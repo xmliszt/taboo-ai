@@ -4,9 +4,6 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  env: {
-    OPENAI_API: "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",
-  },
 };
 
 module.exports = nextConfig;
