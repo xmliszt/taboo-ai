@@ -1,0 +1,68 @@
+{
+  "levels": [
+    {
+      "name": "Food",
+      "difficulty": 1,
+      "words": [
+        "Pasta",
+        "Burger",
+        "French Fries",
+        "Bacon",
+        "Buritto",
+        "Hash Browns",
+        "Ice Cream",
+        "Spaghetti",
+        "Waffles"
+      ]
+    },
+    {
+      "name": "Fruits",
+      "difficulty": 1,
+      "words": [
+        "Apple",
+        "Banana",
+        "Orange",
+        "Guava",
+        "Kiwi",
+        "Star Fruit",
+        "Mango",
+        "Pineapple",
+        "Dragonfruit"
+      ]
+    },
+    {
+      "name": "Country",
+      "difficulty": 1,
+      "words": [
+        "America",
+        "China",
+        "India",
+        "Singapore",
+        "Indonesia",
+        "Taiwan",
+        "Australia",
+        "Canada",
+        "France",
+        "Germany",
+        "Italy"
+      ]
+    },
+    {
+      "name": "Programming Language",
+      "difficulty": 3,
+      "words": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Shell",
+        "Assembly",
+        "Java",
+        "C",
+        "C++",
+        "C#",
+        "Swift",
+        "Go"
+      ]
+    }
+  ]
+}

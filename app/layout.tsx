@@ -1,11 +1,11 @@
 import "./global.css";
 import "./main.css";
-import { Caveat } from "@next/font/google";
+import { Lobster } from "@next/font/google";
 
-const caveatFont = Caveat({
+const lobserFont = Lobster({
   weight: "400",
   subsets: ["latin"],
-  variable: "--font-caveat",
+  variable: "--font-lobster",
 });
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html className={caveatFont.className}>
+    <html className={lobserFont.className}>
       <head />
       <body>{children}</body>
     </html>

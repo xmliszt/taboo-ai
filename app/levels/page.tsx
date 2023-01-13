@@ -1,26 +1,25 @@
-import ILevel from "./level.interface";
 import Link from "next/link";
+import path from "path";
+import fs from "fs";
+import ILevel from "../../app/levels/(models)/level.interface";
+
+function fetchLevels(): ILevel[] {
+  const filePath = path.join(process.cwd(), "levels.json");
+  const jsonData = fs.readFileSync(filePath, "utf-8");
+  var levels = JSON.parse(jsonData).levels as ILevel[];
+  levels = levels.map((level, idx) => {
+    return {
+      ...level,
+      difficulty: Number(level.difficulty),
+      id: Number(idx),
+    };
+  });
+  return levels;
+}
 
 export default function LevelsPage() {
-  const levels: ILevel[] = [
-    {
-      id: 1,
-      name: "Food",
-      difficulty: 1,
-    },
-    {
-      id: 2,
-      name: "Country",
-      difficulty: 2,
-    },
-    {
-      id: 3,
-      name: "Programming Language",
-      difficulty: 3,
-    },
-  ];
-
   const title = "Choose A Category";
+  const levels = fetchLevels();
 
   return (
     <>

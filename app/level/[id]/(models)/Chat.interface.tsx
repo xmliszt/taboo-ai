@@ -1,4 +1,4 @@
-import { Author } from "./Author.enum";
+import { Author } from "../(models)/Author.enum";
 
 export default interface Chat {
   message: string;

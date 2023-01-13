@@ -6,7 +6,7 @@ export default async function handler(
 ) {
   const apiKey = process.env.OPENAI_API;
   if (req.method === "POST") {
-    const prompt = JSON.parse(req.body).prompt;
+    const prompt = req.body.prompt;
     try {
       const response = await fetch("https://api.openai.com/v1/completions", {
         method: "POST",
@@ -23,8 +23,10 @@ export default async function handler(
         }),
       });
       const json = await response.json();
-      console.log(json);
-
+      if (json.error) {
+        res.status(500).json(json.error);
+        return;
+      }
       const responseText =
         json.choices[0].text ?? "Sorry I don't quite get it.";
       res.status(200).send({ response: responseText });
