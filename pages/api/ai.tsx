@@ -18,7 +18,7 @@ export default async function handler(
         body: JSON.stringify({
           model: "text-curie-001",
           prompt,
-          temperature: 0,
+          temperature: 0.6,
           max_tokens: 1600,
         }),
       });
