@@ -56,8 +56,12 @@ export default function LevelPage({ params }: any) {
     return new RegExp(groupRegexString, "gi");
   };
 
-  const generateHighlights = (target: string, str: string): Highlight[] => {
-    const parts = target.split(" ");
+  const generateHighlights = (
+    target: string,
+    str: string,
+    isFullMatch: boolean
+  ): Highlight[] => {
+    var parts = isFullMatch ? [target] : target.split(" ");
     var highlights: Highlight[] = [];
     for (let part of parts) {
       let regex = getRegexPattern(part);
@@ -118,7 +122,7 @@ export default function LevelPage({ params }: any) {
   // * Compute higlight match
   useEffect(() => {
     if (target !== null) {
-      let highlights = generateHighlights(target, responseText);
+      let highlights = generateHighlights(target, responseText, true);
       setHighlights(highlights);
     }
   }, [responseText]);
@@ -126,7 +130,7 @@ export default function LevelPage({ params }: any) {
   // * Compute user input validation match
   useEffect(() => {
     if (target !== null) {
-      let highlights = generateHighlights(target, userInput);
+      let highlights = generateHighlights(target, userInput, false);
       setUserInputHighlights(highlights);
     }
   }, [userInput]);
