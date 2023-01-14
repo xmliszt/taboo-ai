@@ -3,24 +3,7 @@
 @tailwind utilities;
 
 @layer components {
-  .bg-black {
-    background-color: #333a44;
-  }
-
-  .bg-white {
-    background-color: #7c9cab;
-  }
-
-  .text-white {
-    color: #feecc3;
-  }
-
-  .text-black {
-    color: #e8cbb1;
-  }
-
   .unicorn-color {
-    animation: unicornFlow 10s linear infinite;
     background-image: linear-gradient(
       0deg,
       #cf5c5c,
@@ -38,4 +21,7 @@
     );
     background-size: 100% 1100%;
   }
+}
+.unicorn-color {
+  @apply animate-unicorn-flow;
 }

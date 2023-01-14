@@ -7,12 +7,16 @@ interface ResponseDisplayProps {
   message: string;
   highlights: Highlight[];
   author: Author;
+  faded: boolean;
 }
 
 export default function InputDisplay(props: ResponseDisplayProps) {
   const makeNormalMessagePart = (message: string) => {
     return (
-      <span key={uniqueId(message)} className="text-white">
+      <span
+        key={uniqueId(message)}
+        className={props.faded ? "text-white-faded" : "text-white"}
+      >
         {message}
       </span>
     );

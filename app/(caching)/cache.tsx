@@ -28,6 +28,10 @@ export function getScoresCache(): IScore[] | null {
   return null;
 }
 
+export function clearScores() {
+  localStorage.removeItem("scores");
+}
+
 export function clearCache() {
   localStorage.clear();
 }

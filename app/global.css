@@ -24,7 +24,7 @@ a {
   text-decoration: none;
 }
 
-button:not(#submit, #back),
+button:not(#submit, #back, #reset, #share),
 a:not(#ai-mode) {
   background-image: url("https://i.imgur.com/Cyi6Vv5.jpg") !important;
   background-repeat: no-repeat;
