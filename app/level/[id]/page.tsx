@@ -2,24 +2,26 @@
 
 import { FormEvent, useState, useEffect } from "react";
 import Timer from "./(components)/Timer";
-import PlayerInputDisplay from "./(components)/PlayerInputDisplay";
 import { Status } from "use-timer/lib/types";
 import { AiOutlineSend } from "react-icons/ai";
 import { getQueryResponse } from "../../(services)/aiService";
 import { getLevels } from "../../(services)/levelService";
 import ILevel from "../../levels/(models)/level.interface";
-import ResponseDisplay from "./(components)/ResponseDisplay";
+import InputDisplay from "./(components)/InputDisplay";
 import _ from "lodash";
+import { Author } from "./(models)/Author.enum";
 
 export default function LevelPage({ params }: any) {
-  const [userInput, setUserInput] = useState("");
-  const [responseText, setResponseText] = useState("");
+  const [userInput, setUserInput] = useState<string>("");
+  const [responseText, setResponseText] = useState<string>("");
   const [timerStatus, setTimerStatus] = useState<Status>("RUNNING");
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [words, setWords] = useState<string[]>([]);
   const [target, setTarget] = useState<string | null>(null);
   const [pickedWords, setPickedWords] = useState<string[]>([]);
   const [highlights, setHighlights] = useState<number[]>([]);
+  const [userInputHighlights, setUserInputHighlights] = useState<number[]>([]);
+  const [isValidInput, setIsValidInput] = useState<boolean>(true);
 
   const fetchLevels = async () => {
     const levels = await getLevels();
@@ -45,7 +47,7 @@ export default function LevelPage({ params }: any) {
 
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
-    fetchResponse(userInput);
+    isValidInput && fetchResponse(userInput);
   };
 
   const fetchResponse = async (prompt: string) => {
@@ -71,17 +73,42 @@ export default function LevelPage({ params }: any) {
     }
   }, [responseText]);
 
+  useEffect(() => {
+    if (target !== null) {
+      let regex = getRegexPattern(target);
+      var result;
+      var highlights: number[] = [];
+      while ((result = regex.exec(userInput))) {
+        let startIndex = result.index;
+        highlights.push(startIndex);
+      }
+      setUserInputHighlights(highlights);
+    }
+  }, [userInput]);
+
+  useEffect(() => {
+    setIsValidInput(userInputHighlights.length == 0);
+  }, [userInputHighlights]);
+
   return (
     <section className="text-center h-screen pt-4 lg:pt-6">
-      <h1 className="text-2xl lg:text-4xl">{target}</h1>
+      <h1 className="text-2xl lg:text-4xl">
+        Target Word: <span className="text-green-400">{target}</span>
+      </h1>
       <Timer timeStatus={timerStatus} />
       <section className="w-full h-4/5 flex flex-col justify-center items-center gap-16">
-        <ResponseDisplay
+        <InputDisplay
           target={target}
           message={responseText}
           highlights={highlights}
+          author={Author.AI}
         />
-        <PlayerInputDisplay inputMessage={userInput} />
+        <InputDisplay
+          target={target}
+          message={userInput}
+          highlights={userInputHighlights}
+          author={Author.Me}
+        />
       </section>
       <form onSubmit={onFormSubmit} className="fixed bottom-3 w-screen">
         <div className="flex items-center justify-center gap-4 px-4">

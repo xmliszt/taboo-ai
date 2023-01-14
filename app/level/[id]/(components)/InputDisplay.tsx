@@ -1,12 +1,14 @@
 import { uniqueId } from "lodash";
+import { Author } from "../(models)/Author.enum";
 
 interface ResponseDisplayProps {
   target: string | null;
   message: string;
   highlights: number[];
+  author: Author;
 }
 
-export default function ResponseDisplay(props: ResponseDisplayProps) {
+export default function InputDisplay(props: ResponseDisplayProps) {
   const makeNormalMessagePart = (message: string) => {
     return (
       <span key={uniqueId(message)} className="text-white">
@@ -17,7 +19,12 @@ export default function ResponseDisplay(props: ResponseDisplayProps) {
 
   const makeHighlightMessagePart = (message: string) => {
     return (
-      <span key={uniqueId(message)} className="bg-yellow-500 text-black">
+      <span
+        key={uniqueId(message)}
+        className={`${
+          props.author === Author.AI ? "bg-yellow-500" : "bg-red-500"
+        } text-black`}
+      >
         {message}
       </span>
     );
@@ -47,6 +54,7 @@ export default function ResponseDisplay(props: ResponseDisplayProps) {
         );
         startIndex = endIndex;
       }
+      parts.push(makeNormalMessagePart(message.substring(endIndex)));
     }
     return <span>{parts}</span>;
   };
