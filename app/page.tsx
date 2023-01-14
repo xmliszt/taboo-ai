@@ -5,7 +5,7 @@ export default function HomePage() {
 
   return (
     <main>
-      <h1 className="text-center text-2xl mt-5 lg:mt-10 lg:text-6xl overflow-hidden">
+      <h1 className="drop-shadow-lg text-center text-2xl mt-5 lg:mt-10 lg:text-6xl overflow-hidden">
         {title}
       </h1>
       <section className="flex flex-col justify-center items-center h-screen w-screen fixed top-0 left-0">

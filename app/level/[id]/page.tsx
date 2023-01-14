@@ -13,6 +13,8 @@ import { useTimer } from "use-timer";
 import { useRouter } from "next/navigation";
 import { getLevelCache } from "../../(caching)/cache";
 import { Highlight } from "./(models)/Chat.interface";
+import Link from "next/link";
+import BackButton from "../../(components)/BackButton";
 
 export default function LevelPage({ params }: any) {
   const [userInput, setUserInput] = useState<string>("");
@@ -67,8 +69,6 @@ export default function LevelPage({ params }: any) {
         }
         const startIndex = result.index;
         const endIndex = regex.lastIndex;
-        console.log(result[0], startIndex, endIndex);
-
         highlights.push({ start: startIndex, end: endIndex });
       }
     }
@@ -123,7 +123,7 @@ export default function LevelPage({ params }: any) {
     }
   }, [responseText]);
 
-  // * Compute user input valiation match
+  // * Compute user input validation match
   useEffect(() => {
     if (target !== null) {
       let highlights = generateHighlights(target, userInput);
@@ -147,17 +147,20 @@ export default function LevelPage({ params }: any) {
         isValidInput ? "" : "bg-red"
       }`}
     >
-      <h1 className="text-xl lg:text-6xl">
-        TABOO: <span>{target}</span>
+      <BackButton />
+      <h1 className="text-xl lg:text-6xl drop-shadow-lg text-white-faded">
+        TABOO: <span className="font-extrabold text-white">{target}</span>
       </h1>
       <Timer time={time} />
-      <section className="w-full h-4/5 flex flex-col items-center gap-16 px-12 pt-6 lg:px-24 lg:pt-12">
+      <section className="w-full h-4/5 flex flex-col items-center px-12 pt-6 lg:px-24 lg:pt-12">
+        <span className="w-full h-1 bg-white rounded-full"></span>
         <InputDisplay
           target={target}
           message={responseText}
           highlights={highlights}
           author={Author.AI}
         />
+        <span className="w-full h-1 bg-white rounded-full"></span>
         <InputDisplay
           target={target}
           message={userInput}
@@ -174,6 +177,7 @@ export default function LevelPage({ params }: any) {
           <div className="flex items-center justify-center gap-4 px-4">
             <input
               autoFocus
+              placeholder="Start your conversation with AI here..."
               className={`text-white bg-black border-2 border-white outline-black focus:outline-white  lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
                 !isValidInput ? "bg-red text-gray" : ""
               }`}
@@ -184,6 +188,7 @@ export default function LevelPage({ params }: any) {
               maxLength={100}
             />
             <button
+              id="submit"
               disabled={isEmptyInput || !isValidInput}
               type="submit"
               className={`text-xl lg:text-3xl transition-opacity ease-in-out ${

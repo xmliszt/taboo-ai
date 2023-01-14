@@ -21,7 +21,7 @@ module.exports = {
     screens: {
       sm: "640px",
       md: "768px",
-      lg: "1024px",
+      lg: "800px",
       xl: "1280px",
       "2xl": "1536px",
     },
@@ -32,6 +32,8 @@ module.exports = {
       red: "#9c2b1d",
       green: "#476f5d",
       yellow: "#ecbe3f",
+      "red-light": "#cf5c5c",
+      "white-faded": "#afaca3",
     },
   },
   plugins: [scrollBarHide],

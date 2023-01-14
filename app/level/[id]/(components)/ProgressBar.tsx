@@ -12,11 +12,11 @@ export default function ProgressBar(props: ProgressBarProps) {
     return (
       <span
         key={uniqueId(n.toString())}
-        className={`transition-colors w-8 lg:w-16 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-4xl ease-in-out ${
+        className={`transition-colors w-8 shadow-lg lg:w-16 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-4xl ease-in-out ${
           n < c
             ? "bg-green text-white"
             : n == c
-            ? "bg-yellow border-white border-4 text-black"
+            ? "bg-yellow border-white animate-spin border-4 text-black"
             : "bg-white text-black"
         }`}
       >
@@ -29,7 +29,7 @@ export default function ProgressBar(props: ProgressBarProps) {
     return (
       <div
         key={uniqueId(n.toString())}
-        className={`w-auto flex-grow transition-colors ease-in-out rounded-full h-2 lg:h-3 ${
+        className={`w-auto flex-grow  shadow-lg transition-colors ease-in-out rounded-full h-2 lg:h-3 ${
           n < c ? "bg-green" : "bg-white"
         }`}
       ></div>

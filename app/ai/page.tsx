@@ -4,6 +4,8 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import { getCreativeLevel } from "../(services)/aiService";
 import { CONSTANTS } from "../constants";
 import { useRouter } from "next/navigation";
+import { cacheLevel } from "../(caching)/cache";
+import BackButton from "../(components)/BackButton";
 
 export default function AiPage() {
   const [topic, setTopic] = useState<string>("");
@@ -20,6 +22,7 @@ export default function AiPage() {
       if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
         setSomethingWrong(true);
       }
+      cacheLevel(level);
       router.push("/level/" + level.id);
     }
   };
@@ -31,13 +34,17 @@ export default function AiPage() {
 
   return (
     <section
-      className={`w-full h-screen flex justify-center items-center ${
+      className={`w-full h-screen flex justify-center items-center transition-colors ease-in-out ${
         isValid || somethingWrong ? "" : "bg-red"
       }`}
     >
+      <BackButton href="/" />
       <form onSubmit={submitForm}>
         <div className="flex flex-col gap-6 justify-center items-center">
-          <label className="text-3xl lg:text-5xl" htmlFor="topicInput">
+          <label
+            className="text-3xl lg:text-5xl transition-all ease-in-out"
+            htmlFor="topicInput"
+          >
             {somethingWrong
               ? "Taboo.AI went for a toilet break. Please try again!"
               : isValid

@@ -36,6 +36,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     let message = props.message;
     let highlights = props.highlights;
     var parts = [];
+
     if (highlights.length === 0 || target === null)
       parts = [<span key={props.message}>{props.message}</span>];
     else {
@@ -62,8 +63,10 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     }
     return (
       <p
-        className="w-full h-full transition-opacity overflow-y-scroll scrollbar-hide md:scrollbar-default"
-        style={{ maxHeight: "50vh" }}
+        className={`py-4 w-full h-full transition-opacity overflow-y-scroll scrollbar-hide md:scrollbar-default ${
+          props.author == Author.AI ? "text-white" : "text-black"
+        }`}
+        style={{ maxHeight: "40vh" }}
       >
         {parts}
       </p>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cacheLevel } from "../(caching)/cache";
+import BackButton from "../(components)/BackButton";
 import { getLevels } from "../(services)/levelService";
 import ILevel from "./(models)/level.interface";
 
@@ -27,8 +28,9 @@ export default function LevelsPage() {
   }, []);
 
   return (
-    <>
-      <h1 className="text-center text-2xl mt-5 lg:mt-10 lg:text-6xl overflow-hidden">
+    <section className="pt-5 lg:pt-10">
+      <BackButton href="/" />
+      <h1 className="text-center drop-shadow-lg text-2xl lg:text-6xl">
         {title}
       </h1>
       <section className="flex flex-col gap-4 lg:gap-6 p-6 fixed w-screen h-screen top-0 left-0 justify-center items-center">
@@ -43,12 +45,13 @@ export default function LevelsPage() {
         ))}
         <Link
           key="ai-mode"
+          id="ai-mode"
           className="w-full unicorn-color animate-unicorn-flow text-center border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
           href={`/ai`}
         >
           AI Mode
         </Link>
       </section>
-    </>
+    </section>
   );
 }
