@@ -21,7 +21,7 @@ export default function BackButton(props: BackButtonProps = {}) {
   return (
     <button
       id="back"
-      className="fixed transition-opacity z-10 top-5 left-4 lg:text-2xl hover:opacity-50 hover:cursor-pointer"
+      className="fixed transition-opacity z-10 top-5 left-4 lg:text-2xl hover:opacity-50 hover:cursor-pointer drop-shadow-lg shadow-lg"
       onClick={() => {
         back();
       }}

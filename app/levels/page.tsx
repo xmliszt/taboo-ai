@@ -37,7 +37,7 @@ export default function LevelsPage() {
         {levels.map((level) => (
           <button
             key={level.id}
-            className="w-full border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
+            className="drop-shadow-lg shadow-lg w-full border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
             onClick={() => goToLevel(level.id)}
           >
             {level.name}
@@ -46,7 +46,7 @@ export default function LevelsPage() {
         <Link
           key="ai-mode"
           id="ai-mode"
-          className="w-full unicorn-color animate-unicorn-flow text-center border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
+          className="drop-shadow-lg shadow-lg w-full unicorn-color animate-unicorn-flow text-center border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
           href={`/ai`}
         >
           AI Mode

@@ -5,13 +5,13 @@ export default function HomePage() {
 
   return (
     <main>
-      <h1 className="drop-shadow-lg text-center text-2xl mt-5 lg:mt-10 lg:text-6xl overflow-hidden">
-        {title}
-      </h1>
-      <section className="flex flex-col justify-center items-center h-screen w-screen fixed top-0 left-0">
+      <section className="flex flex-col justify-center items-center h-screen w-screen gap-16">
+        <h1 className="drop-shadow-lg text-center text-5xl lg:text-8xl overflow-hidden drop-shadow-lg">
+          {title}
+        </h1>
         <Link
           href="/levels"
-          className="border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
+          className="border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg drop-shadow-lg shadow-lg"
         >
           START
         </Link>
