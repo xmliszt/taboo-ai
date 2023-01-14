@@ -1,10 +1,11 @@
 import { uniqueId } from "lodash";
 import { Author } from "../(models)/Author.enum";
+import { Highlight } from "../(models)/Chat.interface";
 
 interface ResponseDisplayProps {
   target: string | null;
   message: string;
-  highlights: number[];
+  highlights: Highlight[];
   author: Author;
 }
 
@@ -22,8 +23,8 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       <span
         key={uniqueId(message)}
         className={`${
-          props.author === Author.AI ? "bg-yellow-500" : "bg-red-500"
-        } text-black`}
+          props.author === Author.AI ? "bg-green" : "bg-red"
+        } text-yellow`}
       >
         {message}
       </span>
@@ -34,20 +35,23 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     let target = props.target;
     let message = props.message;
     let highlights = props.highlights;
+    var parts = [];
     if (highlights.length === 0 || target === null)
-      return <p className="transition-opacity">{props.message}</p>;
+      parts = [<span key={props.message}>{props.message}</span>];
     else {
-      var parts = [];
       var startIndex = 0;
       var endIndex = 0;
-      for (let i of highlights) {
-        endIndex = i;
+
+      highlights.sort((a, b) => a.start - b.start);
+
+      for (let highlight of highlights) {
+        endIndex = highlight.start;
         // Normal part
         parts.push(
           makeNormalMessagePart(message.substring(startIndex, endIndex))
         );
         startIndex = endIndex;
-        endIndex = startIndex + target.length;
+        endIndex = highlight.end;
         // Highlighted part
         parts.push(
           makeHighlightMessagePart(message.substring(startIndex, endIndex))
@@ -56,11 +60,18 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       }
       parts.push(makeNormalMessagePart(message.substring(endIndex)));
     }
-    return <span>{parts}</span>;
+    return (
+      <p
+        className="w-full h-full transition-opacity overflow-y-scroll scrollbar-hide md:scrollbar-default"
+        style={{ maxHeight: "50vh" }}
+      >
+        {parts}
+      </p>
+    );
   };
 
   return (
-    <section className="w-full flex justify-center items-center text-5xl px-6">
+    <section className="flex-grow basis-6/12 leading-normal text-base lg:text-5xl lg:px-6 px-0">
       {renderResponseMessage()}
     </section>
   );

@@ -1,5 +1,5 @@
 export default interface ILevel {
-  id: number;
+  id: string;
   name: string;
   difficulty: number;
   words: string[];

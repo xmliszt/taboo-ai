@@ -16,10 +16,10 @@ export default async function handler(
           Authorization: "Bearer " + apiKey ?? "",
         },
         body: JSON.stringify({
-          model: "text-davinci-003",
+          model: "text-curie-001",
           prompt,
           temperature: 0.9,
-          max_tokens: 2048,
+          max_tokens: 1900,
         }),
       });
       const json = await response.json();

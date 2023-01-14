@@ -1,10 +1,9 @@
 "use client";
 
-import { FormEvent, useState, useEffect, useRef } from "react";
+import { FormEvent, useState, useEffect, useRef, ChangeEvent } from "react";
 import Timer from "./(components)/Timer";
 import { AiOutlineSend } from "react-icons/ai";
 import { getQueryResponse } from "../../(services)/aiService";
-import { getLevels } from "../../(services)/levelService";
 import InputDisplay from "./(components)/InputDisplay";
 import _ from "lodash";
 import { Author } from "./(models)/Author.enum";
@@ -12,6 +11,8 @@ import ProgressBar from "./(components)/ProgressBar";
 import { CONSTANTS } from "../../constants";
 import { useTimer } from "use-timer";
 import { useRouter } from "next/navigation";
+import { getLevelCache } from "../../(caching)/cache";
+import { Highlight } from "./(models)/Chat.interface";
 
 export default function LevelPage({ params }: any) {
   const [userInput, setUserInput] = useState<string>("");
@@ -19,9 +20,12 @@ export default function LevelPage({ params }: any) {
   const [words, setWords] = useState<string[]>([]);
   const [target, setTarget] = useState<string | null>(null);
   const [pickedWords, setPickedWords] = useState<string[]>([]);
-  const [highlights, setHighlights] = useState<number[]>([]);
-  const [userInputHighlights, setUserInputHighlights] = useState<number[]>([]);
+  const [highlights, setHighlights] = useState<Highlight[]>([]);
+  const [userInputHighlights, setUserInputHighlights] = useState<Highlight[]>(
+    []
+  );
   const [isValidInput, setIsValidInput] = useState<boolean>(true);
+  const [isEmptyInput, setIsEmptyInput] = useState<boolean>(true);
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const { time, start, pause, reset, status } = useTimer({
     initialTime: 0,
@@ -29,13 +33,6 @@ export default function LevelPage({ params }: any) {
   });
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
-
-  const fetchLevels = async () => {
-    const levels = await getLevels();
-    setWords(levels[params.id].words);
-    generateNewTarget(levels[params.id].words);
-    setCurrentProgress(1);
-  };
 
   const generateNewTarget = (words: string[]) => {
     var target = words[Math.floor(Math.random() * words.length)];
@@ -50,8 +47,37 @@ export default function LevelPage({ params }: any) {
     start();
     inputTextField.current?.focus();
   };
+
   const getRegexPattern = (target: string): RegExp => {
-    return new RegExp(target.toLowerCase(), "gi");
+    const magicSeperator = "\\W*";
+    const groupRegexString = `(${target.split("").join(magicSeperator)})`;
+    return new RegExp(groupRegexString, "gi");
+  };
+
+  const generateHighlights = (target: string, str: string): Highlight[] => {
+    const parts = target.split(" ");
+    var highlights: Highlight[] = [];
+    for (let part of parts) {
+      let regex = getRegexPattern(part);
+      var result;
+      while ((result = regex.exec(str)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (result.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        const startIndex = result.index;
+        const endIndex = regex.lastIndex;
+        console.log(result[0], startIndex, endIndex);
+
+        highlights.push({ start: startIndex, end: endIndex });
+      }
+    }
+    return highlights;
+  };
+
+  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setUserInput(event.target.value);
+    setIsEmptyInput(event.target.value.length <= 0);
   };
 
   const onFormSubmit = (event: FormEvent) => {
@@ -79,19 +105,20 @@ export default function LevelPage({ params }: any) {
 
   // * At the start of the game
   useEffect(() => {
-    fetchLevels();
+    let level = getLevelCache();
+    if (level !== null) {
+      setWords(level.words);
+      generateNewTarget(level.words);
+      setCurrentProgress(1);
+    } else {
+      throw Error("Unable to fetch level!");
+    }
   }, []);
 
   // * Compute higlight match
   useEffect(() => {
     if (target !== null) {
-      let regex = getRegexPattern(target);
-      var result;
-      var highlights: number[] = [];
-      while ((result = regex.exec(responseText))) {
-        let startIndex = result.index;
-        highlights.push(startIndex);
-      }
+      let highlights = generateHighlights(target, responseText);
       setHighlights(highlights);
     }
   }, [responseText]);
@@ -99,13 +126,7 @@ export default function LevelPage({ params }: any) {
   // * Compute user input valiation match
   useEffect(() => {
     if (target !== null) {
-      let regex = getRegexPattern(target);
-      var result;
-      var highlights: number[] = [];
-      while ((result = regex.exec(userInput))) {
-        let startIndex = result.index;
-        highlights.push(startIndex);
-      }
+      let highlights = generateHighlights(target, userInput);
       setUserInputHighlights(highlights);
     }
   }, [userInput]);
@@ -121,12 +142,16 @@ export default function LevelPage({ params }: any) {
   }, [userInputHighlights]);
 
   return (
-    <section className="text-center h-screen pt-4 lg:pt-6">
-      <h1 className="text-2xl lg:text-4xl">
-        Target Word: <span className="text-green-400">{target}</span>
+    <section
+      className={`text-center h-screen pt-4 lg:pt-6 transition-colors overflow-hidden ${
+        isValidInput ? "" : "bg-red"
+      }`}
+    >
+      <h1 className="text-xl lg:text-6xl">
+        TABOO: <span>{target}</span>
       </h1>
       <Timer time={time} />
-      <section className="w-full h-4/5 flex flex-col justify-center items-center gap-16 px-24">
+      <section className="w-full h-4/5 flex flex-col items-center gap-16 px-12 pt-6 lg:px-24 lg:pt-12">
         <InputDisplay
           target={target}
           message={responseText}
@@ -140,21 +165,31 @@ export default function LevelPage({ params }: any) {
           author={Author.Me}
         />
       </section>
-      <section className="fixed bottom-3 w-screen flex flex-col gap-8">
+      <section className="fixed bottom-6 w-screen flex flex-col gap-4 lg:gap-8">
         <ProgressBar
           current={currentProgress}
           total={CONSTANTS.numberOfQuestionsPerGame}
         />
-        <form onSubmit={onFormSubmit} className="">
+        <form onSubmit={onFormSubmit}>
           <div className="flex items-center justify-center gap-4 px-4">
             <input
-              className="text-black h-8 text-1xl lg:text-3xl lg:h-16 px-4 rounded-full flex-grow"
+              autoFocus
+              className={`text-white bg-black border-2 border-white outline-black focus:outline-white  lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
+                !isValidInput ? "bg-red text-gray" : ""
+              }`}
               ref={inputTextField}
               type="text"
               value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
+              onChange={onInputChange}
+              maxLength={100}
             />
-            <button type="submit" className="text-xl lg:text-3xl">
+            <button
+              disabled={isEmptyInput || !isValidInput}
+              type="submit"
+              className={`text-xl lg:text-3xl transition-opacity ease-in-out ${
+                isEmptyInput || !isValidInput ? "opacity-50" : ""
+              }`}
+            >
               <AiOutlineSend />
             </button>
           </div>

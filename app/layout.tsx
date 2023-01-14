@@ -1,11 +1,11 @@
 import "./global.css";
 import "./main.css";
-import { Lobster } from "@next/font/google";
+import { Lancelot } from "@next/font/google";
 
-const lobserFont = Lobster({
+const lancelot = Lancelot({
   weight: "400",
   subsets: ["latin"],
-  variable: "--font-lobster",
+  variable: "--font-lancelot",
 });
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html className={lobserFont.className}>
+    <html className={`${lancelot.className} bg-black text-white`}>
       <head />
       <body>{children}</body>
     </html>

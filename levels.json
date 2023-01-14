@@ -2,13 +2,13 @@
   "levels": [
     {
       "name": "Food",
-      "difficulty": 1,
+      "difficulty": 3,
       "words": [
         "Pasta",
         "Burger",
         "French Fries",
         "Bacon",
-        "Buritto",
+        "Burrito",
         "Hash Browns",
         "Ice Cream",
         "Spaghetti",
@@ -58,8 +58,7 @@
         "Assembly",
         "Java",
         "C",
-        "C++",
-        "C#",
+        "Rust",
         "Swift",
         "Go"
       ]

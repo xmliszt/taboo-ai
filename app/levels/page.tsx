@@ -1,41 +1,53 @@
-import Link from "next/link";
-import path from "path";
-import fs from "fs";
-import ILevel from "../../app/levels/(models)/level.interface";
+"use client";
 
-function fetchLevels(): ILevel[] {
-  const filePath = path.join(process.cwd(), "levels.json");
-  const jsonData = fs.readFileSync(filePath, "utf-8");
-  var levels = JSON.parse(jsonData).levels as ILevel[];
-  levels = levels.map((level, idx) => {
-    return {
-      ...level,
-      difficulty: Number(level.difficulty),
-      id: Number(idx),
-    };
-  });
-  return levels;
-}
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { cacheLevel } from "../(caching)/cache";
+import { getLevels } from "../(services)/levelService";
+import ILevel from "./(models)/level.interface";
 
 export default function LevelsPage() {
   const title = "Choose A Category";
-  const levels = fetchLevels();
+  const router = useRouter();
+  const [levels, setLevels] = useState<ILevel[]>([]);
+
+  const fetchLevels = async () => {
+    const levels = await getLevels();
+    setLevels(levels);
+  };
+
+  const goToLevel = (levelID: string) => {
+    cacheLevel(levels.filter((level) => level.id === levelID)[0]);
+    router.push(`/level/${levelID}`);
+  };
+
+  useEffect(() => {
+    fetchLevels();
+  }, []);
 
   return (
     <>
-      <h1 className="text-center text-2xl mt-5 lg:mt-10 lg:text-6xl">
+      <h1 className="text-center text-2xl mt-5 lg:mt-10 lg:text-6xl overflow-hidden">
         {title}
       </h1>
-      <section className="flex flex-col gap-4 p-6 fixed w-screen h-screen top-0 left-0 justify-center items-center">
+      <section className="flex flex-col gap-4 lg:gap-6 p-6 fixed w-screen h-screen top-0 left-0 justify-center items-center">
         {levels.map((level) => (
-          <Link
+          <button
             key={level.id}
-            className="w-2/5 border border-white p-4 text-center rounded-lg hover:bg-white hover:text-slate-600 text-2xl"
-            href={`/level/${level.id}`}
+            className="w-full border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
+            onClick={() => goToLevel(level.id)}
           >
             {level.name}
-          </Link>
+          </button>
         ))}
+        <Link
+          key="ai-mode"
+          className="w-full unicorn-color animate-unicorn-flow text-center border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
+          href={`/ai`}
+        >
+          AI Mode
+        </Link>
       </section>
     </>
   );

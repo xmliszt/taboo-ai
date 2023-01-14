@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 import fs from "fs";
 import ILevel from "../../app/levels/(models)/level.interface";
+import { uniqueId } from "lodash";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +17,7 @@ export default async function handler(
         return {
           ...level,
           difficulty: Number(level.difficulty),
-          id: Number(idx),
+          id: uniqueId(),
         };
       });
       res.json({ levels });
