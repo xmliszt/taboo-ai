@@ -48,11 +48,15 @@ export async function getCreativeLevel(
   });
   const json = await respone.json();
   const text = json.response;
-  var words: string[] = text
+  console.log(text);
+  var wordsString: string = text
     .replaceAll(/\n*\d*\.\s/gi, ",")
     .replaceAll("\n", ",")
-    .replaceAll(/^\W/gi, "")
-    .split(", ");
+    .replaceAll(/^\W/gi, "");
+  var words = wordsString.split(", ");
+  if (words.length < CONSTANTS.numberOfQuestionsPerGame) {
+    words = wordsString.split(",");
+  }
   words = words.map((word) => _.startCase(_.toLower(word)));
 
   return {

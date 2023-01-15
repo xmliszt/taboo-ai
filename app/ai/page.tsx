@@ -24,7 +24,7 @@ export default function AiPage() {
       const level = await getCreativeLevel(topic, difficulty);
       setIsLoading(false);
       if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
-        setSomethingWrong(true);
+        return setSomethingWrong(true);
       }
       cacheLevel(level);
       router.push("/level/" + level.id);
