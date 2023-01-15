@@ -119,6 +119,12 @@ export default function LevelPage() {
     );
     setTimeout(() => {
       if (isLastRound) {
+        cacheScore({
+          id: currentProgress,
+          question: userInput,
+          response: responseText,
+          completion: time,
+        });
         router.push("/result");
       } else {
         generateNewTarget(words);
