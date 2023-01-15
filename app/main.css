@@ -25,3 +25,11 @@
 .unicorn-color {
   @apply animate-unicorn-flow;
 }
+
+input {
+  accent-color: #897ed3;
+}
+
+::selection {
+  background-color: #ede8d9;
+}

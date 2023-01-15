@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html className={`${lancelot.className} bg-black text-white`}>
       <head />
-      <body className="h-screen">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

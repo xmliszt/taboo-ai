@@ -6,7 +6,7 @@ export default function HomePage() {
   return (
     <main>
       <section className="flex flex-col justify-center items-center h-screen w-screen gap-16">
-        <h1 className="text-center text-5xl lg:text-8xl overflow-hidden drop-shadow-lg">
+        <h1 className="text-center text-5xl lg:text-8xl drop-shadow-lg">
           {title}
         </h1>
         <Link

@@ -12,7 +12,7 @@ export function cacheScore(score: IScore) {
     scores.sort((a, b) => a.id - b.id);
     localStorage.setItem("scores", JSON.stringify(scores));
   } else {
-    localStorage.setItem("scores", JSON.stringify([]));
+    localStorage.setItem("scores", JSON.stringify([score]));
   }
 }
 

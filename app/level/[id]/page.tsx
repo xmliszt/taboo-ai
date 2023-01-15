@@ -22,13 +22,14 @@ export default function LevelPage() {
   const [userInput, setUserInput] = useState<string>("");
   const [responseText, setResponseText] = useState<string>("");
   const [words, setWords] = useState<string[]>([]);
+  const [difficulty, setDifficulty] = useState<number>(0);
   const [target, setTarget] = useState<string | null>(null);
   const [pickedWords, setPickedWords] = useState<string[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [userInputHighlights, setUserInputHighlights] = useState<Highlight[]>(
     []
   );
-  const [isValidInput, setIsValidInput] = useState<boolean>(true);
+  const [isValidInput, setIsValidInput] = useState<boolean>(false);
   const [isEmptyInput, setIsEmptyInput] = useState<boolean>(true);
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -42,21 +43,15 @@ export default function LevelPage() {
   const router = useRouter();
 
   const generateNewTarget = (words: string[]) => {
-    cacheScore({
-      id: currentProgress,
-      question: userInput,
-      response: responseText,
-      completion: time,
-    });
     reset();
     start();
-    var target = words[Math.floor(Math.random() * words.length)];
-    setTarget(target);
+    var _target = words[Math.floor(Math.random() * words.length)];
+    setTarget(_target);
     let picked = [...pickedWords];
-    picked.push(target);
+    picked.push(_target);
     setPickedWords(picked);
     let unused = [...words];
-    _.remove(unused, (s) => s === target);
+    _.remove(unused, (s) => s === _target);
     setWords(unused);
     inputTextField.current?.focus();
   };
@@ -117,14 +112,16 @@ export default function LevelPage() {
         isLastRound ? "You have finished the game!" : "Next word is..."
       }`
     );
+    cacheScore({
+      id: currentProgress,
+      target: target ?? "",
+      question: userInput,
+      response: responseText,
+      difficulty: difficulty,
+      completion: time,
+    });
     setTimeout(() => {
       if (isLastRound) {
-        cacheScore({
-          id: currentProgress,
-          question: userInput,
-          response: responseText,
-          completion: time,
-        });
         router.push("/result");
       } else {
         generateNewTarget(words);
@@ -141,6 +138,7 @@ export default function LevelPage() {
     clearScores();
     let level = getLevelCache();
     if (level !== null) {
+      setDifficulty(level.difficulty);
       setWords(level.words);
       generateNewTarget(level.words);
       setCurrentProgress(1);
@@ -190,16 +188,16 @@ export default function LevelPage() {
         pauseOnHover
         theme="light"
       />
+      <BackButton />
+      <h1 className="fixed z-10 w-full top-0 text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl drop-shadow-lg text-white-faded">
+        TABOO: <span className="font-extrabold text-white">{target}</span>
+      </h1>
+      <Timer time={time} />
       <section
         className={`text-center h-screen pt-4 lg:pt-6 transition-colors overflow-hidden ${
           isValidInput ? "" : "bg-red"
         } ${isSuccess && "bg-green"}`}
       >
-        <BackButton />
-        <h1 className="text-xl lg:text-6xl drop-shadow-lg text-white-faded">
-          TABOO: <span className="font-extrabold text-white">{target}</span>
-        </h1>
-        <Timer time={time} />
         <section className="w-full h-4/5 flex flex-col items-center px-12 pt-6 lg:px-24 lg:pt-12">
           <span className="w-full h-1 bg-white rounded-full"></span>
           <InputDisplay

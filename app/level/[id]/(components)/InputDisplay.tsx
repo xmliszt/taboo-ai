@@ -68,7 +68,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     return (
       <p
         className={`py-4 w-full h-full transition-opacity overflow-y-scroll scrollbar-hide md:scrollbar-default ${
-          props.author == Author.AI ? "text-white" : "text-black"
+          props.author == Author.AI ? "text-white" : "text-white"
         }`}
         style={{ maxHeight: "40vh" }}
       >

@@ -12,6 +12,7 @@ export default function ResultPage() {
   const [scores, setScores] = useState<IScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
   const [total, setTotal] = useState<number>(0);
+  const [totalScore, setTotalScore] = useState<number>(0);
   const screenshotRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -20,10 +21,13 @@ export default function ResultPage() {
     scores && setScores(scores);
     level && setLevel(level);
     var total = 0;
+    var totalScore = 0;
     for (let score of scores ?? []) {
       total += score.completion;
+      totalScore += score.completion * score.difficulty;
     }
     setTotal(total);
+    setTotalScore(totalScore);
   }, []);
 
   const share = () => {
@@ -42,11 +46,19 @@ export default function ResultPage() {
     }
   };
 
-  const headers = ["Index", "Your Question", "AI's Response", "Time Taken"];
+  const headers = [
+    "Index",
+    "Taboo Word",
+    "Your Question",
+    "AI's Response",
+    "Difficulty",
+    "Time Taken",
+    "Score (Difficulty x Time Taken)",
+  ];
   return (
     <>
       <BackButton href="/levels" />
-      <section ref={screenshotRef} className="text-center p-10">
+      <section ref={screenshotRef} className="text-center p-10 font-serif">
         <h1 className="text-5xl text-white-faded">
           Topic: <span className="text-white">{level?.name}</span>
         </h1>
@@ -70,16 +82,22 @@ export default function ResultPage() {
               {scores.map((score) => (
                 <tr key={score.id}>
                   <td className="p-3 font-medium w-24">{score.id}</td>
+                  <td className="p-3 font-medium w-24">{score.target}</td>
                   <td className="p-3 font-medium">{score.question}</td>
                   <td className="p-3 font-medium">{score.response}</td>
+                  <td className="p-3 font-medium w-24">{score.difficulty}</td>
                   <td className="p-3 font-medium">
                     {score.completion} seconds
+                  </td>
+                  <td className="p-3 font-medium">
+                    {score.difficulty} x {score.completion} (seconds) ={" "}
+                    {score.difficulty * score.completion}
                   </td>
                 </tr>
               ))}
               <tr>
                 <td
-                  colSpan={3}
+                  colSpan={5}
                   className="px-3 pt-4 pb-8 border-collapse font-extrabold"
                 >
                   Total Time Taken
@@ -87,6 +105,15 @@ export default function ResultPage() {
                 <td className="px-3 pt-4 pb-8 font-extrabold">
                   {total} seconds
                 </td>
+              </tr>
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-3 pt-4 pb-8 border-collapse font-extrabold"
+                >
+                  Total Score
+                </td>
+                <td className="px-3 pt-4 pb-8 font-extrabold">{totalScore}</td>
               </tr>
             </tbody>
           </table>

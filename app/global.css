@@ -7,36 +7,9 @@
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-
-body {
-  background-image: url("https://i.imgur.com/53sDcCt.jpeg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-button:not(#submit, #back, #reset, #share),
-a:not(#ai-mode) {
-  background-image: url("https://i.imgur.com/Cyi6Vv5.jpg") !important;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
-}
-
-input {
-  background-image: url("https://i.imgur.com/sEkMqVZ.jpg") !important;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
 }
