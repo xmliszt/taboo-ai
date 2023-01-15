@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { cacheScore, clearScores, getLevelCache } from "../../(caching)/cache";
 import { Highlight } from "./(models)/Chat.interface";
 import BackButton from "../../(components)/BackButton";
-import Loading from "../../(components)/Loading";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,12 +28,16 @@ export default function LevelPage() {
   const [userInputHighlights, setUserInputHighlights] = useState<Highlight[]>(
     []
   );
-  const [isValidInput, setIsValidInput] = useState<boolean>(false);
+  const [isValidInput, setIsValidInput] = useState<boolean>(true);
   const [isEmptyInput, setIsEmptyInput] = useState<boolean>(true);
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isResponseFaded, setIsResponseFaded] = useState<boolean>(false);
+  const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
+  const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
+  const [responseShouldFadeOut, setResponseShouldFadeOut] =
+    useState<boolean>(false);
   const { time, start, pause, reset, status } = useTimer({
     initialTime: 0,
     timerType: "INCREMENTAL",
@@ -92,16 +95,33 @@ export default function LevelPage() {
 
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
-    isValidInput && fetchResponse(userInput);
+    inputTextField.current?.blur();
+    setIsInputConfirmed(true); // Input ping animation
+    isValidInput && userInput.length > 0 && fetchResponse(userInput);
   };
 
   const fetchResponse = async (prompt: string) => {
     setIsLoading(true);
-    const responseText = await getQueryResponse(prompt);
-    setIsLoading(false);
-    responseText && setResponseText(responseText);
-    setIsResponseFaded(false);
-    if (!responseText) throw Error("Response Failed!");
+    pause();
+    // ! Make sure response fade out completely!
+    setTimeout(async () => {
+      const responseText = await getQueryResponse(prompt);
+      if (!responseText) throw Error("Response Failed!");
+      start();
+      setIsLoading(false);
+      setInputShouldFadeOut(true); // Input start fading out
+      setIsInputConfirmed(false); // Reset input ping animation
+      setResponseShouldFadeOut(true); // Fade out current response if any
+      // Wait for input fade out completely, then show response
+      setTimeout(() => {
+        responseText && setResponseText(responseText);
+        setResponseShouldFadeOut(false); // Let new response fade in
+        setIsResponseFaded(false);
+        setInputShouldFadeOut(false); // Reset input fade animation
+        setUserInput(""); // Clear user input
+        inputTextField.current?.focus();
+      }, 1000);
+    }, 1000);
   };
 
   const nextQuestion = () => {
@@ -109,7 +129,9 @@ export default function LevelPage() {
     setIsSuccess(true);
     toast.success(
       `Congratulations! ${
-        isLastRound ? "You have finished the game!" : "Next word is..."
+        isLastRound
+          ? "You have finished the game!"
+          : "Here comes the next word!"
       }`
     );
     cacheScore({
@@ -175,10 +197,10 @@ export default function LevelPage() {
 
   return (
     <>
-      <Loading isLoading={isLoading} message="Talking to AI..." />
+      {/* <Loading isLoading={isLoading} message="Talking to AI..." /> */}
       <ToastContainer
         position="top-center"
-        autoClose={3000}
+        autoClose={1000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -189,34 +211,40 @@ export default function LevelPage() {
         theme="light"
       />
       <BackButton />
-      <h1 className="fixed z-10 w-full top-0 text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl drop-shadow-lg text-white-faded">
+      <h1 className="sticky z-10 w-full top-0 text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl drop-shadow-lg text-white-faded">
         TABOO: <span className="font-extrabold text-white">{target}</span>
       </h1>
       <Timer time={time} />
       <section
-        className={`text-center h-screen pt-4 lg:pt-6 transition-colors overflow-hidden ${
+        className={`flex flex-col gap-4 text-center h-screen pt-16 lg:pt-36 transition-colors overflow-hidden ${
           isValidInput ? "" : "bg-red"
         } ${isSuccess && "bg-green"}`}
       >
-        <section className="w-full h-4/5 flex flex-col items-center px-12 pt-6 lg:px-24 lg:pt-12">
-          <span className="w-full h-1 bg-white rounded-full"></span>
-          <InputDisplay
-            target={target}
-            message={responseText}
-            highlights={highlights}
-            author={Author.AI}
-            faded={isResponseFaded}
-          />
-          <span className="w-full h-1 bg-white rounded-full"></span>
+        <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center px-12 pt-24 lg:px-24 lg:pt-36">
+          {responseText.length > 0 && (
+            <InputDisplay
+              target={target}
+              message={responseText}
+              highlights={highlights}
+              author={Author.AI}
+              faded={isResponseFaded}
+              inputConfirmed={false}
+              shouldFadeOut={responseShouldFadeOut}
+              shouldFadeIn={!responseShouldFadeOut}
+            />
+          )}
           <InputDisplay
             target={target}
             message={userInput}
             highlights={userInputHighlights}
             author={Author.Me}
             faded={false}
+            inputConfirmed={isInputConfirmed}
+            shouldFadeOut={inputShouldFadeOut}
+            shouldFadeIn={!inputShouldFadeOut}
           />
         </section>
-        <section className="fixed bottom-6 w-screen flex flex-col gap-4 lg:gap-8">
+        <section className="relative w-full h-24 lg:h-48 flex flex-col gap-4 lg:gap-8">
           <ProgressBar
             current={currentProgress}
             total={CONSTANTS.numberOfQuestionsPerGame}
@@ -224,6 +252,7 @@ export default function LevelPage() {
           <form onSubmit={onFormSubmit}>
             <div className="flex items-center justify-center gap-4 px-4">
               <input
+                disabled={isLoading}
                 autoFocus
                 placeholder="Start your conversation with AI here..."
                 className={`text-white bg-black border-2 border-white outline-black focus:outline-white  lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
@@ -237,7 +266,7 @@ export default function LevelPage() {
               />
               <button
                 id="submit"
-                disabled={isEmptyInput || !isValidInput}
+                disabled={isEmptyInput || !isValidInput || isLoading}
                 type="submit"
                 className={`text-xl lg:text-3xl transition-opacity ease-in-out ${
                   isEmptyInput || !isValidInput ? "opacity-50" : ""

@@ -12,7 +12,7 @@ export default function ProgressBar(props: ProgressBarProps) {
     return (
       <span
         key={uniqueId(n.toString())}
-        className={`font-serif transition-all w-8 shadow-lg drop-shadow-lg lg:w-16 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-4xl ease-in-out ${
+        className={`font-serif transition-all h-8 w-8 shadow-lg drop-shadow-lg lg:w-16 lg:h-16 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-2xl ease-in-out ${
           n < c
             ? "bg-green text-white"
             : n == c
@@ -29,7 +29,7 @@ export default function ProgressBar(props: ProgressBarProps) {
     return (
       <div
         key={uniqueId(n.toString())}
-        className={`w-auto flex-grow shadow-lg transition-all ease-in-out rounded-full h-2 lg:h-3 ${
+        className={`w-auto flex-grow shadow-lg transition-colors ease-in-out rounded-full h-2 ${
           n < c ? "bg-green " : "bg-white"
         }`}
       ></div>
@@ -49,7 +49,7 @@ export default function ProgressBar(props: ProgressBarProps) {
   };
 
   return (
-    <section className="w-full flex flex-row justify-between items-center gap-5 pl-6 pr-16">
+    <section className="w-full flex flex-row justify-between items-center gap-2 pl-6 pr-16 overflow-x-scroll scrollbar-hide">
       {renderProgress()}
     </section>
   );

@@ -8,6 +8,9 @@ interface ResponseDisplayProps {
   highlights: Highlight[];
   author: Author;
   faded: boolean;
+  inputConfirmed: boolean;
+  shouldFadeOut: boolean;
+  shouldFadeIn: boolean;
 }
 
 export default function InputDisplay(props: ResponseDisplayProps) {
@@ -66,19 +69,33 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       parts.push(makeNormalMessagePart(message.substring(endIndex)));
     }
     return (
-      <p
-        className={`py-4 w-full h-full transition-opacity overflow-y-scroll scrollbar-hide md:scrollbar-default ${
-          props.author == Author.AI ? "text-white" : "text-white"
-        }`}
-        style={{ maxHeight: "40vh" }}
-      >
-        {parts}
-      </p>
+      <div className={"relative h-full transition-opacity ease-in-out flex"}>
+        <p
+          className={`absolute bottom-0 left-0 z-10 py-4 w-full transition-opacity ${
+            props.author == Author.AI ? "text-white" : "text-white"
+          } ${props.shouldFadeOut ? "animate-fade-out" : ""} ${
+            props.shouldFadeIn ? "animate-fade-in" : ""
+          }`}
+          style={{ maxHeight: "40vh" }}
+        >
+          {parts}
+        </p>
+        {props.inputConfirmed && (
+          <p
+            className={`absolute bottom-0 left-0 py-4 w-full transition-opacity ${
+              props.author == Author.AI ? "text-white" : "text-white"
+            } ${props.shouldFadeOut ? "" : "animate-ping"}`}
+            style={{ maxHeight: "40vh" }}
+          >
+            {parts}
+          </p>
+        )}
+      </div>
     );
   };
 
   return (
-    <section className="flex-grow basis-6/12 leading-normal text-base lg:text-5xl lg:px-6 px-0">
+    <section className="h-full w-full flex-grow basis-6/12 leading-normal text-2xl lg:text-5xl lg:px-6 px-0 ">
       {renderResponseMessage()}
     </section>
   );

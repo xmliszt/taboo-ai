@@ -10,20 +10,29 @@ module.exports = {
     extend: {
       animation: {
         "unicorn-flow": "unicornFlow 5s linear infinite",
+        "ping-once": "ping 1s linear 1",
+        "fade-out": "fadeOut 1s ease-in-out",
+        "fade-in": "fadeIn 1s ease-in-out",
       },
       keyframes: {
         unicornFlow: {
           "0%": { "background-position": "0% 0%" },
           "100%": { "background-position": "0% 100%" },
         },
+        fadeOut: {
+          "0%": { opacity: 100 },
+          "100%": { opacity: 0 },
+        },
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 100 },
+        },
       },
     },
     screens: {
       sm: "640px",
       md: "768px",
-      lg: "960px",
-      xl: "1280px",
-      "2xl": "1536px",
+      lg: "1300px",
     },
     colors: {
       white: "#ede8d9",
