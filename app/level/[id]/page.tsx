@@ -89,15 +89,17 @@ export default function LevelPage() {
   };
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setResponseText("");
     setUserInput(event.target.value);
     setIsEmptyInput(event.target.value.length <= 0);
   };
 
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
-    inputTextField.current?.blur();
-    setIsInputConfirmed(true); // Input ping animation
-    isValidInput && userInput.length > 0 && fetchResponse(userInput);
+    if (isValidInput && userInput.length > 0) {
+      setIsInputConfirmed(true); // Input ping animation
+      fetchResponse(userInput);
+    }
   };
 
   const fetchResponse = async (prompt: string) => {
@@ -151,8 +153,9 @@ export default function LevelPage() {
         inputTextField.current?.focus();
         setIsSuccess(false);
         setIsResponseFaded(true);
+        setInputShouldFadeOut(false);
       }
-    }, 1000);
+    }, 2000);
   };
 
   // * At the start of the game
@@ -211,59 +214,75 @@ export default function LevelPage() {
         theme="light"
       />
       <BackButton />
-      <section className="fixed w-full h-16 lg:h-24 z-10 top-0 drop-shadow-lg">
-        <div className="z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark"></div>
-        <h1 className="absolute left-10 right-10 h-full px-5 flex-grow text-center bg-black dark:bg-neon-black lg:py-6 py-4 text-xl lg:text-3xl text-white-faded dark:text-neon-white-faded whitespace-nowrap overflow-x-scroll scrollbar-hide">
-          TABOO:{" "}
-          <span className="font-extrabold text-white dark:text-neon-white whitespace-nowrap">
-            {target}
-          </span>
-        </h1>
-        <div className="z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark"></div>
-      </section>
-      <Timer time={time} />
+      <div className="fixed top-3 lg:top-2 w-full flex justify-center items-center">
+        <Timer time={time} />
+      </div>
       <section
-        className={`flex flex-col gap-4 text-center h-full w-full transition-colors dark:bg-neon-gray ${
+        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
           isValidInput ? "" : "bg-red dark:bg-neon-red-light"
         } ${isSuccess && "bg-green dark:bg-neon-green"}`}
       >
-        <section className="h-16 lg:h-32 w-full relative"></section>
-        <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center">
-          {responseText.length > 0 && (
-            <InputDisplay
-              target={target}
-              message={responseText}
-              highlights={highlights}
-              author={Author.AI}
-              faded={isResponseFaded}
-              inputConfirmed={false}
-              shouldFadeOut={responseShouldFadeOut}
-              shouldFadeIn={!responseShouldFadeOut}
-            />
-          )}
-          <InputDisplay
-            target={target}
-            message={userInput}
-            highlights={userInputHighlights}
-            author={Author.Me}
-            faded={false}
-            inputConfirmed={isInputConfirmed}
-            shouldFadeOut={inputShouldFadeOut}
-            shouldFadeIn={!inputShouldFadeOut}
-          />
-        </section>
-        <section className="relative w-full h-24 lg:h-48 flex flex-col gap-4 lg:gap-8">
+        <section className="fixed top-16 left-0 right-0 lg:top-24 w-full z-30 flex justify-center">
           <ProgressBar
             current={currentProgress}
             total={CONSTANTS.numberOfQuestionsPerGame}
           />
+        </section>
+        <section className="h-16 lg:h-32 w-full relative"></section>
+        <section className="mt-8 absolute bottom-32 top-16 lg:bottom-56 flex-grow w-full flex flex-col gap-4 justify-center items-center">
+          <div
+            hidden={!isValidInput || isSuccess}
+            className={`h-10 w-full absolute z-20 top-0 gradient-down dark:gradient-down-dark transition-colors`}
+          ></div>
+          <div className="h-full w-full flex-grow leading-normal absolute">
+            {responseText.length > 0 ? (
+              <InputDisplay
+                target={target}
+                message={responseText}
+                highlights={highlights}
+                author={Author.AI}
+                faded={isResponseFaded}
+                inputConfirmed={false}
+                shouldFadeOut={responseShouldFadeOut}
+                shouldFadeIn={!responseShouldFadeOut}
+              />
+            ) : (
+              <InputDisplay
+                target={target}
+                message={userInput}
+                highlights={userInputHighlights}
+                author={Author.Me}
+                faded={false}
+                inputConfirmed={isInputConfirmed}
+                shouldFadeOut={inputShouldFadeOut}
+                shouldFadeIn={!inputShouldFadeOut}
+              />
+            )}
+          </div>
+          <div
+            hidden={!isValidInput || isSuccess}
+            className={`h-10 w-full absolute z-20 bottom-0 gradient-up dark:gradient-up-dark transition-colors `}
+          ></div>
+          <div></div>
+        </section>
+        <section className="absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-black rounded-t-3xl transition-colors  drop-shadow-[0_-5px_20px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_-15px_50px_rgba(0,0,0,1)] z-30">
+          <section className="relative w-full h-14 lg:h-24 z-10 top-0">
+            <div className="z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark rounded-tl-3xl transition-colors"></div>
+            <h1 className="absolute left-10 right-10 px-5 flex-grow text-center lg:py-6 py-4 text-xl lg:text-3xl text-red dark:text-neon-red whitespace-nowrap overflow-x-scroll scrollbar-hide">
+              TABOO:{" "}
+              <span className="font-extrabold text-black dark:text-neon-white whitespace-nowrap">
+                {target}
+              </span>
+            </h1>
+            <div className="z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark rounded-tr-3xl transition-colors"></div>
+          </section>
           <form onSubmit={onFormSubmit}>
             <div className="flex items-center justify-center gap-4 px-4">
               <input
                 disabled={isLoading}
                 autoFocus
                 placeholder="Start your conversation with AI here..."
-                className={`text-white bg-black dark:text-neon-white dark:bg-neon-black dark:border-neon-green dark:outline-neon-black border-2 border-white outline-black focus:outline-white focus:dark:outline-neon-green  lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
+                className={`text-white bg-black dark:text-neon-white dark:bg-neon-black dark:border-neon-green border-2 border-white outline-none focus:outline-none lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
                   !isValidInput
                     ? "bg-red dark:bg-neon-red-light dark:text-neon-gray dark:border-neon-red text-gray"
                     : ""
@@ -276,7 +295,12 @@ export default function LevelPage() {
               />
               <button
                 id="submit"
-                disabled={isEmptyInput || !isValidInput || isLoading}
+                disabled={
+                  userInput.length == 0 ||
+                  isEmptyInput ||
+                  !isValidInput ||
+                  isLoading
+                }
                 type="submit"
                 className={`text-xl lg:text-3xl transition-opacity ease-in-out dark:text-neon-red-light ${
                   isEmptyInput || !isValidInput ? "opacity-50" : ""

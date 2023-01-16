@@ -21,7 +21,7 @@ export default function BackButton(props: BackButtonProps = {}) {
   return (
     <button
       id="back"
-      className="fixed hover:animate-pulse z-40 top-5 left-4 lg:text-4xl hover:cursor-pointer drop-shadow-lg shadow-lg dark:text-neon-blue"
+      className="fixed hover:animate-pulse z-50 top-5 left-4 lg:text-4xl hover:cursor-pointer drop-shadow-lg shadow-lg dark:text-neon-blue"
       onClick={() => {
         back();
       }}

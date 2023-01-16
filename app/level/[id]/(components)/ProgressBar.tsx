@@ -49,7 +49,7 @@ export default function ProgressBar(props: ProgressBarProps) {
   };
 
   return (
-    <section className="w-full flex flex-row justify-between items-center gap-2 pl-6 pr-16 overflow-x-scroll scrollbar-hide">
+    <section className="w-full flex flex-grow flex-row justify-between items-center gap-2 px-6 overflow-x-scroll scrollbar-hide">
       {renderProgress()}
     </section>
   );

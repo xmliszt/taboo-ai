@@ -21,19 +21,48 @@
   }
 
   .gradient-right {
-    background: linear-gradient(90deg, rgba(76,69,62,1) 70%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(
+      90deg,
+      #908c7f 70%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
 
   .gradient-right-dark {
-    background: linear-gradient(90deg, #02090E 70%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(
+      90deg,
+      #02090e 70%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
 
   .gradient-left {
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(76,69,62,1) 30%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #908c7f 30%);
   }
 
   .gradient-left-dark {
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #02090E 30%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #02090e 30%);
+  }
+
+  .gradient-up {
+    background: linear-gradient(
+      0deg,
+      rgba(76, 69, 62, 1) 20%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+  .gradient-down {
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(76, 69, 62, 1) 80%
+    );
+  }
+  .gradient-up-dark {
+    background: linear-gradient(0deg, #112022 20%, rgba(0, 0, 0, 0) 100%);
+  }
+  .gradient-down-dark {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, #112022 80%);
   }
 }
 .unicorn-color {

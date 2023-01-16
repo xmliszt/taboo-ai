@@ -102,11 +102,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
   };
 
   return (
-    <section
-      className={`h-full w-full flex-grow ${
-        props.author == Author.AI ? "basis-8/12" : "basis-4/12"
-      } leading-normal text-xl lg:text-3xl lg:px-6 px-0`}
-    >
+    <section className={`h-full w-full text-xl lg:text-3xl lg:px-6 px-0`}>
       {renderResponseMessage()}
     </section>
   );
