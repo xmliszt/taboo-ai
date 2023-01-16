@@ -4,8 +4,8 @@ export default function HomePage() {
   const title = "Taboo.AI";
 
   return (
-    <main>
-      <section className="flex flex-col justify-center items-center h-screen w-screen gap-16">
+    <main className="h-full w-full overflow-auto">
+      <section className="flex flex-col justify-center items-center h-full w-screen gap-16">
         <h1 className="text-center text-5xl lg:text-8xl drop-shadow-lg">
           {title}
         </h1>

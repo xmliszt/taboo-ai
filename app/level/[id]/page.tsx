@@ -211,16 +211,17 @@ export default function LevelPage() {
         theme="light"
       />
       <BackButton />
-      <h1 className="sticky z-10 w-full top-0 text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl drop-shadow-lg text-white-faded">
+      <h1 className="fixed h-16 lg:h-32 z-10 w-full top-0 text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl drop-shadow-lg text-white-faded">
         TABOO: <span className="font-extrabold text-white">{target}</span>
       </h1>
       <Timer time={time} />
       <section
-        className={`flex flex-col gap-4 text-center h-screen pt-16 lg:pt-36 transition-colors overflow-hidden ${
+        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ${
           isValidInput ? "" : "bg-red"
         } ${isSuccess && "bg-green"}`}
       >
-        <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center px-12 pt-24 lg:px-24 lg:pt-36">
+        <section className="h-16 lg:h-32 w-full relative"></section>
+        <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center px-12 lg:px-24">
           {responseText.length > 0 && (
             <InputDisplay
               target={target}

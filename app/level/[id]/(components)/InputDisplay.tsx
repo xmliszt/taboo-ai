@@ -69,20 +69,23 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       parts.push(makeNormalMessagePart(message.substring(endIndex)));
     }
     return (
-      <div className={"relative h-full transition-opacity ease-in-out flex"}>
+      <div
+        className={
+          "relative h-full transition-opacity ease-in-out flex overflow-y-hidden"
+        }
+      >
         <p
-          className={`absolute bottom-0 left-0 z-10 py-4 w-full transition-opacity ${
+          className={`absolute bottom-0 left-0 z-10 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide ${
             props.author == Author.AI ? "text-white" : "text-white"
           } ${props.shouldFadeOut ? "animate-fade-out" : ""} ${
             props.shouldFadeIn ? "animate-fade-in" : ""
           }`}
-          style={{ maxHeight: "40vh" }}
         >
           {parts}
         </p>
         {props.inputConfirmed && (
           <p
-            className={`absolute bottom-0 left-0 py-4 w-full transition-opacity ${
+            className={`absolute bottom-0 left-0 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide ${
               props.author == Author.AI ? "text-white" : "text-white"
             } ${props.shouldFadeOut ? "" : "animate-ping"}`}
             style={{ maxHeight: "40vh" }}
@@ -95,7 +98,11 @@ export default function InputDisplay(props: ResponseDisplayProps) {
   };
 
   return (
-    <section className="h-full w-full flex-grow basis-6/12 leading-normal text-2xl lg:text-5xl lg:px-6 px-0 ">
+    <section
+      className={`h-full w-full flex-grow ${
+        props.author == Author.AI ? "basis-8/12" : "basis-4/12"
+      } leading-normal text-2xl lg:text-5xl lg:px-6 px-0`}
+    >
       {renderResponseMessage()}
     </section>
   );
