@@ -6,7 +6,7 @@ import { CONSTANTS } from "../constants";
 import { useRouter } from "next/navigation";
 import { cacheLevel } from "../(caching)/cache";
 import BackButton from "../(components)/BackButton";
-import Loading from "../(components)/Loading";
+import LoadingMask from "../(components)/Loading";
 
 export default function AiPage() {
   const [topic, setTopic] = useState<string>("");
@@ -38,7 +38,10 @@ export default function AiPage() {
 
   return (
     <>
-      <Loading isLoading={isLoading} message="Asking AI for taboo words..." />
+      <LoadingMask
+        isLoading={isLoading}
+        message="Asking AI for taboo words..."
+      />
       <section
         className={`w-full h-screen flex justify-center items-center transition-colors ease-in-out ${
           isValid || somethingWrong ? "" : "bg-red"

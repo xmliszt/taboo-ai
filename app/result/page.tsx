@@ -62,13 +62,16 @@ export default function ResultPage() {
   return (
     <>
       <BackButton href="/levels" />
-      <section className="w-full h-5/6 text-center">
+      <h1 className="fixed top-4 w-full text-lg lg:text-3xl text-center">
+        Scoreboard
+      </h1>
+      <section className="w-full max-h-[70%] h-[70%] text-center">
         <section className="font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white overflow-scroll scrollbar-hide border-4 border-white">
           <table
             className="relative table-fixed min-w-[1024px]"
             ref={screenshotRef}
           >
-            <thead className="sticky top-0 font-semibold uppercase bg-black text-white h-24">
+            <thead className="sticky top-0 font-semibold uppercase bg-black text-white h-24 rounded-xl">
               <tr>
                 {headers.map((header, idx) => (
                   <th

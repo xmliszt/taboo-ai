@@ -118,8 +118,6 @@ export default function LevelPage() {
         setResponseShouldFadeOut(false); // Let new response fade in
         setIsResponseFaded(false);
         setInputShouldFadeOut(false); // Reset input fade animation
-        setUserInput(""); // Clear user input
-        inputTextField.current?.focus();
       }, 1000);
     }, 1000);
   };
@@ -150,10 +148,11 @@ export default function LevelPage() {
         generateNewTarget(words);
         setCurrentProgress((progress) => progress + 1);
         setUserInput("");
+        inputTextField.current?.focus();
         setIsSuccess(false);
         setIsResponseFaded(true);
       }
-    }, 3000);
+    }, 1000);
   };
 
   // * At the start of the game

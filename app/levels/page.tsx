@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cacheLevel, clearCache } from "../(caching)/cache";
 import BackButton from "../(components)/BackButton";
-import Loading from "../(components)/Loading";
+import LoadingMask from "../(components)/Loading";
 import { getLevels } from "../(services)/levelService";
 import ILevel from "./(models)/level.interface";
+import Badge from "./(components)/Badge";
 
 export default function LevelsPage() {
   const title = "Choose A Category";
@@ -27,6 +28,32 @@ export default function LevelsPage() {
     router.push(`/level/${levelID}`);
   };
 
+  const getDifficulty = (difficulty: number): string => {
+    switch (difficulty) {
+      case 1:
+        return "Easy (1)";
+      case 2:
+        return "Medium (2)";
+      case 3:
+        return "Hard (3)";
+      default:
+        return "Unknown (?)";
+    }
+  };
+
+  const getDifficultyColor = (difficulty: number): string => {
+    switch (difficulty) {
+      case 1:
+        return "bg-green";
+      case 2:
+        return "bg-yellow";
+      case 3:
+        return "bg-red";
+      default:
+        return "bg-black";
+    }
+  };
+
   useEffect(() => {
     fetchLevels();
     clearCache();
@@ -34,29 +61,34 @@ export default function LevelsPage() {
 
   return (
     <>
-      <Loading isLoading={isLoading} message="Fetching Levels..." />
+      <LoadingMask isLoading={isLoading} message="Fetching Levels..." />
       <BackButton href="/" />
       <h1 className="fixed w-full top-0 z-10 bg-black text-center drop-shadow-lg text-2xl lg:text-6xl py-4">
         {title}
       </h1>
-      <section className="flex h-auto flex-col gap-4 lg:gap-6 p-10 items-center mt-24">
-        {levels.map((level) => (
-          <button
-            key={level.id}
-            className="drop-shadow-lg shadow-lg transition-colors w-full border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
-            onClick={() => goToLevel(level.id)}
-          >
-            {level.name}
-          </button>
-        ))}
+      <section className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-8 lg:gap-10 p-10 mt-16 lg:mt-24 text-center">
         <Link
           key="ai-mode"
           id="ai-mode"
-          className="drop-shadow-lg shadow-lg w-full unicorn-color text-center border-2 lg:border-8 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-colors rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg"
+          className="relative drop-shadow-lg shadow-lg w-full h-full flex items-center justify-center unicorn-color text-center border-2 lg:border-8 border-white text-lg bg-white text-black hover:text-white hover:bg-black hover:border-gray transition-colors rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-3xl overflow-hidden"
           href={`/ai`}
         >
           AI Mode
         </Link>
+        {levels.map((level) => (
+          <Badge
+            key={level.id}
+            label={getDifficulty(level.difficulty)}
+            customClass={getDifficultyColor(level.difficulty)}
+          >
+            <button
+              className="drop-shadow-lg shadow-lg transition-colors w-full h-full border-2 lg:border-8 border-white text-lg bg-white text-black hover:text-white hover:bg-black hover:border-gray rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-3xl overflow-hidden"
+              onClick={() => goToLevel(level.id)}
+            >
+              {level.name}
+            </button>
+          </Badge>
+        ))}
       </section>
     </>
   );
