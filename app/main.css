@@ -21,6 +21,14 @@
     );
     background-size: 100% 1100%;
   }
+
+  .gradient-right {
+    background: linear-gradient(90deg, rgba(76,69,62,1) 70%, rgba(255,255,255,0) 100%);
+  }
+
+  .gradient-left {
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(76,69,62,1) 30%);
+  }
 }
 .unicorn-color {
   @apply animate-unicorn-flow;

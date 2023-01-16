@@ -1,5 +1,5 @@
 "use client";
 
 export const CONSTANTS = {
-  numberOfQuestionsPerGame: 10,
+  numberOfQuestionsPerGame: 2,
 };

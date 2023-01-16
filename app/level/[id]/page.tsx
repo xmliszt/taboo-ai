@@ -60,8 +60,8 @@ export default function LevelPage() {
   };
 
   const getRegexPattern = (target: string): RegExp => {
-    const magicSeperator = "\\W*";
-    const groupRegexString = `(${target.split("").join(magicSeperator)})`;
+    const magicSeparator = "\\W*";
+    const groupRegexString = `(${target.split("").join(magicSeparator)})`;
     return new RegExp(groupRegexString, "gi");
   };
 
@@ -169,7 +169,7 @@ export default function LevelPage() {
     }
   }, []);
 
-  // * Compute higlight match
+  // * Compute highlight match
   useEffect(() => {
     if (target !== null) {
       let highlights = generateHighlights(target, responseText, true);
@@ -211,9 +211,16 @@ export default function LevelPage() {
         theme="light"
       />
       <BackButton />
-      <h1 className="fixed h-16 lg:h-32 z-10 w-full top-0 text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl drop-shadow-lg text-white-faded">
-        TABOO: <span className="font-extrabold text-white">{target}</span>
-      </h1>
+      <section className="fixed w-full h-16 lg:h-32 z-10 top-0 drop-shadow-lg">
+        <div className="z-10 absolute left-0 w-16 h-full gradient-right"></div>
+        <h1 className="absolute left-10 right-10 h-full px-5 flex-grow text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl text-white-faded whitespace-nowrap overflow-x-scroll scrollbar-hide">
+          TABOO:{" "}
+          <span className="font-extrabold text-white whitespace-nowrap">
+            {target}
+          </span>
+        </h1>
+        <div className="z-10 absolute right-0 h-full w-16 gradient-left"></div>
+      </section>
       <Timer time={time} />
       <section
         className={`flex flex-col gap-4 text-center h-full w-full transition-colors ${
