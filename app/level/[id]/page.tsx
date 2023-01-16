@@ -134,10 +134,11 @@ export default function LevelPage() {
           : "Here comes the next word!"
       }`
     );
+    const question = userInput.slice();
     cacheScore({
       id: currentProgress,
       target: target ?? "",
-      question: userInput,
+      question: question,
       response: responseText,
       difficulty: difficulty,
       completion: time,
@@ -211,9 +212,9 @@ export default function LevelPage() {
         theme="light"
       />
       <BackButton />
-      <section className="fixed w-full h-16 lg:h-32 z-10 top-0 drop-shadow-lg">
+      <section className="fixed w-full h-16 lg:h-24 z-10 top-0 drop-shadow-lg">
         <div className="z-10 absolute left-0 w-16 h-full gradient-right"></div>
-        <h1 className="absolute left-10 right-10 h-full px-5 flex-grow text-center bg-black lg:py-8 py-4 text-xl lg:text-6xl text-white-faded whitespace-nowrap overflow-x-scroll scrollbar-hide">
+        <h1 className="absolute left-10 right-10 h-full px-5 flex-grow text-center bg-black lg:py-6 py-4 text-xl lg:text-3xl text-white-faded whitespace-nowrap overflow-x-scroll scrollbar-hide">
           TABOO:{" "}
           <span className="font-extrabold text-white whitespace-nowrap">
             {target}
@@ -228,7 +229,7 @@ export default function LevelPage() {
         } ${isSuccess && "bg-green"}`}
       >
         <section className="h-16 lg:h-32 w-full relative"></section>
-        <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center px-12 lg:px-24">
+        <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center">
           {responseText.length > 0 && (
             <InputDisplay
               target={target}

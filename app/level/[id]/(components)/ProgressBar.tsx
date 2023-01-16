@@ -12,7 +12,7 @@ export default function ProgressBar(props: ProgressBarProps) {
     return (
       <span
         key={uniqueId(n.toString())}
-        className={`font-serif transition-all h-8 w-8 shadow-lg drop-shadow-lg lg:w-16 lg:h-16 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-2xl ease-in-out ${
+        className={`font-serif transition-all h-8 w-8 shadow-lg lg:w-12 lg:h-12 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-xl ease-in-out ${
           n < c
             ? "bg-green text-white"
             : n == c

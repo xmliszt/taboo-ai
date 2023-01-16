@@ -7,13 +7,14 @@ import { getScoresCache, getLevelCache } from "../(caching)/cache";
 import { MdShare } from "react-icons/md";
 import html2canvas from "html2canvas";
 import BackButton from "../(components)/BackButton";
+import _ from "lodash";
 
 export default function ResultPage() {
   const [scores, setScores] = useState<IScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
-  const screenshotRef = useRef<HTMLElement>(null);
+  const screenshotRef = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
     const scores = getScoresCache();
@@ -24,7 +25,10 @@ export default function ResultPage() {
     var totalScore = 0;
     for (let score of scores ?? []) {
       total += score.completion;
-      totalScore += score.completion * score.difficulty;
+      totalScore += _.round(
+        score.difficulty * (1 / score.completion) * 1000,
+        2
+      );
     }
     setTotal(total);
     setTotalScore(totalScore);
@@ -53,24 +57,30 @@ export default function ResultPage() {
     "AI's Response",
     "Difficulty",
     "Time Taken",
-    "Score (Difficulty x Time Taken)",
+    "Score (Difficulty x (1/Time Taken) x 1000)",
   ];
   return (
     <>
       <BackButton href="/levels" />
-      <section ref={screenshotRef} className="text-center p-10 font-serif">
-        <h1 className="text-5xl text-white-faded">
-          Topic: <span className="text-white">{level?.name}</span>
-        </h1>
-        <section className="relative mt-8">
-          <table className=" w-full bg-white text-black rounded-lg table-fixed">
-            <thead className="font-semibold uppercase">
+      <section className="w-full h-5/6 text-center">
+        <section className="font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white overflow-scroll scrollbar-hide border-4 border-white">
+          <table
+            className="relative table-fixed min-w-[1024px]"
+            ref={screenshotRef}
+          >
+            <thead className="sticky top-0 font-semibold uppercase bg-black text-white h-24">
               <tr>
                 {headers.map((header, idx) => (
                   <th
-                    className={`px-4 pb-2 pt-4 font-semibold text-left text-2xl ${
-                      idx == 0 && "w-24"
-                    } ${idx == 3 && "w-44"}`}
+                    className={`px-4 pb-2 pt-4 font-semibold text-left text-xs lg:text-xl ${
+                      idx == 2
+                        ? "w-3/12"
+                        : idx == 3
+                        ? "w-3/12"
+                        : idx == 6
+                        ? "w-3/12"
+                        : "w-1/12"
+                    }`}
                     key={header}
                   >
                     {header}
@@ -78,20 +88,32 @@ export default function ResultPage() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y text-left text-xl text-gray">
+            <tbody className="divide-y text-left text-xs lg:text-xl text-gray bg-white">
+              <tr className="sticky top-24 left-0 ">
+                <td
+                  colSpan={7}
+                  className="w-full h-12 text-xl lg:text-3xl text-white-faded bg-white"
+                >
+                  {" "}
+                  Topic: <span className="text-black">{level?.name}</span>
+                </td>
+              </tr>
               {scores.map((score) => (
                 <tr key={score.id}>
-                  <td className="p-3 font-medium w-24">{score.id}</td>
-                  <td className="p-3 font-medium w-24">{score.target}</td>
+                  <td className="p-3 font-medium">{score.id}</td>
+                  <td className="p-3 font-medium">{score.target}</td>
                   <td className="p-3 font-medium">{score.question}</td>
                   <td className="p-3 font-medium">{score.response}</td>
-                  <td className="p-3 font-medium w-24">{score.difficulty}</td>
+                  <td className="p-3 font-medium">{score.difficulty}</td>
                   <td className="p-3 font-medium">
                     {score.completion} seconds
                   </td>
                   <td className="p-3 font-medium">
-                    {score.difficulty} x {score.completion} (seconds) ={" "}
-                    {score.difficulty * score.completion}
+                    {score.difficulty} x 1/{score.completion} (seconds) x 1000 ={" "}
+                    {_.round(
+                      score.difficulty * (1 / score.completion) * 1000,
+                      2
+                    )}
                   </td>
                 </tr>
               ))}
@@ -121,7 +143,7 @@ export default function ResultPage() {
       </section>
       <button
         id="share"
-        className="text-2xl fixed top-10 right-10 hover:opacity-50 transition-all ease-in-out"
+        className="text-xl lg:text-3xl fixed top-5 right-4 lg:right-10 hover:opacity-50 transition-all ease-in-out"
         onClick={share}
       >
         <MdShare />
