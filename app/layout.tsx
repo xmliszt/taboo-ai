@@ -48,7 +48,9 @@ export default function RootLayout({
               : (pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) ||
                 pathName === "/result"
               ? "top-4 lg:top-3.5 left-12 lg:left-20"
-              : pathName === "/levels" || pathName === "/ai"
+              : pathName === "/levels" ||
+                pathName === "/ai" ||
+                pathName === "/rule"
               ? "top-4 right-5 lg:top-3.5"
               : "bottom-5 left-5"
           } opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl ${
