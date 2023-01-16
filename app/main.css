@@ -24,18 +24,18 @@
     background: linear-gradient(90deg, rgba(76,69,62,1) 70%, rgba(255,255,255,0) 100%);
   }
 
+  .gradient-right-dark {
+    background: linear-gradient(90deg, #02090E 70%, rgba(255,255,255,0) 100%);
+  }
+
   .gradient-left {
     background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(76,69,62,1) 30%);
+  }
+
+  .gradient-left-dark {
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #02090E 30%);
   }
 }
 .unicorn-color {
   @apply animate-unicorn-flow;
-}
-
-input {
-  accent-color: #897ed3;
-}
-
-::selection {
-  background-color: #ede8d9;
 }

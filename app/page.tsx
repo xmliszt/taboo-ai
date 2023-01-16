@@ -11,7 +11,7 @@ export default function HomePage() {
         </h1>
         <Link
           href="/levels"
-          className="border-4 border-white text-lg bg-black text-white hover:text-black hover:bg-white hover:border-gray transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg drop-shadow-lg shadow-lg"
+          className="border-4 border-white dark:border-neon-green text-lg bg-black dark:bg-neon-black text-white dark:text-neon-green hover:text-black hover:dark:text-neon-black hover:bg-white hover:dark:bg-neon-green hover:border-gray hover:dark:border-neon-blue transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg drop-shadow-lg shadow-lg"
         >
           START
         </Link>

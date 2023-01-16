@@ -18,7 +18,11 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     return (
       <span
         key={uniqueId(message)}
-        className={props.faded ? "text-white-faded" : "text-white"}
+        className={
+          props.faded
+            ? "text-white-faded dark:text-neon-red-light"
+            : "text-white dark:text-neon-white"
+        }
       >
         {message}
       </span>
@@ -30,8 +34,10 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       <span
         key={uniqueId(message)}
         className={`${
-          props.author === Author.AI ? "bg-green" : "bg-red"
-        } text-yellow`}
+          props.author === Author.AI
+            ? "bg-green dark:bg-neon-green"
+            : "bg-red dark:bg-neon-red"
+        } text-yellow dark:text-neon-gray rounded-2xl px-3 py-1`}
       >
         {message}
       </span>
@@ -75,8 +81,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         }
       >
         <p
-          className={`absolute bottom-0 left-0 z-10 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 ${
-            props.author == Author.AI ? "text-white" : "text-white"
+          className={`absolute bottom-0 left-0 z-10 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 text-white dark:text-neon-white
           } ${props.shouldFadeOut ? "animate-fade-out" : ""} ${
             props.shouldFadeIn ? "animate-fade-in" : ""
           }`}
@@ -85,8 +90,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         </p>
         {props.inputConfirmed && (
           <p
-            className={`absolute bottom-0 left-0 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 ${
-              props.author == Author.AI ? "text-white" : "text-white"
+            className={`absolute bottom-0 left-0 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 text-white dark:text-neon-white
             } ${props.shouldFadeOut ? "" : "animate-ping"}`}
             style={{ maxHeight: "40vh" }}
           >

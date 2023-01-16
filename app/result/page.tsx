@@ -66,12 +66,12 @@ export default function ResultPage() {
         Scoreboard
       </h1>
       <section className="w-full max-h-[70%] h-[70%] text-center">
-        <section className="font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white overflow-scroll scrollbar-hide border-4 border-white">
+        <section className="font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green">
           <table
             className="relative table-fixed min-w-[1024px]"
             ref={screenshotRef}
           >
-            <thead className="sticky top-0 font-semibold uppercase bg-black text-white h-24 rounded-xl">
+            <thead className="sticky top-0 font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl">
               <tr>
                 {headers.map((header, idx) => (
                   <th
@@ -91,14 +91,17 @@ export default function ResultPage() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y text-left text-xs lg:text-xl text-gray bg-white">
+            <tbody className="divide-y text-left text-xs lg:text-xl text-gray bg-white dark:text-neon-white dark:bg-neon-black">
               <tr className="sticky top-24 left-0 ">
                 <td
                   colSpan={7}
-                  className="w-full h-12 text-xl lg:text-3xl text-white-faded bg-white"
+                  className="w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black"
                 >
                   {" "}
-                  Topic: <span className="text-black">{level?.name}</span>
+                  Topic:{" "}
+                  <span className="text-black dark:text-neon-white">
+                    {level?.name}
+                  </span>
                 </td>
               </tr>
               {scores.map((score) => (
@@ -127,7 +130,7 @@ export default function ResultPage() {
                 >
                   Total Time Taken
                 </td>
-                <td className="px-3 pt-4 pb-8 font-extrabold">
+                <td colSpan={2} className="px-3 pt-4 pb-8 font-extrabold">
                   {total} seconds
                 </td>
               </tr>

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const scrollBarHide = require("tailwind-scrollbar-hide");
 module.exports = {
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -43,6 +44,16 @@ module.exports = {
       yellow: "#ecbe3f",
       "red-light": "#cf5c5c",
       "white-faded": "#afaca3",
+      "neon-white": "#ffffff",
+      "neon-green": "#00ff9f",
+      "neon-red": "#FF0677",
+      "neon-yellow": "#FEE302",
+      "neon-black": "#02090E",
+      "neon-purple": "#B000FF",
+      "neon-blue": "#3AE6F7",
+      "neon-white-faded": "#112022",
+      "neon-gray": "#112022",
+      "neon-red-light": "#F73C5D",
     },
   },
   plugins: [scrollBarHide],

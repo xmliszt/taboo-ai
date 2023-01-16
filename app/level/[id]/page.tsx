@@ -212,20 +212,20 @@ export default function LevelPage() {
       />
       <BackButton />
       <section className="fixed w-full h-16 lg:h-24 z-10 top-0 drop-shadow-lg">
-        <div className="z-10 absolute left-0 w-16 h-full gradient-right"></div>
-        <h1 className="absolute left-10 right-10 h-full px-5 flex-grow text-center bg-black lg:py-6 py-4 text-xl lg:text-3xl text-white-faded whitespace-nowrap overflow-x-scroll scrollbar-hide">
+        <div className="z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark"></div>
+        <h1 className="absolute left-10 right-10 h-full px-5 flex-grow text-center bg-black dark:bg-neon-black lg:py-6 py-4 text-xl lg:text-3xl text-white-faded dark:text-neon-white-faded whitespace-nowrap overflow-x-scroll scrollbar-hide">
           TABOO:{" "}
-          <span className="font-extrabold text-white whitespace-nowrap">
+          <span className="font-extrabold text-white dark:text-neon-white whitespace-nowrap">
             {target}
           </span>
         </h1>
-        <div className="z-10 absolute right-0 h-full w-16 gradient-left"></div>
+        <div className="z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark"></div>
       </section>
       <Timer time={time} />
       <section
-        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ${
-          isValidInput ? "" : "bg-red"
-        } ${isSuccess && "bg-green"}`}
+        className={`flex flex-col gap-4 text-center h-full w-full transition-colors dark:bg-neon-gray ${
+          isValidInput ? "" : "bg-red dark:bg-neon-red-light"
+        } ${isSuccess && "bg-green dark:bg-neon-green"}`}
       >
         <section className="h-16 lg:h-32 w-full relative"></section>
         <section className="relative flex-grow w-full flex flex-col gap-4 justify-center items-center">
@@ -263,8 +263,10 @@ export default function LevelPage() {
                 disabled={isLoading}
                 autoFocus
                 placeholder="Start your conversation with AI here..."
-                className={`text-white bg-black border-2 border-white outline-black focus:outline-white  lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
-                  !isValidInput ? "bg-red text-gray" : ""
+                className={`text-white bg-black dark:text-neon-white dark:bg-neon-black dark:border-neon-green dark:outline-neon-black border-2 border-white outline-black focus:outline-white focus:dark:outline-neon-green  lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
+                  !isValidInput
+                    ? "bg-red dark:bg-neon-red-light dark:text-neon-gray dark:border-neon-red text-gray"
+                    : ""
                 }`}
                 ref={inputTextField}
                 type="text"
@@ -276,7 +278,7 @@ export default function LevelPage() {
                 id="submit"
                 disabled={isEmptyInput || !isValidInput || isLoading}
                 type="submit"
-                className={`text-xl lg:text-3xl transition-opacity ease-in-out ${
+                className={`text-xl lg:text-3xl transition-opacity ease-in-out dark:text-neon-red-light ${
                   isEmptyInput || !isValidInput ? "opacity-50" : ""
                 }`}
               >
