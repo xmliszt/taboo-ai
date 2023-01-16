@@ -37,7 +37,7 @@ export default function RootLayout({
     <html
       className={`${isDark && "dark"} ${
         isDark ? orbitron.className : specialElite.className
-      }`}
+      } font-serif`}
     >
       <head />
       <body className="bg-black dark:bg-neon-black dark:text-neon-white text-white">
