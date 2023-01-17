@@ -63,7 +63,7 @@ export default function ResultPage() {
   const share = () => {
     if (screenshotRef.current && level) {
       html2canvas(screenshotRef.current, {
-        scale: 2,
+        scale: 3.3,
         allowTaint: true,
         backgroundColor: "#4c453e",
       }).then((canvas) => {
