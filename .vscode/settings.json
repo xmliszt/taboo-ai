@@ -1,8 +1,9 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "node_modules\\typescript\\lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "css.lint.unknownAtRules": "ignore",
   "cSpell.words": [
+    "Nextjs",
     "Toastify"
   ]
 }

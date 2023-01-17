@@ -82,7 +82,7 @@ export default function LevelsPage() {
             customClass={getDifficultyColor(level.difficulty)}
           >
             <button
-              className="drop-shadow-lg shadow-lg transition-colors w-full h-full border-2 lg:border-8 border-white text-lg bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-3xl overflow-hidden hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-gray dark:text-neon-white dark:border-neon-green"
+              className="drop-shadow-lg shadow-lg transition-colors w-full h-full border-2 lg:border-8 border-white text-md bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded px-5 lg:text-2xl lg:px-10 lg:py-5 lg:rounded-3xl overflow-hidden hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-gray dark:text-neon-white dark:border-neon-green"
               onClick={() => goToLevel(level.id)}
             >
               {level.name}
