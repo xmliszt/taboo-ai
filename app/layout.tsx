@@ -6,6 +6,7 @@ import { Lancelot, Orbitron, Special_Elite } from "@next/font/google";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { MdDarkMode, MdOutlineWbTwilight } from "react-icons/md";
+import { AnalyticsWrapper } from "./(components)/AnalayticsWrapper";
 
 const lancelot = Lancelot({
   weight: "400",
@@ -63,6 +64,7 @@ export default function RootLayout({
           {isDark ? <MdDarkMode /> : <MdOutlineWbTwilight />}
         </button>
         {children}
+        <AnalyticsWrapper />
       </body>
     </html>
   );
