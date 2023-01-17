@@ -3,6 +3,7 @@ import { BsFillQuestionDiamondFill } from "react-icons/bs";
 import { TbBrandNextjs } from "react-icons/tb";
 import { SiOpenai } from "react-icons/si";
 import { FiGithub } from "react-icons/fi";
+import BetaFeedback from "./(components)/BetaFeedback";
 
 export default function HomePage() {
   const title = "Taboo.AI";
@@ -15,9 +16,12 @@ export default function HomePage() {
       >
         <BsFillQuestionDiamondFill />
       </Link>
-      <section className="flex flex-col justify-center items-center h-full w-screen gap-16">
+      <section className="flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16">
         <h1 className="text-center text-5xl lg:text-8xl drop-shadow-lg">
-          {title}
+          {title}{" "}
+          <span className="text-lg text-white-faded dark:text-neon-white">
+            BETA
+          </span>
         </h1>
         <Link
           href="/levels"
@@ -25,6 +29,7 @@ export default function HomePage() {
         >
           START
         </Link>
+        <BetaFeedback />
       </section>
       <footer className="w-full h-12 rounded-t-2xl dark:drop-shadow-[0_-10px_30px_rgba(0,0,0,1)] flex justify-center items-center bg-gray dark:bg-neon-gray fixed bottom-0 text-white dark:text-neon-white lg:text-white-faded lg:dark:text-neon-white text-center text-[10px] lg:text-lg">
         <article className="flex-grow px-2">

@@ -7,6 +7,7 @@ import { getScoresCache, getLevelCache } from "../(caching)/cache";
 import { MdShare } from "react-icons/md";
 import html2canvas from "html2canvas";
 import BackButton from "../(components)/BackButton";
+import BetaFeedback from "../(components)/BetaFeedback";
 import _ from "lodash";
 import { isMobile } from "react-device-detect";
 
@@ -295,6 +296,9 @@ export default function ResultPage() {
       </h1>
       <section ref={screenshotRef}>
         {isMobile ? renderMobile() : renderDesktop()}
+        <div className="w-full text-center mt-8">
+          <BetaFeedback />
+        </div>
       </section>
       <button
         id="share"

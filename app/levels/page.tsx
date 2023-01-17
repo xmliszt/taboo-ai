@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { cacheLevel, clearCache } from "../(caching)/cache";
+import { cacheLevel, clearLevel } from "../(caching)/cache";
 import BackButton from "../(components)/BackButton";
 import LoadingMask from "../(components)/Loading";
 import { getLevels } from "../(services)/levelService";
@@ -56,7 +56,7 @@ export default function LevelsPage() {
 
   useEffect(() => {
     fetchLevels();
-    clearCache();
+    clearLevel();
   }, []);
 
   return (
