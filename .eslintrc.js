@@ -7,24 +7,18 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
+    'next',
   ],
   overrides: [],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['@typescript-eslint'],
   rules: {
     'react-hooks/exhaustive-deps': 'off',
     'react/react-in-jsx-scope': 'off',
-  },
-  settings: {
-    react: {
-      version: 'detect',
-    },
   },
 };
