@@ -9,7 +9,7 @@
     "lint": "eslint --fix app/**/*.{js,ts,jsx,tsx} pages/**/*.{js,ts,jsx,tsx} --no-error-on-unmatched-pattern && stylelint --fix app/**/*.{css,scss}",
     "style": "prettier --write app/**/*",
     "prepare": "husky install",
-    "test": "jest --watch"
+    "test": "jest"
   },
   "dependencies": {
     "@next/font": "^13.1.1",

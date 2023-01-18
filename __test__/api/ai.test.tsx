@@ -1,6 +1,6 @@
 import { createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import { NextApiRequest, NextApiResponse } from 'next';
-import handler from './ai';
+import handler from '../../pages/api/ai';
 
 jest.mock('next', () => ({
   NextApiRequest: {

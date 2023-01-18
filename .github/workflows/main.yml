@@ -3,10 +3,9 @@ on:
   push:
     branches:
       - main
-      - release/*
 jobs:
-  lint:
-    name: Linting
+  build:
+    name: Linting, Styling, Testing and Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,4 +18,5 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run style
-      - run: npm run test
+      - run: npm test
+      - run: npm run build

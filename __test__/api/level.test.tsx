@@ -1,6 +1,6 @@
 import { createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import { NextApiRequest, NextApiResponse } from 'next';
-import handler from './level';
+import handler from '../../pages/api/level';
 import ILevel from '../../app/levels/(models)/level.interface';
 import path from 'path';
 
