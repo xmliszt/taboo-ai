@@ -1,0 +1,22 @@
+name: taboo-ai-release
+on:
+  push:
+    branches:
+      - main
+      - release/*
+jobs:
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run style
+      - run: npm run test

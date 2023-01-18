@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint --fix app/**/*.{js,ts,jsx,tsx} pages/**/*.{js,ts,jsx,tsx} --no-error-on-unmatched-pattern && stylelint --fix app/**/*.{css,scss}",
+    "style": "prettier --write app/**/*",
+    "prepare": "husky install",
+    "test": "jest --watch"
   },
   "dependencies": {
     "@next/font": "^13.1.1",
@@ -14,7 +17,6 @@
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.10",
     "@vercel/analytics": "^0.1.8",
-    "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
     "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
@@ -30,10 +32,32 @@
     "use-timer": "^2.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^29.2.5",
     "@types/lodash": "^4.14.191",
     "@types/react-toastify": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
     "autoprefixer": "^10.4.13",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-react": "^7.32.1",
+    "husky": "^8.0.3",
+    "jest": "^29.3.1",
+    "lint-staged": "^13.1.0",
+    "node-mocks-http": "^1.12.1",
     "postcss": "^8.4.21",
-    "tailwindcss": "^3.2.4"
+    "prettier": "2.8.3",
+    "stylelint": "^14.16.1",
+    "stylelint-config-prettier": "^9.0.4",
+    "stylelint-config-standard": "^29.0.0",
+    "tailwindcss": "^3.2.4",
+    "ts-node": "^10.9.1"
+  },
+  "lint-staged": {
+    "app/**/*.{js,ts,jsx,tsx}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
+    "!app/**/*.{js,ts,jsx,tsx}": "prettier --write"
   }
 }

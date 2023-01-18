@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, FormEvent, ChangeEvent } from "react";
-import { getCreativeLevel } from "../(services)/aiService";
-import { CONSTANTS } from "../constants";
-import { useRouter } from "next/navigation";
-import { cacheLevel } from "../(caching)/cache";
-import BackButton from "../(components)/BackButton";
-import LoadingMask from "../(components)/Loading";
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { getCreativeLevel } from '../(services)/aiService';
+import { CONSTANTS } from '../constants';
+import { useRouter } from 'next/navigation';
+import { cacheLevel } from '../(caching)/cache';
+import BackButton from '../(components)/BackButton';
+import LoadingMask from '../(components)/Loading';
 
 export default function AiPage() {
-  const [topic, setTopic] = useState<string>("");
+  const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<number>(1);
   const [isValid, setIsValid] = useState<boolean>(true);
   const [somethingWrong, setSomethingWrong] = useState<boolean>(false);
@@ -27,7 +27,7 @@ export default function AiPage() {
         return setSomethingWrong(true);
       }
       cacheLevel(level);
-      router.push("/level/" + level.id);
+      router.push('/level/' + level.id);
     }
   };
 
@@ -40,43 +40,43 @@ export default function AiPage() {
     <>
       <LoadingMask
         isLoading={isLoading}
-        message="Asking AI for taboo words..."
+        message='Asking AI for taboo words...'
       />
       <section
         className={`w-full h-screen flex justify-center items-center transition-colors ease-in-out ${
-          isValid || somethingWrong ? "" : "bg-red dark:bg-neon-red-light"
+          isValid || somethingWrong ? '' : 'bg-red dark:bg-neon-red-light'
         }`}
       >
-        <BackButton href="/" />
+        <BackButton href='/' />
         <form onSubmit={submitForm}>
-          <div className="flex flex-col gap-6 justify-center items-center">
+          <div className='flex flex-col gap-6 justify-center items-center'>
             <label
-              className="text-2xl lg:text-5xl text-center transition-all ease-in-out"
-              htmlFor="topicInput"
+              className='text-2xl lg:text-5xl text-center transition-all ease-in-out'
+              htmlFor='topicInput'
             >
               {somethingWrong
-                ? "Taboo.AI went for a toilet break. Please try again!"
+                ? 'Taboo.AI went for a toilet break. Please try again!'
                 : isValid
-                ? "Enter A Topic"
-                : "Topic cannot be blank!"}
+                ? 'Enter A Topic'
+                : 'Topic cannot be blank!'}
             </label>
-            <div className="flex flex-col xs:flex-row md:flex-row lg:flex-row gap-4">
+            <div className='flex flex-col xs:flex-row md:flex-row lg:flex-row gap-4'>
               <input
                 autoFocus
-                id="topicInput"
-                type="text"
+                id='topicInput'
+                type='text'
                 value={topic}
                 onChange={onInputChange}
-                placeholder="Enter A Topic"
+                placeholder='Enter A Topic'
                 maxLength={50}
-                className="text-gray dark:text-neon-white dark:bg-neon-gray focus:dark:outline-neon-green transition-colors ease-in-out h-12 text-1xl lg:text-3xl lg:h-16 px-4 rounded-full flex-grow"
+                className='text-gray dark:text-neon-white dark:bg-neon-gray focus:dark:outline-neon-green transition-colors ease-in-out h-12 text-1xl lg:text-3xl lg:h-16 px-4 rounded-full flex-grow'
               />
               <select
-                name="difficulty"
-                id="difficulty"
+                name='difficulty'
+                id='difficulty'
                 value={difficulty}
                 onChange={(e) => setDifficulty(Number(e.target.value))}
-                className="form-select appearance-none
+                className='form-select appearance-none
               h-12
               px-4
               lg:h-16
@@ -96,7 +96,7 @@ export default function AiPage() {
               hover:dark:text-neon-white
               hover:dark:border-neon-red
               hover:cursor-pointer
-              focus:outline-none"
+              focus:outline-none'
               >
                 <option value={1}>Easy</option>
                 <option value={2}>Medium</option>

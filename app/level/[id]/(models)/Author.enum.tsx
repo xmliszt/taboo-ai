@@ -1,4 +1,4 @@
 export enum Author {
-  AI = "ai",
-  Me = "me",
+  AI = 'ai',
+  Me = 'me',
 }

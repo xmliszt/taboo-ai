@@ -1,0 +1,11 @@
+build
+coverage
+
+*.html
+**/.git
+**/node_modules
+
+package-lock.json
+
+.husky/**
+.prettierignore

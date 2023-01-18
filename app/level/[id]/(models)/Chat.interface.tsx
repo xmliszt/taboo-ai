@@ -1,4 +1,4 @@
-import { Author } from "../(models)/Author.enum";
+import { Author } from '../(models)/Author.enum';
 
 export interface Highlight {
   start: number;

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { uniqueId } from "lodash";
+import { uniqueId } from 'lodash';
 
 interface ProgressBarProps {
   current: number;
@@ -14,10 +14,10 @@ export default function ProgressBar(props: ProgressBarProps) {
         key={uniqueId(n.toString())}
         className={`font-serif transition-all h-8 w-8 shadow-lg lg:w-12 lg:h-12 aspect-square rounded-full text-center flex items-center justify-center text-base lg:text-xl ease-in-out ${
           n < c
-            ? "bg-green text-white dark:bg-neon-green dark:text-neon-gray"
+            ? 'bg-green text-white dark:bg-neon-green dark:text-neon-gray'
             : n == c
-            ? "bg-yellow border-white border-4 text-black dark:bg-neon-yellow dark:text-neon-black dark:border-neon-green"
-            : "bg-white text-black dark:bg-neon-black dark:text-neon-white"
+            ? 'bg-yellow border-white border-4 text-black dark:bg-neon-yellow dark:text-neon-black dark:border-neon-green'
+            : 'bg-white text-black dark:bg-neon-black dark:text-neon-white'
         }`}
       >
         {n}
@@ -30,18 +30,18 @@ export default function ProgressBar(props: ProgressBarProps) {
       <div
         key={uniqueId(n.toString())}
         className={`w-auto flex-grow shadow-lg transition-colors ease-in-out rounded-full h-2 ${
-          n < c ? "bg-green dark:bg-neon-green" : "bg-white dark:bg-neon-black"
+          n < c ? 'bg-green dark:bg-neon-green' : 'bg-white dark:bg-neon-black'
         }`}
       ></div>
     );
   };
 
   const renderProgress = () => {
-    let current = props.current;
-    let total = props.total;
+    const current = props.current;
+    const total = props.total;
 
-    var parts = [];
-    for (var i = 1; i <= total; i++) {
+    const parts = [];
+    for (let i = 1; i <= total; i++) {
       parts.push(makeProgressNode(i, current));
       i < total && parts.push(makeLinkage(i, current));
     }
@@ -49,7 +49,7 @@ export default function ProgressBar(props: ProgressBarProps) {
   };
 
   return (
-    <section className="w-full flex flex-grow flex-row justify-between items-center gap-2 px-6 overflow-x-scroll scrollbar-hide">
+    <section className='w-full flex flex-grow flex-row justify-between items-center gap-2 px-6 overflow-x-scroll scrollbar-hide'>
       {renderProgress()}
     </section>
   );

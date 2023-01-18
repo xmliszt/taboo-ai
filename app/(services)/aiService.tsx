@@ -1,17 +1,17 @@
-import { uniqueId } from "lodash";
-import ILevel from "../levels/(models)/level.interface";
-import _ from "lodash";
-import { CONSTANTS } from "../constants";
+import { uniqueId } from 'lodash';
+import ILevel from '../levels/(models)/level.interface';
+import _ from 'lodash';
+import { CONSTANTS } from '../constants';
 
 export async function getQueryResponse(prompt: string): Promise<string> {
-  const response = await fetch("/api/ai", {
-    method: "POST",
+  const response = await fetch('/api/ai', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ prompt }),
-    cache: "no-store",
+    cache: 'no-store',
   });
   const json = await response.json();
   return json.response;
@@ -21,26 +21,26 @@ export async function getCreativeLevel(
   topic: string,
   difficulty: number
 ): Promise<ILevel> {
-  var difficultyString = "";
+  let difficultyString = '';
   switch (difficulty) {
     case 1:
-      difficultyString = "well-known";
+      difficultyString = 'well-known';
       break;
     case 2:
-      difficultyString = "known by some";
+      difficultyString = 'known by some';
       break;
     case 3:
-      difficultyString = "rare";
+      difficultyString = 'rare';
       break;
     default:
-      difficultyString = "well-known";
+      difficultyString = 'well-known';
       break;
   }
-  const respone = await fetch("/api/ai", {
-    method: "POST",
+  const respone = await fetch('/api/ai', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       prompt: `Give me a comma-separated list of ${CONSTANTS.numberOfQuestionsPerGame} unique '${topic}' words that are ${difficultyString}.`,
@@ -49,13 +49,13 @@ export async function getCreativeLevel(
   const json = await respone.json();
   const text = json.response;
   console.log(text);
-  var wordsString: string = text
-    .replaceAll(/\n*\d*\.\s/gi, ",")
-    .replaceAll("\n", ",")
-    .replaceAll(/^\W/gi, "");
-  var words = wordsString.split(", ");
+  const wordsString: string = text
+    .replaceAll(/\n*\d*\.\s/gi, ',')
+    .replaceAll('\n', ',')
+    .replaceAll(/^\W/gi, '');
+  let words = wordsString.split(', ');
   if (words.length < CONSTANTS.numberOfQuestionsPerGame) {
-    words = wordsString.split(",");
+    words = wordsString.split(',');
   }
   words = words.map((word) => _.startCase(_.toLower(word)));
 
