@@ -4,10 +4,16 @@ export default function RulePage() {
   return (
     <>
       <BackButton />
-      <h1 className='fixed w-full top-0 h-10 pt-4 lg:pt-6 text-center text-xl lg:text-3xl text-white z-40 bg-black dark:bg-neon-black'>
+      <h1
+        data-testid='heading-rule-title'
+        className='fixed w-full top-0 h-10 pt-4 lg:pt-6 text-center text-xl lg:text-3xl text-white z-40 bg-black dark:bg-neon-black'
+      >
         How To Play Taboo.AI?
       </h1>
-      <section className='w-full h-full pt-20 pb-16 px-12 flex justify-center items-center overflow-hidden drop-shadow-lg'>
+      <section
+        data-testid='level-section'
+        className='w-full h-full pt-20 pb-16 px-12 flex justify-center items-center overflow-hidden drop-shadow-lg'
+      >
         <article className='w-full h-full lg:w-[80%] bg-gray dark:bg-neon-gray dark:text-neon-white text-white p-6 rounded-xl drop-shadow-xl overflow-y-scroll text-md lg:text-2xl'>
           <p className='text-center dark:text-neon-white'>
             Taboo.AI has only one simple rule

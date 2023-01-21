@@ -37,6 +37,7 @@ export default function RootLayout({
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
         <button
+          data-testid='light-dark-toggle-button'
           className={`fixed z-50 ${
             pathName === '/'
               ? 'top-5 left-5'

@@ -1,11 +1,24 @@
-build
-coverage
+**/build
+**/coverage
 
 *.html
 **/.git
 **/node_modules
 
-package-lock.json
+**/package-lock.json
 
-.husky/**
-.prettierignore
+**/.husky/**
+**/.prettierignore
+
+**/playwright-report/**
+**/public/**
+**/test-results/**
+
+**/.gitignore
+**/.github/**
+**/.vscode/**
+**/.swc/**
+**/.next/**
+**/.vercel/**
+
+**/LICENSE

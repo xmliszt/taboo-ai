@@ -63,7 +63,10 @@ export default function LevelsPage() {
     <>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
       <BackButton href='/' />
-      <h1 className='fixed w-full top-0 z-10 bg-black dark:bg-neon-black text-center drop-shadow-lg text-2xl lg:text-6xl py-4 dark:text-neon-blue'>
+      <h1
+        data-testid='levels-heading-title'
+        className='fixed w-full top-0 z-10 bg-black dark:bg-neon-black text-center drop-shadow-lg text-2xl lg:text-6xl py-4 dark:text-neon-blue'
+      >
         {title}
       </h1>
       <section className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-8 lg:gap-10 p-10 mt-16 lg:mt-24 text-center'>
@@ -82,6 +85,7 @@ export default function LevelsPage() {
             customClass={getDifficultyColor(level.difficulty)}
           >
             <button
+              data-testid={`level-link-${level.id}`}
               className='drop-shadow-lg shadow-lg transition-colors w-full h-full border-2 lg:border-8 border-white text-md bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded px-5 lg:text-2xl lg:px-10 lg:py-5 lg:rounded-3xl overflow-hidden hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-gray dark:text-neon-white dark:border-neon-green'
               onClick={() => goToLevel(level.id)}
             >

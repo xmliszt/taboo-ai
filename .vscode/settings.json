@@ -1,13 +1,10 @@
 {
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "css.lint.unknownAtRules": "ignore",
-  "eslint.format.enable": true,
-  "eslint.lintTask.enable": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true
-  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": ["source.fixAll.format", "source.fixAll.eslint"],
   "eslint.workingDirectories": [
     {
       "mode": "auto"
@@ -18,8 +15,5 @@
     "typescript",
     "javascriptreact",
     "typescriptreact"
-  ],
-  "prettier.eslintIntegration": true,
-  "prettier.stylelintIntegration": true,
-  "cSpell.words": ["Nextjs", "Toastify"]
+  ]
 }

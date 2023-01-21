@@ -16,7 +16,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 19.x
-      - run: npm ci
+      - name: Install Node Dependencies
+        run: npm ci
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Pull Vercel Environment Information
@@ -27,6 +28,8 @@ jobs:
         run: npm run style
       - name: Running Jest Tests
         run: npm test
+      - name: Running Playwright E2E Tests
+        run: npm test test:e2e
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
