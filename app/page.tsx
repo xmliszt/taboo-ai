@@ -12,10 +12,9 @@ export default function HomePage() {
     <main className='h-full w-full overflow-auto'>
       <Link
         href='/rule'
-        data-testid='link-rule'
         className='text-white dark:text-neon-red-light text-xl lg:text-3xl fixed z-40 top-5 right-5 hover:animate-pulse'
       >
-        <BsFillQuestionDiamondFill />
+        <BsFillQuestionDiamondFill data-testid='rule-icon' />
       </Link>
       <section className='flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16'>
         <h1

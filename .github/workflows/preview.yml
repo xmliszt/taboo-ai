@@ -32,7 +32,7 @@ jobs:
       - name: Running Jest Tests
         run: npm test
       - name: Running Playwright E2E Tests
-        run: npx playwright test
+        run: npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
         with:
