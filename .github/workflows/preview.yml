@@ -18,6 +18,8 @@ jobs:
           node-version: 19.x
       - name: Install Node Dependencies
         run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Pull Vercel Environment Information
@@ -29,7 +31,7 @@ jobs:
       - name: Running Jest Tests
         run: npm test
       - name: Running Playwright E2E Tests
-        run: npm test test:e2e
+        run: npm run test:e2e
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
