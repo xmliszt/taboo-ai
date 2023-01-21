@@ -29,7 +29,7 @@ jobs:
       - name: Running Jest Tests
         run: npm test
       - name: Running Playwright E2E Tests
-        run: npm test test:e2e
+        run: npm run test:e2e
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel

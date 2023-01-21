@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('tailwindcss').Config} */
 const scrollBarHide = require('tailwind-scrollbar-hide');
 module.exports = {
