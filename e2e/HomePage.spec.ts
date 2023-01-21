@@ -11,6 +11,6 @@ test('test home page', async ({ page }) => {
   const lightDarkThemeButton = page.getByTestId('light-dark-toggle-button');
   expect(lightDarkThemeButton).toBeEnabled();
   await lightDarkThemeButton.click();
-  const ruleButton = page.getByTestId('link-rule');
+  const ruleButton = page.getByTestId(/link-rule/);
   expect(ruleButton).toHaveAttribute('href', '/rule');
 });

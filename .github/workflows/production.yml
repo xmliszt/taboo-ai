@@ -30,8 +30,10 @@ jobs:
         run: npm run style
       - name: Running Jest Tests
         run: npm test
+        continue-on-error: false
       - name: Running Playwright E2E Tests
         run: npm run test:e2e
+        continue-on-error: false
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
