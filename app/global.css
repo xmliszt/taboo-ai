@@ -16,3 +16,11 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+article > h3 {
+  margin-bottom: 2rem;
+}
+
+article > p {
+  margin-bottom: 1.25rem;
+}
