@@ -15,5 +15,8 @@
     "typescript",
     "javascriptreact",
     "typescriptreact"
-  ]
+  ],
+  "[xml]": {
+    "editor.defaultFormatter": "SimonSiefke.prettier-vscode"
+  }
 }

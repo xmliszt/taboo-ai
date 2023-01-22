@@ -64,3 +64,7 @@
 .unicorn-color {
   @apply animate-unicorn-flow;
 }
+
+b {
+  @apply font-bold text-yellow dark:text-neon-red;
+}
