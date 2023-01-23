@@ -42,6 +42,10 @@ export default function Head() {
       <meta name='twitter:image:alt' content='Taboo.AI: Trick AI with Words' />
       <meta name='twitter:creator' content='@xmliszt' />
       <meta name='twitter:site' content='@xmliszt' />
+      <meta
+        name='ahrefs-site-verification'
+        content='f832d06e3893f0e38cd251704fa298ec65dfd86ce5b54eebb349c755229b0dd9'
+      />
       <link rel='icon' href='/favicon.ico' />
     </>
   );
