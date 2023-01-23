@@ -5,7 +5,7 @@ import BackButton from '../(components)/BackButton';
 export default function RulePage() {
   return (
     <>
-      <BackButton />
+      <BackButton href='/' />
       <h1
         data-testid='heading-rule-title'
         className='fixed w-full top-0 h-14 lg:h-20 pt-4 lg:pt-6 text-center text-xl lg:text-3xl text-white z-40 bg-gray dark:bg-neon-gray rounded-b-2xl drop-shadow-lg'

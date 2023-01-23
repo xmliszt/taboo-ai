@@ -30,6 +30,7 @@ export default function RootLayout({
 
   return (
     <html
+      lang='en'
       className={`${isDark && 'dark'} ${
         isDark ? orbitron.className : specialElite.className
       } font-serif`}

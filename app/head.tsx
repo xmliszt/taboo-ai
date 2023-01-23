@@ -4,7 +4,6 @@ export default function Head() {
       <title>Taboo.AI: Play Word Tricks with AI</title>
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />
-      <meta name='theme-color' content='#4c453f' />
       <meta
         name='description'
         content='Play word tricks with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
