@@ -19,7 +19,7 @@ export default function HomePage() {
       <section className='flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16'>
         <h1
           data-testid='heading-title'
-          className='text-center text-5xl lg:text-8xl drop-shadow-lg'
+          className='text-center text-4xl lg:text-8xl drop-shadow-lg'
         >
           {title}{' '}
           <span className='text-lg text-white-faded dark:text-neon-white'>

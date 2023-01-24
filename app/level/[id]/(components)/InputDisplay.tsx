@@ -36,8 +36,8 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         className={`${
           props.author === Author.AI
             ? 'bg-green dark:bg-neon-green'
-            : 'bg-red dark:bg-neon-red'
-        } text-yellow dark:text-neon-gray rounded-2xl px-3 py-1`}
+            : 'bg-black dark:bg-neon-gray'
+        } text-yellow dark:text-neon-yellow rounded-2xl px-1 py-1`}
       >
         {message}
       </span>

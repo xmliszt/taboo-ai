@@ -284,7 +284,7 @@ export default function LevelPage() {
                 placeholder='Start your conversation with AI here...'
                 className={`flex-grow ${
                   !isValidInput
-                    ? 'bg-red dark:bg-neon-red-light dark:text-neon-gray dark:border-neon-red text-gray'
+                    ? 'bg-red dark:bg-neon-black dark:text-neon-white dark:border-neon-red-light text-gray'
                     : ''
                 }`}
                 ref={inputTextField}

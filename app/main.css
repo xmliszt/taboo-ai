@@ -71,9 +71,13 @@ b {
 
 button:not(#back, #theme, #submit, #share),
 a#start {
-  @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-full rounded-br-full hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-gray dark:text-neon-white dark:border-neon-green hover:rounded-full;
+  @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green hover:rounded-[2rem];
 }
 
 input {
-  @apply text-white bg-black dark:text-neon-white dark:bg-neon-black dark:border-neon-green border-2 border-white outline-none focus:outline-none focus:border-4 lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-8 lg:px-6 rounded-tl-full rounded-br-full;
+  @apply text-white bg-black dark:text-neon-white dark:bg-neon-black dark:border-neon-green border-2 border-white outline-none focus:outline-none focus:border-4 lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-8 lg:px-10 rounded-tl-2xl rounded-br-2xl;
+}
+
+h1 {
+  @apply text-xl lg:text-5xl;
 }

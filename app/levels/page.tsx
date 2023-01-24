@@ -59,7 +59,7 @@ export default function LevelsPage() {
       <BackButton href='/' />
       <h1
         data-testid='levels-heading-title'
-        className='fixed w-full top-0 z-20 bg-black dark:bg-neon-black text-center drop-shadow-lg text-2xl lg:text-6xl py-4 dark:text-neon-blue'
+        className='fixed w-full top-0 z-20 bg-black dark:bg-neon-black text-center drop-shadow-lg py-4 dark:text-neon-blue'
       >
         {title}
       </h1>
