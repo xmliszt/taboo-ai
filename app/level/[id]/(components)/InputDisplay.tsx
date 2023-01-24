@@ -35,9 +35,9 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         key={uniqueId(message)}
         className={`${
           props.author === Author.AI
-            ? 'bg-green dark:bg-neon-green'
-            : 'bg-black dark:bg-neon-gray'
-        } text-yellow dark:text-neon-yellow rounded-2xl px-1 py-1`}
+            ? 'bg-green dark:bg-neon-green text-whtie dark:text-neon-white'
+            : 'bg-black dark:bg-neon-gray text-yellow dark:text-neon-yellow'
+        } rounded-2xl px-1 py-1`}
       >
         {message}
       </span>
