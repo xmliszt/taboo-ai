@@ -11,13 +11,11 @@ import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 const specialElite = Special_Elite({
   weight: '400',
   subsets: ['latin'],
-  variable: '--font-special-elite',
 });
 
 const orbitron = Orbitron({
   weight: '400',
   subsets: ['latin'],
-  variable: '--font-orbitron',
 });
 
 export default function RootLayout({
@@ -38,6 +36,7 @@ export default function RootLayout({
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
         <button
+          id='theme'
           data-testid='light-dark-toggle-button'
           className={`fixed z-50 ${
             pathName === '/'

@@ -12,12 +12,7 @@ export default function RulePage() {
       >
         How To Play Taboo.AI?
       </h1>
-      <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 lg:pt-24 lg:text-2xl'>
-        {/* 
-      <section
-        data-testid='level-section'
-        className='bg-gray first-letter:bg-gray dark:bg-neon-gray dark:text-neon-white text-white p-6 rounded-xl drop-shadow-xl text-md lg:text-2xl overflow-y-scroll scrollbar-hide mx-8 mt-16 lg:mt-24 lg:mx-16 mb-8 flex-grow'
-      > */}
+      <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 lg:text-2xl'>
         <article>
           <p className='text-center dark:text-neon-white'>
             Taboo.AI is a game of <b>Taboo</b> with a twist. In this game, you

@@ -27,9 +27,10 @@ export default function HomePage() {
           </span>
         </h1>
         <Link
+          id='start'
           href='/levels'
           data-testid='link-start'
-          className='border-4 border-white dark:border-neon-green text-lg bg-black dark:bg-neon-black text-white dark:text-neon-green hover:text-black hover:dark:text-neon-black hover:bg-white hover:dark:bg-neon-green hover:border-gray hover:dark:border-neon-blue transition-all rounded px-5 lg:text-5xl lg:px-10 lg:py-5 lg:rounded-lg drop-shadow-lg shadow-lg'
+          className='text-2xl px-8 py-2'
         >
           START
         </Link>

@@ -282,7 +282,7 @@ export default function LevelPage() {
                 disabled={isLoading}
                 autoFocus
                 placeholder='Start your conversation with AI here...'
-                className={`text-white bg-black dark:text-neon-white dark:bg-neon-black dark:border-neon-green border-2 border-white outline-none focus:outline-none lg:focus:border-8 h-8 ease-in-out transition-all text-base lg:text-2xl lg:h-16 px-4 lg:px-6 rounded-full flex-grow ${
+                className={`flex-grow ${
                   !isValidInput
                     ? 'bg-red dark:bg-neon-red-light dark:text-neon-gray dark:border-neon-red text-gray'
                     : ''

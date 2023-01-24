@@ -69,7 +69,10 @@ export default function AiPage() {
                 onChange={onInputChange}
                 placeholder='Enter A Topic'
                 maxLength={50}
-                className='text-gray dark:text-neon-white dark:bg-neon-gray focus:dark:outline-neon-green transition-colors ease-in-out h-12 text-1xl lg:text-3xl lg:h-16 px-4 rounded-full flex-grow'
+                className={`flex-grow h-12 lg:h-16 ${
+                  (!isValid || somethingWrong) &&
+                  'border-red dark:bg-neon-red-light dark:text-neon-gray dark:border-neon-white text-gray'
+                }`}
               />
               <select
                 name='difficulty'

@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'unicorn-flow': 'unicornFlow 5s linear infinite',
+        'unicorn-flow': 'unicornFlow 10s ease-in-out infinite',
         'ping-once': 'ping 1s linear 1',
         'fade-out': 'fadeOut 1s ease-in-out',
         'fade-in': 'fadeIn 1s ease-in-out',
