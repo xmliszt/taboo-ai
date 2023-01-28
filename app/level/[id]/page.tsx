@@ -213,7 +213,7 @@ export default function LevelPage() {
         pauseOnHover
         theme='light'
       />
-      <BackButton />
+      <BackButton href='/levels' />
       <div className='fixed top-3 lg:top-2 w-full flex justify-center items-center'>
         <Timer time={time} />
       </div>
@@ -305,6 +305,7 @@ export default function LevelPage() {
                 className={`text-xl lg:text-3xl transition-opacity ease-in-out dark:text-neon-red-light ${
                   isEmptyInput || !isValidInput ? 'opacity-50' : ''
                 }`}
+                aria-label='submit button'
               >
                 <AiOutlineSend />
               </button>

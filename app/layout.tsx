@@ -37,6 +37,7 @@ export default function RootLayout({
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
         <button
           id='theme'
+          aria-label='toggle light/dark button'
           data-testid='light-dark-toggle-button'
           className={`fixed z-50 ${
             pathName === '/'

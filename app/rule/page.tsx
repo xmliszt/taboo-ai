@@ -8,7 +8,7 @@ export default function RulePage() {
       <BackButton href='/' />
       <h1
         data-testid='heading-rule-title'
-        className='fixed w-full top-0 h-14 lg:h-20 pt-4 lg:pt-6 text-center text-xl lg:text-3xl text-white z-40 bg-gray dark:bg-neon-gray rounded-b-2xl drop-shadow-lg'
+        className='fixed w-full top-0 h-14 lg:h-20 pt-4 lg:pt-6 text-center text-white z-40 bg-gray dark:bg-neon-gray rounded-b-2xl drop-shadow-lg'
       >
         How To Play Taboo.AI?
       </h1>
@@ -21,10 +21,10 @@ export default function RulePage() {
         </article>
         <br />
         <article>
-          <h3 className='text-center text-lg lg:text-3xl font-bold text-yellow dark:text-neon-green'>
+          <p className='text-center text-lg lg:text-3xl font-bold text-yellow dark:text-neon-green'>
             <b>Guess Words</b> will be given to you. Your job is to converse
             with the AI and trick it into saying the &apos;Guess Words&apos;.
-          </h3>
+          </p>
           <p className='text-justify'>
             1. Select a category of words, or choose the <b>AI MODE</b> to let
             AI generate the <b>Guess Words</b> based on custom topics!{' '}

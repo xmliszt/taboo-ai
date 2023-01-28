@@ -21,6 +21,7 @@ export default function BackButton(props: BackButtonProps = {}) {
   return (
     <button
       id='back'
+      aria-label='back button'
       className='fixed hover:animate-pulse z-50 top-5 left-4 lg:text-4xl hover:cursor-pointer drop-shadow-lg dark:text-neon-blue'
       onClick={() => {
         back();

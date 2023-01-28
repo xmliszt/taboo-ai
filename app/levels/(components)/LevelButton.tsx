@@ -25,10 +25,11 @@ export default function LevelButton({
 
   return (
     <button
+      aria-label={`level button: level ${level?.id ?? 'ai'}`}
       data-testid={`level-link-${level?.id ?? 'ai'}`}
       className={`${
         isAI && 'unicorn-color'
-      } h-full w-full text-xs lg:text-2xl px-8 py-4 lg:px-10 lg:py-4 break-words`}
+      } h-full w-full text-xs lg:text-2xl px-2 py-2 lg:px-10 lg:py-4 break-words`}
       onClick={() => goToLevel()}
     >
       {isAI ? 'AI Mode' : level?.name}

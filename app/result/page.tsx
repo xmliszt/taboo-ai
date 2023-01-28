@@ -291,7 +291,7 @@ export default function ResultPage() {
   return (
     <>
       <BackButton href='/levels' />
-      <h1 className='fixed top-0 w-full h-14 py-4 text-lg lg:text-3xl text-center bg-black dark:bg-neon-black z-10'>
+      <h1 className='fixed top-0 w-full h-14 py-4 text-center bg-black dark:bg-neon-black z-10'>
         Scoreboard
       </h1>
       <section ref={screenshotRef}>
@@ -302,6 +302,7 @@ export default function ResultPage() {
       </section>
       <button
         id='share'
+        aria-label='result button'
         className='text-xl lg:text-3xl fixed top-5 right-4 lg:right-10 hover:opacity-50 transition-all ease-in-out z-40'
         onClick={share}
       >

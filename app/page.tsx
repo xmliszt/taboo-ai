@@ -32,17 +32,18 @@ export default function HomePage() {
           data-testid='link-start'
           className='text-2xl px-8 py-2'
         >
-          START
+          Choose Topics
         </Link>
         <BetaFeedback />
       </section>
       <footer
         data-testid='footer'
-        className='w-full h-12 rounded-t-2xl dark:drop-shadow-[0_-10px_30px_rgba(0,0,0,1)] flex justify-center items-center bg-gray dark:bg-neon-gray fixed bottom-0 text-white dark:text-neon-white lg:text-white-faded lg:dark:text-neon-white text-center text-[10px] lg:text-lg'
+        className='w-full h-12 rounded-t-2xl dark:drop-shadow-[0_-10px_30px_rgba(0,0,0,1)] flex justify-center items-center bg-gray dark:bg-neon-gray fixed bottom-0 text-white dark:text-neon-white lg:text-white-faded lg:dark:text-neon-white text-center text-xs lg:text-lg'
       >
         <article className='flex-grow px-2'>
           Powered by{' '}
           <a
+            aria-label='Read more about Next.JS on its official website'
             href='https://beta.nextjs.org/docs/getting-started'
             target='__blank'
             className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
@@ -51,6 +52,7 @@ export default function HomePage() {
           </a>{' '}
           &{' '}
           <a
+            aria-label='Read more about OpenAI APi on its official website'
             href='https://openai.com/api/'
             target='__blank'
             className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
@@ -59,6 +61,7 @@ export default function HomePage() {
           </a>{' '}
           | Developed by{' '}
           <a
+            aria-label="Go to Li Yuxuan's personal portfolio page"
             href='https://xmliszt.github.io/'
             target='__blank'
             className='underline text-white dark:text-neon-blue lg:hover:text-white lg:hover:dark:text-neon-red transition-colors'
