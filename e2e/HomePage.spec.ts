@@ -7,7 +7,7 @@ test('test home page', async ({ page }) => {
   const heading = page.getByTestId('heading-title');
   await expect(heading).toHaveText(/Taboo.AI BETA/);
   const startButton = page.getByTestId('link-start');
-  await expect(startButton).toHaveText(/START/);
+  await expect(startButton).toHaveText(/Choose Topics/);
   await expect(startButton).toHaveAttribute('href', '/levels');
   const lightDarkThemeButton = page.getByTestId('light-dark-toggle-button');
   await expect(lightDarkThemeButton).toBeEnabled();
