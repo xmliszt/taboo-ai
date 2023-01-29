@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { clearLevel } from '../(caching)/cache';
 import BackButton from '../(components)/BackButton';
@@ -8,6 +7,7 @@ import LoadingMask from '../(components)/Loading';
 import { getLevels } from '../(services)/levelService';
 import ILevel from './(models)/level.interface';
 import Badge from './(components)/Badge';
+import HotBadge from './(components)/HotBadge';
 import LevelButton from './(components)/LevelButton';
 
 export default function LevelsPage() {
@@ -64,7 +64,9 @@ export default function LevelsPage() {
         {title}
       </h1>
       <section className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-8 lg:gap-10 p-10 mt-16 lg:mt-24 text-center'>
-        <LevelButton isAI={true} />
+        <HotBadge>
+          <LevelButton isAI={true} />
+        </HotBadge>
         {levels.map((level) => (
           <Badge
             key={level.id}
