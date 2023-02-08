@@ -209,7 +209,7 @@ export default function ResultPage() {
       <div className='w-full max-h-[70%] h-[70%] text-center'>
         <div className='font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
           <table className='relative table-fixed min-w-[1024px]'>
-            <thead className='sticky top-0 font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
+            <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
               <tr>
                 {headers.map((header, idx) => (
                   <th
