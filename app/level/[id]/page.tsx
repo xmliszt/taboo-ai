@@ -36,6 +36,7 @@ export default function LevelPage() {
   const [isResponseFaded, setIsResponseFaded] = useState<boolean>(false);
   const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
   const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
+  const [isAbleToSubmitInput, setIsAbleToSubmitInput] = useState<boolean>(true);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const { time, start, pause, reset } = useTimer({
@@ -92,35 +93,48 @@ export default function LevelPage() {
     setResponseText('');
     setUserInput(event.target.value);
     setIsEmptyInput(event.target.value.length <= 0);
+    setIsAbleToSubmitInput(event.target.value.length > 0);
   };
 
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (isValidInput && userInput.length > 0) {
+    if (isAbleToSubmitInput && isValidInput && userInput.length > 0) {
       setIsInputConfirmed(true); // Input ping animation
       fetchResponse(userInput);
     }
   };
 
   const fetchResponse = async (prompt: string) => {
+    setIsAbleToSubmitInput(false);
     setIsLoading(true);
     pause();
     // ! Make sure response fade out completely!
     setTimeout(async () => {
-      const responseText = await getQueryResponse(prompt);
-      if (!responseText) throw Error('Response Failed!');
-      start();
-      setIsLoading(false);
-      setInputShouldFadeOut(true); // Input start fading out
-      setIsInputConfirmed(false); // Reset input ping animation
-      setResponseShouldFadeOut(true); // Fade out current response if any
-      // Wait for input fade out completely, then show response
-      setTimeout(() => {
-        responseText && setResponseText(responseText);
-        setResponseShouldFadeOut(false); // Let new response fade in
-        setIsResponseFaded(false);
-        setInputShouldFadeOut(false); // Reset input fade animation
-      }, 1000);
+      try {
+        let responseText = await getQueryResponse(prompt);
+        if (!responseText) {
+          responseText = '... ...';
+        }
+        setIsLoading(false);
+        setInputShouldFadeOut(true); // Input start fading out
+        setIsInputConfirmed(false); // Reset input ping animation
+        setResponseShouldFadeOut(true); // Fade out current response if any
+        // Wait for input fade out completely, then show response
+        setTimeout(() => {
+          responseText && setResponseText(responseText);
+          setResponseShouldFadeOut(false); // Let new response fade in
+          setIsResponseFaded(false);
+          setInputShouldFadeOut(false); // Reset input fade animation
+        }, 1000);
+      } catch (err) {
+        setInputShouldFadeOut(true); // Input start fading out
+        setIsInputConfirmed(false); // Reset input ping animation
+        setResponseShouldFadeOut(true); // Fade out current response if any
+        toast.error('Sorry! AI is not paying attention. Please try again :p');
+      } finally {
+        setIsLoading(false);
+        start();
+      }
     }, 1000);
   };
 
@@ -200,7 +214,6 @@ export default function LevelPage() {
 
   return (
     <>
-      {/* <Loading isLoading={isLoading} message="Talking to AI..." /> */}
       <ToastContainer
         position='top-center'
         autoClose={1000}
@@ -299,7 +312,8 @@ export default function LevelPage() {
                   userInput.length == 0 ||
                   isEmptyInput ||
                   !isValidInput ||
-                  isLoading
+                  isLoading ||
+                  !isAbleToSubmitInput
                 }
                 type='submit'
                 className={`text-xl lg:text-3xl transition-opacity ease-in-out dark:text-neon-red-light ${

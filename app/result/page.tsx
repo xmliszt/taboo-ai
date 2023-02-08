@@ -62,24 +62,21 @@ export default function ResultPage() {
   };
 
   const share = () => {
-    if (screenshotRef.current && level) {
+    if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
-        scale: 3.3,
+        scale: 5,
         allowTaint: true,
         backgroundColor: '#4c453e',
       }).then((canvas) => {
         const link = document.createElement('a');
         const href = canvas
-          .toDataURL('image/jpeg')
-          .replace('image/jpeg', 'image/octet-stream');
+          .toDataURL('image/png')
+          .replace('image/png', 'image/octet-stream');
         link.href = href;
         const downloadName = `taboo-ai_[${
-          level.name
-        }]_scores_${Date.now()}.jpg`;
+          level?.name ?? 'game'
+        }]_scores_${Date.now()}.png`;
         link.download = downloadName;
-        console.log(href);
-
-        // link.click();
         if (navigator.share) {
           navigator
             .share({
@@ -90,7 +87,7 @@ export default function ResultPage() {
                   [b64toBlob(href.split(',')[1], 'image/octet-stream')],
                   downloadName,
                   {
-                    type: 'image/jpeg',
+                    type: 'image/png',
                   }
                 ),
               ],
@@ -209,7 +206,7 @@ export default function ResultPage() {
       <div className='w-full max-h-[70%] h-[70%] text-center'>
         <div className='font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
           <table className='relative table-fixed min-w-[1024px]'>
-            <thead className='sticky top-0 font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
+            <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
               <tr>
                 {headers.map((header, idx) => (
                   <th
@@ -296,10 +293,10 @@ export default function ResultPage() {
       </h1>
       <section ref={screenshotRef}>
         {isMobile ? renderMobile() : renderDesktop()}
-        <div className='w-full text-center mt-8'>
-          <BetaFeedback />
-        </div>
       </section>
+      {/* <div className='w-full text-center mt-8'>
+        <BetaFeedback />
+      </div> */}
       <button
         id='share'
         aria-label='result button'

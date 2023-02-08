@@ -3,7 +3,7 @@ import { BsFillQuestionDiamondFill } from 'react-icons/bs';
 import { TbBrandNextjs } from 'react-icons/tb';
 import { SiOpenai } from 'react-icons/si';
 import { FiGithub } from 'react-icons/fi';
-import BetaFeedback from './(components)/BetaFeedback';
+import CustomWordListLink from './(components)/CustomWordListLink';
 
 export default function HomePage() {
   const title = 'Taboo.AI';
@@ -26,9 +26,9 @@ export default function HomePage() {
           className='text-center text-4xl lg:text-8xl drop-shadow-lg'
         >
           {title}{' '}
-          <span className='text-lg text-white-faded dark:text-neon-white'>
+          {/* <span className='text-lg text-white-faded dark:text-neon-white'>
             BETA
-          </span>
+          </span> */}
         </h1>
         <Link
           id='start'
@@ -38,7 +38,7 @@ export default function HomePage() {
         >
           Choose Topics
         </Link>
-        <BetaFeedback />
+        <CustomWordListLink />
       </section>
       <footer
         data-testid='footer'

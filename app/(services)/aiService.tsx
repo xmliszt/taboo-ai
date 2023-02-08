@@ -20,7 +20,7 @@ export async function getQueryResponse(prompt: string): Promise<string> {
 export async function getCreativeLevel(
   topic: string,
   difficulty: number
-): Promise<ILevel> {
+): Promise<ILevel | undefined> {
   let difficultyString = '';
   switch (difficulty) {
     case 1:
@@ -48,21 +48,24 @@ export async function getCreativeLevel(
   });
   const json = await respone.json();
   const text = json.response;
-  console.log(text);
-  const wordsString: string = text
-    .replaceAll(/\n*\d*\.\s/gi, ',')
-    .replaceAll('\n', ',')
-    .replaceAll(/^\W/gi, '');
-  let words = wordsString.split(', ');
-  if (words.length < CONSTANTS.numberOfQuestionsPerGame) {
-    words = wordsString.split(',');
-  }
-  words = words.map((word) => _.startCase(_.toLower(word)));
+  if (text) {
+    const wordsString: string = text
+      .replaceAll(/\n*\d*\.\s/gi, ',')
+      .replaceAll('\n', ',')
+      .replaceAll(/^\W/gi, '');
+    let words = wordsString.split(', ');
+    if (words.length < CONSTANTS.numberOfQuestionsPerGame) {
+      words = wordsString.split(',');
+    }
+    words = words.map((word) => _.startCase(_.toLower(word)));
 
-  return {
-    id: uniqueId(),
-    name: topic,
-    difficulty: difficulty,
-    words: words,
-  };
+    return {
+      id: uniqueId(),
+      name: topic,
+      difficulty: difficulty,
+      words: words,
+    };
+  } else {
+    return;
+  }
 }

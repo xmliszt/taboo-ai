@@ -21,19 +21,31 @@ export default function AiPage() {
     setIsValid(topic.length > 0);
     if (topic.length > 0) {
       setIsLoading(true);
-      const level = await getCreativeLevel(topic, difficulty);
-      setIsLoading(false);
-      if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
-        return setSomethingWrong(true);
+      try {
+        const level = await getCreativeLevel(topic, difficulty);
+        if (level) {
+          if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
+            return setSomethingWrong(true);
+          }
+          cacheLevel(level);
+          router.push('/level/' + level.id);
+        } else {
+          throw new Error(
+            'Unable to process AI response to construct word list'
+          );
+        }
+      } catch {
+        setSomethingWrong(true);
+      } finally {
+        setIsLoading(false);
       }
-      cacheLevel(level);
-      router.push('/level/' + level.id);
     }
   };
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTopic(event.target.value);
     setIsValid(event.target.value.length > 0);
+    setSomethingWrong(false);
   };
 
   return (
@@ -44,7 +56,7 @@ export default function AiPage() {
       />
       <section
         className={`w-full h-screen flex justify-center items-center transition-colors ease-in-out ${
-          isValid || somethingWrong ? '' : 'bg-red dark:bg-neon-red-light'
+          !isValid || somethingWrong ? 'bg-red dark:bg-neon-red-light' : ''
         }`}
       >
         <BackButton href='/levels' />

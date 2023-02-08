@@ -1,19 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import BackButton from './(components)/BackButton';
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
+export default function Error({ reset }: { error: Error; reset: () => void }) {
   return (
     <div className='w-full h-screen flex flex-col justify-center items-center gap-10'>
       <BackButton href='/' />
