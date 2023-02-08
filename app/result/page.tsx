@@ -77,9 +77,6 @@ export default function ResultPage() {
           level?.name ?? 'game'
         }]_scores_${Date.now()}.png`;
         link.download = downloadName;
-        console.log(href);
-
-        // link.click();
         if (navigator.share) {
           navigator
             .share({
@@ -297,9 +294,9 @@ export default function ResultPage() {
       <section ref={screenshotRef}>
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
-      <div className='w-full text-center mt-8'>
+      {/* <div className='w-full text-center mt-8'>
         <BetaFeedback />
-      </div>
+      </div> */}
       <button
         id='share'
         aria-label='result button'

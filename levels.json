@@ -443,6 +443,13 @@
         "Frankenstein",
         "Dracula"
       ]
+    },
+    {
+      "name": "The Great Jurassic (Dinasaurs)",
+      "difficulty": 3,
+      "author": "xmliszt",
+      "new": true,
+      "words": ["A", "B", "C", "D", "E"]
     }
   ]
 }

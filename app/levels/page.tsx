@@ -8,6 +8,8 @@ import { getLevels } from '../(services)/levelService';
 import ILevel from './(models)/level.interface';
 import Badge from './(components)/Badge';
 import HotBadge from './(components)/HotBadge';
+import NewBadge from './(components)/NewBadge';
+import AuthorBadge from './(components)/AuthorBadge';
 import LevelButton from './(components)/LevelButton';
 
 export default function LevelsPage() {
@@ -63,19 +65,43 @@ export default function LevelsPage() {
       >
         {title}
       </h1>
-      <section className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-8 lg:gap-10 p-10 mt-16 lg:mt-24 text-center'>
+      <section className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 p-10 mt-16 lg:mt-24 text-center'>
         <HotBadge>
           <LevelButton isAI={true} />
         </HotBadge>
-        {levels.map((level) => (
-          <Badge
-            key={level.id}
-            label={getDifficulty(level.difficulty)}
-            customClass={getDifficultyColor(level.difficulty)}
-          >
-            <LevelButton level={level} />
-          </Badge>
-        ))}
+        {levels.map((level) =>
+          level.new ? (
+            <Badge
+              key={level.id}
+              label={getDifficulty(level.difficulty)}
+              customClass={getDifficultyColor(level.difficulty)}
+            >
+              <NewBadge>
+                {level.author !== undefined ? (
+                  <AuthorBadge label={level.author}>
+                    <LevelButton
+                      level={level}
+                      customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                    />
+                  </AuthorBadge>
+                ) : (
+                  <LevelButton
+                    level={level}
+                    customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                  />
+                )}
+              </NewBadge>
+            </Badge>
+          ) : (
+            <Badge
+              key={level.id}
+              label={getDifficulty(level.difficulty)}
+              customClass={getDifficultyColor(level.difficulty)}
+            >
+              <LevelButton level={level} />
+            </Badge>
+          )
+        )}
       </section>
     </>
   );
