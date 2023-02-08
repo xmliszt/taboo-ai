@@ -66,12 +66,17 @@
 }
 
 b {
-  @apply font-bold text-yellow dark:text-neon-red;
+  @apply font-bold text-yellow dark:text-neon-yellow;
 }
 
 button:not(#back, #theme, #submit, #share, #reset),
 a#start {
-  @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green hover:rounded-[2rem] disabled:cursor-not-allowed disabled:opacity-50;
+  @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green hover:rounded-[2rem];
+}
+
+button,
+a {
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 input {

@@ -62,20 +62,20 @@ export default function ResultPage() {
   };
 
   const share = () => {
-    if (screenshotRef.current && level) {
+    if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
-        scale: 3.3,
+        scale: 5,
         allowTaint: true,
         backgroundColor: '#4c453e',
       }).then((canvas) => {
         const link = document.createElement('a');
         const href = canvas
-          .toDataURL('image/jpeg')
-          .replace('image/jpeg', 'image/octet-stream');
+          .toDataURL('image/png')
+          .replace('image/png', 'image/octet-stream');
         link.href = href;
         const downloadName = `taboo-ai_[${
-          level.name
-        }]_scores_${Date.now()}.jpg`;
+          level?.name ?? 'game'
+        }]_scores_${Date.now()}.png`;
         link.download = downloadName;
         console.log(href);
 
@@ -90,7 +90,7 @@ export default function ResultPage() {
                   [b64toBlob(href.split(',')[1], 'image/octet-stream')],
                   downloadName,
                   {
-                    type: 'image/jpeg',
+                    type: 'image/png',
                   }
                 ),
               ],
@@ -296,10 +296,10 @@ export default function ResultPage() {
       </h1>
       <section ref={screenshotRef}>
         {isMobile ? renderMobile() : renderDesktop()}
-        <div className='w-full text-center mt-8'>
-          <BetaFeedback />
-        </div>
       </section>
+      <div className='w-full text-center mt-8'>
+        <BetaFeedback />
+      </div>
       <button
         id='share'
         aria-label='result button'
