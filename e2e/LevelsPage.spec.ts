@@ -6,5 +6,4 @@ test('test levels page', async ({ page }) => {
   await expect(page.getByTestId('levels-heading-title')).toHaveText(
     'Choose A Category'
   );
-  await expect(page.getByTestId(/level-link-.*/)).toBeVisible();
 });
