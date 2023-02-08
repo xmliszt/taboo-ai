@@ -443,6 +443,28 @@
         "Frankenstein",
         "Dracula"
       ]
+    },
+    {
+      "name": "Disney Princesses",
+      "difficulty": 3,
+      "new": true,
+      "author": "Acid_Bunny",
+      "words": [
+        "Snow White",
+        "Cinderella",
+        "Aurora",
+        "Ariel",
+        "Belle",
+        "Jasmine",
+        "Pocahontas",
+        "Mulan",
+        "Tiana",
+        "Rapunzel",
+        "Merida",
+        "Moana",
+        "Anna",
+        "Elsa"
+      ]
     }
   ]
 }
