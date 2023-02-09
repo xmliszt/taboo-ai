@@ -64,7 +64,7 @@ export default function ResultPage() {
   const share = () => {
     if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
-        scale: 5,
+        scale: 2,
         allowTaint: true,
         backgroundColor: '#4c453e',
       }).then((canvas) => {
@@ -81,7 +81,6 @@ export default function ResultPage() {
           navigator
             .share({
               title: downloadName,
-              text: 'Share the scores with friend!',
               files: [
                 new File(
                   [b64toBlob(href.split(',')[1], 'image/octet-stream')],

@@ -113,7 +113,7 @@ export default function LevelPage() {
       try {
         let responseText = await getQueryResponse(prompt);
         if (!responseText) {
-          responseText = '... ...';
+          responseText = "I don't quite understand you";
         }
         setIsLoading(false);
         setInputShouldFadeOut(true); // Input start fading out
