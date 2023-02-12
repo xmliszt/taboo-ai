@@ -17,6 +17,35 @@ export async function getQueryResponse(prompt: string): Promise<string> {
   return json.response;
 }
 
+export async function getWordVariations(word: string): Promise<string[]> {
+  const response = await fetch('/api/ai', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: `Generate all forms of the word "${word}" without duplications.`,
+    }),
+    cache: 'no-store',
+  });
+  const json = await response.json();
+  let text = json.response;
+  text = text.replace(/^\s+|\s+$/g, '');
+  try {
+    const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+    const sanitizedString = _.trim(text, punctuation);
+    let variations = sanitizedString.split(',');
+    variations = variations.map((text) => text.replace(/^\s+|\s+$/g, ''));
+    if (!variations.includes(word)) {
+      variations.push(word);
+    }
+    return variations;
+  } catch (err) {
+    return [word];
+  }
+}
+
 export async function getCreativeLevel(
   topic: string,
   difficulty: number

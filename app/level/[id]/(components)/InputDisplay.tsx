@@ -44,10 +44,29 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     );
   };
 
+  /**
+   * Sanitize the array of Highlight objects such that Highlight
+   * with same start but different end will only keep the one
+   * that has the larget end.
+   * @param highlights The array of Highlight object
+   */
+  const sanitizeHighlights = (highlights: Highlight[]): Highlight[] => {
+    const highlightMap: { [key: number]: Highlight } = {};
+    for (const highlight of highlights) {
+      const start = highlight.start;
+      if (start in highlightMap) {
+        const currentHighlight = highlightMap[start];
+        highlightMap[start] =
+          highlight.end > currentHighlight.end ? highlight : currentHighlight;
+      }
+    }
+    return Object.values(highlightMap);
+  };
+
   const renderResponseMessage = () => {
     const target = props.target;
     const message = props.message;
-    const highlights = props.highlights;
+    const highlights = sanitizeHighlights(props.highlights);
     let parts = [];
 
     if (highlights.length === 0 || target === null)
