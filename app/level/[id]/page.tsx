@@ -188,7 +188,6 @@ export default function LevelPage() {
       setIsGeneratingVariations(true);
       getWordVariations(target)
         .then((variations) => {
-          console.log(variations, target);
           if (variations.includes(target)) {
             setVariations(variations);
           }
@@ -232,7 +231,6 @@ export default function LevelPage() {
   useEffect(() => {
     if (target !== null) {
       const highlights = generateHighlights(userInput, false);
-      console.log(highlights);
       setUserInputHighlights(highlights);
     }
   }, [userInput]);
