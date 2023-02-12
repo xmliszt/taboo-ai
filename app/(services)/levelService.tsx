@@ -5,7 +5,5 @@ export async function getLevels(): Promise<ILevel[]> {
   const json = await response.json();
   let levels = json.levels as ILevel[];
   levels = levels.sort((a) => (a.new ?? false ? -1 : 1));
-  console.log(levels);
-
   return levels;
 }

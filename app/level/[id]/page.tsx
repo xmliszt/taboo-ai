@@ -3,7 +3,10 @@
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
 import Timer from './(components)/Timer';
 import { AiOutlineSend } from 'react-icons/ai';
-import { getQueryResponse } from '../../(services)/aiService';
+import {
+  getQueryResponse,
+  getWordVariations,
+} from '../../(services)/aiService';
 import InputDisplay from './(components)/InputDisplay';
 import _ from 'lodash';
 import { Author } from './(models)/Author.enum';
@@ -23,6 +26,9 @@ export default function LevelPage() {
   const [words, setWords] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<number>(0);
   const [target, setTarget] = useState<string | null>(null);
+  const [variations, setVariations] = useState<string[]>([]);
+  const [isGeneratingVariations, setIsGeneratingVariations] =
+    useState<boolean>(false);
   const [pickedWords, setPickedWords] = useState<string[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [userInputHighlights, setUserInputHighlights] = useState<Highlight[]>(
@@ -46,18 +52,15 @@ export default function LevelPage() {
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const generateNewTarget = (words: string[]) => {
-    reset();
-    start();
+  const generateNewTarget = (words: string[]): string => {
     const _target = words[Math.floor(Math.random() * words.length)];
-    setTarget(_target);
     const picked = [...pickedWords];
     picked.push(_target);
     setPickedWords(picked);
     const unused = [...words];
     _.remove(unused, (s) => s === _target);
     setWords(unused);
-    inputTextField.current?.focus();
+    return _target;
   };
 
   const getRegexPattern = (target: string): RegExp => {
@@ -67,23 +70,24 @@ export default function LevelPage() {
   };
 
   const generateHighlights = (
-    target: string,
     str: string,
     isFullMatch: boolean
   ): Highlight[] => {
-    const parts = isFullMatch ? [target] : target.split(' ');
     const highlights: Highlight[] = [];
-    for (const part of parts) {
-      const regex = getRegexPattern(part);
-      let result;
-      while ((result = regex.exec(str)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (result.index === regex.lastIndex) {
-          regex.lastIndex++;
+    for (const variation of variations) {
+      const parts = isFullMatch ? [variation] : variation.split(' ');
+      for (const part of parts) {
+        const regex = getRegexPattern(part);
+        let result;
+        while ((result = regex.exec(str)) !== null) {
+          // This is necessary to avoid infinite loops with zero-width matches
+          if (result.index === regex.lastIndex) {
+            regex.lastIndex++;
+          }
+          const startIndex = result.index;
+          const endIndex = regex.lastIndex;
+          highlights.push({ start: startIndex, end: endIndex });
         }
-        const startIndex = result.index;
-        const endIndex = regex.lastIndex;
-        highlights.push({ start: startIndex, end: endIndex });
       }
     }
     return highlights;
@@ -113,7 +117,8 @@ export default function LevelPage() {
       try {
         let responseText = await getQueryResponse(prompt);
         if (!responseText) {
-          responseText = "I don't quite understand you";
+          responseText =
+            'Sorry the free version of AI is experiencing high volume. Could you please try again? >_<';
         }
         setIsLoading(false);
         setInputShouldFadeOut(true); // Input start fading out
@@ -130,7 +135,9 @@ export default function LevelPage() {
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
-        toast.error('Sorry! AI is not paying attention. Please try again :p');
+        toast.error(
+          'Sorry the free version of AI is experiencing high volume. Could you please try again? >_<'
+        );
       } finally {
         setIsLoading(false);
         start();
@@ -138,7 +145,7 @@ export default function LevelPage() {
     }, 1000);
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
     setIsSuccess(true);
     toast.success(
@@ -157,11 +164,14 @@ export default function LevelPage() {
       difficulty: difficulty,
       completion: time,
     });
+    const _target = generateNewTarget(words);
     setTimeout(() => {
       if (isLastRound) {
         router.push('/result');
       } else {
-        generateNewTarget(words);
+        reset();
+        start();
+        setTarget(_target);
         setCurrentProgress((progress) => progress + 1);
         setUserInput('');
         inputTextField.current?.focus();
@@ -172,6 +182,26 @@ export default function LevelPage() {
     }, 2000);
   };
 
+  useEffect(() => {
+    if (target) {
+      setVariations([target]);
+      setIsGeneratingVariations(true);
+      getWordVariations(target)
+        .then((variations) => {
+          console.log(variations, target);
+          if (variations.includes(target)) {
+            setVariations(variations);
+          }
+        })
+        .catch(() => {
+          setVariations([target]);
+        })
+        .finally(() => {
+          setIsGeneratingVariations(false);
+        });
+    }
+  }, [target]);
+
   // * At the start of the game
   useEffect(() => {
     clearScores();
@@ -179,7 +209,11 @@ export default function LevelPage() {
     if (level !== null) {
       setDifficulty(level.difficulty);
       setWords(level.words);
-      generateNewTarget(level.words);
+      const _target = generateNewTarget(level.words);
+      reset();
+      start();
+      setTarget(_target);
+      inputTextField.current?.focus();
       setCurrentProgress(1);
     } else {
       throw Error('Unable to fetch level!');
@@ -189,7 +223,7 @@ export default function LevelPage() {
   // * Compute highlight match
   useEffect(() => {
     if (target !== null) {
-      const highlights = generateHighlights(target, responseText, true);
+      const highlights = generateHighlights(responseText, true);
       setHighlights(highlights);
     }
   }, [responseText]);
@@ -197,7 +231,8 @@ export default function LevelPage() {
   // * Compute user input validation match
   useEffect(() => {
     if (target !== null) {
-      const highlights = generateHighlights(target, userInput, false);
+      const highlights = generateHighlights(userInput, false);
+      console.log(highlights);
       setUserInputHighlights(highlights);
     }
   }, [userInput]);
@@ -242,7 +277,7 @@ export default function LevelPage() {
           />
         </section>
         <section className='h-16 lg:h-32 w-full relative'></section>
-        <section className='mt-8 absolute bottom-32 top-16 lg:bottom-56 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
+        <section className='mt-8 absolute bottom-40 top-16 lg:bottom-60 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
           <div
             hidden={!isValidInput || isSuccess}
             className={`h-10 w-full absolute z-20 top-0 gradient-down dark:gradient-down-dark transition-colors`}
@@ -294,7 +329,7 @@ export default function LevelPage() {
               <input
                 disabled={isLoading}
                 autoFocus
-                placeholder='Start your conversation with AI here...'
+                placeholder='Say something...'
                 className={`flex-grow ${
                   !isValidInput
                     ? 'bg-red dark:bg-neon-black dark:text-neon-white dark:border-neon-red-light text-gray'
@@ -325,6 +360,19 @@ export default function LevelPage() {
               </button>
             </div>
           </form>
+          <div className='text-sm lg:text-base mt-4 overflow-x-scroll scrollbar-hide w-full px-4 whitespace-nowrap'>
+            <span className=''>
+              Taboo words:{' '}
+              <span className='text-red dark:text-neon-red'>
+                {variations.join(', ')}
+              </span>{' '}
+              {isGeneratingVariations && (
+                <span className='text-black dark:text-neon-gray'>
+                  (Generating...)
+                </span>
+              )}
+            </span>
+          </div>
         </section>
       </section>
     </>

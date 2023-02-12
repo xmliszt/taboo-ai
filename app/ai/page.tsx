@@ -31,7 +31,7 @@ export default function AiPage() {
           router.push('/level/' + level.id);
         } else {
           throw new Error(
-            'Unable to process AI response to construct word list'
+            'Taboo.AI is using free AI service which is currently under high demand. Please try again later >_<!'
           );
         }
       } catch {
@@ -69,7 +69,7 @@ export default function AiPage() {
               htmlFor='topicInput'
             >
               {somethingWrong
-                ? 'Taboo.AI went for a toilet break. Please try again!'
+                ? 'Taboo.AI is using free AI service which is currently under high demand. Please try again later >_<!'
                 : isValid
                 ? 'Enter A Topic'
                 : 'Topic cannot be blank!'}
