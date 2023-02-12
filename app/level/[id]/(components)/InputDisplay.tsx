@@ -58,6 +58,8 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         const currentHighlight = highlightMap[start];
         highlightMap[start] =
           highlight.end > currentHighlight.end ? highlight : currentHighlight;
+      } else {
+        highlightMap[start] = highlight;
       }
     }
     return Object.values(highlightMap);
