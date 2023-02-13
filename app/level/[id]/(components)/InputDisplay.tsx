@@ -62,7 +62,21 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         highlightMap[start] = highlight;
       }
     }
-    return Object.values(highlightMap);
+    const highlightsArray = Object.values(highlightMap);
+    highlightsArray.sort((a, b) => a.start - b.start);
+    const results: Highlight[] = [];
+    let prevEnd = 0;
+    let idx = 0;
+    for (const highlight of highlightsArray) {
+      if (highlight.start < prevEnd) {
+        results[idx - 1].end = highlight.end;
+      } else {
+        results.push(highlight);
+        prevEnd = highlight.end;
+        idx++;
+      }
+    }
+    return results;
   };
 
   const renderResponseMessage = () => {
@@ -76,9 +90,6 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     else {
       let startIndex = 0;
       let endIndex = 0;
-
-      highlights.sort((a, b) => a.start - b.start);
-
       for (const highlight of highlights) {
         endIndex = highlight.start;
         // Normal part

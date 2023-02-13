@@ -30,9 +30,7 @@ export default function AiPage() {
           cacheLevel(level);
           router.push('/level/' + level.id);
         } else {
-          throw new Error(
-            'Taboo.AI is using free AI service which is currently under high demand. Please try again later >_<!'
-          );
+          throw new Error(CONSTANTS.errors.overloaded);
         }
       } catch {
         setSomethingWrong(true);
@@ -69,7 +67,7 @@ export default function AiPage() {
               htmlFor='topicInput'
             >
               {somethingWrong
-                ? 'Taboo.AI is using free AI service which is currently under high demand. Please try again later >_<!'
+                ? CONSTANTS.errors.overloaded
                 : isValid
                 ? 'Enter A Topic'
                 : 'Topic cannot be blank!'}
