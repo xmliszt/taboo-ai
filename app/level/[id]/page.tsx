@@ -47,7 +47,7 @@ export default function LevelPage() {
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
-  const { time, start, pause, reset } = useTimer({
+  const { time, start, pause, reset, status } = useTimer({
     initialTime: 0,
     timerType: 'INCREMENTAL',
   });
@@ -315,8 +315,16 @@ export default function LevelPage() {
         theme='light'
       />
       <BackButton href='/levels' />
-      <div className='fixed top-3 lg:top-2 w-full flex justify-center items-center'>
+      <div className='fixed top-3 right-5 text-sm'>
+        {status === 'PAUSED' && (
+          <span className='lg:hidden block'>Timer Paused</span>
+        )}
+      </div>
+      <div className='fixed top-3 lg:top-2 w-full flex flex-col gap-2 justify-center items-center'>
         <Timer time={time} />
+        {status === 'PAUSED' && (
+          <span className='lg:text-sm hidden lg:block'>Timer Paused</span>
+        )}
       </div>
       <section
         className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
