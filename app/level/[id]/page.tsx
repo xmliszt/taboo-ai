@@ -19,6 +19,7 @@ import { Highlight } from './(models)/Chat.interface';
 import BackButton from '../../(components)/BackButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import IVariation from '../../(models)/variationModel';
 
 export default function LevelPage() {
   const [userInput, setUserInput] = useState<string>('');
@@ -45,6 +46,7 @@ export default function LevelPage() {
   const [isAbleToSubmitInput, setIsAbleToSubmitInput] = useState<boolean>(true);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState<number>(5);
   const { time, start, pause, reset } = useTimer({
     initialTime: 0,
     timerType: 'INCREMENTAL',
@@ -69,24 +71,55 @@ export default function LevelPage() {
     return new RegExp(groupRegexString, 'gi');
   };
 
+  const renderWaitingMessageForVariations = () => {
+    switch (retryCount) {
+      case 5:
+        return 'Finding relevant taboo words...';
+      case 4:
+        return 'Still finding relevant taboo words...';
+      case 3:
+        return 'Experiencing high traffic, trying my best to find relevant taboo words...';
+      case 2:
+      case 1:
+        return 'Trying even harder to find relevant taboo words...';
+      case 0:
+      default:
+        return "Sorry, I can't seem to find any other relevant taboo words >_<!";
+    }
+  };
+
   const generateHighlights = (
     str: string,
-    isFullMatch: boolean
+    forResponse: boolean
   ): Highlight[] => {
     const highlights: Highlight[] = [];
-    for (const variation of variations) {
-      const parts = isFullMatch ? [variation] : variation.split(' ');
-      for (const part of parts) {
-        const regex = getRegexPattern(part);
-        let result;
-        while ((result = regex.exec(str)) !== null) {
-          // This is necessary to avoid infinite loops with zero-width matches
-          if (result.index === regex.lastIndex) {
-            regex.lastIndex++;
+    if (forResponse && target) {
+      const regex = getRegexPattern(target);
+      let result;
+      while ((result = regex.exec(str)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (result.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        const startIndex = result.index;
+        const endIndex = regex.lastIndex;
+        highlights.push({ start: startIndex, end: endIndex });
+      }
+    } else {
+      for (const variation of variations) {
+        const parts = [variation];
+        for (const part of parts) {
+          const regex = getRegexPattern(part);
+          let result;
+          while ((result = regex.exec(str)) !== null) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (result.index === regex.lastIndex) {
+              regex.lastIndex++;
+            }
+            const startIndex = result.index;
+            const endIndex = regex.lastIndex;
+            highlights.push({ start: startIndex, end: endIndex });
           }
-          const startIndex = result.index;
-          const endIndex = regex.lastIndex;
-          highlights.push({ start: startIndex, end: endIndex });
         }
       }
     }
@@ -102,7 +135,10 @@ export default function LevelPage() {
 
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
+    setResponseText('');
+    setResponseShouldFadeOut(true); // Fade out current response if any
     if (isAbleToSubmitInput && isValidInput && userInput.length > 0) {
+      setInputShouldFadeOut(false);
       setIsInputConfirmed(true); // Input ping animation
       fetchResponse(userInput);
     }
@@ -116,11 +152,11 @@ export default function LevelPage() {
     setTimeout(async () => {
       try {
         let responseText = await getQueryResponse(prompt);
-        if (!responseText) {
-          responseText =
-            'Sorry the free version of AI is experiencing high volume. Could you please try again? >_<';
-        }
         setIsLoading(false);
+        if (!responseText) {
+          setIsAbleToSubmitInput(true);
+          responseText = CONSTANTS.errors.overloaded;
+        }
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
@@ -132,14 +168,16 @@ export default function LevelPage() {
           setInputShouldFadeOut(false); // Reset input fade animation
         }, 1000);
       } catch (err) {
+        // Server error
+        setIsAbleToSubmitInput(true);
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
-        toast.error(
-          'Sorry the free version of AI is experiencing high volume. Could you please try again? >_<'
-        );
+        toast.error(CONSTANTS.errors.overloaded);
       } finally {
         setIsLoading(false);
+        console.log(inputTextField.current);
+        inputTextField.current?.focus();
         start();
       }
     }, 1000);
@@ -172,6 +210,7 @@ export default function LevelPage() {
         reset();
         start();
         setTarget(_target);
+        setVariations([_target]);
         setCurrentProgress((progress) => progress + 1);
         setUserInput('');
         inputTextField.current?.focus();
@@ -182,22 +221,38 @@ export default function LevelPage() {
     }, 2000);
   };
 
+  const generateVariationsForTarget = (
+    retries: number,
+    target: string,
+    callback: (variations?: IVariation) => void
+  ) => {
+    console.log(retries);
+    setRetryCount(retries);
+    getWordVariations(target)
+      .then((variations) => {
+        callback(variations);
+      })
+      .catch(() => {
+        if (retries > 0) {
+          generateVariationsForTarget(retries - 1, target, callback);
+        } else {
+          callback();
+        }
+      });
+  };
+
   useEffect(() => {
     if (target) {
       setVariations([target]);
       setIsGeneratingVariations(true);
-      getWordVariations(target)
-        .then((variations) => {
-          if (variations.includes(target)) {
-            setVariations(variations);
-          }
-        })
-        .catch(() => {
-          setVariations([target]);
-        })
-        .finally(() => {
-          setIsGeneratingVariations(false);
-        });
+      generateVariationsForTarget(5, target, (variations) => {
+        setIsGeneratingVariations(false);
+        if (variations) {
+          variations.target === target
+            ? setVariations(variations.variations)
+            : {};
+        }
+      });
     }
   }, [target]);
 
@@ -327,13 +382,13 @@ export default function LevelPage() {
               <input
                 disabled={isLoading}
                 autoFocus
+                ref={inputTextField}
                 placeholder='Say something...'
                 className={`flex-grow ${
                   !isValidInput
                     ? 'bg-red dark:bg-neon-black dark:text-neon-white dark:border-neon-red-light text-gray'
                     : ''
                 }`}
-                ref={inputTextField}
                 type='text'
                 value={userInput}
                 onChange={onInputChange}
@@ -365,8 +420,8 @@ export default function LevelPage() {
                 {variations.join(', ')}
               </span>{' '}
               {isGeneratingVariations && (
-                <span className='text-black dark:text-neon-gray'>
-                  (Generating...)
+                <span className='text-black dark:text-gray'>
+                  ({renderWaitingMessageForVariations()})
                 </span>
               )}
             </span>
