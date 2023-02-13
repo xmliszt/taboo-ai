@@ -208,7 +208,6 @@ export default function LevelPage() {
         router.push('/result');
       } else {
         reset();
-        start();
         setTarget(_target);
         setVariations([_target]);
         setCurrentProgress((progress) => progress + 1);
@@ -217,6 +216,7 @@ export default function LevelPage() {
         setIsSuccess(false);
         setIsResponseFaded(true);
         setInputShouldFadeOut(false);
+        start();
       }
     }, 2000);
   };
@@ -261,14 +261,14 @@ export default function LevelPage() {
     clearScores();
     const level = getLevelCache();
     if (level !== null) {
+      reset();
       setDifficulty(level.difficulty);
       setWords(level.words);
       const _target = generateNewTarget(level.words);
-      reset();
-      start();
       setTarget(_target);
       inputTextField.current?.focus();
       setCurrentProgress(1);
+      start();
     } else {
       throw Error('Unable to fetch level!');
     }
