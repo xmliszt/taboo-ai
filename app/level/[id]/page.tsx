@@ -176,7 +176,6 @@ export default function LevelPage() {
         toast.error(CONSTANTS.errors.overloaded);
       } finally {
         setIsLoading(false);
-        console.log(inputTextField.current);
         inputTextField.current?.focus();
         start();
       }
@@ -226,7 +225,6 @@ export default function LevelPage() {
     target: string,
     callback: (variations?: IVariation) => void
   ) => {
-    console.log(retries);
     setRetryCount(retries);
     getWordVariations(target)
       .then((variations) => {

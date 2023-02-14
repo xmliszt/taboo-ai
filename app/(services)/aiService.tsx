@@ -11,7 +11,9 @@ export async function getQueryResponse(prompt: string): Promise<string> {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({
+      prompt: `Your best response to "${prompt}" in readable form.`,
+    }),
     cache: 'no-store',
   });
   const json = await response.json();
@@ -26,7 +28,7 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate all forms of the word (e.g singular, plural, tenses) "${word}" without duplications, in an array of strings in JSON format.`,
+      prompt: `Generate words related to ${word}, to be played in a taboo game, includes all lemma (e.g. tenses) for each word, each as a single element in an array in JSON format.`,
     }),
     cache: 'no-store',
   });
