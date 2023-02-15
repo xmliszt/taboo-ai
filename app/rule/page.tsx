@@ -13,14 +13,14 @@ export default function RulePage() {
         How To Play Taboo.AI?
       </h1>
       <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 lg:text-2xl'>
-        <article>
+        <article className='leading-normal'>
           <p className='text-center dark:text-neon-white'>
             Taboo.AI is a game of <b>Taboo</b> with a twist. In this game, you
             are playing against AI!
           </p>
         </article>
         <br />
-        <article>
+        <article className='leading-normal'>
           <hr />
           <p className='text-center text-lg lg:text-3xl font-bold mt-4'>
             <b>Guess Words</b> will be given to you. Your job is to converse

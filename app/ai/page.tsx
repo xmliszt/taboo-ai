@@ -74,7 +74,7 @@ export default function AiPage() {
             </label>
             <label
               htmlFor='topicInput'
-              className='text-xs text-center px-5 lg:text-lg lg:px-16'
+              className='text-xs text-center px-5 lg:text-lg lg:px-16 leading-normal'
               aria-label='AI Mode Explanation'
             >
               In <b>AI Mode</b>, the topic you provided here will be used for AI
