@@ -2,7 +2,7 @@
 
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
 import Timer from './(components)/Timer';
-import { AiOutlineSend } from 'react-icons/ai';
+import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
@@ -44,6 +44,7 @@ export default function LevelPage() {
   const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
   const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
   const [isAbleToSubmitInput, setIsAbleToSubmitInput] = useState<boolean>(true);
+  const [isInputEnabled, setIsInputEnabled] = useState<boolean>(false);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
@@ -51,6 +52,18 @@ export default function LevelPage() {
     initialTime: 0,
     timerType: 'INCREMENTAL',
   });
+  const countdown = useTimer({
+    initialTime: 3,
+    endTime: -1,
+    timerType: 'DECREMENTAL',
+    onTimeOver: () => {
+      setIsCountdown(false);
+      start();
+      setIsInputEnabled(true);
+      inputTextField.current?.focus();
+    },
+  });
+  const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -145,6 +158,7 @@ export default function LevelPage() {
   };
 
   const fetchResponse = async (prompt: string) => {
+    setIsInputEnabled(false);
     setIsAbleToSubmitInput(false);
     setIsLoading(true);
     pause();
@@ -154,7 +168,6 @@ export default function LevelPage() {
         let responseText = await getQueryResponse(prompt);
         setIsLoading(false);
         if (!responseText) {
-          setIsAbleToSubmitInput(true);
           responseText = CONSTANTS.errors.overloaded;
         }
         setInputShouldFadeOut(true); // Input start fading out
@@ -169,30 +182,25 @@ export default function LevelPage() {
         }, 1000);
       } catch (err) {
         // Server error
-        setIsAbleToSubmitInput(true);
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
         toast.error(CONSTANTS.errors.overloaded);
       } finally {
-        setIsLoading(false);
-        console.log(inputTextField.current);
-        inputTextField.current?.focus();
+        setIsAbleToSubmitInput(true);
+        setIsInputEnabled(true);
         start();
       }
     }, 1000);
   };
 
   const nextQuestion = async () => {
-    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
-    setIsSuccess(true);
-    toast.success(
-      `Congratulations! ${
-        isLastRound
-          ? 'You have finished the game!'
-          : 'Here comes the next word!'
-      }`
-    );
+    pause();
+    setIsSuccess(true); // set the background
+    setTimeout(() => {
+      setIsSuccess(false);
+    }, 1000);
+    setIsResponseFaded(true);
     const question = userInput.slice();
     cacheScore({
       id: currentProgress,
@@ -201,24 +209,23 @@ export default function LevelPage() {
       response: responseText,
       difficulty: difficulty,
       completion: time,
+      responseHighlights: highlights,
     });
-    const _target = generateNewTarget(words);
-    setTimeout(() => {
-      if (isLastRound) {
+    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
+    if (isLastRound) {
+      isLastRound &&
+        toast.success('Congratulations! Generating your results...');
+      setTimeout(() => {
         router.push('/result');
-      } else {
-        reset();
-        setTarget(_target);
-        setVariations([_target]);
-        setCurrentProgress((progress) => progress + 1);
-        setUserInput('');
-        inputTextField.current?.focus();
-        setIsSuccess(false);
-        setIsResponseFaded(true);
-        setInputShouldFadeOut(false);
-        start();
-      }
-    }, 2000);
+      }, 2000);
+    } else {
+      const _target = generateNewTarget(words);
+      setTarget(_target);
+      setVariations([_target]);
+      setCurrentProgress((progress) => progress + 1);
+      setUserInput('');
+      setInputShouldFadeOut(false);
+    }
   };
 
   const generateVariationsForTarget = (
@@ -226,7 +233,6 @@ export default function LevelPage() {
     target: string,
     callback: (variations?: IVariation) => void
   ) => {
-    console.log(retries);
     setRetryCount(retries);
     getWordVariations(target)
       .then((variations) => {
@@ -241,17 +247,29 @@ export default function LevelPage() {
       });
   };
 
+  const startCountdown = () => {
+    countdown.start();
+    setIsCountdown(true);
+    reset();
+  };
+
   useEffect(() => {
     if (target) {
       setVariations([target]);
       setIsGeneratingVariations(true);
+      setIsAbleToSubmitInput(false);
+      setIsInputEnabled(false);
+      toast.info('Generating new taboo words...');
       generateVariationsForTarget(5, target, (variations) => {
         setIsGeneratingVariations(false);
         if (variations) {
-          variations.target === target
-            ? setVariations(variations.variations)
-            : {};
+          variations.target === target && setVariations(variations.variations);
+        } else {
+          setVariations([target]);
         }
+        setResponseShouldFadeOut(true);
+        setResponseText('');
+        startCountdown();
       });
     }
   }, [target]);
@@ -266,13 +284,23 @@ export default function LevelPage() {
       setWords(level.words);
       const _target = generateNewTarget(level.words);
       setTarget(_target);
-      inputTextField.current?.focus();
       setCurrentProgress(1);
-      start();
+      setResponseShouldFadeOut(false); // Let new response fade in
+      setResponseText(
+        'Think about your prompt while we generate the Taboo words.'
+      );
     } else {
-      throw Error('Unable to fetch level!');
+      toast.error('Unable to fetch levels. Please try again!');
+      router.push('/levels');
     }
   }, []);
+
+  // * Timer control
+  useEffect(() => {
+    if (isCountingdown) {
+      reset();
+    }
+  }, [isCountingdown]);
 
   // * Compute highlight match
   useEffect(() => {
@@ -292,7 +320,9 @@ export default function LevelPage() {
 
   // * Next Question Condition
   useEffect(() => {
-    highlights.length > 0 && nextQuestion();
+    if (highlights.length > 0) {
+      nextQuestion();
+    }
   }, [highlights]);
 
   // * User input validation condition
@@ -304,8 +334,8 @@ export default function LevelPage() {
     <>
       <ToastContainer
         position='top-center'
-        autoClose={1000}
-        hideProgressBar={false}
+        autoClose={2000}
+        hideProgressBar={true}
         newestOnTop={false}
         closeOnClick
         rtl={false}
@@ -315,16 +345,23 @@ export default function LevelPage() {
         theme='light'
       />
       <BackButton href='/levels' />
-      <div className='fixed top-3 right-5 text-sm'>
-        {status === 'PAUSED' && (
-          <span className='lg:hidden block'>Timer Paused</span>
-        )}
+      {isCountingdown && (
+        <div
+          className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
+        >
+          {countdown.time === 0
+            ? 'Start'
+            : countdown.time === -1
+            ? ''
+            : countdown.time}
+        </div>
+      )}
+      <div className='fixed top-3 right-5 text-xs text-right'>
+        <span className='lg:hidden block'>TIMER {status}</span>
       </div>
       <div className='fixed top-3 lg:top-2 w-full flex flex-col gap-2 justify-center items-center'>
         <Timer time={time} />
-        {status === 'PAUSED' && (
-          <span className='lg:text-sm hidden lg:block'>Timer Paused</span>
-        )}
+        <span className='lg:text-sm hidden lg:block'>TIMER {status}</span>
       </div>
       <section
         className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
@@ -386,12 +423,30 @@ export default function LevelPage() {
             <div className='z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark rounded-tr-3xl transition-colors'></div>
           </section>
           <form onSubmit={onFormSubmit}>
-            <div className='flex items-center justify-center gap-4 px-4'>
+            <div className='flex relative items-center justify-center gap-4 px-4'>
+              <button
+                id='clear'
+                type='button'
+                aria-label='Clear input button'
+                disabled={isLoading || !isInputEnabled}
+                className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
+                onClick={() => {
+                  setUserInput('');
+                  inputTextField.current?.focus();
+                }}
+              >
+                <AiFillCloseCircle />
+              </button>
               <input
-                disabled={isLoading}
-                autoFocus
+                disabled={isLoading || !isInputEnabled}
                 ref={inputTextField}
-                placeholder='Say something...'
+                placeholder={
+                  isGeneratingVariations
+                    ? 'Generating taboo words...'
+                    : isCountingdown
+                    ? 'Ready to ask questions?'
+                    : 'Enter your prompt...'
+                }
                 className={`flex-grow ${
                   !isValidInput
                     ? 'bg-red dark:bg-neon-black dark:text-neon-white dark:border-neon-red-light text-gray'
@@ -405,6 +460,7 @@ export default function LevelPage() {
               <button
                 id='submit'
                 disabled={
+                  isCountingdown ||
                   userInput.length == 0 ||
                   isEmptyInput ||
                   !isValidInput ||

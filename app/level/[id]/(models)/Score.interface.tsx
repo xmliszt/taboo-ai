@@ -1,3 +1,5 @@
+import { Highlight } from './Chat.interface';
+
 // {id} {word} {your question} {ai response} {completion time in seconds}
 export default interface IScore {
   id: number;
@@ -6,4 +8,5 @@ export default interface IScore {
   response: string;
   difficulty: number;
   completion: number;
+  responseHighlights: Highlight[];
 }

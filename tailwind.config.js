@@ -10,6 +10,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      lineHeight: {
+        screenshot: '1.5',
+      },
       animation: {
         'unicorn-flow': 'unicornFlow 10s ease-in-out infinite',
         'ping-once': 'ping 1s linear 1',
