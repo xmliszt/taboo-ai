@@ -2,7 +2,7 @@
 
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
 import Timer from './(components)/Timer';
-import { AiOutlineSend } from 'react-icons/ai';
+import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
@@ -53,7 +53,7 @@ export default function LevelPage() {
     timerType: 'INCREMENTAL',
   });
   const countdown = useTimer({
-    initialTime: 5,
+    initialTime: 3,
     endTime: -1,
     timerType: 'DECREMENTAL',
     onTimeOver: () => {
@@ -168,7 +168,6 @@ export default function LevelPage() {
         let responseText = await getQueryResponse(prompt);
         setIsLoading(false);
         if (!responseText) {
-          setIsAbleToSubmitInput(true);
           responseText = CONSTANTS.errors.overloaded;
         }
         setInputShouldFadeOut(true); // Input start fading out
@@ -183,25 +182,24 @@ export default function LevelPage() {
         }, 1000);
       } catch (err) {
         // Server error
-        setIsAbleToSubmitInput(true);
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
         toast.error(CONSTANTS.errors.overloaded);
       } finally {
+        setIsAbleToSubmitInput(true);
         setIsInputEnabled(true);
-        setIsLoading(false);
-        start();
       }
     }, 1000);
   };
 
   const nextQuestion = async () => {
     pause();
-    setIsSuccess(true);
-    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
-    isLastRound &&
-      toast.success('Congratulations! You have finished the game!');
+    setIsSuccess(true); // set the background
+    setTimeout(() => {
+      setIsSuccess(false);
+    }, 1000);
+    setIsResponseFaded(true);
     const question = userInput.slice();
     cacheScore({
       id: currentProgress,
@@ -210,21 +208,23 @@ export default function LevelPage() {
       response: responseText,
       difficulty: difficulty,
       completion: time,
+      responseHighlights: highlights,
     });
-    const _target = generateNewTarget(words);
-    setTimeout(() => {
-      if (isLastRound) {
+    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
+    if (isLastRound) {
+      isLastRound &&
+        toast.success('Congratulations! Generating your results...');
+      setTimeout(() => {
         router.push('/result');
-      } else {
-        setTarget(_target);
-        setVariations([_target]);
-        setCurrentProgress((progress) => progress + 1);
-        setUserInput('');
-        setIsSuccess(false);
-        setIsResponseFaded(true);
-        setInputShouldFadeOut(false);
-      }
-    }, 1000);
+      }, 2000);
+    } else {
+      const _target = generateNewTarget(words);
+      setTarget(_target);
+      setVariations([_target]);
+      setCurrentProgress((progress) => progress + 1);
+      setUserInput('');
+      setInputShouldFadeOut(false);
+    }
   };
 
   const generateVariationsForTarget = (
@@ -319,7 +319,9 @@ export default function LevelPage() {
 
   // * Next Question Condition
   useEffect(() => {
-    highlights.length > 0 && nextQuestion();
+    if (highlights.length > 0) {
+      nextQuestion();
+    }
   }, [highlights]);
 
   // * User input validation condition
@@ -420,11 +422,30 @@ export default function LevelPage() {
             <div className='z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark rounded-tr-3xl transition-colors'></div>
           </section>
           <form onSubmit={onFormSubmit}>
-            <div className='flex items-center justify-center gap-4 px-4'>
+            <div className='flex relative items-center justify-center gap-4 px-4'>
+              <button
+                id='clear'
+                type='button'
+                aria-label='Clear input button'
+                disabled={isLoading || !isInputEnabled}
+                className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
+                onClick={() => {
+                  setUserInput('');
+                  inputTextField.current?.focus();
+                }}
+              >
+                <AiFillCloseCircle />
+              </button>
               <input
                 disabled={isLoading || !isInputEnabled}
                 ref={inputTextField}
-                placeholder='Say something...'
+                placeholder={
+                  isGeneratingVariations
+                    ? 'Generating taboo words...'
+                    : isCountingdown
+                    ? 'Ready to ask questions?'
+                    : 'Enter your prompt...'
+                }
                 className={`flex-grow ${
                   !isValidInput
                     ? 'bg-red dark:bg-neon-black dark:text-neon-white dark:border-neon-red-light text-gray'

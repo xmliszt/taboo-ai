@@ -7,13 +7,16 @@ import { getScoresCache, getLevelCache } from '../(caching)/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';
-import BetaFeedback from '../(components)/BetaFeedback';
 import _ from 'lodash';
 import { isMobile } from 'react-device-detect';
+import { Highlight } from '../level/[id]/(models)/Chat.interface';
+import { applyHighlightsToMessage } from '../utilities';
 
 interface StatItem {
   title: string;
   content: string;
+  isResponse?: boolean;
+  highlights?: Highlight[];
 }
 
 export default function ResultPage() {
@@ -65,7 +68,6 @@ export default function ResultPage() {
     if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
         scale: 2,
-        allowTaint: true,
         backgroundColor: '#4c453e',
       }).then((canvas) => {
         const link = document.createElement('a');
@@ -116,13 +118,71 @@ export default function ResultPage() {
     }
   };
 
-  const generateMobileStatsRow = (title: string, content: string) => {
+  const generateDesktopResponseCellContent = (
+    responseText: string,
+    highlights: Highlight[] = []
+  ): JSX.Element => {
+    let parts: JSX.Element[] = [];
+    if (highlights.length > 0) {
+      parts = applyHighlightsToMessage(
+        responseText,
+        highlights,
+        (normal) => {
+          return <span>{normal}</span>;
+        },
+        (highlight) => {
+          return (
+            <span className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'>
+              {highlight}
+            </span>
+          );
+        }
+      );
+    }
+    let contentElement: JSX.Element;
+    if (parts.length > 0) {
+      contentElement = <p>{parts}</p>;
+    } else {
+      contentElement = <p>{responseText}</p>;
+    }
+    return contentElement;
+  };
+
+  const generateMobileStatsRow = (
+    title: string,
+    content: string,
+    isResponse = false,
+    highlights: Highlight[] = []
+  ) => {
+    let parts: JSX.Element[] = [];
+    if (isResponse && highlights.length > 0) {
+      parts = applyHighlightsToMessage(
+        content,
+        highlights,
+        (normal) => {
+          return <span>{normal}</span>;
+        },
+        (highlight) => {
+          return (
+            <span className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'>
+              {highlight}
+            </span>
+          );
+        }
+      );
+    }
+    let contentElement: JSX.Element;
+    if (parts.length > 0) {
+      contentElement = <p>{parts}</p>;
+    } else {
+      contentElement = <p>{content}</p>;
+    }
     return (
       <div key={title} className='p-3'>
         <span className='font-extrabold text-black border-b-2 border-black dark:text-neon-blue dark:border-neon-blue'>
           {title}
         </span>
-        <p>{content}</p>
+        {contentElement}
       </div>
     );
   };
@@ -134,7 +194,12 @@ export default function ResultPage() {
   const generateStatsItems = (score: IScore): StatItem[] => {
     return [
       { title: 'Your Question', content: score.question },
-      { title: "AI's Response", content: score.response },
+      {
+        title: "AI's Response",
+        content: score.response,
+        isResponse: true,
+        highlights: score.responseHighlights,
+      },
       {
         title: 'Difficulty Point',
         content: `${getDifficulty(score.difficulty)} - ${score.difficulty}`,
@@ -160,7 +225,12 @@ export default function ResultPage() {
           <span className='font-extrabold'>Score: {calculateScore(score)}</span>
         </div>
         {generateStatsItems(score).map((item) => {
-          return generateMobileStatsRow(item.title, item.content);
+          return generateMobileStatsRow(
+            item.title,
+            item.content,
+            item.isResponse ?? false,
+            item.highlights
+          );
         })}
       </div>
     );
@@ -243,7 +313,12 @@ export default function ResultPage() {
                   <td className='p-3 font-medium'>{score.id}</td>
                   <td className='p-3 font-medium'>{score.target}</td>
                   <td className='p-3 font-medium'>{score.question}</td>
-                  <td className='p-3 font-medium'>{score.response}</td>
+                  <td className='p-3 font-medium'>
+                    {generateDesktopResponseCellContent(
+                      score.response,
+                      score.responseHighlights
+                    )}
+                  </td>
                   <td className='p-3 font-medium'>{score.difficulty}</td>
                   <td className='p-3 font-medium'>
                     {score.completion} seconds
@@ -290,7 +365,7 @@ export default function ResultPage() {
       <h1 className='fixed top-0 w-full h-14 py-4 text-center bg-black dark:bg-neon-black z-10'>
         Scoreboard
       </h1>
-      <section ref={screenshotRef}>
+      <section ref={screenshotRef} className='!leading-screenshot pb-8 pt-4'>
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
       {/* <div className='w-full text-center mt-8'>
