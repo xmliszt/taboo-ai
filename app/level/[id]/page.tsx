@@ -189,6 +189,7 @@ export default function LevelPage() {
       } finally {
         setIsAbleToSubmitInput(true);
         setIsInputEnabled(true);
+        start();
       }
     }, 1000);
   };
