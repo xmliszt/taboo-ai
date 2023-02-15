@@ -20,7 +20,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         key={uniqueId(message)}
         className={
           props.faded
-            ? 'text-white-faded dark:text-neon-red-light'
+            ? 'text-white-faded dark:text-neon-white'
             : 'text-white dark:text-neon-white'
         }
       >

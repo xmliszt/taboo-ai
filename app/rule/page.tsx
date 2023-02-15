@@ -21,10 +21,14 @@ export default function RulePage() {
         </article>
         <br />
         <article>
-          <p className='text-center text-lg lg:text-3xl font-bold text-yellow dark:text-neon-green'>
+          <hr />
+          <p className='text-center text-lg lg:text-3xl font-bold mt-4'>
             <b>Guess Words</b> will be given to you. Your job is to converse
             with the AI and trick it into saying the &apos;Guess Words&apos;.
+            However, you cannot include the <b>Taboo Words</b> in your prompt!
           </p>
+          <hr />
+          <br />
           <p className='text-justify'>
             1. Select a category of words, or choose the <b>AI MODE</b> to let
             AI generate the <b>Guess Words</b> based on custom topics!{' '}

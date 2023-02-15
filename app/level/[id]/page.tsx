@@ -44,6 +44,7 @@ export default function LevelPage() {
   const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
   const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
   const [isAbleToSubmitInput, setIsAbleToSubmitInput] = useState<boolean>(true);
+  const [isInputEnabled, setIsInputEnabled] = useState<boolean>(false);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
@@ -51,6 +52,18 @@ export default function LevelPage() {
     initialTime: 0,
     timerType: 'INCREMENTAL',
   });
+  const countdown = useTimer({
+    initialTime: 5,
+    endTime: -1,
+    timerType: 'DECREMENTAL',
+    onTimeOver: () => {
+      setIsCountdown(false);
+      start();
+      setIsInputEnabled(true);
+      inputTextField.current?.focus();
+    },
+  });
+  const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -145,6 +158,7 @@ export default function LevelPage() {
   };
 
   const fetchResponse = async (prompt: string) => {
+    setIsInputEnabled(false);
     setIsAbleToSubmitInput(false);
     setIsLoading(true);
     pause();
@@ -175,23 +189,19 @@ export default function LevelPage() {
         setResponseShouldFadeOut(true); // Fade out current response if any
         toast.error(CONSTANTS.errors.overloaded);
       } finally {
+        setIsInputEnabled(true);
         setIsLoading(false);
-        inputTextField.current?.focus();
         start();
       }
     }, 1000);
   };
 
   const nextQuestion = async () => {
-    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
+    pause();
     setIsSuccess(true);
-    toast.success(
-      `Congratulations! ${
-        isLastRound
-          ? 'You have finished the game!'
-          : 'Here comes the next word!'
-      }`
-    );
+    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
+    isLastRound &&
+      toast.success('Congratulations! You have finished the game!');
     const question = userInput.slice();
     cacheScore({
       id: currentProgress,
@@ -206,18 +216,15 @@ export default function LevelPage() {
       if (isLastRound) {
         router.push('/result');
       } else {
-        reset();
         setTarget(_target);
         setVariations([_target]);
         setCurrentProgress((progress) => progress + 1);
         setUserInput('');
-        inputTextField.current?.focus();
         setIsSuccess(false);
         setIsResponseFaded(true);
         setInputShouldFadeOut(false);
-        start();
       }
-    }, 2000);
+    }, 1000);
   };
 
   const generateVariationsForTarget = (
@@ -239,17 +246,29 @@ export default function LevelPage() {
       });
   };
 
+  const startCountdown = () => {
+    countdown.start();
+    setIsCountdown(true);
+    reset();
+  };
+
   useEffect(() => {
     if (target) {
       setVariations([target]);
       setIsGeneratingVariations(true);
+      setIsAbleToSubmitInput(false);
+      setIsInputEnabled(false);
+      toast.info('Generating new taboo words...');
       generateVariationsForTarget(5, target, (variations) => {
         setIsGeneratingVariations(false);
         if (variations) {
-          variations.target === target
-            ? setVariations(variations.variations)
-            : {};
+          variations.target === target && setVariations(variations.variations);
+        } else {
+          setVariations([target]);
         }
+        setResponseShouldFadeOut(true);
+        setResponseText('');
+        startCountdown();
       });
     }
   }, [target]);
@@ -264,13 +283,23 @@ export default function LevelPage() {
       setWords(level.words);
       const _target = generateNewTarget(level.words);
       setTarget(_target);
-      inputTextField.current?.focus();
       setCurrentProgress(1);
-      start();
+      setResponseShouldFadeOut(false); // Let new response fade in
+      setResponseText(
+        'Think about your prompt while we generate the Taboo words.'
+      );
     } else {
-      throw Error('Unable to fetch level!');
+      toast.error('Unable to fetch levels. Please try again!');
+      router.push('/levels');
     }
   }, []);
+
+  // * Timer control
+  useEffect(() => {
+    if (isCountingdown) {
+      reset();
+    }
+  }, [isCountingdown]);
 
   // * Compute highlight match
   useEffect(() => {
@@ -302,8 +331,8 @@ export default function LevelPage() {
     <>
       <ToastContainer
         position='top-center'
-        autoClose={1000}
-        hideProgressBar={false}
+        autoClose={2000}
+        hideProgressBar={true}
         newestOnTop={false}
         closeOnClick
         rtl={false}
@@ -313,16 +342,23 @@ export default function LevelPage() {
         theme='light'
       />
       <BackButton href='/levels' />
-      <div className='fixed top-3 right-5 text-sm'>
-        {status === 'PAUSED' && (
-          <span className='lg:hidden block'>Timer Paused</span>
-        )}
+      {isCountingdown && (
+        <div
+          className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
+        >
+          {countdown.time === 0
+            ? 'Start'
+            : countdown.time === -1
+            ? ''
+            : countdown.time}
+        </div>
+      )}
+      <div className='fixed top-3 right-5 text-xs text-right'>
+        <span className='lg:hidden block'>TIMER {status}</span>
       </div>
       <div className='fixed top-3 lg:top-2 w-full flex flex-col gap-2 justify-center items-center'>
         <Timer time={time} />
-        {status === 'PAUSED' && (
-          <span className='lg:text-sm hidden lg:block'>Timer Paused</span>
-        )}
+        <span className='lg:text-sm hidden lg:block'>TIMER {status}</span>
       </div>
       <section
         className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
@@ -386,8 +422,7 @@ export default function LevelPage() {
           <form onSubmit={onFormSubmit}>
             <div className='flex items-center justify-center gap-4 px-4'>
               <input
-                disabled={isLoading}
-                autoFocus
+                disabled={isLoading || !isInputEnabled}
                 ref={inputTextField}
                 placeholder='Say something...'
                 className={`flex-grow ${
@@ -403,6 +438,7 @@ export default function LevelPage() {
               <button
                 id='submit'
                 disabled={
+                  isCountingdown ||
                   userInput.length == 0 ||
                   isEmptyInput ||
                   !isValidInput ||

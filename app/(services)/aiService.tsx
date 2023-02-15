@@ -28,12 +28,13 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate words related to ${word}, to be played in a taboo game, includes all lemma (e.g. tenses) for each word, each as a single element in an array in JSON format.`,
+      prompt: `Generate 10 words related to ${word}, to be played in a taboo game, includes all lemma (e.g. tenses) for each word, each as a single element, all in one flattened array in JSON format.`,
     }),
     cache: 'no-store',
   });
   const json = await response.json();
   let text = json.response;
+  console.log(text);
   text = text.replace(/^\s+|\s+$/g, '');
   let variations: string[];
   const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
@@ -50,18 +51,18 @@ export async function getWordVariations(word: string): Promise<IVariation> {
           _.trim(text, punctuationWithDigits).toLowerCase()
         )
       );
-      if (!variations.includes(word)) {
-        variations.push(word);
-      }
     } catch {
       variations = [];
     }
   }
-  word.split(' ').forEach((part) => variations.push(part));
   variations = variations.map((e) =>
     _.startCase(_.toLower(_.trim(e, punctuation)))
   );
   variations = _.uniq(variations);
+  const _word = _.startCase(_.toLower(word));
+  if (!variations.includes(_word)) {
+    variations.push(_word);
+  }
   return {
     target: word,
     variations: variations,
