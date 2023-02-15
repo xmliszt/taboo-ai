@@ -57,6 +57,10 @@ export default function Head() {
         name='ahrefs-site-verification'
         content='f832d06e3893f0e38cd251704fa298ec65dfd86ce5b54eebb349c755229b0dd9'
       />
+      <meta
+        name='google-site-verification'
+        content='ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk'
+      />
       <link rel='icon' href='/favicon.ico' />
     </>
   );
