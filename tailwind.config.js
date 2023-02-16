@@ -18,6 +18,7 @@ module.exports = {
         'ping-once': 'ping 1s linear 1',
         'fade-out': 'fadeOut 1s ease-in-out',
         'fade-in': 'fadeIn 1s ease-in-out',
+        carousell: 'moveIn 10s linear infinite',
       },
       keyframes: {
         unicornFlow: {
@@ -31,6 +32,10 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: 0 },
           '100%': { opacity: 100 },
+        },
+        moveIn: {
+          '0%': { transform: 'translateX(-100vw)' },
+          '100%': { transform: 'translateX(100vw)' },
         },
       },
     },

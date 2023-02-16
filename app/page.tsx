@@ -1,9 +1,7 @@
 import Link from 'next/link';
 import { BsFillQuestionDiamondFill } from 'react-icons/bs';
-import { TbBrandNextjs } from 'react-icons/tb';
-import { SiOpenai } from 'react-icons/si';
-import { FiGithub } from 'react-icons/fi';
 import CustomWordListLink from './(components)/CustomWordListLink';
+import Footer from './(components)/Footer';
 
 export default function HomePage() {
   const title = 'Taboo.AI';
@@ -21,15 +19,23 @@ export default function HomePage() {
         </div>
       </Link>
       <section className='flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16'>
-        <h1
-          data-testid='heading-title'
-          className='text-center text-4xl lg:text-8xl drop-shadow-lg'
-        >
-          {title}{' '}
-          {/* <span className='text-lg text-white-faded dark:text-neon-white'>
+        <div className='w-full relative'>
+          <h1
+            data-testid='heading-title'
+            className='text-center text-4xl lg:text-8xl drop-shadow-lg'
+          >
+            {title}{' '}
+            {/* <span className='text-lg text-white-faded dark:text-neon-white'>
             BETA
           </span> */}
-        </h1>
+          </h1>
+          <Link
+            className='absolute w-full left-[60%] -top-10 lg:-top-12 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
+            href='/whatsnew'
+          >
+            What&apos;s New?
+          </Link>
+        </div>
         <Link
           id='start'
           href='/levels'
@@ -40,40 +46,7 @@ export default function HomePage() {
         </Link>
         <CustomWordListLink />
       </section>
-      <footer
-        data-testid='footer'
-        className='w-full h-12 rounded-t-2xl dark:drop-shadow-[0_-10px_30px_rgba(0,0,0,1)] flex justify-center items-center bg-gray dark:bg-neon-gray fixed bottom-0 text-white dark:text-neon-white lg:text-white-faded lg:dark:text-neon-white text-center text-xs lg:text-lg'
-      >
-        <article className='flex-grow px-2'>
-          Powered by{' '}
-          <a
-            aria-label='Read more about Next.JS on its official website'
-            href='https://beta.nextjs.org/docs/getting-started'
-            target='__blank'
-            className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
-          >
-            Next.JS <TbBrandNextjs className='inline' />
-          </a>{' '}
-          &{' '}
-          <a
-            aria-label='Read more about OpenAI APi on its official website'
-            href='https://openai.com/api/'
-            target='__blank'
-            className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
-          >
-            OpenAI API <SiOpenai className='inline' />
-          </a>{' '}
-          | Developed by{' '}
-          <a
-            aria-label="Go to Li Yuxuan's personal portfolio page"
-            href='https://xmliszt.github.io/'
-            target='__blank'
-            className='underline text-white dark:text-neon-blue lg:hover:text-white lg:hover:dark:text-neon-red transition-colors'
-          >
-            Li Yuxuan <FiGithub className='inline' />
-          </a>
-        </article>
-      </footer>
+      <Footer />
     </main>
   );
 }

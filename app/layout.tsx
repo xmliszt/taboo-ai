@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
+import WordCarousell from './(components)/WordCarousell';
 
 const specialElite = Special_Elite({
   weight: '400',
@@ -35,6 +36,9 @@ export default function RootLayout({
     >
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
+        {(pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) || (
+          <WordCarousell />
+        )}
         <button
           id='theme'
           aria-label='toggle light/dark button'
@@ -43,7 +47,8 @@ export default function RootLayout({
             pathName === '/'
               ? 'top-5 left-5'
               : (pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) ||
-                pathName === '/result'
+                pathName === '/result' ||
+                pathName === '/whatsnew'
               ? 'top-4 lg:top-3.5 left-12 lg:left-20'
               : pathName === '/levels' ||
                 pathName === '/ai' ||

@@ -362,7 +362,7 @@ export default function ResultPage() {
   return (
     <>
       <BackButton href='/levels' />
-      <h1 className='fixed top-0 w-full h-14 py-4 text-center bg-black dark:bg-neon-black z-10'>
+      <h1 className='fixed top-0 w-full h-20 py-4 text-center gradient-down dark:gradient-down-dark-black z-10'>
         Scoreboard
       </h1>
       <section ref={screenshotRef} className='!leading-screenshot pb-8 pt-4'>
