@@ -19,21 +19,23 @@ export default function HomePage() {
         </div>
       </Link>
       <section className='flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16'>
-        <h1
-          data-testid='heading-title'
-          className='text-center text-4xl lg:text-8xl drop-shadow-lg'
-        >
-          {title}{' '}
+        <div className='w-full relative'>
+          <h1
+            data-testid='heading-title'
+            className='text-center text-4xl lg:text-8xl drop-shadow-lg'
+          >
+            {title}{' '}
+            {/* <span className='text-lg text-white-faded dark:text-neon-white'>
+            BETA
+          </span> */}
+          </h1>
           <Link
-            className='absolute w-full -top-10 left-1/2 lg:-top-12 lg:-right-16 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
+            className='absolute w-full left-[60%] -top-10 lg:-top-12 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
             href='/whatsnew'
           >
             What&apos;s New?
           </Link>
-          {/* <span className='text-lg text-white-faded dark:text-neon-white'>
-            BETA
-          </span> */}
-        </h1>
+        </div>
         <Link
           id='start'
           href='/levels'
