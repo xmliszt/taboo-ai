@@ -36,7 +36,7 @@ export default function RootLayout({
     >
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        {(pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) || (
+        {!(pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) && (
           <WordCarousell />
         )}
         <button
