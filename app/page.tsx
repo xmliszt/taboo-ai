@@ -4,7 +4,7 @@ import CustomWordListLink from './(components)/CustomWordListLink';
 import Footer from './(components)/Footer';
 
 export default function HomePage() {
-  const title = 'Taboo.A';
+  const title = 'Taboo.AI';
 
   return (
     <main className='h-full w-full overflow-auto'>
