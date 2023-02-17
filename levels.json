@@ -465,6 +465,51 @@
         "Anna",
         "Elsa"
       ]
+    },
+    {
+      "name": "Weathers",
+      "difficulty": 1,
+      "new": true,
+      "author": "Austin",
+      "words": [
+        "Blizzard",
+        "Heatwave",
+        "Tornado",
+        "Hurricane",
+        "Thunderstorm",
+        "Hailstorm",
+        "Fog",
+        "Rain",
+        "Snowstorm",
+        "Drought",
+        "Monsoon",
+        "Gale",
+        "Sleet",
+        "Mist",
+        "Windstorm",
+        "Sunny",
+        "Cloudy",
+        "Partly cloudy",
+        "Rainy",
+        "Snowy",
+        "Windy",
+        "Humid",
+        "Muggy",
+        "Stormy",
+        "Sultry",
+        "Breezy",
+        "Freezing",
+        "Mild",
+        "Hot",
+        "Cold",
+        "Wet",
+        "Dry",
+        "Chilly",
+        "Frosty",
+        "Sizzling",
+        "Scorching",
+        "Overcast"
+      ]
     }
   ]
 }
