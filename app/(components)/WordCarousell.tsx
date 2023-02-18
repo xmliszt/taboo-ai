@@ -119,16 +119,16 @@ const getAnimationClass = (): string => {
 
 const getOpacityAndBlurClass = (size: string): string => {
   if (size === 'text-base lg:text-lg') {
-    return 'opacity-10 blur-xxxxs';
+    return 'opacity-[7%] blur-xxxxs';
   }
   if (size === 'text-lg lg:text-2xl') {
-    return 'opacity-[15%] blur-xxxs';
+    return 'opacity-[10%] blur-xxxs';
   }
   if (size === 'text-2xl lg:text-4xl') {
-    return 'opacity-20 blur-xxs';
+    return 'opacity-[12%] blur-xxs';
   }
   if (size === 'text-3xl lg:text-7xl') {
-    return 'opacity-[25%] blur-xs';
+    return 'opacity-[15%] blur-xs';
   }
   return 'opacity-10 blur-xxxxs';
 };

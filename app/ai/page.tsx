@@ -76,7 +76,7 @@ export default function AiPage(props: AiPageProps) {
             </label>
             <label
               htmlFor='topicInput'
-              className='text-xs text-center px-5 lg:text-lg lg:px-16 leading-normal'
+              className='text-sm text-center px-5 lg:text-2xl lg:px-16 leading-normal'
               aria-label='AI Mode Explanation'
             >
               In <b>AI Mode</b>, the topic you provided here will be used for AI
@@ -98,6 +98,7 @@ export default function AiPage(props: AiPageProps) {
                 onChange={onInputChange}
                 placeholder='e.g. Planets'
                 maxLength={50}
+                disabled={isLoading}
                 className={`flex-grow h-12 lg:h-16 leading- ${
                   (!isValid || somethingWrong) &&
                   'border-red dark:bg-neon-red-light dark:text-neon-gray dark:border-neon-white text-gray'
