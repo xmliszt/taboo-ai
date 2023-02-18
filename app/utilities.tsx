@@ -1,4 +1,4 @@
-import { Highlight } from './level/[id]/(models)/Chat.interface';
+import { Highlight } from './level/(models)/Chat.interface';
 
 /**
  * Sanitize the array of Highlight objects such that Highlight

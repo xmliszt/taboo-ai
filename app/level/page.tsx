@@ -3,25 +3,24 @@
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
 import Timer from './(components)/Timer';
 import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
-import {
-  getQueryResponse,
-  getWordVariations,
-} from '../../(services)/aiService';
+import { getQueryResponse, getWordVariations } from '../(services)/aiService';
 import InputDisplay from './(components)/InputDisplay';
 import _ from 'lodash';
 import { Author } from './(models)/Author.enum';
 import ProgressBar from './(components)/ProgressBar';
-import { CONSTANTS } from '../../constants';
+import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { cacheScore, clearScores, getLevelCache } from '../../(caching)/cache';
+import { cacheScore, clearScores, getLevelCache } from '../(caching)/cache';
 import { Highlight } from './(models)/Chat.interface';
-import BackButton from '../../(components)/BackButton';
+import BackButton from '../(components)/BackButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import IVariation from '../../(models)/variationModel';
+import IVariation from '../(models)/variationModel';
 
-export default function LevelPage() {
+interface LevelPageProps {}
+
+export default function LevelPage(props: LevelPageProps) {
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -290,8 +289,7 @@ export default function LevelPage() {
         'Think about your prompt while we generate the Taboo words.'
       );
     } else {
-      toast.error('Unable to fetch levels. Please try again!');
-      router.push('/levels');
+      throw Error('No level is chosen');
     }
   }, []);
 

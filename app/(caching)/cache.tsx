@@ -1,4 +1,4 @@
-import IScore from '../level/[id]/(models)/Score.interface';
+import IScore from '../level/(models)/Score.interface';
 import ILevel from '../levels/(models)/level.interface';
 
 export function cacheLevel(level: ILevel) {

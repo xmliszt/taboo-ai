@@ -4,7 +4,9 @@ import content from './content.md';
 import style from './style.module.css';
 import Footer from '../(components)/Footer';
 
-export default async function WhatsNewPage() {
+interface WhatsNewPageProps {}
+
+export default async function WhatsNewPage(props: WhatsNewPageProps) {
   return (
     <section className='flex justify-center'>
       <BackButton href='/' />

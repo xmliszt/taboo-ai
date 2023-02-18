@@ -8,7 +8,9 @@ import { cacheLevel } from '../(caching)/cache';
 import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/Loading';
 
-export default function AiPage() {
+interface AiPageProps {}
+
+export default function AiPage(props: AiPageProps) {
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<number>(1);
   const [isValid, setIsValid] = useState<boolean>(true);
@@ -28,7 +30,7 @@ export default function AiPage() {
             return setSomethingWrong(true);
           }
           cacheLevel(level);
-          router.push('/level/' + level.id);
+          router.push('/level');
         } else {
           throw new Error(CONSTANTS.errors.overloaded);
         }

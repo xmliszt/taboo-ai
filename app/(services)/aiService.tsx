@@ -116,7 +116,6 @@ export async function getCreativeLevel(
     }
     words = words.map((word) => _.startCase(_.toLower(word)));
     return {
-      id: uniqueId(),
       name: topic,
       difficulty: difficulty,
       words: words,

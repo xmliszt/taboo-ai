@@ -23,7 +23,9 @@ jest.mock('path', () => ({
 }));
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
-  readFileSync: jest.fn().mockReturnValue('{"levels":[{"difficulty": 100}]}'),
+  readFileSync: jest
+    .fn()
+    .mockReturnValue('{"levels":[{"difficulty": 100, "name": "hello"}]}'),
 }));
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
@@ -46,7 +48,7 @@ describe('/api/level 200', () => {
     const levels: ILevel[] = res._getJSONData().levels;
     expect(res.statusCode).toBe(200);
     expect(levels.length).toBe(1);
-    expect(levels[0].id).toBe(1);
+    expect(levels[0].name).toBe('hello');
     expect(levels[0].difficulty).toBe(100);
   });
 

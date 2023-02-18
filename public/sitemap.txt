@@ -1,6 +1,7 @@
 https://taboo-ai.vercel.app/
 https://taboo-ai.vercel.app/rule
 https://taboo-ai.vercel.app/levels
+https://taboo-ai.vercel.app/level
 https://taboo-ai.vercel.app/ai
 https://taboo-ai.vercel.app/results
 https://taboo-ai.vercel.app/whatsnew
