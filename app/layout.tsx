@@ -2,21 +2,37 @@
 
 import './global.css';
 import './main.css';
-import { Orbitron, Special_Elite } from '@next/font/google';
+import { Orbitron, Grenze } from '@next/font/google';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 import WordCarousell from './(components)/WordCarousell';
 
-const specialElite = Special_Elite({
+const specialElite = Grenze({
   weight: '400',
   subsets: ['latin'],
+  fallback: [
+    'ui-serif',
+    'Georgia',
+    'Cambria',
+    'Times New Roman',
+    'Times',
+    'serif',
+  ],
 });
 
 const orbitron = Orbitron({
   weight: '400',
   subsets: ['latin'],
+  fallback: [
+    'ui-serif',
+    'Georgia',
+    'Cambria',
+    'Times New Roman',
+    'Times',
+    'serif',
+  ],
 });
 
 export default function RootLayout({
@@ -36,9 +52,7 @@ export default function RootLayout({
     >
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        {!(pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) && (
-          <WordCarousell />
-        )}
+        {!(pathName?.match(/^\/level$/)?.length ?? 0 > 0) && <WordCarousell />}
         <button
           id='theme'
           aria-label='toggle light/dark button'
@@ -46,7 +60,7 @@ export default function RootLayout({
           className={`fixed z-50 ${
             pathName === '/'
               ? 'top-5 left-5'
-              : (pathName?.match(/^\/level\/\d*/)?.length ?? 0 > 0) ||
+              : (pathName?.match(/^\/level$/)?.length ?? 0 > 0) ||
                 pathName === '/result' ||
                 pathName === '/whatsnew'
               ? 'top-4 lg:top-3.5 left-12 lg:left-20'

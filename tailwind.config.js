@@ -10,6 +10,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      blur: {
+        xxxxs: '2px',
+        xxxs: '1.5px',
+        xxs: '1px',
+        xs: '0.5px',
+      },
       lineHeight: {
         screenshot: '1.5',
       },
