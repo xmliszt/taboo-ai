@@ -299,7 +299,7 @@ export default function ResultPage(props: ResultPageProps) {
               </tr>
             </thead>
             <tbody className='divide-y text-left text-xs lg:text-xl text-gray bg-white dark:text-neon-white dark:bg-neon-black'>
-              <tr className='sticky top-24 left-0 '>
+              <tr>
                 <td
                   colSpan={7}
                   className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
