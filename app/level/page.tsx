@@ -289,8 +289,7 @@ export default function LevelPage(props: LevelPageProps) {
         'Think about your prompt while we generate the Taboo words.'
       );
     } else {
-      toast.error('Unable to fetch levels. Please try again!');
-      router.push('/levels');
+      throw Error('No level is chosen');
     }
   }, []);
 

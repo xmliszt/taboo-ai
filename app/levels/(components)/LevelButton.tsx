@@ -21,14 +21,14 @@ export default function LevelButton({
     }
     if (level) {
       cacheLevel(level);
-      return router.push(`/level/${level.id}`);
+      return router.push(`/level`);
     }
   };
 
   return (
     <button
-      aria-label={`level button: level ${level?.id ?? 'ai'}`}
-      data-testid={`level-link-${level?.id ?? 'ai'}`}
+      aria-label={`level button: level ${level?.name ?? 'ai'}`}
+      data-testid={`level-link-${level?.name ?? 'ai'}`}
       className={`${
         isAI && 'unicorn-color'
       } h-full w-full text-xs lg:text-2xl px-2 py-2 lg:px-10 lg:py-4 break-words ${customClass}`}

@@ -30,6 +30,7 @@ export default function ResultPage(props: ResultPageProps) {
 
   useEffect(() => {
     const scores = getScoresCache();
+    if (!scores) throw Error('No recent results available.');
     const level = getLevelCache();
     scores && setScores(scores);
     level && setLevel(level);
