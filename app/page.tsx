@@ -30,7 +30,7 @@ export default function HomePage() {
           </span> */}
           </h1>
           <Link
-            className='absolute w-full left-[60%] -top-10 lg:-top-12 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
+            className='absolute left-[60%] -top-10 lg:-top-12 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
             href='/whatsnew'
           >
             What&apos;s New?
