@@ -2,7 +2,9 @@
 
 import BackButton from '../(components)/BackButton';
 
-export default function RulePage() {
+interface RulePageProps {}
+
+export default function RulePage(props: RulePageProps) {
   return (
     <>
       <BackButton href='/' />

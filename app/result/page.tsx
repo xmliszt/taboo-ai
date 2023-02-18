@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import ILevel from '../levels/(models)/level.interface';
-import IScore from '../level/[id]/(models)/Score.interface';
+import IScore from '../level/(models)/Score.interface';
 import { getScoresCache, getLevelCache } from '../(caching)/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';
 import _ from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Highlight } from '../level/[id]/(models)/Chat.interface';
+import { Highlight } from '../level/(models)/Chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
 
 interface StatItem {
@@ -19,7 +19,9 @@ interface StatItem {
   highlights?: Highlight[];
 }
 
-export default function ResultPage() {
+interface ResultPageProps {}
+
+export default function ResultPage(props: ResultPageProps) {
   const [scores, setScores] = useState<IScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
   const [total, setTotal] = useState<number>(0);

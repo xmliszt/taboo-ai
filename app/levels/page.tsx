@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { clearLevel } from '../(caching)/cache';
 import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/Loading';
@@ -12,7 +12,9 @@ import NewBadge from './(components)/NewBadge';
 import AuthorBadge from './(components)/AuthorBadge';
 import LevelButton from './(components)/LevelButton';
 
-export default function LevelsPage() {
+interface LevelsPageProps {}
+
+export default function LevelsPage(props: LevelsPageProps) {
   const title = 'Choose A Category';
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -72,7 +74,7 @@ export default function LevelsPage() {
         {levels.map((level) =>
           level.new ? (
             <Badge
-              key={level.id}
+              key={level.name}
               label={getDifficulty(level.difficulty)}
               customClass={getDifficultyColor(level.difficulty)}
             >
@@ -94,7 +96,7 @@ export default function LevelsPage() {
             </Badge>
           ) : (
             <Badge
-              key={level.id}
+              key={level.name}
               label={getDifficulty(level.difficulty)}
               customClass={getDifficultyColor(level.difficulty)}
             >
