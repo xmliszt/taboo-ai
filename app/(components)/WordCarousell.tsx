@@ -117,6 +117,22 @@ const getAnimationClass = (): string => {
   return animationClasses[Math.floor(Math.random() * animationClasses.length)];
 };
 
+const getOpacityAndBlurClass = (size: string): string => {
+  if (size === 'text-base lg:text-lg') {
+    return 'opacity-10 blur-xxxxs';
+  }
+  if (size === 'text-lg lg:text-2xl') {
+    return 'opacity-[15%] blur-xxxs';
+  }
+  if (size === 'text-2xl lg:text-4xl') {
+    return 'opacity-20 blur-xxs';
+  }
+  if (size === 'text-3xl lg:text-7xl') {
+    return 'opacity-[25%] blur-xs';
+  }
+  return 'opacity-10 blur-xxxxs';
+};
+
 let cache: JSX.Element[];
 
 export default function WordCarousell() {
@@ -125,10 +141,14 @@ export default function WordCarousell() {
     wordsElements = [...cache];
   } else {
     wordsElements = words.map((word) => {
-      const size = sizes[Math.floor(Math.random() * sizes.length)];
+      const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
       const animationClass = getAnimationClass();
+      const opacityBlurClass = getOpacityAndBlurClass(sizeClass);
       return (
-        <div key={word} className={`${animationClass} ${size} w-full`}>
+        <div
+          key={word}
+          className={`${animationClass} ${opacityBlurClass} ${sizeClass} w-full`}
+        >
           {word}
         </div>
       );
@@ -136,7 +156,7 @@ export default function WordCarousell() {
     cache = wordsElements;
   }
   return (
-    <div className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif opacity-10 pointer-events-none'>
+    <div className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif pointer-events-none'>
       {wordsElements}
     </div>
   );
