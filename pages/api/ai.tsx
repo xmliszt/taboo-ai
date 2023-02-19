@@ -8,6 +8,9 @@ export default async function handler(
   if (!apiKey) return res.status(500).send({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
     const prompt = req.body.prompt;
+    const temperature = parseFloat(req.body.temperature);
+    const maxToken = parseInt(req.body.maxToken);
+
     try {
       const response = await fetch('https://api.openai.com/v1/completions', {
         method: 'POST',
@@ -17,13 +20,16 @@ export default async function handler(
           Authorization: 'Bearer ' + apiKey,
         },
         body: JSON.stringify({
-          model: 'text-davinci-003',
+          model: 'text-curie-001',
           prompt,
-          temperature: 0.9,
-          max_tokens: 2900,
+          temperature: Number.isNaN(temperature) ? 0.9 : temperature,
+          max_tokens: Number.isNaN(maxToken) ? 500 : maxToken,
+          n: 1,
+          stop: ['[]', '{}'],
         }),
       });
       const json = await response.json();
+      console.log(json);
       if (json.error) {
         res.status(500).json(json.error);
         return;
