@@ -45,6 +45,20 @@ export default function RulePage(props: RulePageProps) {
             3. Successfully trick AI into saying <b>all 5 words</b> given to win
             the game. You can view your scores and share them with your friends!
           </p>
+          <p className='text-justify text-gray text-sm'>
+            Disclaimer: The game is solely relying on{' '}
+            <a href='https://openai.com/api/pricing/'>
+              OpenAI Davinci Language Model
+            </a>{' '}
+            to generate AI response and taboo words. Without it, the game will
+            not be possible. However, sometimes even paid model has overloaded
+            requests from all over the world. Hence you might experience some
+            internet hiccups here and there. But not to worry! Just simply try
+            again and submit your prompt again until it succeeds. (Usually the
+            downtime won&apos;t be that long, after at most 5 tries you should
+            be able to get your reponse!) I will pause the timer for you so you
+            won&apos;t be at disadvantage if such incident happens 😉
+          </p>
         </article>
       </section>
     </>
