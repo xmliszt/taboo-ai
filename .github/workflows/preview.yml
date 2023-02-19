@@ -6,9 +6,6 @@ on:
   push:
     branches:
       - 'releases/**'
-  pull_request:
-    branches:
-      - 'releases/**'
 jobs:
   Deploy-Preview:
     timeout-minutes: 60
