@@ -7,7 +7,25 @@ on:
     branches:
       - main
 jobs:
-  Deploy-Production:
+  Unit-Test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Linting Code and Styles
+        run: npm run lint
+      - name: Make It Prettier
+        run: npm run style
+      - name: Running Jest Tests
+        run: npm test
+  E2E-Test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -21,16 +39,6 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Linting Code and Styles
-        run: npm run lint
-      - name: Make It Prettier
-        run: npm run style
-      - name: Running Jest Tests
-        run: npm test
       - name: Running Playwright E2E Tests
         run: npm run test:e2e
       - uses: actions/upload-artifact@v3
@@ -39,6 +47,23 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+  Deploy-Production:
+    needs: [Unit-Test, E2E-Test]
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
