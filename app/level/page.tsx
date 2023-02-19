@@ -285,7 +285,8 @@ export default function LevelPage(props: LevelPageProps) {
 
   // * When progress changed
   useEffect(() => {
-    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
+    const isLastRound =
+      currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
       isLastRound &&
         toast.success('Congratulations! Generating your results...');
