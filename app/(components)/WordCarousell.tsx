@@ -136,25 +136,23 @@ const getOpacityAndBlurClass = (size: string): string => {
 let cache: JSX.Element[];
 
 export default function WordCarousell() {
-  let wordsElements: JSX.Element[];
-  if (cache) {
-    wordsElements = [...cache];
-  } else {
-    wordsElements = words.map((word) => {
-      const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-      const animationClass = getAnimationClass();
-      const opacityBlurClass = getOpacityAndBlurClass(sizeClass);
-      return (
-        <div
-          key={word}
-          className={`${animationClass} ${opacityBlurClass} ${sizeClass} w-full`}
-        >
-          {word}
-        </div>
-      );
-    });
-    cache = wordsElements;
-  }
+  const wordsElements =
+    !cache || cache?.length === 0
+      ? words.map((word) => {
+          const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
+          const animationClass = getAnimationClass();
+          const opacityBlurClass = getOpacityAndBlurClass(sizeClass);
+          return (
+            <div
+              key={word}
+              className={`${animationClass} ${opacityBlurClass} ${sizeClass} w-full`}
+            >
+              {word}
+            </div>
+          );
+        })
+      : cache;
+  cache = wordsElements;
   return (
     <div className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif pointer-events-none'>
       {wordsElements}

@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import { BsFillQuestionDiamondFill } from 'react-icons/bs';
+import { GiCoffeeCup } from 'react-icons/gi';
+import { SiDiscord } from 'react-icons/si';
 import CustomWordListLink from './(components)/CustomWordListLink';
 import Footer from './(components)/Footer';
+import SocialLinkButton from './(components)/SocialLinkButton';
 
 export default function HomePage() {
   const title = 'Taboo.AI';
+  const versionNumber = 'V1.3';
 
   return (
     <main className='h-full w-full overflow-auto'>
@@ -25,9 +29,9 @@ export default function HomePage() {
             className='text-center text-4xl lg:text-8xl drop-shadow-lg'
           >
             {title}{' '}
-            {/* <span className='text-lg text-white-faded dark:text-neon-white'>
-            BETA
-          </span> */}
+            <span className='text-lg text-white-faded dark:text-neon-white'>
+              {versionNumber}
+            </span>
           </h1>
           <Link
             className='absolute left-[60%] -top-10 lg:-top-12 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
@@ -46,6 +50,21 @@ export default function HomePage() {
         </Link>
         <CustomWordListLink />
       </section>
+      <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-[999]'>
+        <SocialLinkButton
+          content='Buy Me Coffee'
+          icon={<GiCoffeeCup />}
+          href='/buymecoffee'
+        />
+        <SocialLinkButton
+          content='Join Discord!'
+          icon={<SiDiscord />}
+          href='https://discord.gg/dgqs29CHC2'
+          newTab={true}
+          accentColorClass='bg-purple dark:bg-neon-purple'
+          dropShadowClass='hover:drop-shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
+        />
+      </div>
       <Footer />
     </main>
   );
