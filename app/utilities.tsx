@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Highlight } from './level/(models)/Chat.interface';
 
 /**
@@ -25,7 +26,9 @@ export const sanitizeHighlights = (highlights: Highlight[]): Highlight[] => {
   let idx = 0;
   for (const highlight of highlightsArray) {
     if (highlight.start < prevEnd) {
-      results[idx - 1].end = highlight.end;
+      if (highlight.end > prevEnd) {
+        results[idx - 1].end = highlight.end;
+      }
     } else {
       results.push(highlight);
       prevEnd = highlight.end;
@@ -61,4 +64,45 @@ export const applyHighlightsToMessage = (
     parts.push(onNormalMessagePart(message.substring(endIndex)));
   }
   return parts;
+};
+
+export const formatResponseTextIntoArray = (
+  text: string,
+  target?: string
+): string[] => {
+  let wordList: string[];
+  const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+  try {
+    wordList = JSON.parse(text) as string[];
+  } catch {
+    try {
+      const sanitizedString = text.trim();
+      wordList = sanitizedString.split(',');
+      if (wordList.length <= 1) {
+        wordList = sanitizedString.split('\n');
+        if (wordList.length <= 1) {
+          wordList = [];
+        }
+      }
+      wordList = _.uniq(
+        wordList.map((text) =>
+          _.trim(text.replace(/\d/g, ''), punctuation).toLowerCase()
+        )
+      );
+      wordList = wordList.filter((text) => text.length > 0);
+    } catch {
+      wordList = [];
+    }
+  }
+  wordList = wordList.map((e) =>
+    _.startCase(_.toLower(_.trim(e, punctuation)))
+  );
+  wordList = _.uniq(wordList);
+  if (target) {
+    const _word = _.startCase(_.toLower(target));
+    if (!wordList.includes(_word)) {
+      wordList.push(_word);
+    }
+  }
+  return wordList;
 };

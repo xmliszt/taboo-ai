@@ -48,7 +48,7 @@ export default function RulePage(props: RulePageProps) {
           <p className='text-justify text-gray text-sm'>
             Disclaimer: The game is solely relying on{' '}
             <a href='https://openai.com/api/pricing/'>
-              OpenAI Davinci Language Model
+              OpenAI Curie Language Model
             </a>{' '}
             to generate AI response and taboo words. Without it, the game will
             not be possible. However, sometimes even paid model has overloaded

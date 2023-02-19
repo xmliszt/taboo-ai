@@ -195,11 +195,6 @@ export default function LevelPage(props: LevelPageProps) {
 
   const nextQuestion = async () => {
     pause();
-    setIsSuccess(true); // set the background
-    setTimeout(() => {
-      setIsSuccess(false);
-    }, 1000);
-    setIsResponseFaded(true);
     const question = userInput.slice();
     cacheScore({
       id: currentProgress,
@@ -210,21 +205,14 @@ export default function LevelPage(props: LevelPageProps) {
       completion: time,
       responseHighlights: highlights,
     });
-    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame;
-    if (isLastRound) {
-      isLastRound &&
-        toast.success('Congratulations! Generating your results...');
-      setTimeout(() => {
-        router.push('/result');
-      }, 2000);
-    } else {
-      const _target = generateNewTarget(words);
-      setTarget(_target);
-      setVariations([_target]);
+    setIsSuccess(true); // set the background
+    setIsResponseFaded(true);
+    setTimeout(() => {
+      setIsSuccess(false);
+    }, 1000);
+    setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
-      setUserInput('');
-      setInputShouldFadeOut(false);
-    }
+    }, 5000);
   };
 
   const generateVariationsForTarget = (
@@ -260,15 +248,17 @@ export default function LevelPage(props: LevelPageProps) {
       setIsInputEnabled(false);
       toast.info('Generating new taboo words...');
       generateVariationsForTarget(5, target, (variations) => {
-        setIsGeneratingVariations(false);
-        if (variations) {
-          variations.target === target && setVariations(variations.variations);
-        } else {
-          setVariations([target]);
-        }
-        setResponseShouldFadeOut(true);
-        setResponseText('');
-        startCountdown();
+        setTimeout(() => {
+          setIsGeneratingVariations(false);
+          if (variations && variations.target === target) {
+            setVariations(variations.variations);
+          } else {
+            setVariations([target]);
+          }
+          setResponseShouldFadeOut(true);
+          setResponseText('');
+          startCountdown();
+        }, 2000);
       });
     }
   }, [target]);
@@ -293,6 +283,27 @@ export default function LevelPage(props: LevelPageProps) {
     }
   }, []);
 
+  // * When progress changed
+  useEffect(() => {
+    const isLastRound =
+      currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
+    if (isLastRound) {
+      isLastRound &&
+        toast.success('Congratulations! Generating your results...');
+      setTimeout(() => {
+        router.push('/result');
+      }, 2000);
+    } else if (currentProgress === 1) {
+      return;
+    } else {
+      const _target = generateNewTarget(words);
+      setTarget(_target);
+      setVariations([_target]);
+      setUserInput('');
+      setInputShouldFadeOut(false);
+    }
+  }, [currentProgress]);
+
   // * Timer control
   useEffect(() => {
     if (isCountingdown) {
@@ -302,7 +313,7 @@ export default function LevelPage(props: LevelPageProps) {
 
   // * Compute highlight match
   useEffect(() => {
-    if (target !== null) {
+    if (target) {
       const highlights = generateHighlights(responseText, true);
       setHighlights(highlights);
     }
@@ -310,7 +321,7 @@ export default function LevelPage(props: LevelPageProps) {
 
   // * Compute user input validation match
   useEffect(() => {
-    if (target !== null) {
+    if (userInput) {
       const highlights = generateHighlights(userInput, false);
       setUserInputHighlights(highlights);
     }
