@@ -3,9 +3,10 @@
 ## 19 Feb - Release Notes (V1.3)
 
 - Version number indicator to inform players about version updates.
-- **OpenAI API free trial ended**. Started paid subscription to continue use the Davinci model to provide users with smooth gameplay experience.
+- **OpenAI API free trial ended**. Started paid subscription to continue use the Curie model to provide users with smooth gameplay experience.
 - Added **"Buy Me Coffee"** to call for kind supports from the players. If you like this game, can buy me a coffee so that I can continue to maintain the game and update it to bring more fun and exciting features to you! **Thank you for your kind support** ❤️!
 - Disclaimer for possible internet hiccups due to the **overloaded OpenAI service**.
+- AI prompts improvements.
 - Overall fonts update.
 
 ## 16 Feb - Release Notes (V1.2)
