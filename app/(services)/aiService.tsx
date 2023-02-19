@@ -28,7 +28,7 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate 10 words related to ${word}, to be played in a taboo game, includes all lemma (e.g. tenses) for each word, each as a single element, all in one flattened array in JSON format.`,
+      prompt: `Generate words related to "${word}" to be played in a taboo game. Make it trickier! Includes all lemma (e.g. tenses) for each word, each as a single element, all in one flattened array in JSON format.`,
     }),
     cache: 'no-store',
   });

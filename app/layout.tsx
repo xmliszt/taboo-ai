@@ -62,7 +62,8 @@ export default function RootLayout({
               ? 'top-5 left-5'
               : (pathName?.match(/^\/level$/)?.length ?? 0 > 0) ||
                 pathName === '/result' ||
-                pathName === '/whatsnew'
+                pathName === '/whatsnew' ||
+                pathName === '/buymecoffee'
               ? 'top-4 lg:top-3.5 left-12 lg:left-20'
               : pathName === '/levels' ||
                 pathName === '/ai' ||
