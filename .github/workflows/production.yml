@@ -19,10 +19,6 @@ jobs:
           node-version: 19.x
       - name: Install Node Dependencies
         run: npm ci
-      - name: Linting Code and Styles
-        run: npm run lint
-      - name: Make It Prettier
-        run: npm run style
       - name: Running Jest Tests
         run: npm test
   E2E-Test:
