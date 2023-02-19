@@ -1,8 +1,8 @@
-import { uniqueId } from 'lodash';
 import ILevel from '../levels/(models)/level.interface';
 import _ from 'lodash';
 import { CONSTANTS } from '../constants';
 import IVariation from '../(models)/variationModel';
+import { formatResponseTextIntoArray } from '../utilities';
 
 export async function getQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {
@@ -12,7 +12,7 @@ export async function getQueryResponse(prompt: string): Promise<string> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Your best response to "${prompt}" in readable form.`,
+      prompt: `Question: ${prompt}\n Best Answer: {}`,
     }),
     cache: 'no-store',
   });
@@ -28,41 +28,15 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate words related to "${word}" to be played in a taboo game. Make it trickier! Includes all lemma (e.g. tenses) for each word, each as a single element, all in one flattened array in JSON format.`,
+      prompt: `Generate a list of at least 15 words related to the word '${word}' or its lemma forms, to be played in the Taboo game, each word is one-word, insert the words generated in an comma separated array: [word1, word2, ...]`,
+      temperature: 0.8,
+      maxToken: 100,
     }),
     cache: 'no-store',
   });
   const json = await response.json();
-  let text = json.response;
-  console.log(text);
-  text = text.replace(/^\s+|\s+$/g, '');
-  let variations: string[];
-  const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-  try {
-    variations = JSON.parse(text) as string[];
-  } catch {
-    try {
-      const punctuationWithDigits =
-        '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789';
-      const sanitizedString = _.trim(text, punctuation);
-      variations = sanitizedString.split(',');
-      variations = _.uniq(
-        variations.map((text) =>
-          _.trim(text, punctuationWithDigits).toLowerCase()
-        )
-      );
-    } catch {
-      variations = [];
-    }
-  }
-  variations = variations.map((e) =>
-    _.startCase(_.toLower(_.trim(e, punctuation)))
-  );
-  variations = _.uniq(variations);
-  const _word = _.startCase(_.toLower(word));
-  if (!variations.includes(_word)) {
-    variations.push(_word);
-  }
+  const text = json.response;
+  const variations = formatResponseTextIntoArray(text, word);
   return {
     target: word,
     variations: variations,
@@ -95,26 +69,15 @@ export async function getCreativeLevel(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate ${CONSTANTS.numberOfQuestionsPerGame} unique '${topic}' words that are ${difficultyString}, in an array of strings in JSON format.`,
+      prompt: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in the topic of ${topic} that are ${difficultyString}. Insert the words generated in an array: [word1, word2, ...]`,
+      temperature: 0.8,
+      maxToken: 50,
     }),
   });
   const json = await respone.json();
   const text = json.response;
   if (text) {
-    let words: string[];
-    try {
-      words = JSON.parse(text) as string[];
-    } catch {
-      const wordsString: string = text
-        .replaceAll(/\n*\d*\.\s/gi, ',')
-        .replaceAll('\n', ',')
-        .replaceAll(/^\W/gi, '');
-      words = wordsString.split(', ');
-      if (words.length < CONSTANTS.numberOfQuestionsPerGame) {
-        words = wordsString.split(',');
-      }
-    }
-    words = words.map((word) => _.startCase(_.toLower(word)));
+    const words = formatResponseTextIntoArray(text);
     return {
       name: topic,
       difficulty: difficulty,
