@@ -362,7 +362,7 @@ export default function LevelPage(props: LevelPageProps) {
       nextQuestion();
     } else {
       setIsSuccess(false);
-      isCountingdown ? stop() : start();
+      isCountingdown ? stop() : currentProgress > 1 && start();
     }
   }, [highlights]);
   //!SECTION
