@@ -54,7 +54,6 @@ export default function LevelsPage(props: LevelsPageProps) {
 
   useEffect(() => {
     fetchLevels();
-    clearLevel();
   }, []);
 
   return (

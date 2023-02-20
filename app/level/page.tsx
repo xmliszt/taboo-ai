@@ -11,16 +11,23 @@ import ProgressBar from './(components)/ProgressBar';
 import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { cacheScore, clearScores, getLevelCache } from '../(caching)/cache';
+import {
+  cacheScore,
+  clearLevel,
+  clearScores,
+  getLevelCache,
+} from '../(caching)/cache';
 import { Highlight } from './(models)/Chat.interface';
 import BackButton from '../(components)/BackButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../(models)/variationModel';
+import { getMockResponse, getMockVariations } from '../utilities';
 
 interface LevelPageProps {}
 
 export default function LevelPage(props: LevelPageProps) {
+  //SECTION - States
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -39,11 +46,10 @@ export default function LevelPage(props: LevelPageProps) {
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [showSuccessBackground, setShowSuccessBackground] = useState(false);
   const [isResponseFaded, setIsResponseFaded] = useState<boolean>(false);
   const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
   const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
-  const [isAbleToSubmitInput, setIsAbleToSubmitInput] = useState<boolean>(true);
-  const [isInputEnabled, setIsInputEnabled] = useState<boolean>(false);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
@@ -58,13 +64,13 @@ export default function LevelPage(props: LevelPageProps) {
     onTimeOver: () => {
       setIsCountdown(false);
       start();
-      setIsInputEnabled(true);
       inputTextField.current?.focus();
     },
   });
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  //!SECTION
 
   const generateNewTarget = (words: string[]): string => {
     const _target = words[Math.floor(Math.random() * words.length)];
@@ -78,8 +84,12 @@ export default function LevelPage(props: LevelPageProps) {
   };
 
   const getRegexPattern = (target: string): RegExp => {
-    const magicSeparator = '\\W*';
-    const groupRegexString = `(${target.split('').join(magicSeparator)})`;
+    const magicSeparator = '[\\W_]*';
+    const magicMatchString = target
+      .replace(/\W/g, '')
+      .split('')
+      .join(magicSeparator);
+    const groupRegexString = `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`;
     return new RegExp(groupRegexString, 'gi');
   };
 
@@ -115,7 +125,8 @@ export default function LevelPage(props: LevelPageProps) {
         }
         const startIndex = result.index;
         const endIndex = regex.lastIndex;
-        highlights.push({ start: startIndex, end: endIndex });
+        const highlight = { start: startIndex, end: endIndex };
+        highlights.push(highlight);
       }
     } else {
       for (const variation of variations) {
@@ -130,7 +141,8 @@ export default function LevelPage(props: LevelPageProps) {
             }
             const startIndex = result.index;
             const endIndex = regex.lastIndex;
-            highlights.push({ start: startIndex, end: endIndex });
+            const highlight = { start: startIndex, end: endIndex };
+            highlights.push(highlight);
           }
         }
       }
@@ -138,61 +150,65 @@ export default function LevelPage(props: LevelPageProps) {
     return highlights;
   };
 
+  //SECTION - On Input Changed
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setResponseText('');
     setUserInput(event.target.value);
     setIsEmptyInput(event.target.value.length <= 0);
-    setIsAbleToSubmitInput(event.target.value.length > 0);
   };
+  //!SECTION
 
+  //SECTION - On Input submitted
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     setResponseText('');
     setResponseShouldFadeOut(true); // Fade out current response if any
-    if (isAbleToSubmitInput && isValidInput && userInput.length > 0) {
+    if (isValidInput && userInput.length > 0) {
       setInputShouldFadeOut(false);
       setIsInputConfirmed(true); // Input ping animation
       fetchResponse(userInput);
     }
   };
+  //!SECTION
 
+  //SECTION - Fetch Response
   const fetchResponse = async (prompt: string) => {
-    setIsInputEnabled(false);
-    setIsAbleToSubmitInput(false);
     setIsLoading(true);
     pause();
-    // ! Make sure response fade out completely!
+    // * Make sure response fade out completely!
     setTimeout(async () => {
       try {
-        let responseText = await getQueryResponse(prompt);
-        setIsLoading(false);
+        let responseText = localStorage.getItem('dev')
+          ? await getMockResponse(target ?? '', true)
+          : await getQueryResponse(prompt);
         if (!responseText) {
           responseText = CONSTANTS.errors.overloaded;
         }
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
-        // Wait for input fade out completely, then show response
+        // * Wait for input fade out completely, then show response
         setTimeout(() => {
           responseText && setResponseText(responseText);
+          setIsLoading(false);
           setResponseShouldFadeOut(false); // Let new response fade in
           setIsResponseFaded(false);
           setInputShouldFadeOut(false); // Reset input fade animation
         }, 1000);
       } catch (err) {
         // Server error
+        setIsSuccess(false);
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
         toast.error(CONSTANTS.errors.overloaded);
-      } finally {
-        setIsAbleToSubmitInput(true);
-        setIsInputEnabled(true);
-        start();
+        setIsLoading(false);
       }
     }, 1000);
   };
+  //!SECTION
 
+  //SECTION - Next Question
   const nextQuestion = async () => {
     pause();
     const question = userInput.slice();
@@ -205,15 +221,19 @@ export default function LevelPage(props: LevelPageProps) {
       completion: time,
       responseHighlights: highlights,
     });
-    setIsSuccess(true); // set the background
+    setShowSuccessBackground(true);
+    setIsSuccess(true);
     setIsResponseFaded(true);
     setTimeout(() => {
-      setIsSuccess(false);
+      setShowSuccessBackground(false);
     }, 1000);
+    currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
+      toast.success('Game Over! Generating Results...');
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
   };
+  //!SECTION
 
   const generateVariationsForTarget = (
     retries: number,
@@ -221,17 +241,29 @@ export default function LevelPage(props: LevelPageProps) {
     callback: (variations?: IVariation) => void
   ) => {
     setRetryCount(retries);
-    getWordVariations(target)
-      .then((variations) => {
-        callback(variations);
-      })
-      .catch(() => {
-        if (retries > 0) {
-          generateVariationsForTarget(retries - 1, target, callback);
-        } else {
-          callback();
-        }
-      });
+    localStorage.getItem('dev')
+      ? getMockVariations(target, true)
+          .then((variations) => {
+            callback(variations);
+          })
+          .catch(() => {
+            if (retries > 0) {
+              generateVariationsForTarget(retries - 1, target, callback);
+            } else {
+              callback();
+            }
+          })
+      : getWordVariations(target)
+          .then((variations) => {
+            callback(variations);
+          })
+          .catch(() => {
+            if (retries > 0) {
+              generateVariationsForTarget(retries - 1, target, callback);
+            } else {
+              callback();
+            }
+          });
   };
 
   const startCountdown = () => {
@@ -240,12 +272,11 @@ export default function LevelPage(props: LevelPageProps) {
     reset();
   };
 
+  //SECTION - When target changed
   useEffect(() => {
     if (target) {
       setVariations([target]);
       setIsGeneratingVariations(true);
-      setIsAbleToSubmitInput(false);
-      setIsInputEnabled(false);
       toast.info('Generating new taboo words...');
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
@@ -262,8 +293,9 @@ export default function LevelPage(props: LevelPageProps) {
       });
     }
   }, [target]);
+  //!SECTION
 
-  // * At the start of the game
+  //SECTION - At the start of the game
   useEffect(() => {
     clearScores();
     const level = getLevelCache();
@@ -274,6 +306,7 @@ export default function LevelPage(props: LevelPageProps) {
       const _target = generateNewTarget(level.words);
       setTarget(_target);
       setCurrentProgress(1);
+      setIsSuccess(false);
       setResponseShouldFadeOut(false); // Let new response fade in
       setResponseText(
         'Think about your prompt while we generate the Taboo words.'
@@ -282,17 +315,14 @@ export default function LevelPage(props: LevelPageProps) {
       throw Error('No level is chosen');
     }
   }, []);
+  //!SECTION
 
-  // * When progress changed
+  //SECTION - When progress changed
   useEffect(() => {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      isLastRound &&
-        toast.success('Congratulations! Generating your results...');
-      setTimeout(() => {
-        router.push('/result');
-      }, 2000);
+      router.push('/result');
     } else if (currentProgress === 1) {
       return;
     } else {
@@ -301,43 +331,55 @@ export default function LevelPage(props: LevelPageProps) {
       setVariations([_target]);
       setUserInput('');
       setInputShouldFadeOut(false);
+      setIsSuccess(false);
     }
   }, [currentProgress]);
+  //!SECTION
 
-  // * Timer control
+  //SECITON - Timer control
   useEffect(() => {
     if (isCountingdown) {
       reset();
     }
   }, [isCountingdown]);
+  //!SECTION
 
-  // * Compute highlight match
+  //SECTION -  Compute highlight match
   useEffect(() => {
     if (target) {
       const highlights = generateHighlights(responseText, true);
       setHighlights(highlights);
     }
   }, [responseText]);
+  //!SECTION
 
-  // * Compute user input validation match
+  //SECTION - Compute user input validation match
   useEffect(() => {
     if (userInput) {
       const highlights = generateHighlights(userInput, false);
       setUserInputHighlights(highlights);
+    } else {
+      setUserInputHighlights([]);
     }
   }, [userInput]);
+  //!SECTION
 
-  // * Next Question Condition
+  //SECTION - When highlights updated
   useEffect(() => {
     if (highlights.length > 0) {
       nextQuestion();
+    } else {
+      setIsSuccess(false);
+      isCountingdown ? stop() : currentProgress > 1 && start();
     }
   }, [highlights]);
+  //!SECTION
 
-  // * User input validation condition
+  //SECTION - User input validation condition
   useEffect(() => {
     setIsValidInput(userInputHighlights.length == 0);
   }, [userInputHighlights]);
+  //!SECTION
 
   return (
     <>
@@ -375,7 +417,7 @@ export default function LevelPage(props: LevelPageProps) {
       <section
         className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
           isValidInput ? '' : 'bg-red dark:bg-neon-red-light'
-        } ${isSuccess && 'bg-green dark:bg-neon-green'}`}
+        } ${showSuccessBackground && 'bg-green dark:bg-neon-green'}`}
       >
         <section className='fixed top-16 left-0 right-0 lg:top-24 w-full z-30 flex justify-center'>
           <ProgressBar
@@ -386,7 +428,7 @@ export default function LevelPage(props: LevelPageProps) {
         <section className='h-16 lg:h-32 w-full relative'></section>
         <section className='mt-8 absolute bottom-40 top-16 lg:bottom-60 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
           <div
-            hidden={!isValidInput || isSuccess}
+            hidden={!isValidInput || showSuccessBackground}
             className={`h-10 w-full absolute z-20 top-0 gradient-down dark:gradient-down-dark transition-colors`}
           ></div>
           <div className='h-full w-full flex-grow leading-normal absolute'>
@@ -415,7 +457,7 @@ export default function LevelPage(props: LevelPageProps) {
             )}
           </div>
           <div
-            hidden={!isValidInput || isSuccess}
+            hidden={!isValidInput || showSuccessBackground}
             className={`h-10 w-full absolute z-20 bottom-0 gradient-up dark:gradient-up-dark transition-colors `}
           ></div>
           <div></div>
@@ -437,17 +479,28 @@ export default function LevelPage(props: LevelPageProps) {
                 id='clear'
                 type='button'
                 aria-label='Clear input button'
-                disabled={isLoading || !isInputEnabled}
+                disabled={
+                  isLoading ||
+                  isCountingdown ||
+                  isGeneratingVariations ||
+                  isSuccess
+                }
                 className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
                 onClick={() => {
                   setUserInput('');
+                  setIsEmptyInput(true);
                   inputTextField.current?.focus();
                 }}
               >
                 <AiFillCloseCircle />
               </button>
               <input
-                disabled={isLoading || !isInputEnabled}
+                disabled={
+                  isLoading ||
+                  isCountingdown ||
+                  isGeneratingVariations ||
+                  isSuccess
+                }
                 ref={inputTextField}
                 placeholder={
                   isGeneratingVariations
@@ -469,12 +522,12 @@ export default function LevelPage(props: LevelPageProps) {
               <button
                 id='submit'
                 disabled={
+                  isGeneratingVariations ||
                   isCountingdown ||
-                  userInput.length == 0 ||
                   isEmptyInput ||
                   !isValidInput ||
                   isLoading ||
-                  !isAbleToSubmitInput
+                  isSuccess
                 }
                 type='submit'
                 className={`text-xl lg:text-3xl transition-opacity ease-in-out dark:text-neon-red-light ${

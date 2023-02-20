@@ -62,6 +62,5 @@ export default function RulePage(props: RulePageProps) {
         </article>
       </section>
     </>
-    // </section>
   );
 }

@@ -3,12 +3,16 @@ import { BsFillQuestionDiamondFill } from 'react-icons/bs';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import CustomWordListLink from './(components)/CustomWordListLink';
+import DevToggle from './(components)/DevToggle';
 import Footer from './(components)/Footer';
 import SocialLinkButton from './(components)/SocialLinkButton';
 
-export default function HomePage() {
+interface HomePageProps {}
+
+export default function HomePage(props: HomePageProps) {
   const title = 'Taboo.AI';
   const versionNumber = 'V1.3';
+  const environment = process.env.VERCEL_ENV;
 
   return (
     <main className='h-full w-full overflow-auto'>
@@ -48,6 +52,9 @@ export default function HomePage() {
         >
           Choose Topics
         </Link>
+        {(environment === 'preview' || environment === 'development') && (
+          <DevToggle />
+        )}
         <CustomWordListLink />
       </section>
       <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-[999]'>
