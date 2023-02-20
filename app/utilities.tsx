@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import IVariation from './(models)/variationModel';
 import { Highlight } from './level/(models)/Chat.interface';
 
 /**
@@ -51,6 +52,9 @@ export const applyHighlightsToMessage = (
     let endIndex = 0;
     for (const highlight of highlights) {
       endIndex = highlight.start;
+      while (/[\W_]/g.test(message[endIndex])) {
+        endIndex++;
+      }
       // Normal part
       parts.push(onNormalMessagePart(message.substring(startIndex, endIndex)));
       startIndex = endIndex;
@@ -105,4 +109,30 @@ export const formatResponseTextIntoArray = (
     }
   }
   return wordList;
+};
+
+export const getMockResponse = async (
+  target: string,
+  shouldSucceed = true
+): Promise<string> => {
+  return new Promise<string>((res, rej) => {
+    setTimeout(() => {
+      shouldSucceed
+        ? res(`The target response is: ${target}.`)
+        : rej('Mock Failure');
+    }, 2000);
+  });
+};
+
+export const getMockVariations = async (
+  target: string,
+  shouldSucceed = true
+): Promise<IVariation> => {
+  return new Promise<IVariation>((res, rej) => {
+    setTimeout(() => {
+      shouldSucceed
+        ? res({ target: target, variations: Array(15).fill(target) })
+        : rej('Mock Failure');
+    }, 1000);
+  });
 };
