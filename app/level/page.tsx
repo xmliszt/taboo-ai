@@ -84,8 +84,12 @@ export default function LevelPage(props: LevelPageProps) {
   };
 
   const getRegexPattern = (target: string): RegExp => {
-    const magicSeparator = '\\W*';
-    const groupRegexString = `(${target.split('').join(magicSeparator)})`;
+    const magicSeparator = '[\\W_]*';
+    const magicMatchString = target
+      .replace(/\W/g, '')
+      .split('')
+      .join(magicSeparator);
+    const groupRegexString = `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`;
     return new RegExp(groupRegexString, 'gi');
   };
 
@@ -121,7 +125,8 @@ export default function LevelPage(props: LevelPageProps) {
         }
         const startIndex = result.index;
         const endIndex = regex.lastIndex;
-        highlights.push({ start: startIndex, end: endIndex });
+        const highlight = { start: startIndex, end: endIndex };
+        highlights.push(highlight);
       }
     } else {
       for (const variation of variations) {
@@ -136,7 +141,8 @@ export default function LevelPage(props: LevelPageProps) {
             }
             const startIndex = result.index;
             const endIndex = regex.lastIndex;
-            highlights.push({ start: startIndex, end: endIndex });
+            const highlight = { start: startIndex, end: endIndex };
+            highlights.push(highlight);
           }
         }
       }
@@ -352,6 +358,8 @@ export default function LevelPage(props: LevelPageProps) {
     if (userInput) {
       const highlights = generateHighlights(userInput, false);
       setUserInputHighlights(highlights);
+    } else {
+      setUserInputHighlights([]);
     }
   }, [userInput]);
   //!SECTION

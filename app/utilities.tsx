@@ -52,6 +52,9 @@ export const applyHighlightsToMessage = (
     let endIndex = 0;
     for (const highlight of highlights) {
       endIndex = highlight.start;
+      while (/[\W_]/g.test(message[endIndex])) {
+        endIndex++;
+      }
       // Normal part
       parts.push(onNormalMessagePart(message.substring(startIndex, endIndex)));
       startIndex = endIndex;
