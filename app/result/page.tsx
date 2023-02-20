@@ -31,6 +31,10 @@ export default function ResultPage(props: ResultPageProps) {
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
 
+  const getCompletionSeconds = (completion: number): number => {
+    return completion <= 0 ? 1 : completion;
+  };
+
   useEffect(() => {
     const scores = getScoresCache();
     if (!scores) throw Error('No recent results available.');
@@ -40,9 +44,9 @@ export default function ResultPage(props: ResultPageProps) {
     let total = 0;
     let totalScore = 0;
     for (const score of scores ?? []) {
-      total += score.completion;
+      total += getCompletionSeconds(score.completion);
       totalScore += _.round(
-        score.difficulty * (1 / score.completion) * 1000,
+        score.difficulty * (1 / getCompletionSeconds(score.completion)) * 1000,
         2
       );
     }
@@ -194,7 +198,10 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const calculateScore = (score: IScore): number => {
-    return _.round(score.difficulty * (1000 / score.completion), 2);
+    return _.round(
+      score.difficulty * (1000 / getCompletionSeconds(score.completion)),
+      2
+    );
   };
 
   const generateStatsItems = (score: IScore): StatItem[] => {
@@ -210,12 +217,15 @@ export default function ResultPage(props: ResultPageProps) {
         title: 'Difficulty Point',
         content: `${getDifficulty(score.difficulty)} - ${score.difficulty}`,
       },
-      { title: 'Total Time Taken', content: `${score.completion} seconds` },
+      {
+        title: 'Total Time Taken',
+        content: `${getCompletionSeconds(score.completion)} seconds`,
+      },
       {
         title: 'Score Calculation',
-        content: `${score.difficulty} * (1 / ${
+        content: `${score.difficulty} * (1 / ${getCompletionSeconds(
           score.completion
-        }) x 1000 = ${calculateScore(score)}`,
+        )}) x 1000 = ${calculateScore(score)}`,
       },
     ];
   };
@@ -327,12 +337,15 @@ export default function ResultPage(props: ResultPageProps) {
                   </td>
                   <td className='p-3 font-medium'>{score.difficulty}</td>
                   <td className='p-3 font-medium'>
-                    {score.completion} seconds
+                    {getCompletionSeconds(score.completion)} seconds
                   </td>
                   <td className='p-3 font-medium'>
-                    {score.difficulty} x 1/{score.completion} (seconds) x 1000 ={' '}
+                    {score.difficulty} x 1/
+                    {getCompletionSeconds(score.completion)} (seconds) x 1000 ={' '}
                     {_.round(
-                      score.difficulty * (1 / score.completion) * 1000,
+                      score.difficulty *
+                        (1 / getCompletionSeconds(score.completion)) *
+                        1000,
                       2
                     )}
                   </td>
