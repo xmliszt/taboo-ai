@@ -1,3 +1,4 @@
+/* stylelint-disable selector-class-pattern */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -85,7 +86,15 @@ b {
   @apply font-bold text-yellow dark:text-neon-yellow;
 }
 
-button:not(#back, #theme, #submit, #share, #reset, #clear),
+button:not(
+    #back,
+    #theme,
+    #submit,
+    #share,
+    #reset,
+    #clear,
+    .Toastify__close-button
+  ),
 a#start {
   @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green hover:rounded-[2rem];
 }
@@ -102,4 +111,9 @@ input {
 
 h1 {
   @apply text-base lg:text-5xl;
+}
+
+.Toastify__toast-body {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 1rem;
 }
