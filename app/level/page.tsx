@@ -89,7 +89,10 @@ export default function LevelPage(props: LevelPageProps) {
       .replace(/\W/g, '')
       .split('')
       .join(magicSeparator);
-    const groupRegexString = `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`;
+    const groupRegexString =
+      target.length === 1
+        ? `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`
+        : `(${magicMatchString})`;
     return new RegExp(groupRegexString, 'gi');
   };
 
