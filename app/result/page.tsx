@@ -11,6 +11,8 @@ import _ from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Highlight } from '../level/(models)/Chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface StatItem {
   title: string;
@@ -27,6 +29,7 @@ export default function ResultPage(props: ResultPageProps) {
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
   const screenshotRef = useRef<HTMLTableElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const scores = getScoresCache();
@@ -368,12 +371,22 @@ export default function ResultPage(props: ResultPageProps) {
       <h1 className='fixed top-0 w-full h-20 py-4 text-center gradient-down dark:gradient-down-dark-black z-10'>
         Scoreboard
       </h1>
-      <section ref={screenshotRef} className='!leading-screenshot pb-8 pt-4'>
+      <section
+        ref={screenshotRef}
+        className='!leading-screenshot pb-32 lg:pb-48 pt-4'
+      >
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
-      {/* <div className='w-full text-center mt-8'>
-        <BetaFeedback />
-      </div> */}
+      <div className='fixed bottom-0 z-20 w-full text-center py-4'>
+        <button
+          className='h-12 lg:h-36 lg:text-4xl w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
+          onClick={() => {
+            router.push('/level');
+          }}
+        >
+          Play This Topic Again
+        </button>
+      </div>
       <button
         id='share'
         aria-label='result button'
