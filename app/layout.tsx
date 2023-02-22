@@ -9,11 +9,6 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
 
-export enum Theme {
-  Light = 'light',
-  Dark = 'dark',
-}
-
 const grenze = Grenze({
   weight: '400',
   subsets: ['latin'],
