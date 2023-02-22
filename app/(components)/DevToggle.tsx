@@ -15,6 +15,7 @@ const DevToggle = () => {
     } else {
       localStorage.removeItem('dev');
     }
+    setChecked(event.target.checked);
   };
 
   return (
@@ -25,6 +26,7 @@ const DevToggle = () => {
         aria-label='Toggle for development mode'
         name='dev-toggle'
         defaultChecked={checked}
+        checked={checked}
         onChange={onDevToggle}
       />
       <label htmlFor='dev-toggle'>Dev Mode</label>
