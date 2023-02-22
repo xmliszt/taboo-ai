@@ -11,7 +11,7 @@ interface HomePageProps {}
 
 export default function HomePage(props: HomePageProps) {
   const title = 'Taboo.AI';
-  const versionNumber = 'V1.3';
+  const versionNumber = 'V1.4';
   const environment = process.env.VERCEL_ENV;
 
   return (
