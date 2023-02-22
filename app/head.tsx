@@ -1,26 +1,106 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 export default function Head() {
+  const [title, setTitle] = useState<string>('Taboo.AI: Play Taboo with AI');
+  const [isMounted, setIsMounted] = useState(false);
+  const pathname = usePathname();
+
+  const onTargetChanged = (event: CustomEvent<{ target: string }>) => {
+    if (pathname === '/level') {
+      setTitle(`Taboo.AI: Target -> ${event.detail.target}`);
+    }
+  };
+
+  const onScoreComputed = (event: CustomEvent<{ score: number }>) => {
+    if (pathname === '/result') {
+      setTitle(`Taboo.AI: Score: ${event.detail.score}!`);
+    }
+  };
+
+  const isPathTitleCustom = (pathname: string): boolean => {
+    switch (pathname) {
+      case '/level':
+      case '/result':
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  useEffect(() => {
+    !isMounted && setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const isCustom = isPathTitleCustom(pathname ?? '');
+    const title = getTitle(isCustom);
+    setTitle(title);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (isMounted) {
+      window.addEventListener(
+        'onTargetChanged',
+        onTargetChanged as EventListener
+      );
+      window.addEventListener(
+        'onScoreComputed',
+        onScoreComputed as EventListener
+      );
+    }
+    return () => {
+      window.removeEventListener(
+        'onTargetChanged',
+        onTargetChanged as EventListener
+      );
+      window.removeEventListener(
+        'onScoreComputed',
+        onScoreComputed as EventListener
+      );
+    };
+  }, [isMounted]);
+
+  const getTitle = (isCustomPath: boolean): string => {
+    switch (pathname) {
+      case '/':
+        return 'Taboo.AI: Play Taboo with AI';
+      case '/ai':
+        return 'Taboo.AI: AI Mode';
+      case '/whatsnew':
+        return "Taboo.AI: What's New";
+      case '/levels':
+        return 'Taboo.AI: Choose Topics';
+      case '/rule':
+        return 'Taboo.AI: Game Rules';
+      case '/buymecoffee':
+        return 'Taboo.AI: Buy Me Coffee';
+      case '/level':
+        return isCustomPath ? title : 'Taboo.AI: Play Taboo with AI';
+      case '/result':
+        return isCustomPath ? title : 'Taboo.AI: Share your scores!';
+      default:
+        return 'Taboo.AI: Play Taboo with AI';
+    }
+  };
   return (
     <>
-      <title>Taboo.AI: Play Taboo Game with AI</title>
+      <title>{title}</title>
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />
       <meta
         name='description'
         content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta property='og:title' content='Taboo.AI: Play Taboo Game with AI' />
+      <meta property='og:title' content={title} />
       <meta
         property='og:description'
         content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta
-        property='og:image'
-        content='https://i.ibb.co/8xFQX3P/TabooAI.png'
-      />
-      <meta
-        property='og:image:alt'
-        content='Taboo.AI: Play Taboo Game for Free with AI'
-      />
+      <meta property='og:image' content='/images/Poster.png' />
+      <meta property='og:image:alt' content={title} />
       <meta property='og:url' content='https://taboo-ai.vercel.app/' />
       <meta property='og:site_name' content='Taboo.AI' />
       <meta property='og:locale' content='en_US' />
@@ -35,22 +115,13 @@ export default function Head() {
         content='Taboo.AI: Play Taboo Game for Free with AI'
       />
       <meta name='twitter:card' content='summary_large_image' />
-      <meta
-        name='twitter:title'
-        content='Taboo.AI: Play Taboo Game for Free with AI'
-      />
+      <meta name='twitter:title' content={title} />
       <meta
         name='twitter:description'
         content='Play Taboo Game for free ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta
-        name='twitter:image'
-        content='https://i.ibb.co/8xFQX3P/TabooAI.png'
-      />
-      <meta
-        name='twitter:image:alt'
-        content='Taboo.AI: Play Taboo Game for Free with AI'
-      />
+      <meta name='twitter:image' content='/images/Poster.png' />
+      <meta name='twitter:image:alt' content={title} />
       <meta name='twitter:creator' content='@xmliszt' />
       <meta name='twitter:site' content='@xmliszt' />
       <meta

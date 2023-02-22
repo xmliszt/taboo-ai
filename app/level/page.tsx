@@ -11,14 +11,8 @@ import ProgressBar from './(components)/ProgressBar';
 import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import {
-  cacheScore,
-  clearLevel,
-  clearScores,
-  getLevelCache,
-} from '../(caching)/cache';
+import { cacheScore, clearScores, getLevelCache } from '../(caching)/cache';
 import { Highlight } from './(models)/Chat.interface';
-import BackButton from '../(components)/BackButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../(models)/variationModel';
@@ -28,6 +22,7 @@ interface LevelPageProps {}
 
 export default function LevelPage(props: LevelPageProps) {
   //SECTION - States
+  const [isMounted, setIsMounted] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -50,6 +45,7 @@ export default function LevelPage(props: LevelPageProps) {
   const [isResponseFaded, setIsResponseFaded] = useState<boolean>(false);
   const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
   const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
+  const [isOverloaded, setIsOverloaded] = useState<boolean>(false);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
@@ -80,6 +76,11 @@ export default function LevelPage(props: LevelPageProps) {
     const unused = [...words];
     _.remove(unused, (s) => s === _target);
     setWords(unused);
+    window.dispatchEvent(
+      new CustomEvent<{ target: string }>('onTargetChanged', {
+        detail: { target: _target },
+      })
+    );
     return _target;
   };
 
@@ -164,6 +165,7 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - On Input submitted
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
+    setIsOverloaded(false);
     setResponseText('');
     setResponseShouldFadeOut(true); // Fade out current response if any
     if (isValidInput && userInput.length > 0) {
@@ -181,14 +183,28 @@ export default function LevelPage(props: LevelPageProps) {
     // * Make sure response fade out completely!
     setTimeout(async () => {
       try {
-        let responseText = localStorage.getItem('dev')
-          ? await getMockResponse(target ?? '', true)
-          : await getQueryResponse(prompt);
-        if (!responseText) {
-          responseText = CONSTANTS.errors.overloaded;
+        let responseText: string | undefined;
+        if (
+          (process.env.NEXT_PUBLIC_ENV === 'development' ||
+            process.env.NEXT_PUBLIC_ENV === 'preview') &&
+          localStorage.getItem('dev')
+        ) {
+          responseText = await getMockResponse(
+            target ?? '',
+            localStorage.getItem('mode') ?? '1'
+          );
+        } else {
+          responseText = await getQueryResponse(prompt);
         }
-        setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
+        if (responseText === undefined || responseText === null) {
+          setIsOverloaded(true);
+          setIsLoading(false);
+          start();
+          return;
+        }
+        setIsOverloaded(false);
+        setInputShouldFadeOut(true); // Input start fading out
         setResponseShouldFadeOut(true); // Fade out current response if any
         // * Wait for input fade out completely, then show response
         setTimeout(() => {
@@ -206,6 +222,7 @@ export default function LevelPage(props: LevelPageProps) {
         setResponseShouldFadeOut(true); // Fade out current response if any
         toast.error(CONSTANTS.errors.overloaded);
         setIsLoading(false);
+        start();
       }
     }, 1000);
   };
@@ -272,8 +289,11 @@ export default function LevelPage(props: LevelPageProps) {
   const startCountdown = () => {
     countdown.start();
     setIsCountdown(true);
-    reset();
   };
+
+  useEffect(() => {
+    !isMounted && setIsMounted(true);
+  }, []);
 
   //SECTION - When target changed
   useEffect(() => {
@@ -300,24 +320,26 @@ export default function LevelPage(props: LevelPageProps) {
 
   //SECTION - At the start of the game
   useEffect(() => {
-    clearScores();
-    const level = getLevelCache();
-    if (level !== null) {
-      reset();
-      setDifficulty(level.difficulty);
-      setWords(level.words);
-      const _target = generateNewTarget(level.words);
-      setTarget(_target);
-      setCurrentProgress(1);
-      setIsSuccess(false);
-      setResponseShouldFadeOut(false); // Let new response fade in
-      setResponseText(
-        'Think about your prompt while we generate the Taboo words.'
-      );
-    } else {
-      throw Error('No level is chosen');
+    if (isMounted) {
+      clearScores();
+      const level = getLevelCache();
+      if (level !== null) {
+        reset();
+        setDifficulty(level.difficulty);
+        setWords(level.words);
+        const _target = generateNewTarget(level.words);
+        setTarget(_target);
+        setCurrentProgress(1);
+        setIsSuccess(false);
+        setResponseShouldFadeOut(false); // Let new response fade in
+        setResponseText(
+          'Think about your prompt while we generate the Taboo words.'
+        );
+      } else {
+        throw Error('No level is chosen');
+      }
     }
-  }, []);
+  }, [isMounted]);
   //!SECTION
 
   //SECTION - When progress changed
@@ -358,6 +380,7 @@ export default function LevelPage(props: LevelPageProps) {
 
   //SECTION - Compute user input validation match
   useEffect(() => {
+    setIsOverloaded(false);
     if (userInput) {
       const highlights = generateHighlights(userInput, false);
       setUserInputHighlights(highlights);
@@ -373,7 +396,14 @@ export default function LevelPage(props: LevelPageProps) {
       nextQuestion();
     } else {
       setIsSuccess(false);
-      isCountingdown ? stop() : currentProgress > 1 && start();
+      inputTextField.current?.focus();
+      isCountingdown ||
+      isEmptyInput ||
+      isLoading ||
+      isGeneratingVariations ||
+      isLoading
+        ? pause()
+        : start();
     }
   }, [highlights]);
   //!SECTION
@@ -398,7 +428,6 @@ export default function LevelPage(props: LevelPageProps) {
         pauseOnHover
         theme='light'
       />
-      <BackButton href='/levels' />
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
@@ -410,26 +439,28 @@ export default function LevelPage(props: LevelPageProps) {
             : countdown.time}
         </div>
       )}
-      <div className='fixed top-3 right-5 text-xs text-right'>
-        <span className='lg:hidden block'>TIMER {status}</span>
-      </div>
-      <div className='fixed top-3 lg:top-2 w-full flex flex-col gap-2 justify-center items-center'>
+      {isOverloaded && (
+        <div className='animate-fadeIn px-16 fixed z-50 top-1/3 w-full h-24 text-center text-lg lg:text-2xl'>
+          {CONSTANTS.errors.overloaded}
+        </div>
+      )}
+      <div className='fixed top-2 lg:top-2 w-full flex flex-col gap-1 justify-center items-center'>
         <Timer time={time} />
-        <span className='lg:text-sm hidden lg:block'>TIMER {status}</span>
+        <span className='text-xs lg:text-sm lg:block'>TIMER {status}</span>
       </div>
       <section
         className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
           isValidInput ? '' : 'bg-red dark:bg-neon-red-light'
         } ${showSuccessBackground && 'bg-green dark:bg-neon-green'}`}
       >
-        <section className='fixed top-16 left-0 right-0 lg:top-24 w-full z-30 flex justify-center'>
+        <section className='fixed top-20 lg:top-24 left-0 right-0  w-full z-30 flex justify-center'>
           <ProgressBar
             current={currentProgress}
             total={CONSTANTS.numberOfQuestionsPerGame}
           />
         </section>
         <section className='h-16 lg:h-32 w-full relative'></section>
-        <section className='mt-8 absolute bottom-40 top-16 lg:bottom-60 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
+        <section className='mt-8 absolute bottom-40 top-20 lg:bottom-60 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
           <div
             hidden={!isValidInput || showSuccessBackground}
             className={`h-10 w-full absolute z-20 top-0 gradient-down dark:gradient-down-dark transition-colors`}
@@ -469,10 +500,11 @@ export default function LevelPage(props: LevelPageProps) {
           <section className='relative w-full h-14 lg:h-24 z-10 top-0'>
             <div className='z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark rounded-tl-3xl transition-colors'></div>
             <h1 className='absolute left-10 right-10 px-5 flex-grow text-center lg:py-6 py-4 text-xl lg:text-3xl text-red dark:text-neon-red whitespace-nowrap overflow-x-scroll scrollbar-hide'>
-              TABOO:{' '}
+              Make AI Say:{' '}
               <span className='font-extrabold text-black dark:text-neon-white whitespace-nowrap'>
                 {target}
-              </span>
+              </span>{' '}
+              <span className='font-light text-sm'>(case-insensitive)</span>
             </h1>
             <div className='z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark rounded-tr-3xl transition-colors'></div>
           </section>

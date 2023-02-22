@@ -29,7 +29,6 @@ export default async function handler(
         }),
       });
       const json = await response.json();
-      console.log(json);
       if (json.error) {
         res.status(500).json(json.error);
         return;

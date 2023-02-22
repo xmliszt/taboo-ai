@@ -11,7 +11,6 @@ import _ from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Highlight } from '../level/(models)/Chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface StatItem {
@@ -52,6 +51,11 @@ export default function ResultPage(props: ResultPageProps) {
     }
     setTotal(total);
     setTotalScore(totalScore);
+    window.dispatchEvent(
+      new CustomEvent<{ score: number }>('onScoreComputed', {
+        detail: { score: totalScore },
+      })
+    );
   }, []);
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
@@ -214,10 +218,6 @@ export default function ResultPage(props: ResultPageProps) {
         highlights: score.responseHighlights,
       },
       {
-        title: 'Difficulty Point',
-        content: `${getDifficulty(score.difficulty)} - ${score.difficulty}`,
-      },
-      {
         title: 'Total Time Taken',
         content: `${getCompletionSeconds(score.completion)} seconds`,
       },
@@ -269,6 +269,10 @@ export default function ResultPage(props: ResultPageProps) {
             <span>Total Score:</span>
             <span className='font-extrabold'>{_.round(totalScore, 2)}</span>
           </div>
+          <div className='flex flex-row justify-between'>
+            <span>Difficulty:</span>
+            <span className='font-extrabold'>{level?.difficulty ?? 1}</span>
+          </div>
         </div>
         {scores.map((score) => {
           return generateMobileScoreStack(score);
@@ -283,14 +287,13 @@ export default function ResultPage(props: ResultPageProps) {
       'Taboo Word',
       'Your Question',
       "AI's Response",
-      'Difficulty',
       'Time Taken',
       'Score (Difficulty x (1/Time Taken) x 1000)',
     ];
     return (
       <div className='w-full max-h-[70%] h-[70%] text-center'>
         <div className='font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
-          <table className='relative table-fixed min-w-[1024px]'>
+          <table className='relative table-fixed w-full min-w-[1024px]'>
             <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
               <tr>
                 {headers.map((header, idx) => (
@@ -300,7 +303,7 @@ export default function ResultPage(props: ResultPageProps) {
                         ? 'w-3/12'
                         : idx == 3
                         ? 'w-3/12'
-                        : idx == 6
+                        : idx == 5
                         ? 'w-3/12'
                         : 'w-1/12'
                     }`}
@@ -314,13 +317,23 @@ export default function ResultPage(props: ResultPageProps) {
             <tbody className='divide-y text-left text-xs lg:text-xl text-gray bg-white dark:text-neon-white dark:bg-neon-black'>
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={3}
                   className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
                 >
                   {' '}
                   Topic:{' '}
                   <span className='text-black dark:text-neon-white'>
                     {level?.name}
+                  </span>
+                </td>
+                <td
+                  colSpan={3}
+                  className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
+                >
+                  {' '}
+                  Difficulty:{' '}
+                  <span className='text-black dark:text-neon-white'>
+                    {level?.difficulty ?? 1}
                   </span>
                 </td>
               </tr>
@@ -335,7 +348,6 @@ export default function ResultPage(props: ResultPageProps) {
                       score.responseHighlights
                     )}
                   </td>
-                  <td className='p-3 font-medium'>{score.difficulty}</td>
                   <td className='p-3 font-medium'>
                     {getCompletionSeconds(score.completion)} seconds
                   </td>
@@ -353,7 +365,7 @@ export default function ResultPage(props: ResultPageProps) {
               ))}
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={4}
                   className='px-3 pt-4 pb-8 border-collapse font-extrabold'
                 >
                   Total Time Taken
@@ -364,7 +376,7 @@ export default function ResultPage(props: ResultPageProps) {
               </tr>
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={5}
                   className='px-3 pt-4 pb-8 border-collapse font-extrabold'
                 >
                   Total Score
@@ -403,7 +415,7 @@ export default function ResultPage(props: ResultPageProps) {
       <button
         id='share'
         aria-label='result button'
-        className='text-xl lg:text-3xl fixed top-5 right-4 lg:right-10 hover:opacity-50 transition-all ease-in-out z-40'
+        className='text-2xl lg:text-5xl fixed top-4 right-14 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
         onClick={share}
       >
         <MdShare />

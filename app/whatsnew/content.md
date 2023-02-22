@@ -1,5 +1,13 @@
 # What's New
 
+## 22 Feb - Release Notes (V1.4)
+
+- Improved **AI response** by altering prompts.
+- Improved **AI generated taboo words**.
+- More **meaningful** text in the game. (e.g. "TABOO: word" changed to "Make AI Say: word")
+- **Persistent** light/dark theme. Your last theme will be saved and restored when you come back.
+- Fixed timer issue when player re-submit prompt again after unsuccessful attempt.
+
 ## 19 Feb - Release Notes (V1.3)
 
 - Version number indicator to inform players about version updates.
