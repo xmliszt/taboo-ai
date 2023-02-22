@@ -433,7 +433,7 @@ export default function LevelPage(props: LevelPageProps) {
         </div>
       )}
       {isOverloaded && (
-        <div className='animate-fadeIn px-16 fixed z-50 top-1/3 w-full h-24 text-center text-[2rem] lg:text-[4rem] leading-normal'>
+        <div className='animate-fadeIn px-16 fixed z-50 top-1/3 w-full h-24 text-center text-lg lg:text-2xl'>
           {CONSTANTS.errors.overloaded}
         </div>
       )}
