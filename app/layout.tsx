@@ -68,7 +68,10 @@ export default function RootLayout({
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
         {!(pathName?.match(/^\/level$/)?.length ?? 0 > 0) && <WordCarousell />}
-        <LightDarkSwitchButton onThemeChanged={onThemeChange} />
+        <LightDarkSwitchButton
+          onThemeChanged={onThemeChange}
+          pathName={pathName}
+        />
         {children}
         <AnalyticsWrapper />
       </body>

@@ -1,6 +1,5 @@
 'use client';
 import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
-import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export enum Theme {
@@ -9,16 +8,16 @@ export enum Theme {
 }
 
 interface LightDarkSwitchButtonProps {
+  pathName: string | null;
   onThemeChanged: (theme: Theme) => void;
 }
 
 const LightDarkSwitchButton = (props: LightDarkSwitchButtonProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const pathName = usePathname();
 
   useEffect(() => {
-    setIsMounted(true);
+    !isMounted && setIsMounted(true);
   }, []);
 
   const onToggle = () => {
@@ -27,6 +26,24 @@ const LightDarkSwitchButton = (props: LightDarkSwitchButtonProps) => {
     const theme = dark ? 'dark' : 'light';
     localStorage.setItem('theme', theme);
     props.onThemeChanged(theme === 'dark' ? Theme.Dark : Theme.Light);
+  };
+
+  const getLocationClass = () => {
+    switch (props.pathName) {
+      case '/':
+        return 'top-5 left-5';
+      case '/result':
+      case '/level':
+      case '/whatsnew':
+      case '/buymecoffee':
+        return 'top-4 lg:top-3.5 left-12 lg:left-20';
+      case '/levels':
+      case '/ai':
+      case '/rule':
+        return 'top-4 right-5 lg:top-3.5';
+      default:
+        return 'bottom-5 left-5';
+    }
   };
 
   useEffect(() => {
@@ -41,18 +58,7 @@ const LightDarkSwitchButton = (props: LightDarkSwitchButtonProps) => {
       id='theme'
       aria-label='toggle light/dark button'
       data-testid='light-dark-toggle-button'
-      className={`fixed z-50 ${
-        pathName === '/'
-          ? 'top-5 left-5'
-          : (pathName?.match(/^\/level$/)?.length ?? 0 > 0) ||
-            pathName === '/result' ||
-            pathName === '/whatsnew' ||
-            pathName === '/buymecoffee'
-          ? 'top-4 lg:top-3.5 left-12 lg:left-20'
-          : pathName === '/levels' || pathName === '/ai' || pathName === '/rule'
-          ? 'top-4 right-5 lg:top-3.5'
-          : 'bottom-5 left-5'
-      } opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl dark:text-neon-blue
+      className={`fixed z-50 ${getLocationClass()} opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl dark:text-neon-blue
       }`}
       onClick={onToggle}
     >
