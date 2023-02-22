@@ -98,16 +98,13 @@ export default function Head() {
         name='description'
         content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta property='og:title' content='Taboo.AI: Play Taboo Game with AI' />
+      <meta property='og:title' content={title} />
       <meta
         property='og:description'
         content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
       <meta property='og:image' content='/images/Poster.png' />
-      <meta
-        property='og:image:alt'
-        content='Taboo.AI: Play Taboo Game for Free with AI'
-      />
+      <meta property='og:image:alt' content={title} />
       <meta property='og:url' content='https://taboo-ai.vercel.app/' />
       <meta property='og:site_name' content='Taboo.AI' />
       <meta property='og:locale' content='en_US' />
@@ -122,19 +119,13 @@ export default function Head() {
         content='Taboo.AI: Play Taboo Game for Free with AI'
       />
       <meta name='twitter:card' content='summary_large_image' />
-      <meta
-        name='twitter:title'
-        content='Taboo.AI: Play Taboo Game for Free with AI'
-      />
+      <meta name='twitter:title' content={title} />
       <meta
         name='twitter:description'
         content='Play Taboo Game for free ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
       <meta name='twitter:image' content='/images/Poster.png' />
-      <meta
-        name='twitter:image:alt'
-        content='Taboo.AI: Play Taboo Game for Free with AI'
-      />
+      <meta name='twitter:image:alt' content={title} />
       <meta name='twitter:creator' content='@xmliszt' />
       <meta name='twitter:site' content='@xmliszt' />
       <meta
