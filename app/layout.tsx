@@ -9,7 +9,7 @@ import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 import WordCarousell from './(components)/WordCarousell';
 
-const specialElite = Grenze({
+const grenze = Grenze({
   weight: '400',
   subsets: ['latin'],
   fallback: [
@@ -47,7 +47,7 @@ export default function RootLayout({
     <html
       lang='en'
       className={`${isDark && 'dark'} ${
-        isDark ? orbitron.className : specialElite.className
+        isDark ? orbitron.className : grenze.className
       } font-serif`}
     >
       <head />
