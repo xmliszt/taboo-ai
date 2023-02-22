@@ -19,7 +19,7 @@ export default function HomePage(props: HomePageProps) {
       <Link
         href='/rule'
         aria-label='Link to rule page'
-        className='text-white dark:text-neon-red-light text-xl lg:text-3xl fixed z-40 top-5 right-5 hover:animate-pulse'
+        className='text-white dark:text-neon-red-light text-xl lg:text-3xl fixed z-40 top-5 left-5 hover:animate-pulse'
       >
         <div className='flex flex-row gap-2'>
           <span className='text-sm lg:text-lg'>How To Play</span>

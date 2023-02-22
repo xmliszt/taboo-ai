@@ -6,8 +6,8 @@ import { Orbitron, Grenze } from '@next/font/google';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 import WordCarousell from './(components)/WordCarousell';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
+import { useState } from 'react';
+import LightDarkToggle from './(components)/LightDarkToggle';
 
 const grenze = Grenze({
   weight: '400',
@@ -40,44 +40,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-  const [isDark, setIsDark] = useState<boolean>();
+  const [isDark, setIsDark] = useState(false);
   const pathName = usePathname();
-
-  useEffect(() => {
-    !isMounted && setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    isMounted && setIsDark(localStorage.getItem('theme') === 'dark');
-    console.log('mounted');
-  }, [isMounted]);
-
-  const onToggle = () => {
-    const dark = !isDark;
-    setIsDark(dark);
-    const theme = dark ? 'dark' : 'light';
-    localStorage.setItem('theme', theme);
-    setIsDark(theme === 'dark');
-  };
-
-  // const getLocationClass = () => {
-  //   switch (pathName) {
-  //     case '/':
-  //       return 'top-5 left-5';
-  //     case '/result':
-  //     case '/level':
-  //     case '/whatsnew':
-  //     case '/buymecoffee':
-  //       return 'top-4 lg:top-3.5 left-12 lg:left-20';
-  //     case '/levels':
-  //     case '/ai':
-  //     case '/rule':
-  //       return 'top-4 right-5 lg:top-3.5';
-  //     default:
-  //       return 'bottom-5 left-5';
-  //   }
-  // };
 
   return (
     <html
@@ -88,31 +52,12 @@ export default function RootLayout({
     >
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        {!(pathName?.match(/^\/level$/)?.length ?? 0 > 0) && <WordCarousell />}
-        <button
-          id='theme'
-          aria-label='toggle light/dark button'
-          data-testid='light-dark-toggle-button'
-          className={`fixed z-50 ${
-            pathName === '/'
-              ? 'top-5 left-5'
-              : pathName === '/level' ||
-                pathName === '/result' ||
-                pathName === '/whatsnew' ||
-                pathName === '/buymecoffee'
-              ? 'top-4 lg:top-3.5 left-12 lg:left-20'
-              : pathName === '/levels' ||
-                pathName === '/ai' ||
-                pathName === '/rule'
-              ? 'top-4 right-5 lg:top-3.5'
-              : 'bottom-5 left-5'
-          } opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl ${
-            isDark && 'text-neon-blue'
-          }`}
-          onClick={onToggle}
-        >
-          {isDark ? <MdDarkMode /> : <MdOutlineWbTwilight />}
-        </button>
+        {!(pathName === '/level') && <WordCarousell />}
+        <LightDarkToggle
+          onToggle={(dark) => {
+            setIsDark(dark);
+          }}
+        />
         {children}
         <AnalyticsWrapper />
       </body>

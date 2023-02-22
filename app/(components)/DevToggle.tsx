@@ -18,7 +18,6 @@ const DevToggle = () => {
   }, []);
 
   const onDevToggle = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.checked);
     if (event.target.checked) {
       localStorage.setItem('dev', '1');
     } else {
