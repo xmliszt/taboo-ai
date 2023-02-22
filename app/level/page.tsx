@@ -13,7 +13,6 @@ import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
 import { cacheScore, clearScores, getLevelCache } from '../(caching)/cache';
 import { Highlight } from './(models)/Chat.interface';
-import BackButton from '../(components)/BackButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../(models)/variationModel';
@@ -45,6 +44,7 @@ export default function LevelPage(props: LevelPageProps) {
   const [isResponseFaded, setIsResponseFaded] = useState<boolean>(false);
   const [isInputConfirmed, setIsInputConfirmed] = useState<boolean>(false);
   const [inputShouldFadeOut, setInputShouldFadeOut] = useState<boolean>(false);
+  const [isOverloaded, setIsOverloaded] = useState<boolean>(false);
   const [responseShouldFadeOut, setResponseShouldFadeOut] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
@@ -159,6 +159,7 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - On Input submitted
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
+    setIsOverloaded(false);
     setResponseText('');
     setResponseShouldFadeOut(true); // Fade out current response if any
     if (isValidInput && userInput.length > 0) {
@@ -176,14 +177,21 @@ export default function LevelPage(props: LevelPageProps) {
     // * Make sure response fade out completely!
     setTimeout(async () => {
       try {
-        let responseText = localStorage.getItem('dev')
-          ? await getMockResponse(target ?? '', true)
+        const responseText = localStorage.getItem('dev')
+          ? await getMockResponse(
+              target ?? '',
+              localStorage.getItem('mode') ?? '1'
+            )
           : await getQueryResponse(prompt);
-        if (!responseText) {
-          responseText = CONSTANTS.errors.overloaded;
-        }
-        setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
+        if (responseText === undefined || responseText === null) {
+          setIsOverloaded(true);
+          setIsLoading(false);
+          start();
+          return;
+        }
+        setIsOverloaded(false);
+        setInputShouldFadeOut(true); // Input start fading out
         setResponseShouldFadeOut(true); // Fade out current response if any
         // * Wait for input fade out completely, then show response
         setTimeout(() => {
@@ -353,6 +361,7 @@ export default function LevelPage(props: LevelPageProps) {
 
   //SECTION - Compute user input validation match
   useEffect(() => {
+    setIsOverloaded(false);
     if (userInput) {
       const highlights = generateHighlights(userInput, false);
       setUserInputHighlights(highlights);
@@ -400,7 +409,6 @@ export default function LevelPage(props: LevelPageProps) {
         pauseOnHover
         theme='light'
       />
-      <BackButton href='/levels' />
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
@@ -410,6 +418,11 @@ export default function LevelPage(props: LevelPageProps) {
             : countdown.time === -1
             ? ''
             : countdown.time}
+        </div>
+      )}
+      {isOverloaded && (
+        <div className='animate-fadeIn px-16 fixed z-50 top-1/3 w-full h-24 text-center text-[2rem] lg:text-[4rem] leading-normal'>
+          {CONSTANTS.errors.overloaded}
         </div>
       )}
       <div className='fixed top-3 right-5 text-xs text-right'>

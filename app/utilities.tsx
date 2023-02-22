@@ -113,13 +113,26 @@ export const formatResponseTextIntoArray = (
 
 export const getMockResponse = async (
   target: string,
-  shouldSucceed = true
-): Promise<string> => {
-  return new Promise<string>((res, rej) => {
+  mode: string
+): Promise<string | undefined> => {
+  return new Promise<string | undefined>((res, rej) => {
     setTimeout(() => {
-      shouldSucceed
-        ? res(`The target response is: ${target}.`)
-        : rej('Mock Failure');
+      switch (mode) {
+        case '1':
+          res(`The target response is: ${target}.`);
+          break;
+        case '2':
+          res(`adfjlasdjflaksjdfklajsdfjaklsjaj`);
+          break;
+        case '3':
+          res(undefined);
+          break;
+        case '4':
+          rej('Mock Failure');
+          break;
+        default:
+          res(`The target response is: ${target}.`);
+      }
     }, 2000);
   });
 };
