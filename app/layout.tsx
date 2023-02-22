@@ -50,6 +50,7 @@ export default function RootLayout({
 
   useEffect(() => {
     isMounted && setIsDark(localStorage.getItem('theme') === 'dark');
+    console.log('mounted');
   }, [isMounted]);
 
   const onToggle = () => {
@@ -60,23 +61,23 @@ export default function RootLayout({
     setIsDark(theme === 'dark');
   };
 
-  const getLocationClass = () => {
-    switch (pathName) {
-      case '/':
-        return 'top-5 left-5';
-      case '/result':
-      case '/level':
-      case '/whatsnew':
-      case '/buymecoffee':
-        return 'top-4 lg:top-3.5 left-12 lg:left-20';
-      case '/levels':
-      case '/ai':
-      case '/rule':
-        return 'top-4 right-5 lg:top-3.5';
-      default:
-        return 'bottom-5 left-5';
-    }
-  };
+  // const getLocationClass = () => {
+  //   switch (pathName) {
+  //     case '/':
+  //       return 'top-5 left-5';
+  //     case '/result':
+  //     case '/level':
+  //     case '/whatsnew':
+  //     case '/buymecoffee':
+  //       return 'top-4 lg:top-3.5 left-12 lg:left-20';
+  //     case '/levels':
+  //     case '/ai':
+  //     case '/rule':
+  //       return 'top-4 right-5 lg:top-3.5';
+  //     default:
+  //       return 'bottom-5 left-5';
+  //   }
+  // };
 
   return (
     <html
@@ -92,8 +93,22 @@ export default function RootLayout({
           id='theme'
           aria-label='toggle light/dark button'
           data-testid='light-dark-toggle-button'
-          className={`fixed z-50 ${getLocationClass()} opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl dark:text-neon-blue
-      }`}
+          className={`fixed z-50 ${
+            pathName === '/'
+              ? 'top-5 left-5'
+              : pathName === '/level' ||
+                pathName === '/result' ||
+                pathName === '/whatsnew' ||
+                pathName === '/buymecoffee'
+              ? 'top-4 lg:top-3.5 left-12 lg:left-20'
+              : pathName === '/levels' ||
+                pathName === '/ai' ||
+                pathName === '/rule'
+              ? 'top-4 right-5 lg:top-3.5'
+              : 'bottom-5 left-5'
+          } opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl ${
+            isDark && 'text-neon-blue'
+          }`}
           onClick={onToggle}
         >
           {isDark ? <MdDarkMode /> : <MdOutlineWbTwilight />}

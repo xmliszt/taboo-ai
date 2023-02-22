@@ -10,7 +10,6 @@ export default function Head() {
 
   const onTargetChanged = (event: CustomEvent<{ target: string }>) => {
     if (pathname === '/level') {
-      console.log('set custom title');
       setTitle(`Taboo.AI: Target -> ${event.detail.target}`);
     }
   };
@@ -43,7 +42,6 @@ export default function Head() {
 
   useEffect(() => {
     if (isMounted) {
-      console.log('added EL');
       window.addEventListener(
         'onTargetChanged',
         onTargetChanged as EventListener
@@ -54,7 +52,6 @@ export default function Head() {
       );
     }
     return () => {
-      console.log('removed EL');
       window.removeEventListener(
         'onTargetChanged',
         onTargetChanged as EventListener
@@ -67,7 +64,6 @@ export default function Head() {
   }, [isMounted]);
 
   const getTitle = (isCustomPath: boolean): string => {
-    console.log('get title', isCustomPath);
     switch (pathname) {
       case '/':
         return 'Taboo.AI: Play Taboo with AI';
