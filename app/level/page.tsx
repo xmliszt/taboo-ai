@@ -183,12 +183,19 @@ export default function LevelPage(props: LevelPageProps) {
     // * Make sure response fade out completely!
     setTimeout(async () => {
       try {
-        const responseText = localStorage.getItem('dev')
-          ? await getMockResponse(
-              target ?? '',
-              localStorage.getItem('mode') ?? '1'
-            )
-          : await getQueryResponse(prompt);
+        let responseText: string | undefined;
+        if (
+          (process.env.NEXT_PUBLIC_ENV === 'development' ||
+            process.env.NEXT_PUBLIC_ENV === 'preview') &&
+          localStorage.getItem('dev')
+        ) {
+          responseText = await getMockResponse(
+            target ?? '',
+            localStorage.getItem('mode') ?? '1'
+          );
+        } else {
+          responseText = await getQueryResponse(prompt);
+        }
         setIsInputConfirmed(false); // Reset input ping animation
         if (responseText === undefined || responseText === null) {
           setIsOverloaded(true);
