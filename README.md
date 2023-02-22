@@ -1,6 +1,13 @@
 # TABOO.AI
 
-![taboo.ai](taboo.png)
+![taboo.ai](/public/images/Poster.png)
+
+## How to play?
+
+![taboo.ai](/public/images/Artboard%201.png)
+![taboo.ai](/public/images/Artboard%202.png)
+![taboo.ai](/public/images/Artboard%203.png)
+![taboo.ai](/public/images/Artboard%204.png)
 
 ## Pre-requisites
 
