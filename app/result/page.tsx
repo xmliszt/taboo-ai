@@ -11,7 +11,6 @@ import _ from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Highlight } from '../level/(models)/Chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface StatItem {
@@ -52,6 +51,11 @@ export default function ResultPage(props: ResultPageProps) {
     }
     setTotal(total);
     setTotalScore(totalScore);
+    window.dispatchEvent(
+      new CustomEvent<{ score: number }>('onScoreComputed', {
+        detail: { score: totalScore },
+      })
+    );
   }, []);
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {

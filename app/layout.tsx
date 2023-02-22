@@ -47,7 +47,7 @@ export default function RootLayout({
   const pathName = usePathname();
 
   useEffect(() => {
-    setIsMounted(true);
+    !isMounted && setIsMounted(true);
   }, []);
 
   useEffect(() => {

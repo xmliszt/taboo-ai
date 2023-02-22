@@ -22,6 +22,7 @@ interface LevelPageProps {}
 
 export default function LevelPage(props: LevelPageProps) {
   //SECTION - States
+  const [isMounted, setIsMounted] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -75,6 +76,11 @@ export default function LevelPage(props: LevelPageProps) {
     const unused = [...words];
     _.remove(unused, (s) => s === _target);
     setWords(unused);
+    window.dispatchEvent(
+      new CustomEvent<{ target: string }>('onTargetChanged', {
+        detail: { target: _target },
+      })
+    );
     return _target;
   };
 
@@ -278,6 +284,10 @@ export default function LevelPage(props: LevelPageProps) {
     setIsCountdown(true);
   };
 
+  useEffect(() => {
+    !isMounted && setIsMounted(true);
+  }, []);
+
   //SECTION - When target changed
   useEffect(() => {
     if (target) {
@@ -303,24 +313,26 @@ export default function LevelPage(props: LevelPageProps) {
 
   //SECTION - At the start of the game
   useEffect(() => {
-    clearScores();
-    const level = getLevelCache();
-    if (level !== null) {
-      reset();
-      setDifficulty(level.difficulty);
-      setWords(level.words);
-      const _target = generateNewTarget(level.words);
-      setTarget(_target);
-      setCurrentProgress(1);
-      setIsSuccess(false);
-      setResponseShouldFadeOut(false); // Let new response fade in
-      setResponseText(
-        'Think about your prompt while we generate the Taboo words.'
-      );
-    } else {
-      throw Error('No level is chosen');
+    if (isMounted) {
+      clearScores();
+      const level = getLevelCache();
+      if (level !== null) {
+        reset();
+        setDifficulty(level.difficulty);
+        setWords(level.words);
+        const _target = generateNewTarget(level.words);
+        setTarget(_target);
+        setCurrentProgress(1);
+        setIsSuccess(false);
+        setResponseShouldFadeOut(false); // Let new response fade in
+        setResponseText(
+          'Think about your prompt while we generate the Taboo words.'
+        );
+      } else {
+        throw Error('No level is chosen');
+      }
     }
-  }, []);
+  }, [isMounted]);
   //!SECTION
 
   //SECTION - When progress changed
