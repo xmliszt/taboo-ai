@@ -11,12 +11,7 @@ import ProgressBar from './(components)/ProgressBar';
 import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import {
-  cacheScore,
-  clearLevel,
-  clearScores,
-  getLevelCache,
-} from '../(caching)/cache';
+import { cacheScore, clearScores, getLevelCache } from '../(caching)/cache';
 import { Highlight } from './(models)/Chat.interface';
 import BackButton from '../(components)/BackButton';
 import { ToastContainer, toast } from 'react-toastify';
@@ -273,7 +268,6 @@ export default function LevelPage(props: LevelPageProps) {
   const startCountdown = () => {
     countdown.start();
     setIsCountdown(true);
-    reset();
   };
 
   //SECTION - When target changed
@@ -374,7 +368,14 @@ export default function LevelPage(props: LevelPageProps) {
       nextQuestion();
     } else {
       setIsSuccess(false);
-      isCountingdown || isEmptyInput ? pause() : start();
+      inputTextField.current?.focus();
+      isCountingdown ||
+      isEmptyInput ||
+      isLoading ||
+      isGeneratingVariations ||
+      isLoading
+        ? pause()
+        : start();
     }
   }, [highlights]);
   //!SECTION
@@ -470,10 +471,11 @@ export default function LevelPage(props: LevelPageProps) {
           <section className='relative w-full h-14 lg:h-24 z-10 top-0'>
             <div className='z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark rounded-tl-3xl transition-colors'></div>
             <h1 className='absolute left-10 right-10 px-5 flex-grow text-center lg:py-6 py-4 text-xl lg:text-3xl text-red dark:text-neon-red whitespace-nowrap overflow-x-scroll scrollbar-hide'>
-              TABOO:{' '}
+              Make AI Say:{' '}
               <span className='font-extrabold text-black dark:text-neon-white whitespace-nowrap'>
                 {target}
-              </span>
+              </span>{' '}
+              <span className='font-light text-sm'>(case-insensitive)</span>
             </h1>
             <div className='z-10 absolute right-0 h-full w-16 gradient-left dark:gradient-left-dark rounded-tr-3xl transition-colors'></div>
           </section>
