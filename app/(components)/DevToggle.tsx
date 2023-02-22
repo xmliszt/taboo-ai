@@ -18,6 +18,7 @@ const DevToggle = () => {
         id='dev-toggle'
         aria-label='Toggle for development mode'
         name='dev-toggle'
+        defaultChecked={localStorage.getItem('dev') !== null}
         onChange={onDevToggle}
       />
       <label htmlFor='dev-toggle'>Dev Mode</label>

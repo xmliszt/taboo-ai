@@ -12,7 +12,7 @@ export async function getQueryResponse(prompt: string): Promise<string> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Question: ${prompt}\n Best Answer: {}`,
+      prompt: `Give your best answer to this prompt: ${prompt}.`,
     }),
     cache: 'no-store',
   });
@@ -28,7 +28,7 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate a list of at least 15 words related to the word '${word}' or its lemma forms, to be played in the Taboo game, each word is one-word, insert the words generated in an comma separated array: [word1, word2, ...]`,
+      prompt: `Generate all most obvious related single-words for '${word}', and lemmatization of '${word}' if available. Insert the words in an comma separated array: [word1, word2, ...]`,
       temperature: 0.8,
       maxToken: 100,
     }),
