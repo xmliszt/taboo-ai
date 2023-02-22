@@ -1,8 +1,14 @@
 'use client';
 
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 const DevToggle = () => {
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setChecked(localStorage.getItem('dev') ? true : false);
+  }, []);
+
   const onDevToggle = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       localStorage.setItem('dev', '1');
@@ -18,7 +24,7 @@ const DevToggle = () => {
         id='dev-toggle'
         aria-label='Toggle for development mode'
         name='dev-toggle'
-        defaultChecked={localStorage.getItem('dev') !== null}
+        defaultChecked={checked}
         onChange={onDevToggle}
       />
       <label htmlFor='dev-toggle'>Dev Mode</label>
