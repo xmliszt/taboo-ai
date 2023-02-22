@@ -206,6 +206,7 @@ export default function LevelPage(props: LevelPageProps) {
         setResponseShouldFadeOut(true); // Fade out current response if any
         toast.error(CONSTANTS.errors.overloaded);
         setIsLoading(false);
+        start();
       }
     }, 1000);
   };
@@ -373,7 +374,7 @@ export default function LevelPage(props: LevelPageProps) {
       nextQuestion();
     } else {
       setIsSuccess(false);
-      isCountingdown ? stop() : currentProgress > 1 && start();
+      isCountingdown || isEmptyInput ? pause() : start();
     }
   }, [highlights]);
   //!SECTION
