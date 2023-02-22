@@ -51,7 +51,7 @@ const DevToggle = () => {
       {devOn && (
         <fieldset
           id='response-mode'
-          className='p-4 bg-white text-black leading-none rounded-lg'
+          className='p-4 bg-white text-black leading-none rounded-lg opacity-50'
         >
           <h2 className='mb-4'>Server Response Mode</h2>
           <div className='flex flex-col gap-2'>

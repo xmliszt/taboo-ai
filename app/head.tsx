@@ -1,7 +1,97 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 export default function Head() {
+  const [title, setTitle] = useState<string>('Taboo.AI: Play Taboo with AI');
+  const [isMounted, setIsMounted] = useState(false);
+  const pathname = usePathname();
+
+  const onTargetChanged = (event: CustomEvent<{ target: string }>) => {
+    if (pathname === '/level') {
+      console.log('set custom title');
+      setTitle(`Taboo.AI: Target -> ${event.detail.target}`);
+    }
+  };
+
+  const onScoreComputed = (event: CustomEvent<{ score: number }>) => {
+    if (pathname === '/result') {
+      setTitle(`Taboo.AI: Score: ${event.detail.score}!`);
+    }
+  };
+
+  const isPathTitleCustom = (pathname: string): boolean => {
+    switch (pathname) {
+      case '/level':
+      case '/result':
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  useEffect(() => {
+    !isMounted && setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const isCustom = isPathTitleCustom(pathname ?? '');
+    const title = getTitle(isCustom);
+    setTitle(title);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (isMounted) {
+      console.log('added EL');
+      window.addEventListener(
+        'onTargetChanged',
+        onTargetChanged as EventListener
+      );
+      window.addEventListener(
+        'onScoreComputed',
+        onScoreComputed as EventListener
+      );
+    }
+    return () => {
+      console.log('removed EL');
+      window.removeEventListener(
+        'onTargetChanged',
+        onTargetChanged as EventListener
+      );
+      window.removeEventListener(
+        'onScoreComputed',
+        onScoreComputed as EventListener
+      );
+    };
+  }, [isMounted]);
+
+  const getTitle = (isCustomPath: boolean): string => {
+    console.log('get title', isCustomPath);
+    switch (pathname) {
+      case '/':
+        return 'Taboo.AI: Play Taboo with AI';
+      case '/ai':
+        return 'Taboo.AI: AI Mode';
+      case '/whatsnew':
+        return "Taboo.AI: What's New";
+      case '/levels':
+        return 'Taboo.AI: Choose Topics';
+      case '/rule':
+        return 'Taboo.AI: Game Rules';
+      case '/buymecoffee':
+        return 'Taboo.AI: Buy Me Coffee';
+      case '/level':
+        return isCustomPath ? title : 'Taboo.AI: Play Taboo with AI';
+      case '/result':
+        return isCustomPath ? title : 'Taboo.AI: Share your scores!';
+      default:
+        return 'Taboo.AI: Play Taboo with AI';
+    }
+  };
   return (
     <>
-      <title>Taboo.AI: Play Taboo Game with AI</title>
+      <title>{title}</title>
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />
       <meta
