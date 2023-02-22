@@ -13,10 +13,7 @@ export default function Head() {
         property='og:description'
         content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta
-        property='og:image'
-        content='https://i.ibb.co/8xFQX3P/TabooAI.png'
-      />
+      <meta property='og:image' content='/images/Poster.png' />
       <meta
         property='og:image:alt'
         content='Taboo.AI: Play Taboo Game for Free with AI'
@@ -43,10 +40,7 @@ export default function Head() {
         name='twitter:description'
         content='Play Taboo Game for free ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta
-        name='twitter:image'
-        content='https://i.ibb.co/8xFQX3P/TabooAI.png'
-      />
+      <meta name='twitter:image' content='/images/Poster.png' />
       <meta
         name='twitter:image:alt'
         content='Taboo.AI: Play Taboo Game for Free with AI'

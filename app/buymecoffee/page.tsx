@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 const BuyMeCoffeeQR = '/images/bmc_qr.png';
 import { GiCoffeeCup } from 'react-icons/gi';
 import BackButton from '../(components)/BackButton';
