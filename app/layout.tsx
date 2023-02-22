@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import LightDarkSwitchButton, {
   Theme,
 } from './(components)/LightDarkSwitchButton';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const grenze = Grenze({
   weight: '400',
@@ -42,10 +42,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isDark, setIsDark] = useState(
-    localStorage.getItem('theme') === 'dark'
-  );
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>();
   const pathName = usePathname();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    isMounted && setIsDark(localStorage.getItem('theme') === 'dark');
+  }, [isMounted]);
 
   const onThemeChange = (theme: Theme) => {
     setIsDark(theme === Theme.Dark);
