@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, FormEvent, ChangeEvent } from 'react';
-import { getCreativeLevel } from '../(services)/aiService';
+import { getCreativeLevel } from '../../lib/services/aiService';
 import { CONSTANTS } from '../constants';
 import { useRouter } from 'next/navigation';
-import { cacheLevel } from '../(caching)/cache';
+import { cacheLevel } from '../../lib/cache';
 import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/Loading';
 
