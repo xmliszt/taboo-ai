@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { CONSTANTS } from '../../app/constants';
 import IVariation from '../../app/(models)/variationModel';
 import { formatResponseTextIntoArray } from '../../app/utilities';
-import { isWordExist } from '../db/wordRepository';
 import { getTabooWords } from './wordService';
 
 export async function getQueryResponse(prompt: string): Promise<string> {
@@ -23,9 +22,9 @@ export async function getQueryResponse(prompt: string): Promise<string> {
 }
 
 export async function getWordVariations(word: string): Promise<IVariation> {
-  const wordExistInDB = await isWordExist(word);
+  const tabooWords = await getTabooWords(word);
+  const wordExistInDB = tabooWords.length > 0;
   if (wordExistInDB) {
-    const tabooWords = await getTabooWords(word);
     const words = tabooWords.map((word) => _.startCase(_.toLower(word)));
     return {
       target: word,

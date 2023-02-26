@@ -7,7 +7,10 @@ import { getLevels } from '../../lib/services/levelService';
 import ILevel from '../levels/(models)/level.interface';
 import { IoMdAddCircle } from 'react-icons/io';
 import { AiFillDelete } from 'react-icons/ai';
-import { getTabooWords, saveTabooWords } from '../../lib/services/wordService';
+import {
+  getFullWordList,
+  saveTabooWords,
+} from '../../lib/services/wordService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import _ from 'lodash';
@@ -16,15 +19,17 @@ const DevPage = () => {
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<ILevel | null>(null);
   const [variations, setVariations] = useState<IVariation>();
-  const [visitedWords, setVisitedWords] = useState<string[]>([]);
   const [editText, setEditText] = useState<string>();
   const [currentEditingIndex, setCurrentEditingIndex] = useState<number>(-1);
   const [currentTarget, setCurrentTarget] = useState<string>();
+  const [fullWordList, setFullWordList] = useState<string[]>([]);
 
   const fetchLevels = async () => {
     const levels = await getLevels();
     setLevels(levels);
     setSelectedLevel(levels[0]);
+    const wordList = await getFullWordList();
+    setFullWordList(wordList.map((w) => w.word));
   };
 
   const onLevelSelected = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -33,24 +38,13 @@ const DevPage = () => {
       (level) => level.name === e.target.value
     )[0];
     setVariations(undefined);
-    setVisitedWords([]);
     setCurrentEditingIndex(-1);
     setEditText('');
     setSelectedLevel(selectedLevel);
   };
 
   const getVariationsForWord = async (word: string) => {
-    setVisitedWords((words) => [...words, word]);
     const variations = await getWordVariations(word);
-    try {
-      const dbSavedVariations = await getTabooWords(word);
-      variations.variations = _.uniq([
-        ...variations.variations,
-        ...dbSavedVariations,
-      ]);
-    } catch (err) {
-      console.error(err);
-    }
     setVariations(variations);
   };
 
@@ -135,7 +129,7 @@ const DevPage = () => {
           {selectedLevel?.words.map((word, idx) => (
             <button
               className={`p-3 rounded-lg w-full leading-none ${
-                visitedWords.includes(word)
+                fullWordList.includes(word)
                   ? '!bg-green !text-white'
                   : '!bg-yellow !text-black'
               }`}

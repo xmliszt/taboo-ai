@@ -1,14 +1,14 @@
 import IVariation from '../../app/(models)/variationModel';
 import {
+  getAllWords,
   getWords,
   insertWord,
-  isWordExist,
   updateWord,
 } from '../db/wordRepository';
 
 export async function saveTabooWords(word: string, variations: IVariation) {
-  const wordExists = await isWordExist(word);
-  if (wordExists) {
+  const { data } = await getWords(word);
+  if (data.length > 0) {
     await updateWord(word, variations.variations);
   } else {
     await insertWord(word, variations.variations);
@@ -19,8 +19,13 @@ export async function getTabooWords(word: string) {
   const { data } = await getWords(word);
   if (data.length > 0) {
     const variations: string[] = data[0].taboo_words.split(',');
-    return variations;
+    return variations.filter((word) => word.length > 0);
   } else {
-    throw Error('No target word found in db!');
+    return [];
   }
+}
+
+export async function getFullWordList() {
+  const { data } = await getAllWords();
+  return data;
 }
