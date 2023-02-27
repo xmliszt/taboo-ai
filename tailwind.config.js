@@ -25,6 +25,8 @@ module.exports = {
         'fade-out': 'fadeOut 1s ease-in-out',
         'fade-in': 'fadeIn 1s ease-in-out',
         carousell: 'moveIn 10s linear infinite',
+        'fade-inout-first-loop': 'fadeInOut 10s ease-in-out infinite',
+        'fade-inout-delay-loop': 'fadeInOut 10s ease-in-out 5s infinite',
       },
       keyframes: {
         unicornFlow: {
@@ -42,6 +44,14 @@ module.exports = {
         moveIn: {
           '0%': { transform: 'translateX(-100vw)' },
           '100%': { transform: 'translateX(100vw)' },
+        },
+        fadeInOut: {
+          '0%': { opacity: 0 },
+          '4%': { opacity: 0 },
+          '7%': { opacity: 100 },
+          '50%': { opacity: 100 },
+          '53%': { opacity: 0 },
+          '100%': { opacity: 0 },
         },
       },
     },
