@@ -446,7 +446,7 @@
     {
       "name": "Disney Princesses",
       "difficulty": 3,
-      "new": true,
+      "new": false,
       "author": "Acid_Bunny",
       "words": [
         "Snow White",
@@ -509,6 +509,13 @@
         "Scorching",
         "Overcast"
       ]
+    },
+    {
+      "name": "ESL Basic 1",
+      "difficulty": 1,
+      "new": true,
+      "author": "Emon",
+      "words": ["Shopping", "Travel", "Office", "Work", "Cooking", "Zoom"]
     }
   ]
 }
