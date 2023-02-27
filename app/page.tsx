@@ -4,6 +4,7 @@ import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import CustomWordListLink from './(components)/CustomWordListLink';
 import DevToggle from './(components)/DevToggle';
+import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
 import Footer from './(components)/Footer';
 import SocialLinkButton from './(components)/SocialLinkButton';
 
@@ -37,12 +38,7 @@ export default function HomePage(props: HomePageProps) {
               {versionNumber}
             </span>
           </h1>
-          <Link
-            className='absolute left-[60%] -top-10 lg:-top-12 text-base lg:text-2xl text-yellow dark:text-neon-yellow animate-bounce hover:text-red-light hover:dark:text-neon-red transition-colors ease-in-out'
-            href='/whatsnew'
-          >
-            What&apos;s New?
-          </Link>
+          <FeatureUpdatesLink />
         </div>
         <Link
           id='start'
