@@ -1,9 +1,21 @@
 import { createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import { NextApiRequest, NextApiResponse } from 'next';
+import * as levelRepository from '../../lib/db/levelRespository';
 import handler from '../../pages/api/level';
 import ILevel from '../../app/levels/(models)/level.interface';
-import path from 'path';
 
+jest.mock('../../lib/db/levelRespository', () => ({
+  queryAllLevels: jest.fn().mockReturnValue({
+    levels: [
+      {
+        name: 'hello',
+        difficulty: 100,
+        author: 'test',
+        words: '',
+      },
+    ],
+  }),
+}));
 jest.mock('next', () => ({
   NextApiRequest: {
     method: 'GET',
@@ -16,16 +28,6 @@ jest.mock('next', () => ({
     }),
     end: jest.fn(),
   },
-}));
-jest.mock('path', () => ({
-  ...jest.requireActual('path'),
-  join: jest.fn(),
-}));
-jest.mock('fs', () => ({
-  ...jest.requireActual('fs'),
-  readFileSync: jest
-    .fn()
-    .mockReturnValue('{"levels":[{"difficulty": 100, "name": "hello"}]}'),
 }));
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
@@ -60,14 +62,10 @@ describe('/api/level 200', () => {
 });
 
 describe('/api/level 500', () => {
-  it('should return unsuccessful 500 response', async () => {
-    path.join = jest.fn(() => {
-      throw Error();
-    });
+  it('should return 500 response with levels object', async () => {
+    (levelRepository.queryAllLevels as jest.Mock).mockRejectedValue('');
     const { req, res } = makeRequestResponse();
     await handler(req, res);
     expect(res.statusCode).toBe(500);
   });
 });
-
-export {};

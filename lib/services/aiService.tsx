@@ -1,8 +1,9 @@
-import ILevel from '../levels/(models)/level.interface';
+import ILevel from '../../app/levels/(models)/level.interface';
 import _ from 'lodash';
-import { CONSTANTS } from '../constants';
-import IVariation from '../(models)/variationModel';
-import { formatResponseTextIntoArray } from '../utilities';
+import { CONSTANTS } from '../../app/constants';
+import IVariation from '../../app/(models)/variationModel';
+import { formatResponseTextIntoArray } from '../../app/utilities';
+import { getTabooWords } from './wordService';
 
 export async function getQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {
@@ -21,6 +22,15 @@ export async function getQueryResponse(prompt: string): Promise<string> {
 }
 
 export async function getWordVariations(word: string): Promise<IVariation> {
+  const tabooWords = await getTabooWords(word);
+  const wordExistInDB = tabooWords.length > 0;
+  if (wordExistInDB) {
+    const words = tabooWords.map((word) => _.startCase(_.toLower(word)));
+    return {
+      target: word,
+      variations: words,
+    };
+  }
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {

@@ -3,7 +3,10 @@
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
 import Timer from './(components)/Timer';
 import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
-import { getQueryResponse, getWordVariations } from '../(services)/aiService';
+import {
+  getQueryResponse,
+  getWordVariations,
+} from '../../lib/services/aiService';
 import InputDisplay from './(components)/InputDisplay';
 import _ from 'lodash';
 import { Author } from './(models)/Author.enum';
@@ -11,12 +14,18 @@ import ProgressBar from './(components)/ProgressBar';
 import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { cacheScore, clearScores, getLevelCache } from '../(caching)/cache';
+import {
+  cacheScore,
+  clearScores,
+  getLevelCache,
+  getScoresCache,
+} from '../../lib/cache';
 import { Highlight } from './(models)/Chat.interface';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../(models)/variationModel';
 import { getMockResponse, getMockVariations } from '../utilities';
+import { saveGame } from '../../lib/services/gameService';
 
 interface LevelPageProps {}
 
@@ -347,7 +356,20 @@ export default function LevelPage(props: LevelPageProps) {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      router.push('/result');
+      const level = getLevelCache();
+      const scores = getScoresCache();
+      if (level && scores) {
+        saveGame(level, scores)
+          .catch((err) => {
+            console.error(err);
+          })
+          .finally(() => {
+            router.push('/result');
+          });
+      } else {
+        console.error("Can't save game due to missing level or scores cache!");
+        router.push('/result');
+      }
     } else if (currentProgress === 1) {
       return;
     } else {

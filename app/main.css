@@ -93,6 +93,8 @@ button:not(
     #share,
     #reset,
     #clear,
+    #add,
+    #delete,
     .Toastify__close-button
   ),
 a#start {

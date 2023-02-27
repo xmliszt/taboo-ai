@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { clearLevel } from '../(caching)/cache';
 import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/Loading';
-import { getLevels } from '../(services)/levelService';
+import { getLevels } from '../../lib/services/levelService';
 import ILevel from './(models)/level.interface';
 import Badge from './(components)/Badge';
 import HotBadge from './(components)/HotBadge';
@@ -16,14 +15,18 @@ interface LevelsPageProps {}
 
 export default function LevelsPage(props: LevelsPageProps) {
   const title = 'Choose A Category';
+  const [isMounted, setIsMounted] = useState(false);
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchLevels = async () => {
     setIsLoading(true);
-    const levels = await getLevels();
-    setIsLoading(false);
-    setLevels(levels);
+    try {
+      const levels = await getLevels();
+      setLevels(levels);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getDifficulty = (difficulty: number): string => {
@@ -53,8 +56,12 @@ export default function LevelsPage(props: LevelsPageProps) {
   };
 
   useEffect(() => {
-    fetchLevels();
+    !isMounted && setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    fetchLevels();
+  }, [isMounted]);
 
   return (
     <>

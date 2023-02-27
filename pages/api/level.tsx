@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import path from 'path';
-import fs from 'fs';
 import ILevel from '../../app/levels/(models)/level.interface';
+import { queryAllLevels } from '../../lib/db/levelRespository';
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,18 +8,20 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     try {
-      const filePath = path.join(process.cwd(), 'levels.json');
-      const jsonData = fs.readFileSync(filePath, 'utf-8');
-      let levels = JSON.parse(jsonData).levels as ILevel[];
-      levels = levels.map((level) => {
+      const { levels } = await queryAllLevels();
+      const convertedLevels: ILevel[] = levels.map((level): ILevel => {
         return {
-          ...level,
-          difficulty: Number(level.difficulty),
+          name: level.name as string,
+          difficulty: level.difficulty as number,
+          author: level.author as string,
+          new: level.new as boolean,
+          words: (level.words as string).split(','),
         };
       });
-      res.json({ levels });
+      res.json({ levels: convertedLevels });
     } catch (err) {
-      res.status(500).send(err);
+      console.log(err);
+      res.status(500).json(err);
     }
   } else {
     res.end();

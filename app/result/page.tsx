@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ILevel from '../levels/(models)/level.interface';
 import IScore from '../level/(models)/Score.interface';
-import { getScoresCache, getLevelCache } from '../(caching)/cache';
+import { getScoresCache, getLevelCache } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';

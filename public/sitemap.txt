@@ -5,3 +5,4 @@ https://taboo-ai.vercel.app/level
 https://taboo-ai.vercel.app/ai
 https://taboo-ai.vercel.app/results
 https://taboo-ai.vercel.app/whatsnew
+https://taboo-ai.vercel.app/upcoming
