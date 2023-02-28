@@ -137,6 +137,11 @@ export default function Head() {
         name='google-site-verification'
         content='ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk'
       />
+      <script
+        async
+        src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6537113723731394'
+        crossOrigin='anonymous'
+      ></script>
       <link rel='icon' href='/favicon.ico' />
     </>
   );
