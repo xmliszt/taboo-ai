@@ -85,7 +85,7 @@ export default function LevelsPage(props: LevelsPageProps) {
               customClass={getDifficultyColor(level.difficulty)}
             >
               <NewBadge>
-                {level.author !== undefined ? (
+                {level.author ? (
                   <AuthorBadge label={level.author}>
                     <LevelButton
                       level={level}
@@ -106,7 +106,13 @@ export default function LevelsPage(props: LevelsPageProps) {
               label={getDifficulty(level.difficulty)}
               customClass={getDifficultyColor(level.difficulty)}
             >
-              <LevelButton level={level} />
+              {level.author ? (
+                <AuthorBadge label={level.author}>
+                  <LevelButton level={level} />
+                </AuthorBadge>
+              ) : (
+                <LevelButton level={level} />
+              )}
             </Badge>
           )
         )}
