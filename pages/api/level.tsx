@@ -16,6 +16,7 @@ export default async function handler(
           author: level.author as string,
           new: level.new as boolean,
           words: (level.words as string).split(','),
+          createdAt: Date.parse(level.created_at),
         };
       });
       res.json({ levels: convertedLevels });

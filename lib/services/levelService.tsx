@@ -3,7 +3,9 @@ import ILevel from '../../app/levels/(models)/level.interface';
 export async function getLevels(): Promise<ILevel[]> {
   const response = await fetch('/api/level');
   const json = await response.json();
-  let levels = json.levels as ILevel[];
-  levels = levels.sort((a) => (a.new ?? false ? -1 : 1));
+  const levels = json.levels as ILevel[];
+
+  levels.sort((a) => (a.new ?? false ? -1 : 1));
+  levels.sort((a, b) => (b.createdAt ?? Infinity) - (a.createdAt ?? Infinity));
   return levels;
 }
