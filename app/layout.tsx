@@ -6,8 +6,9 @@ import { Orbitron, Grenze } from '@next/font/google';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 import WordCarousell from './(components)/WordCarousell';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LightDarkToggle from './(components)/LightDarkToggle';
+import { getMaintenance } from '../lib/services/maintenanceService';
 
 const grenze = Grenze({
   weight: '400',
@@ -35,13 +36,27 @@ const orbitron = Orbitron({
   ],
 });
 
+interface IMaintenance {
+  isGPTOutage: boolean;
+}
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [maintenanceData, setMaintenanceData] = useState<IMaintenance>();
   const [isDark, setIsDark] = useState(false);
   const pathName = usePathname();
+
+  useEffect(() => {
+    fetchMaintenance();
+  }, []);
+
+  const fetchMaintenance = async () => {
+    const data = await getMaintenance();
+    setMaintenanceData(data);
+  };
 
   return (
     <html
@@ -58,7 +73,15 @@ export default function RootLayout({
             setIsDark(dark);
           }}
         />
-        {children}
+        {maintenanceData?.isGPTOutage ? (
+          <section className='flex justify-center items-center text-3xl leading-normal h-full w-full p-16'>
+            OpenAI API is experiencing unexpected outage. We will be back once
+            the outage from OpenAI has been resolved! Thank you for your
+            patience!
+          </section>
+        ) : (
+          children
+        )}
         <AnalyticsWrapper />
       </body>
     </html>
