@@ -6,6 +6,6 @@ export async function getLevels(): Promise<ILevel[]> {
   const levels = json.levels as ILevel[];
 
   levels.sort((a) => (a.new ?? false ? -1 : 1));
-  levels.sort((a, b) => b.createdAt - a.createdAt);
+  levels.sort((a, b) => (b.createdAt ?? Infinity) - (a.createdAt ?? Infinity));
   return levels;
 }

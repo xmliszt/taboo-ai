@@ -4,5 +4,5 @@ export default interface ILevel {
   author?: string;
   new?: boolean;
   words: string[];
-  createdAt: number;
+  createdAt?: number;
 }
