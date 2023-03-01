@@ -122,7 +122,10 @@ export default function Head() {
         name='twitter:description'
         content='Play Taboo Game for free ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
       />
-      <meta name='twitter:image' content='/images/Poster.png' />
+      <meta
+        name='twitter:image'
+        content='https://i.ibb.co/44Gz4P1/Poster.png'
+      />
       <meta name='twitter:image:alt' content={title} />
       <meta name='twitter:creator' content='@xmliszt' />
       <meta name='twitter:site' content='@xmliszt' />
@@ -134,6 +137,11 @@ export default function Head() {
         name='google-site-verification'
         content='ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk'
       />
+      <script
+        async
+        src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6537113723731394'
+        crossOrigin='anonymous'
+      ></script>
       <link rel='icon' href='/favicon.ico' />
     </>
   );

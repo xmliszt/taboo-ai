@@ -46,7 +46,7 @@ export default function RootLayout({
   return (
     <html
       lang='en'
-      className={`${isDark ? 'dark' : 'light'} ${
+      className={`${isDark && 'dark'} ${
         isDark ? orbitron.className : grenze.className
       } font-serif`}
     >
