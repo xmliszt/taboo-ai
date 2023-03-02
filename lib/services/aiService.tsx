@@ -5,6 +5,12 @@ import IVariation from '../../app/(models)/variationModel';
 import { formatResponseTextIntoArray } from '../../app/utilities';
 import { getTabooWords } from './wordService';
 
+export async function isWordVariationsExist(word: string): Promise<boolean> {
+  const tabooWords = await getTabooWords(word);
+  const wordExistInDB = tabooWords.length > 0;
+  return wordExistInDB;
+}
+
 export async function getQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {
     method: 'POST',
@@ -22,15 +28,6 @@ export async function getQueryResponse(prompt: string): Promise<string> {
 }
 
 export async function getWordVariations(word: string): Promise<IVariation> {
-  const tabooWords = await getTabooWords(word);
-  const wordExistInDB = tabooWords.length > 0;
-  if (wordExistInDB) {
-    const words = tabooWords.map((word) => _.startCase(_.toLower(word)));
-    return {
-      target: word,
-      variations: words,
-    };
-  }
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {
@@ -38,7 +35,7 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate all most obvious related single-words for '${word}', and lemmatization of '${word}' if available. Insert the words in an comma separated array: [word1, word2, ...]`,
+      prompt: `Generate 10 most obvious related single-words for '${word}', and forms of '${word}'. No plural form, no duplication. Insert the words in an comma separated array: [word1, word2, ...]`,
       temperature: 0.8,
       maxToken: 100,
     }),
