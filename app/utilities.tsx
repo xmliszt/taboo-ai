@@ -108,6 +108,7 @@ export const formatResponseTextIntoArray = (
       wordList.push(_word);
     }
   }
+  wordList = wordList.filter((word) => word.length < 20);
   return wordList;
 };
 

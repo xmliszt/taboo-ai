@@ -26,6 +26,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../(models)/variationModel';
 import { getMockResponse, getMockVariations } from '../utilities';
 import { saveGame } from '../../lib/services/gameService';
+import { getTabooWords } from '../../lib/services/wordService';
 
 interface LevelPageProps {}
 
@@ -142,7 +143,8 @@ export default function LevelPage(props: LevelPageProps) {
         highlights.push(highlight);
       }
     } else {
-      for (const variation of variations) {
+      const _variations = target == null ? variations : [...variations, target];
+      for (const variation of _variations) {
         const parts = [variation];
         for (const part of parts) {
           const regex = getRegexPattern(part);
@@ -264,26 +266,31 @@ export default function LevelPage(props: LevelPageProps) {
   };
   //!SECTION
 
-  const generateVariationsForTarget = (
+  const generateVariationsForTarget = async (
     retries: number,
     target: string,
     callback: (variations?: IVariation) => void
   ) => {
     setRetryCount(retries);
-    localStorage.getItem('dev')
-      ? getMockVariations(target, true)
-          .then((variations) => {
-            callback(variations);
-          })
-          .catch(() => {
-            if (retries > 0) {
-              generateVariationsForTarget(retries - 1, target, callback);
-            } else {
-              callback();
-            }
-          })
-      : getWordVariations(target)
-          .then((variations) => {
+    if (localStorage.getItem('dev')) {
+      getMockVariations(target, true)
+        .then((variations) => {
+          callback(variations);
+        })
+        .catch(() => {
+          if (retries > 0) {
+            generateVariationsForTarget(retries - 1, target, callback);
+          } else {
+            callback();
+          }
+        });
+    } else {
+      const savedWords = await getTabooWords(target);
+      if (savedWords.length > 0) {
+        callback({ target: target, variations: savedWords });
+      } else {
+        getWordVariations(target)
+          .then(async (variations) => {
             callback(variations);
           })
           .catch(() => {
@@ -293,6 +300,8 @@ export default function LevelPage(props: LevelPageProps) {
               callback();
             }
           });
+      }
+    }
   };
 
   const startCountdown = () => {
