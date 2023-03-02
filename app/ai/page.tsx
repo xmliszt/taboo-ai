@@ -69,7 +69,7 @@ export default function AiPage(props: AiPageProps) {
               htmlFor='topicInput'
             >
               {somethingWrong
-                ? CONSTANTS.errors.overloaded
+                ? CONSTANTS.errors.aiModeFail + ' ' + topic
                 : isValid
                 ? 'Enter A Topic'
                 : 'Topic cannot be blank!'}
