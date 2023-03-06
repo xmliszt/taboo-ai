@@ -1,11 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import ILevel from '../../app/levels/(models)/level.interface';
 import { queryAllLevels } from '../../lib/db/levelRespository';
+import withMiddleware from '../../lib/middleware/middlewareWrapper';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
       const { levels } = await queryAllLevels();
@@ -27,4 +25,6 @@ export default async function handler(
   } else {
     res.end();
   }
-}
+};
+
+export default withMiddleware(handler);
