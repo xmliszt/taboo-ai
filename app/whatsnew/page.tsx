@@ -1,6 +1,6 @@
 import BackButton from '../(components)/BackButton';
 import ReactMarkdown from 'react-markdown';
-import content from './content.md';
+import content from './whatsnew.md';
 import style from './style.module.css';
 import Footer from '../(components)/Footer';
 import Link from 'next/link';
