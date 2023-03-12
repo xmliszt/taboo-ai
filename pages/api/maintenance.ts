@@ -1,13 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import withMiddleware from '../../lib/middleware/middlewareWrapper';
 
 interface IOutageData {
   isGPTOutage: boolean;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const outageData: IOutageData = {
     isGPTOutage: false,
   };
@@ -24,4 +22,6 @@ export default async function handler(
   } else {
     res.end();
   }
-}
+};
+
+export default withMiddleware(handler);
