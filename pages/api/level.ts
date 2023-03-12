@@ -17,10 +17,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           createdAt: Date.parse(level.created_at),
         };
       });
-      res.json({ levels: convertedLevels });
+      res.status(200).json({ levels: convertedLevels });
     } catch (err) {
-      console.log(err);
-      res.status(500).json(err);
+      res.status(500).json({ error: err });
     }
   } else {
     res.end();

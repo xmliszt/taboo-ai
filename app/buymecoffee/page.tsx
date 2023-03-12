@@ -39,8 +39,8 @@ const BuyMeCoffeePage = () => {
             <b>OpenAI GPT API services</b>. To provide you with the smooth
             gameplay experience without{' '}
             <b>frequent internet hiccups and API overloads</b>, a paid
-            subscription to <b>the Curie Model</b> API service was made monthly
-            by the developer. Your coffee bought for the developer will
+            subscription to <b>the gpt-3.5-turbo Model</b> API service was made
+            monthly by the developer. Your coffee bought for the developer will
             definitely help him continue maintain and update the game to bring
             more fun and interesting components to you in the future!{' '}
           </p>

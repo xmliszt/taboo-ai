@@ -1,8 +1,9 @@
-import { createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as levelRepository from '../../lib/db/levelRespository';
 import handler from '../../pages/api/level';
 import ILevel from '../../app/levels/(models)/level.interface';
+
+jest.mock('../../lib/middleware/middlewareWrapper', () => jest.fn((fn) => fn));
 
 jest.mock('../../lib/db/levelRespository', () => ({
   queryAllLevels: jest.fn().mockReturnValue({
@@ -16,56 +17,71 @@ jest.mock('../../lib/db/levelRespository', () => ({
     ],
   }),
 }));
-jest.mock('next', () => ({
-  NextApiRequest: {
-    method: 'GET',
-  },
-  NextApiResponse: {
-    json: jest.fn((response) => response),
-    status: jest.fn((status: number) => {
-      status;
-      jest.fn((error) => error);
-    }),
-    end: jest.fn(),
-  },
-}));
+
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
   uniqueId: jest.fn().mockReturnValue(1),
 }));
 
-type ApiRequest = NextApiRequest & ReturnType<typeof createRequest>;
-type APiResponse = NextApiResponse & ReturnType<typeof createResponse>;
-
-function makeRequestResponse(method: RequestMethod = 'GET') {
-  const req = createRequest<ApiRequest>({ method });
-  const res = createResponse<APiResponse>();
-  return { req, res };
-}
-
 describe('/api/level 200', () => {
+  const mockReq = {} as NextApiRequest;
+  const mockRes = {} as NextApiResponse;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReq.method = 'GET'; // default 'GET'
+    mockReq.headers = {
+      'x-forwarded-for': ['http://localhost:3000'],
+      origin: 'http://localhost:3000',
+    };
+    mockRes.status = jest.fn().mockReturnThis();
+    mockRes.json = jest.fn();
+    mockRes.end = jest.fn();
+  });
+
   it('should return successful 200 response with levels object', async () => {
-    const { req, res } = makeRequestResponse();
-    await handler(req, res);
-    const levels: ILevel[] = res._getJSONData().levels;
-    expect(res.statusCode).toBe(200);
-    expect(levels.length).toBe(1);
-    expect(levels[0].name).toBe('hello');
-    expect(levels[0].difficulty).toBe(100);
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      levels: [
+        {
+          author: 'test',
+          createdAt: NaN,
+          difficulty: 100,
+          name: 'hello',
+          new: undefined,
+          words: [''],
+        },
+      ],
+    });
   });
 
   it('should return successful response with nothing', async () => {
-    const { req, res } = makeRequestResponse('POST');
-    await handler(req, res);
-    expect(res.statusCode).toBe(200);
+    mockReq.method = 'POST';
+    await handler(mockReq, mockRes);
+    expect(mockRes.end).toHaveBeenCalled();
   });
 });
 
 describe('/api/level 500', () => {
+  const mockReq = {} as NextApiRequest;
+  const mockRes = {} as NextApiResponse;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReq.method = 'GET'; // default 'GET'
+    mockReq.headers = {
+      'x-forwarded-for': ['http://localhost:3000'],
+      origin: 'http://localhost:3000',
+    };
+    mockRes.status = jest.fn().mockReturnThis();
+    mockRes.json = jest.fn();
+    mockRes.end = jest.fn();
+  });
   it('should return 500 response with levels object', async () => {
-    (levelRepository.queryAllLevels as jest.Mock).mockRejectedValue('');
-    const { req, res } = makeRequestResponse();
-    await handler(req, res);
-    expect(res.statusCode).toBe(500);
+    (levelRepository.queryAllLevels as jest.Mock).mockRejectedValue(
+      'some error'
+    );
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'some error' });
   });
 });

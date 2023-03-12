@@ -1,19 +1,10 @@
 /** @type {import('next').NextConfig} */
 
-const ContentSecurityPolicy = `
-  default-src 'self';
-  script-src 'self';
-`;
-
 const appSecurityHeaders = [
   { key: 'X-XSS-Protection', value: '1; mode=block' },
   {
     key: 'X-Frame-Options',
     value: 'SAMEORIGIN',
-  },
-  {
-    key: 'Content-Security-Policy',
-    value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
   },
 ];
 

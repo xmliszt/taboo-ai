@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const trustedOrigins = ['https://taboo-ai.vercel.app'];
+const trustedOrigins = ['https://taboo-ai.vercel.app', 'http://localhost:3000'];
 // if (process.env.VERCEL_ENV === 'development') {
 //   trustedOrigins.push('http://0.0.0.0');
 // }
