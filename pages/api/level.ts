@@ -1,11 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import ILevel from '../../app/levels/(models)/level.interface';
 import { queryAllLevels } from '../../lib/db/levelRespository';
+import withMiddleware from '../../lib/middleware/middlewareWrapper';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
       const { levels } = await queryAllLevels();
@@ -19,12 +17,13 @@ export default async function handler(
           createdAt: Date.parse(level.created_at),
         };
       });
-      res.json({ levels: convertedLevels });
+      res.status(200).json({ levels: convertedLevels });
     } catch (err) {
-      console.log(err);
-      res.status(500).json(err);
+      res.status(500).json({ error: err });
     }
   } else {
     res.end();
   }
-}
+};
+
+export default withMiddleware(handler);

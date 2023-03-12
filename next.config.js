@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
+
+const appSecurityHeaders = [
+  { key: 'X-XSS-Protection', value: '1; mode=block' },
+  {
+    key: 'X-Frame-Options',
+    value: 'SAMEORIGIN',
+  },
+];
+
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
@@ -10,6 +19,24 @@ const nextConfig = {
       use: 'raw-loader',
     });
     return config;
+  },
+  async headers() {
+    return [
+      {
+        // Apply these headers to all routes in your application.
+        source: '/:path*',
+        headers: appSecurityHeaders,
+      },
+      {
+        source: '/api/:path',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://taboo-ai.vercel.app',
+          },
+        ],
+      },
+    ];
   },
 };
 

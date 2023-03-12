@@ -1,20 +1,7 @@
-import { createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import { NextApiRequest, NextApiResponse } from 'next';
 import handler from '../../pages/api/ai';
 
-jest.mock('next', () => ({
-  NextApiRequest: {
-    method: 'GET',
-  },
-  NextApiResponse: {
-    json: jest.fn((response) => response),
-    status: jest.fn((status: number) => {
-      status;
-      jest.fn((error) => error);
-    }),
-    end: jest.fn(),
-  },
-}));
+jest.mock('../../lib/middleware/middlewareWrapper', () => jest.fn((fn) => fn));
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -25,45 +12,38 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-type ApiRequest = NextApiRequest & ReturnType<typeof createRequest>;
-type APiResponse = NextApiResponse & ReturnType<typeof createResponse>;
-
-function makeRequestResponse(method: RequestMethod = 'GET') {
-  const req = createRequest<ApiRequest>({ method });
-  const res = createResponse<APiResponse>();
-  return { req, res };
-}
-
-function makeRequestResponseWithBody(
-  method: RequestMethod = 'GET',
-  body: object
-) {
-  const req = createRequest<ApiRequest>({ method, body });
-  const res = createResponse<APiResponse>();
-  return { req, res };
-}
-
 describe('/api/ai 200', () => {
+  const mockReq = {} as NextApiRequest;
+  const mockRes = {} as NextApiResponse;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReq.method = 'GET'; // default 'GET'
+    mockReq.headers = {
+      'x-forwarded-for': ['http://localhost:3000'],
+      origin: 'http://localhost:3000',
+    };
+    mockReq.body = { prompt: 'hello' };
+    mockRes.status = jest.fn().mockReturnThis();
+    mockRes.json = jest.fn();
+    mockRes.end = jest.fn();
+  });
   beforeAll(() => {
     process.env.OPENAI_API = 'something';
   });
   it('should return successful 200 response with choices text', async () => {
-    const { req, res } = makeRequestResponse('POST');
-    await handler(req, res);
-    const response = res._getData().response;
-    expect(res.statusCode).toBe(200);
-    expect(response).toBe('test');
+    // const { req, res } = makeRequestResponse('POST');
+    mockReq.method = 'POST';
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({ response: 'test' });
   });
 
   it('should return successful 200 response with custom settings', async () => {
-    const { req, res } = makeRequestResponseWithBody('POST', {
-      temperature: 1,
-      maxToken: 10,
-    });
-    await handler(req, res);
-    const response = res._getData().response;
-    expect(res.statusCode).toBe(200);
-    expect(response).toBe('test');
+    mockReq.method = 'POST';
+    mockReq.body = { prompt: 'hello', temperature: 0.5, maxToken: 100 };
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({ response: 'test' });
   });
 
   it('should return successful 200 response with error text when choices is null', async () => {
@@ -73,32 +53,60 @@ describe('/api/ai 200', () => {
           Promise.resolve({ choices: [{ message: { content: null } }] }),
       })
     );
-    const { req, res } = makeRequestResponse('POST');
-    await handler(req, res);
-    const response = res._getData().response;
-    expect(res.statusCode).toBe(200);
-    expect(response).toBe("Sorry I don't quite get it.");
+    mockReq.method = 'POST';
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({ response: null });
   });
 
   it('should return successful response with nothing', async () => {
-    const { req, res } = makeRequestResponse('GET');
-    await handler(req, res);
-    expect(res.statusCode).toBe(200);
+    await handler(mockReq, mockRes);
+    expect(mockRes.end).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('/api/ai 500 with no api key', () => {
+  const mockReq = {} as NextApiRequest;
+  const mockRes = {} as NextApiResponse;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReq.method = 'GET'; // default 'GET'
+    mockReq.headers = {
+      'x-forwarded-for': ['http://localhost:3000'],
+      origin: 'http://localhost:3000',
+    };
+    mockReq.body = {};
+    mockRes.status = jest.fn().mockReturnThis();
+    mockRes.json = jest.fn();
+    mockRes.end = jest.fn();
+  });
   beforeAll(() => {
     delete process.env['OPENAI_API'];
   });
-  it('should return successful response', async () => {
-    const { req, res } = makeRequestResponse();
-    await handler(req, res);
-    expect(res.statusCode).toBe(500);
+  it('should return 500 error response', async () => {
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      error: 'No API Key provided!',
+    });
   });
 });
 
 describe('/api/ai 500', () => {
+  const mockReq = {} as NextApiRequest;
+  const mockRes = {} as NextApiResponse;
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReq.method = 'GET'; // default 'GET'
+    mockReq.headers = {
+      'x-forwarded-for': ['http://localhost:3000'],
+      origin: 'http://localhost:3000',
+    };
+    mockReq.body = {};
+    mockRes.status = jest.fn().mockReturnThis();
+    mockRes.json = jest.fn();
+    mockRes.end = jest.fn();
+  });
   beforeAll(() => {
     process.env['OPENAI_API'] = 'something';
   });
@@ -108,9 +116,10 @@ describe('/api/ai 500', () => {
         json: () => Promise.resolve({ error: { error: 'error' } }),
       })
     );
-    const { req, res } = makeRequestResponse('POST');
-    await handler(req, res);
-    expect(res.statusCode).toBe(500);
+    mockReq.method = 'POST';
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'error' });
   });
 
   it('should return unsuccessful 500 response', async () => {
@@ -119,9 +128,9 @@ describe('/api/ai 500', () => {
         json: () => Promise.reject('error'),
       })
     );
-    const { req, res } = makeRequestResponse('POST');
-    await handler(req, res);
-    expect(res.statusCode).toBe(500);
+    mockReq.method = 'POST';
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
   });
 });
 

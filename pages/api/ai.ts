@@ -1,11 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import withMiddleware from '../../lib/middleware/middlewareWrapper';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;
-  if (!apiKey) return res.status(500).send({ error: 'No API Key provided!' });
+  if (!apiKey) return res.status(500).json({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
     const prompt = req.body.prompt;
     const temperature = parseFloat(req.body.temperature);
@@ -38,16 +36,17 @@ export default async function handler(
       );
       const json = await response.json();
       if (json.error) {
-        res.status(500).json(json.error);
-        return;
+        res.status(500).json(json.error); // Return ChatGPT side API error
+      } else {
+        const responseText = json.choices[0].message.content;
+        res.status(200).json({ response: responseText });
       }
-      const responseText =
-        json.choices[0].message.content ?? "Sorry I don't quite get it.";
-      res.status(200).send({ response: responseText });
     } catch (err) {
-      res.status(500).end(err);
+      res.status(500).json({ error: err });
     }
   } else {
     res.end();
   }
-}
+};
+
+export default withMiddleware(handler);
