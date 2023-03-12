@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const trustedOrigins = ['https://taboo-ai.vercel.app', 'http://localhost:3000'];
-// if (process.env.VERCEL_ENV === 'development') {
-//   trustedOrigins.push('http://0.0.0.0');
-// }
+const allowedOrigins = [
+  /^https:\/\/taboo-ai\.vercel\.app$/,
+  /^https:\/\/taboo-.+-xmliszt\.vercel\.app$/,
+  /^http:\/\/localhost:3000$/,
+];
 
 const checkOrigin = (
   req: NextApiRequest,
@@ -11,10 +12,23 @@ const checkOrigin = (
   next: () => void
 ) => {
   const origin = req.headers.origin;
-  if (origin && !trustedOrigins.includes(origin)) {
-    return res.status(403).json({ error: 'Invalid origin' });
+  if (
+    origin &&
+    allowedOrigins.some((allowedOrigin) => allowedOrigin.test(origin))
+  ) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, OPTIONS, PUT, DELETE'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden' });
   }
-  next();
 };
 
 export default checkOrigin;
