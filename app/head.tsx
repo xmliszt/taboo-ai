@@ -89,13 +89,13 @@ export default function Head() {
   };
   return (
     <>
-      <script
+      {/* <script
         async
         type='text/javascript'
         src='https://app.termly.io/embed.min.js'
         data-auto-block='on'
         data-website-uuid='641b2885-7d6f-4021-9f3a-6be59c54b67f'
-      ></script>
+      ></script> */}
       <title>{title}</title>
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />

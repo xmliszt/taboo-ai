@@ -60,19 +60,6 @@ export default function Footer() {
         >
           Cookie Policy
         </a>
-        <a
-          aria-label='Open Preference Center to manage cookies'
-          href='#'
-          onClick={(e) => {
-            e.preventDefault();
-            window.displayPreferenceModal();
-            return false;
-          }}
-          id='termly-consent-preferences'
-          className='underline text-white dark:text-neon-blue lg:hover:text-white lg:hover:dark:text-neon-red transition-colors'
-        >
-          Consent Preferences
-        </a>
       </article>
     </footer>
   );
