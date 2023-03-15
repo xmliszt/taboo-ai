@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import IVariation from './(models)/variationModel';
-import { Highlight } from './level/(models)/Chat.interface';
+import IVariation from '../types/variation.interface';
+import { Highlight } from '../types/chat.interface';
 
 /**
  * Sanitize the array of Highlight objects such that Highlight

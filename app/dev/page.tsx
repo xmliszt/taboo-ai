@@ -1,13 +1,13 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import IVariation from '../(models)/variationModel';
+import IVariation from '../../types/variation.interface';
 import {
   getWordVariations,
   isWordVariationsExist,
 } from '../../lib/services/aiService';
 import { getLevels } from '../../lib/services/levelService';
-import ILevel from '../levels/(models)/level.interface';
+import ILevel from '../../types/level.interface';
 import { IoMdAddCircle, IoMdRefreshCircle } from 'react-icons/io';
 import { AiFillDelete, AiFillRest } from 'react-icons/ai';
 import {

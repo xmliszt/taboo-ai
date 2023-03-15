@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as levelRepository from '../../lib/db/levelRespository';
 import handler from '../../pages/api/level';
-import ILevel from '../../app/levels/(models)/level.interface';
+import ILevel from '../../types/level.interface';
 
 jest.mock('../../lib/middleware/middlewareWrapper', () => jest.fn((fn) => fn));
 

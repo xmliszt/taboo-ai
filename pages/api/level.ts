@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import ILevel from '../../app/levels/(models)/level.interface';
+import ILevel from '../../types/level.interface';
 import { queryAllLevels } from '../../lib/db/levelRespository';
 import withMiddleware from '../../lib/middleware/middlewareWrapper';
 

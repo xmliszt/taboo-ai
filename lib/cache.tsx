@@ -1,5 +1,5 @@
-import IScore from '../app/level/(models)/Score.interface';
-import ILevel from '../app/levels/(models)/level.interface';
+import IScore from '../types/score.interface';
+import ILevel from '../types/level.interface';
 
 export function cacheLevel(level: ILevel) {
   localStorage.setItem('level', JSON.stringify(level));

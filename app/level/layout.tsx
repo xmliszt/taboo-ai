@@ -1,6 +1,11 @@
 import BackButton from '../(components)/BackButton';
 import DevToggle from '../(components)/DevToggle';
 
+export enum Author {
+  AI = 'ai',
+  Me = 'me',
+}
+
 export default function LevelLayout({
   children,
 }: {

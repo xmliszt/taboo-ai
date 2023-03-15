@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import ILevel from '../levels/(models)/level.interface';
-import IScore from '../level/(models)/Score.interface';
+import ILevel from '../../types/level.interface';
+import IScore from '../../types/score.interface';
 import { getScoresCache, getLevelCache } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';
 import _ from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Highlight } from '../level/(models)/Chat.interface';
+import { Highlight } from '../../types/chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
 import { useRouter } from 'next/navigation';
 

@@ -1,5 +1,5 @@
-import IScore from '../../app/level/(models)/Score.interface';
-import ILevel from '../../app/levels/(models)/level.interface';
+import IScore from '../../types/score.interface';
+import ILevel from '../../types/level.interface';
 import { insertNewGame } from '../db/gameRepository';
 import { insertHighlight } from '../db/highlightRepository';
 import { insertNewScore } from '../db/scoreRepository';

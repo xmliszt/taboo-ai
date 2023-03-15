@@ -1,4 +1,4 @@
-import IVariation from '../../app/(models)/variationModel';
+import IVariation from '../../types/variation.interface';
 import {
   getAllWords,
   getWords,

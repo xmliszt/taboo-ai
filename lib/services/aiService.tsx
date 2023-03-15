@@ -1,7 +1,7 @@
-import ILevel from '../../app/levels/(models)/level.interface';
+import ILevel from '../../types/level.interface';
 import _ from 'lodash';
 import { CONSTANTS } from '../../app/constants';
-import IVariation from '../../app/(models)/variationModel';
+import IVariation from '../../types/variation.interface';
 import { formatResponseTextIntoArray } from '../../app/utilities';
 import { getTabooWords } from './wordService';
 

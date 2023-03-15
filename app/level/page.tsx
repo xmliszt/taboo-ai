@@ -9,7 +9,7 @@ import {
 } from '../../lib/services/aiService';
 import InputDisplay from './(components)/InputDisplay';
 import _ from 'lodash';
-import { Author } from './(models)/Author.enum';
+import { Author } from './layout';
 import ProgressBar from './(components)/ProgressBar';
 import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
@@ -20,10 +20,10 @@ import {
   getLevelCache,
   getScoresCache,
 } from '../../lib/cache';
-import { Highlight } from './(models)/Chat.interface';
+import { Highlight } from '../../types/chat.interface';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import IVariation from '../(models)/variationModel';
+import IVariation from '../../types/variation.interface';
 import { getMockResponse, getMockVariations } from '../utilities';
 import { saveGame } from '../../lib/services/gameService';
 import { getTabooWords } from '../../lib/services/wordService';
