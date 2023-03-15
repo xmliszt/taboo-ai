@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import getIp from '../utils';
+import { getIp } from '../utils';
 import RateLimiter from './rateLimiter';
 
 const rateLimiter = RateLimiter({
