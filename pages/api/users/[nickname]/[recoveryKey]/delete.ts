@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { deleteUserByNicknameAndRecoveryKey } from '../../../../../lib/services/userService';
+import withMiddleware from '../../../../../lib/middleware/middlewareWrapper';
+import { deleteUserByNicknameAndRecoveryKey } from '../../../../../lib/services/backend/userService';
 
-export default async function deleteUserHandler(
+const deleteUserHandler = async (
   req: NextApiRequest,
-  res: NextApiResponse<{ error: string }>
-) {
+  res: NextApiResponse<{ error: string; details?: string }>
+) => {
   if (req.method !== 'DELETE') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -24,6 +25,10 @@ export default async function deleteUserHandler(
     return res.status(204).end();
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Server Error' });
+    return res
+      .status(500)
+      .json({ error: 'Server Error', details: error.message });
   }
-}
+};
+
+export default withMiddleware(deleteUserHandler);

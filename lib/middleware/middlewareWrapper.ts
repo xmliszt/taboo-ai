@@ -4,7 +4,7 @@ import checkRateLimit from './rateLimit+middleware';
 
 // Middleware route handler
 const withMiddleware = (
-  handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>
+  handler: (req: NextApiRequest, res: NextApiResponse) => Promise<any>
 ) => {
   return (req: NextApiRequest, res: NextApiResponse) => {
     checkRateLimit(req, res, () => {

@@ -1,5 +1,7 @@
 import crypto from 'crypto';
+import _ from 'lodash';
 import { NextApiRequest } from 'next';
+import IScore from '../types/score.interface';
 
 export function getIp(req: NextApiRequest): string | undefined {
   let ip: string | undefined;
@@ -25,4 +27,13 @@ export function generateHashedString(
   const hash = crypto.createHash('sha256').update(stringToHash).digest('hex');
   const truncatedHash = hash.substring(0, 8);
   return truncatedHash;
+}
+
+export function calculateScore(score: IScore): number {
+  return _.round(
+    score.difficulty *
+      (1 / (score.completion <= 0 ? 1 : score.completion)) *
+      1000,
+    2
+  );
 }

@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import * as levelRepository from '../../lib/db/levelRespository';
-import handler from '../../pages/api/level';
-import ILevel from '../../types/level.interface';
+import * as levelRepository from '../../lib/database/levelRespository';
+import handler from '../../pages/api/levels/get';
 
 jest.mock('../../lib/middleware/middlewareWrapper', () => jest.fn((fn) => fn));
 
-jest.mock('../../lib/db/levelRespository', () => ({
+jest.mock('../../lib/database/levelRespository', () => ({
   queryAllLevels: jest.fn().mockReturnValue({
     levels: [
       {

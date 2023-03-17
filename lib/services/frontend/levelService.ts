@@ -1,7 +1,12 @@
-import ILevel from '../../types/level.interface';
+import ILevel from '../../../types/level.interface';
 
 export async function getLevels(): Promise<ILevel[]> {
-  const response = await fetch('/api/level');
+  const response = await fetch('/api/levels/get', {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
   const json = await response.json();
   const levels = json.levels as ILevel[];
 

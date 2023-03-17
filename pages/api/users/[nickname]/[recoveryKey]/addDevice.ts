@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { addDeviceToUser } from '../../../../../lib/services/userService';
+import withMiddleware from '../../../../../lib/middleware/middlewareWrapper';
+import { addDeviceToUser } from '../../../../../lib/services/backend/userService';
 
-export default async function addUserDevice(
+const addUserDeviceHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
-) {
+) => {
   if (req.method === 'POST') {
     const { nickname, recoveryKey } = req.query;
     const { device } = req.body;
@@ -17,9 +18,13 @@ export default async function addUserDevice(
       res.status(200).json({ message: 'Device added successfully' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      res
+        .status(500)
+        .json({ error: 'Internal server error', details: error.message });
     }
   } else {
-    res.status(404).json({ message: 'Not found' });
+    res.status(404).json({ error: 'Not found' });
   }
-}
+};
+
+export default withMiddleware(addUserDeviceHandler);

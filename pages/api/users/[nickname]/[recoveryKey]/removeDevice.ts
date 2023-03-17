@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { removeDeviceFromUser } from '../../../../../lib/services/userService';
+import withMiddleware from '../../../../../lib/middleware/middlewareWrapper';
+import { removeDeviceFromUser } from '../../../../../lib/services/backend/userService';
 
-export default async function removeUserDevice(
+const removeUserDeviceHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
-) {
+) => {
   if (req.method === 'DELETE') {
     const { nickname, recoveryKey } = req.query;
     const { deviceIndex } = req.body;
@@ -17,9 +18,13 @@ export default async function removeUserDevice(
       res.status(200).json({ message: 'Device removed successfully' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      res
+        .status(500)
+        .json({ error: 'Internal server error', details: error.message });
     }
   } else {
-    res.status(404).json({ message: 'Not found' });
+    res.status(404).json({ error: 'Not found' });
   }
-}
+};
+
+export default withMiddleware(removeUserDeviceHandler);

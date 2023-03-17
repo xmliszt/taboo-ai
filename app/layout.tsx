@@ -8,7 +8,7 @@ import WordCarousell from './(components)/WordCarousell';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import LightDarkToggle from './(components)/LightDarkToggle';
-import { getMaintenance } from '../lib/services/maintenanceService';
+import { getMaintenance } from '../lib/services/frontend/maintenanceService';
 
 const grenze = Grenze({
   weight: '400',

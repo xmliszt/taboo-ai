@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/Loading';
-import { getLevels } from '../../lib/services/levelService';
+import { getLevels } from '../../lib/services/frontend/levelService';
 import ILevel from '../../types/level.interface';
 import Badge from './(components)/Badge';
 import HotBadge from './(components)/HotBadge';

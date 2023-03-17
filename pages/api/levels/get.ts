@@ -1,9 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import ILevel from '../../types/level.interface';
-import { queryAllLevels } from '../../lib/db/levelRespository';
-import withMiddleware from '../../lib/middleware/middlewareWrapper';
+import ILevel from '../../../types/level.interface';
+import { queryAllLevels } from '../../../lib/database/levelRespository';
+import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const getAllLevelsHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   if (req.method === 'GET') {
     try {
       const { levels } = await queryAllLevels();
@@ -19,11 +22,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).json({ levels: convertedLevels });
     } catch (err) {
-      res.status(500).json({ error: err });
+      res.status(500).json({ error: err, details: err.message });
     }
   } else {
     res.end();
   }
 };
 
-export default withMiddleware(handler);
+export default withMiddleware(getAllLevelsHandler);

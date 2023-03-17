@@ -6,9 +6,9 @@ import {
   updateUserDevices,
   selectUserByNickname,
   selectAllUsers,
-} from '../db/userRepository';
-import { generateHashedString } from '../utils';
-import type IUser from '../../types/user.interface';
+} from '../../database/userRepository';
+import { generateHashedString } from '../../utils';
+import type IUser from '../../../types/user.interface';
 
 const createUser = async (
   nickname: string,
@@ -41,6 +41,9 @@ const addDeviceToUser = async (
   device: string
 ): Promise<void> => {
   const { data } = await getUserDevices(nickname, recoveryKey);
+  if (data.length <= 0) {
+    throw Error('User devices not found!');
+  }
   const devices = data[0].devices as string[];
   devices.push(device);
   await updateUserDevices(nickname, recoveryKey, devices);
@@ -52,6 +55,9 @@ const removeDeviceFromUser = async (
   deviceIndex: number
 ): Promise<void> => {
   const { data } = await getUserDevices(nickname, recoveryKey);
+  if (data.length <= 0) {
+    throw Error('Cannot find any devices');
+  }
   const devices = data[0].devices as string[];
   devices.splice(deviceIndex, 1);
   await updateUserDevices(nickname, recoveryKey, devices);

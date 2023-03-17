@@ -1,15 +1,8 @@
-import ILevel from '../../types/level.interface';
+import ILevel from '../../../types/level.interface';
 import _ from 'lodash';
-import { CONSTANTS } from '../../app/constants';
-import IVariation from '../../types/variation.interface';
-import { formatResponseTextIntoArray } from '../../app/utilities';
-import { getTabooWords } from './wordService';
-
-export async function isWordVariationsExist(word: string): Promise<boolean> {
-  const tabooWords = await getTabooWords(word);
-  const wordExistInDB = tabooWords.length > 0;
-  return wordExistInDB;
-}
+import { CONSTANTS } from '../../../app/constants';
+import IVariation from '../../../types/variation.interface';
+import { formatResponseTextIntoArray } from '../../../app/utilities';
 
 export async function getQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {

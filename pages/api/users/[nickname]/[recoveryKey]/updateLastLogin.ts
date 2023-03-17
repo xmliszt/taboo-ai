@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { updateLastLoginAt } from '../../../../../lib/services/userService';
+import withMiddleware from '../../../../../lib/middleware/middlewareWrapper';
+import { updateLastLoginAt } from '../../../../../lib/services/backend/userService';
 
-export default async function updateLastLoginHandler(
+const updateLastLoginHandler = async (
   req: NextApiRequest,
-  res: NextApiResponse<{ error: string }>
-) {
+  res: NextApiResponse<{ error: string; details?: string }>
+) => {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -30,6 +31,10 @@ export default async function updateLastLoginHandler(
     return res.status(204).end();
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Server Error' });
+    return res
+      .status(500)
+      .json({ error: 'Server Error', details: error.message });
   }
-}
+};
+
+export default withMiddleware(updateLastLoginHandler);

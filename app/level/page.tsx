@@ -6,7 +6,7 @@ import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
-} from '../../lib/services/aiService';
+} from '../../lib/services/frontend/aiService';
 import InputDisplay from './(components)/InputDisplay';
 import _ from 'lodash';
 import { Author } from './layout';
@@ -25,8 +25,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../../types/variation.interface';
 import { getMockResponse, getMockVariations } from '../utilities';
-import { saveGame } from '../../lib/services/gameService';
-import { getTabooWords } from '../../lib/services/wordService';
+import {
+  getVariations,
+  saveVariations,
+} from '../../lib/services/frontend/wordService';
+import { saveGame } from '../../lib/services/frontend/gameService';
 
 interface LevelPageProps {}
 
@@ -79,6 +82,10 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   const generateNewTarget = (words: string[]): string => {
+    if (words.length === 0) {
+      words = pickedWords;
+      setPickedWords([]);
+    }
     const _target = words[Math.floor(Math.random() * words.length)];
     const picked = [...pickedWords];
     picked.push(_target);
@@ -285,7 +292,7 @@ export default function LevelPage(props: LevelPageProps) {
           }
         });
     } else {
-      const savedWords = await getTabooWords(target);
+      const savedWords = await getVariations(target);
       if (savedWords.length > 0) {
         callback({ target: target, variations: savedWords });
       } else {
