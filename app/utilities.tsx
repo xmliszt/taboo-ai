@@ -150,3 +150,7 @@ export const getMockVariations = async (
     }, 1000);
   });
 };
+
+export const getRandomInt = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
