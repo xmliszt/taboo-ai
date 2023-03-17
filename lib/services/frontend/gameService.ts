@@ -24,11 +24,20 @@ async function request<T>(url: string, method: string, body?: any): Promise<T> {
   return data;
 }
 
-export const saveGame = async (level: ILevel, scores: IScore[]) => {
+export const saveGame = async (
+  level: ILevel,
+  scores: IScore[],
+  player_nickname: string,
+  player_id: string,
+  prompt_visible: boolean
+) => {
   const url = `/api/games/save`;
   await request<{ message: string }>(url, 'POST', {
     level,
     scores,
+    player_nickname: player_nickname,
+    player_id: player_id,
+    prompt_visible: prompt_visible,
   });
 };
 

@@ -83,6 +83,8 @@ export default function Head() {
         return isCustomPath ? title : 'Taboo.AI: Play Taboo with AI';
       case '/result':
         return isCustomPath ? title : 'Taboo.AI: Share your scores!';
+      case '/signup':
+        return 'Taboo.AI: Submit Your Nickname';
       default:
         return 'Taboo.AI: Play Taboo with AI';
     }

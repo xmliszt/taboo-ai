@@ -115,6 +115,20 @@ h1 {
   @apply text-base lg:text-5xl;
 }
 
+.react-confirm-alert {
+  line-height: 1.25rem;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.react-confirm-alert h1 {
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.react-confirm-alert button {
+  border-radius: 50%;
+}
+
 .Toastify__toast-body {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   line-height: 1rem;

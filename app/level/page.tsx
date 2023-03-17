@@ -14,22 +14,13 @@ import ProgressBar from './(components)/ProgressBar';
 import { CONSTANTS } from '../constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import {
-  cacheScore,
-  clearScores,
-  getLevelCache,
-  getScoresCache,
-} from '../../lib/cache';
+import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../../types/variation.interface';
 import { getMockResponse, getMockVariations } from '../utilities';
-import {
-  getVariations,
-  saveVariations,
-} from '../../lib/services/frontend/wordService';
-import { saveGame } from '../../lib/services/frontend/gameService';
+import { getVariations } from '../../lib/services/frontend/wordService';
 
 interface LevelPageProps {}
 
@@ -372,20 +363,7 @@ export default function LevelPage(props: LevelPageProps) {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      const level = getLevelCache();
-      const scores = getScoresCache();
-      if (level && scores) {
-        saveGame(level, scores)
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            router.push('/result');
-          });
-      } else {
-        console.error("Can't save game due to missing level or scores cache!");
-        router.push('/result');
-      }
+      router.push('/result');
     } else if (currentProgress === 1) {
       return;
     } else {

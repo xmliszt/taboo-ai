@@ -1,5 +1,6 @@
 import IScore from '../types/score.interface';
 import ILevel from '../types/level.interface';
+import IUser from '../types/user.interface';
 
 export function cacheLevel(level: ILevel) {
   localStorage.setItem('level', JSON.stringify(level));
@@ -38,4 +39,14 @@ export function clearScores() {
 
 export function clearCache() {
   localStorage.clear();
+}
+
+//ANCHOR - User data storage
+export function getUser(): IUser | null {
+  const userString = localStorage.getItem('user');
+  return userString === null ? null : JSON.parse(userString);
+}
+
+export function setUser(user: IUser) {
+  localStorage.setItem('user', JSON.stringify(user));
 }

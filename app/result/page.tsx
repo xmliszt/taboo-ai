@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ILevel from '../../types/level.interface';
 import IScore from '../../types/score.interface';
-import { getScoresCache, getLevelCache } from '../../lib/cache';
+import { getScoresCache, getLevelCache, getUser } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';
@@ -12,6 +12,8 @@ import { isMobile } from 'react-device-detect';
 import { Highlight } from '../../types/chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
 import { useRouter } from 'next/navigation';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 interface StatItem {
   title: string;
@@ -37,8 +39,8 @@ export default function ResultPage(props: ResultPageProps) {
   useEffect(() => {
     const scores = getScoresCache();
     if (!scores) throw Error('No recent results available.');
+    setScores(scores);
     const level = getLevelCache();
-    scores && setScores(scores);
     level && setLevel(level);
     let total = 0;
     let totalScore = 0;
@@ -56,7 +58,36 @@ export default function ResultPage(props: ResultPageProps) {
         detail: { score: totalScore },
       })
     );
+    checkUserStatus();
   }, []);
+
+  const checkUserStatus = () => {
+    const user = getUser();
+    if (!user) {
+      confirmAlert({
+        title: 'Join the Global Rankings & Compete against Other Players!',
+        message:
+          'Would you like to save your results and participate in the exciting global rankings?',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => router.push('/signup'),
+          },
+          {
+            label: 'No',
+          },
+        ],
+        closeOnClickOutside: true,
+        closeOnEscape: true,
+      });
+    } else {
+      showSaveResultPrompt();
+    }
+  };
+
+  const showSaveResultPrompt = () => {
+    // TODO: Prompt user for saving their results. And have choice for showing/hiding the prompts
+  };
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
     const byteCharacters = atob(b64Data);
