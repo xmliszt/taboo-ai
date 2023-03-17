@@ -37,57 +37,94 @@ async function getGameById(id: number): Promise<IGame | null> {
   return data[0] as IGame | null;
 }
 
-async function getAllGames(): Promise<IGame[] | null> {
-  const { data, error } = await supabase.from('game').select('*');
+async function getAllGames(
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> {
+  const {
+    data: games,
+    error,
+    count: total,
+  } = await supabase
+    .from('game')
+    .select('*', { count: 'exact' })
+    .range(page * limit, (page + 1) * limit - 1);
 
   if (error) {
-    console.error('Error getting all games:', error);
+    console.error(`Error getting games on page ${page}:`, error);
     return null;
   }
 
-  return data as IGame[];
+  return { data: games as IGame[], total };
 }
 
-async function getGamesByNickname(nickname: string): Promise<IGame[] | null> {
-  const { data, error } = await supabase
+async function getGamesByNickname(
+  nickname: string,
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> {
+  const {
+    data,
+    error,
+    count: total,
+  } = await supabase
     .from('game')
-    .select('*')
-    .eq('player_nickname', nickname);
+    .select('*', { count: 'exact' })
+    .eq('player_nickname', nickname)
+    .range(page * limit, (page + 1) * limit - 1);
 
   if (error) {
     console.error('Error getting games by nickname:', error);
     return null;
   }
 
-  return data as IGame[];
+  return { data: data as IGame[], total };
 }
 
-async function getGamesByPlayerId(playerId: string): Promise<IGame[] | null> {
-  const { data, error } = await supabase
+async function getGamesByPlayerId(
+  playerId: string,
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> {
+  const {
+    data,
+    error,
+    count: total,
+  } = await supabase
     .from('game')
-    .select('*')
-    .eq('player_id', playerId);
+    .select('*', { count: 'exact' })
+    .eq('player_id', playerId)
+    .range(page * limit, (page + 1) * limit - 1);
 
   if (error) {
     console.error('Error getting games by player ID:', error);
     return null;
   }
 
-  return data as IGame[];
+  return { data: data as IGame[], total };
 }
 
-async function getGamesByLevel(level: string): Promise<IGame[] | null> {
-  const { data, error } = await supabase
+async function getGamesByLevel(
+  level: string,
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> {
+  const {
+    data,
+    error,
+    count: total,
+  } = await supabase
     .from('game')
-    .select('*')
-    .eq('level', level);
+    .select('*', { count: 'exact' })
+    .eq('level', level)
+    .range(page * limit, (page + 1) * limit - 1);
 
   if (error) {
     console.error('Error getting games by level:', error);
     return null;
   }
 
-  return data as IGame[];
+  return { data: data as IGame[], total };
 }
 
 async function getBestGamesByNickname(

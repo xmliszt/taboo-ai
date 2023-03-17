@@ -62,8 +62,15 @@ const saveGame = async (
   return data;
 };
 
-const retrieveAllGames = async (): Promise<IGame[]> => {
-  return (await getAllGames()) ?? [];
+const retrieveAllGames = async (
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null }> => {
+  const data = await getAllGames(page, limit);
+  if (!data) {
+    throw new Error(`Failed to get games`);
+  }
+  return data;
 };
 
 const retrieveGameById = async (id: number): Promise<IGame> => {
@@ -76,11 +83,13 @@ const retrieveGameById = async (id: number): Promise<IGame> => {
 };
 
 const retrieveGamesByNickname = async (
-  nickname: string
-): Promise<IGame[] | null> => {
+  nickname: string,
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> => {
   // Retrieve all games associated with the given nickname from the database
   try {
-    const games = await await getGamesByNickname(nickname);
+    const games = await await getGamesByNickname(nickname, page, limit);
     if (!games) {
       throw new Error(
         `Failed to get best games by player nickname ${nickname}`
@@ -94,11 +103,13 @@ const retrieveGamesByNickname = async (
 };
 
 const retrieveGamesByPlayerID = async (
-  playerID: string
-): Promise<IGame[] | null> => {
+  playerID: string,
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> => {
   // Retrieve all games associated with the given nickname from the database
   try {
-    const games = await await getGamesByPlayerId(playerID);
+    const games = await await getGamesByPlayerId(playerID, page, limit);
     if (!games) {
       throw new Error(`Failed to get best games by player ID ${playerID}`);
     }
@@ -126,10 +137,12 @@ const retrieveBestGamesByNickname = async (
 };
 
 const retrieveAllGamesByLevel = async (
-  level: string
-): Promise<IGame[] | null> => {
+  level: string,
+  page: number,
+  limit: number
+): Promise<{ data: IGame[] | null; total: number | null } | null> => {
   try {
-    const games = await getGamesByLevel(level);
+    const games = await getGamesByLevel(level, page, limit);
     if (!games) {
       throw new Error(`Failed to get best games by level ${level}`);
     }
