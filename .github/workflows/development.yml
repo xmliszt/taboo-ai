@@ -23,7 +23,7 @@ jobs:
       - name: Running Jest Tests
         run: npm test
   Deploy-Preview:
-    needs: [Unit-Test, E2E-Test]
+    needs: Unit-Test
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
