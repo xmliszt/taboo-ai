@@ -368,13 +368,14 @@ export default function LevelPage(props: LevelPageProps) {
       const level = getLevelCache();
       const scores = getScoresCache();
       if (level && scores) {
-        saveGame(level, scores)
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            router.push('/result');
-          });
+        // saveGame(level, scores)
+        //   .catch((err) => {
+        //     console.error(err);
+        //   })
+        //   .finally(() => {
+        //     router.push('/result');
+        //   });
+        router.push('/result');
       } else {
         console.error("Can't save game due to missing level or scores cache!");
         router.push('/result');
