@@ -8,8 +8,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');
@@ -45,12 +44,14 @@ const SignupPage = () => {
     try {
       setIsLoading(true);
       const newUser = await createUser(nickname);
-      console.log(newUser);
+      window.dispatchEvent(new CustomEvent('onSignUpComplete'));
       setUser(newUser);
-      toast.success('Nickname submitted successfully!');
       router.push(hasScores ? '/result' : '/');
     } catch (error) {
-      setErrorMessage(error.message);
+      console.error(error);
+      setErrorMessage(
+        'Sorry! We are unable to submit your nickname at the moment. Please try again later!'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -58,18 +59,6 @@ const SignupPage = () => {
 
   return (
     <>
-      <ToastContainer
-        position='top-center'
-        autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
       <LoadingMask
         isLoading={isLoading}
         message='Submitting your nickname...'

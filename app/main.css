@@ -116,17 +116,18 @@ h1 {
 }
 
 .react-confirm-alert {
-  line-height: 1.25rem;
+  line-height: 1.2rem;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .react-confirm-alert h1 {
   font-weight: 900;
   font-size: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
 .react-confirm-alert button {
-  border-radius: 50%;
+  border-radius: 2rem !important;
 }
 
 .Toastify__toast-body {

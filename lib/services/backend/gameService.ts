@@ -37,7 +37,7 @@ const saveGame = async (
   if (!data) {
     throw new Error('Failed to save game');
   }
-  const savedGameID: number = data.id;
+  const savedGameID = data.game_id;
   let scoreID = 1;
   for (const score of scores) {
     const { data } = await insertNewScore(
@@ -73,13 +73,9 @@ const retrieveAllGames = async (
   return data;
 };
 
-const retrieveGameById = async (id: number): Promise<IGame> => {
+const retrieveGameById = async (game_id: string): Promise<IGame | null> => {
   // Retrieve the game with the given ID from the database
-  const game = await getGameById(id);
-  if (!game) {
-    throw new Error(`Game with ID ${id} not found`);
-  }
-  return game;
+  return await getGameById(game_id);
 };
 
 const retrieveGamesByNickname = async (

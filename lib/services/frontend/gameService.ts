@@ -32,7 +32,7 @@ export const saveGame = async (
   prompt_visible: boolean
 ) => {
   const url = `/api/games/save`;
-  await request<{ message: string }>(url, 'POST', {
+  await request<{ data: IGame }>(url, 'POST', {
     level,
     scores,
     player_nickname: player_nickname,
@@ -41,9 +41,9 @@ export const saveGame = async (
   });
 };
 
-export const getOneGameByID = async (game_id: number) => {
+export const getOneGameByID = async (game_id: string) => {
   const url = `/api/games/${game_id}/get`;
-  return await request<IGame>(url, 'GET');
+  return await request<{ game: IGame | null; error?: string }>(url, 'GET');
 };
 
 export const getAllGames = async (page: number, limit = 50) => {

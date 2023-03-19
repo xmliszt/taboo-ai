@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 import { saveGame } from '../../../lib/services/backend/gameService';
+import IGame from '../../../types/game.interface';
 import type ILevel from '../../../types/level.interface';
 import type IScore from '../../../types/score.interface';
 
 interface SaveGameResponse {
-  message: string;
+  data: IGame;
 }
 
 interface ErrorResponse {
@@ -36,8 +37,14 @@ const saveGameHandler = async (
   } = req.body;
 
   try {
-    await saveGame(level, scores, player_nickname, player_id, prompt_visible);
-    return res.status(200).send({ message: 'Game saved successfully.' });
+    const savedGame = await saveGame(
+      level,
+      scores,
+      player_nickname,
+      player_id,
+      prompt_visible
+    );
+    return res.status(200).send({ data: savedGame });
   } catch (error) {
     console.error(error);
     return res

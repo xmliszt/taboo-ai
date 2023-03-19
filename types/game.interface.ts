@@ -1,5 +1,5 @@
 export default interface IGame {
-  id: number;
+  game_id: string;
   player_nickname: string;
   player_id: string;
   level: string;

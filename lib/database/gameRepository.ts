@@ -1,5 +1,6 @@
 import IGame from '../../types/game.interface';
 import { supabase } from '../supabaseClient';
+import { generateHashedString, getFormattedToday } from '../utils';
 
 async function insertNewGame(
   levelName: string,
@@ -11,6 +12,12 @@ async function insertNewGame(
   const { data, error } = await supabase
     .from('game')
     .insert({
+      game_id: generateHashedString(
+        playerID ?? '',
+        playerNickname ?? '',
+        levelName,
+        getFormattedToday()
+      ),
       player_id: playerID,
       player_nickname: playerNickname,
       level: levelName,
@@ -26,8 +33,11 @@ async function insertNewGame(
   return (data[0] as IGame) || null;
 }
 
-async function getGameById(id: number): Promise<IGame | null> {
-  const { data, error } = await supabase.from('game').select().eq('id', id);
+async function getGameById(game_id: string): Promise<IGame | null> {
+  const { data, error } = await supabase
+    .from('game')
+    .select()
+    .eq('game_id', game_id);
 
   if (error) {
     console.error('Error getting game by id:', error);

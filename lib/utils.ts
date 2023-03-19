@@ -19,11 +19,8 @@ export function getIp(req: NextApiRequest): string | undefined {
   return ip;
 }
 
-export function generateHashedString(
-  nickname: string,
-  timestamp: number
-): string {
-  const stringToHash = `${nickname}_${timestamp}`;
+export function generateHashedString(...items: string[]): string {
+  const stringToHash = items.join('_');
   const hash = crypto.createHash('sha256').update(stringToHash).digest('hex');
   const truncatedHash = hash.substring(0, 8);
   return truncatedHash;
@@ -36,4 +33,14 @@ export function calculateScore(score: IScore): number {
       1000,
     2
   );
+}
+
+export function getFormattedToday(): string {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+    date
+  );
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${day}-${month}-${year}`;
 }

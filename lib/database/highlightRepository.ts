@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient';
 export const insertHighlight = async (
-  gameID: number,
+  gameID: string,
   scoreID: number,
   start: number,
   end: number

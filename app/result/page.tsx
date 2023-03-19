@@ -7,13 +7,22 @@ import { getScoresCache, getLevelCache, getUser } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';
-import _ from 'lodash';
+import _, { uniqueId } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Highlight } from '../../types/chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { toast } from 'react-toastify';
+import {
+  getOneGameByID,
+  saveGame,
+} from '../../lib/services/frontend/gameService';
+import IUser from '../../types/user.interface';
+import LoadingMask from '../(components)/Loading';
+import ConfirmPopUp from '../(components)/ConfirmPopUp';
+import { generateHashedString, getFormattedToday } from '../../lib/utils';
 
 interface StatItem {
   title: string;
@@ -22,13 +31,36 @@ interface StatItem {
   highlights?: Highlight[];
 }
 
+interface PrompPopupConfiguration {
+  title: string;
+  content: string;
+  yesButtonText: string;
+  noButtonText: string;
+}
+
+enum PromptStep {
+  Idle = 0,
+  PromptSaveResult = 1,
+  PromptIsVisible = 2,
+  Finished = 3,
+}
+
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
+  const [userCache, setUserCache] = useState<IUser | null>(null);
   const [scores, setScores] = useState<IScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSaveResultPrompt, setShowSaveResultPrompt] =
+    useState<boolean>(false);
+  const [promptTitle, setPromptTitle] = useState('');
+  const [promptContent, setPromptContent] = useState('');
+  const [yesButtonText, setYesButtonText] = useState('Yes');
+  const [noButtonText, setNoButtonText] = useState('No');
+  const [promptStep, setPromptStep] = useState<number>(0);
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
 
@@ -36,12 +68,23 @@ export default function ResultPage(props: ResultPageProps) {
     return completion <= 0 ? 1 : completion;
   };
 
+  const onBackFromSignUpSuccess = () => {
+    toast.success('Nickname submitted successfully!', { autoClose: 4000 });
+  };
+
+  const registerEvents = () => {
+    window.addEventListener(
+      'onSignUpComplete',
+      onBackFromSignUpSuccess as EventListener
+    );
+  };
+
   useEffect(() => {
     const scores = getScoresCache();
     if (!scores) throw Error('No recent results available.');
     setScores(scores);
     const level = getLevelCache();
-    level && setLevel(level);
+    if (level) setLevel(level);
     let total = 0;
     let totalScore = 0;
     for (const score of scores ?? []) {
@@ -58,14 +101,64 @@ export default function ResultPage(props: ResultPageProps) {
         detail: { score: totalScore },
       })
     );
+    registerEvents();
     checkUserStatus();
   }, []);
 
-  const checkUserStatus = () => {
+  useEffect(() => {
+    switch (promptStep) {
+      case PromptStep.PromptSaveResult:
+        setShowSaveResultPrompt(true);
+        break;
+      case PromptStep.PromptIsVisible:
+        configurePromptPopUp({
+          title: 'Show Your Prompts?',
+          content:
+            'Would you like to keep your prompts (your inputs in the game) visible to the public?',
+          yesButtonText: 'Sure! Keep them visible!',
+          noButtonText: 'No, they are secrets!',
+        });
+        break;
+      case PromptStep.Finished:
+        setPromptStep(PromptStep.Idle);
+        setShowSaveResultPrompt(false);
+        break;
+      default:
+        break;
+    }
+  }, [promptStep]);
+
+  const saveGameAsync = async (promptVisible: boolean) => {
+    if (level && scores && userCache) {
+      setIsLoading(true);
+      try {
+        await saveGame(
+          level,
+          scores,
+          userCache.nickname,
+          userCache.recovery_key,
+          promptVisible
+        );
+        toast.success(
+          'Congratulations! Your results have been submitted to global leaderboard successfully!'
+        );
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          'We are currently unable to submit the scores. Please try again later.'
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const checkUserStatus = async () => {
     const user = getUser();
+    setUserCache(user);
     if (!user) {
       confirmAlert({
-        title: 'Join the Global Rankings & Compete against Other Players!',
+        title: 'Join the global leaderboard & Compete against other players!',
         message:
           'Would you like to save your results and participate in the exciting global rankings?',
         buttons: [
@@ -77,16 +170,54 @@ export default function ResultPage(props: ResultPageProps) {
             label: 'No',
           },
         ],
-        closeOnClickOutside: true,
-        closeOnEscape: true,
       });
     } else {
-      showSaveResultPrompt();
+      const level = getLevelCache();
+      const gameID = generateHashedString(
+        user.recovery_key,
+        user.nickname,
+        level?.name ?? '',
+        getFormattedToday()
+      );
+      try {
+        const { game } = await getOneGameByID(gameID);
+        const hasSubmittedGame = game !== null;
+        if (!hasSubmittedGame) {
+          configurePromptPopUp({
+            title: 'Submit Your Results?',
+            content: `Hi, ${user.nickname}. Would you like to submit your results to the global leaderboard?`,
+            yesButtonText: 'Sure!',
+            noButtonText: 'Maybe next time!',
+          });
+          setPromptStep(PromptStep.PromptSaveResult);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
-  const showSaveResultPrompt = () => {
-    // TODO: Prompt user for saving their results. And have choice for showing/hiding the prompts
+  const configurePromptPopUp = (configuration: PrompPopupConfiguration) => {
+    setPromptTitle(configuration.title);
+    setPromptContent(configuration.content);
+    setYesButtonText(configuration.yesButtonText);
+    setNoButtonText(configuration.noButtonText);
+  };
+
+  const onPromptYesButtonClick = async () => {
+    if (promptStep === PromptStep.PromptSaveResult) {
+      setPromptStep(PromptStep.PromptIsVisible);
+    } else if (promptStep === PromptStep.PromptIsVisible) {
+      await saveGameAsync(true);
+      setPromptStep(PromptStep.Finished);
+    }
+  };
+
+  const onPromptNoButtonClick = async () => {
+    if (promptStep === PromptStep.PromptIsVisible) {
+      await saveGameAsync(false);
+    }
+    setPromptStep(PromptStep.Finished);
   };
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
@@ -173,11 +304,14 @@ export default function ResultPage(props: ResultPageProps) {
         responseText,
         highlights,
         (normal) => {
-          return <span>{normal}</span>;
+          return <span key={uniqueId()}>{normal}</span>;
         },
         (highlight) => {
           return (
-            <span className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'>
+            <span
+              key={uniqueId()}
+              className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'
+            >
               {highlight}
             </span>
           );
@@ -205,11 +339,14 @@ export default function ResultPage(props: ResultPageProps) {
         content,
         highlights,
         (normal) => {
-          return <span>{normal}</span>;
+          return <span key={uniqueId()}>{normal}</span>;
         },
         (highlight) => {
           return (
-            <span className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'>
+            <span
+              key={uniqueId()}
+              className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'
+            >
               {highlight}
             </span>
           );
@@ -224,7 +361,10 @@ export default function ResultPage(props: ResultPageProps) {
     }
     return (
       <div key={title} className='p-3'>
-        <span className='font-extrabold text-black border-b-2 border-black dark:text-neon-blue dark:border-neon-blue'>
+        <span
+          key={uniqueId()}
+          className='font-extrabold text-black border-b-2 border-black dark:text-neon-blue dark:border-neon-blue'
+        >
           {title}
         </span>
         {contentElement}
@@ -268,8 +408,10 @@ export default function ResultPage(props: ResultPageProps) {
         className='border-2 border-white bg-white text-black flex flex-col gap-2 rounded-2xl dark:border-neon-red dark:bg-neon-gray dark:text-neon-white'
       >
         <div className='bg-black dark:bg-neon-black dark:drop-shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'>
-          <span>{score.target}</span>
-          <span className='font-extrabold'>Score: {calculateScore(score)}</span>
+          <span key={uniqueId()}>{score.target}</span>
+          <span className='font-extrabold' key={uniqueId()}>
+            Score: {calculateScore(score)}
+          </span>
         </div>
         {generateStatsItems(score).map((item) => {
           return generateMobileStatsRow(
@@ -302,7 +444,10 @@ export default function ResultPage(props: ResultPageProps) {
           </div>
           <div className='flex flex-row justify-between'>
             <span>Difficulty:</span>
-            <span className='font-extrabold'>{level?.difficulty ?? 1}</span>
+            <span className='font-extrabold'>
+              {level?.difficulty ?? 1}{' '}
+              <span>({getDifficulty(level?.difficulty ?? 1)})</span>
+            </span>
           </div>
         </div>
         {scores.map((score) => {
@@ -365,6 +510,7 @@ export default function ResultPage(props: ResultPageProps) {
                   Difficulty:{' '}
                   <span className='text-black dark:text-neon-white'>
                     {level?.difficulty ?? 1}
+                    <span>({getDifficulty(level?.difficulty ?? 1)})</span>
                   </span>
                 </td>
               </tr>
@@ -423,7 +569,27 @@ export default function ResultPage(props: ResultPageProps) {
 
   return (
     <>
-      <BackButton href='/levels' />
+      <ConfirmPopUp
+        show={showSaveResultPrompt}
+        title={promptTitle}
+        content={promptContent}
+        buttons={[
+          {
+            label: yesButtonText,
+            onClick: onPromptYesButtonClick,
+          },
+          {
+            label: noButtonText,
+            onClick: onPromptNoButtonClick,
+          },
+        ]}
+      />
+      <LoadingMask
+        key='loading-mask'
+        isLoading={isLoading}
+        message='Submitting your scores to the leaderboard...'
+      />
+      <BackButton href='/levels' key='back-button' />
       <h1 className='fixed top-0 w-full h-20 py-4 text-center gradient-down dark:gradient-down-dark-black z-10'>
         Scoreboard
       </h1>

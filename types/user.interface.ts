@@ -1,7 +1,7 @@
 export default interface IUser {
   nickname: string;
-  recoveryKey: string;
-  createdAt: number;
-  lastLoginAt: number;
+  recovery_key: string;
+  created_at: number;
+  last_login_at: number;
   devices: string[];
 }

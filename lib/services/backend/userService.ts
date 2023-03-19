@@ -15,7 +15,7 @@ const createUser = async (
   userAgent: string
 ): Promise<IUser> => {
   const now = Date.now();
-  const recoveryKey = generateHashedString(nickname, now);
+  const recoveryKey = generateHashedString(nickname, String(now));
   const { data } = await insertUser(nickname, recoveryKey, userAgent);
   return data[0] as IUser;
 };

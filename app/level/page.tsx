@@ -16,8 +16,7 @@ import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
 import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import IVariation from '../../types/variation.interface';
 import { getMockResponse, getMockVariations } from '../utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
@@ -257,7 +256,7 @@ export default function LevelPage(props: LevelPageProps) {
       setShowSuccessBackground(false);
     }, 1000);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
-      toast.success('Game Over! Generating Results...');
+      toast.success('Game Over! Generating Results...', { autoClose: 4000 });
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
@@ -432,18 +431,6 @@ export default function LevelPage(props: LevelPageProps) {
 
   return (
     <>
-      <ToastContainer
-        position='top-center'
-        autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}

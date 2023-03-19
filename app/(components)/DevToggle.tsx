@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
+import { HASH } from '../../lib/hash';
 
 const DevToggle = () => {
   const [devOn, setDevOn] = useState<boolean>(false);
@@ -19,9 +20,9 @@ const DevToggle = () => {
 
   const onDevToggle = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      localStorage.setItem('dev', '1');
+      localStorage.setItem(HASH.dev, '1');
     } else {
-      localStorage.removeItem('dev');
+      localStorage.removeItem(HASH.dev);
     }
     setDevOn(event.target.checked);
   };

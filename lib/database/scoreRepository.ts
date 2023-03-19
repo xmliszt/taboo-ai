@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient';
 export const insertNewScore = async (
-  gameID: number,
+  gameID: string,
   scoreID: number,
   target: string,
   question: string,

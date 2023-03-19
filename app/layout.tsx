@@ -9,6 +9,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import LightDarkToggle from './(components)/LightDarkToggle';
 import { getMaintenance } from '../lib/services/frontend/maintenanceService';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const grenze = Grenze({
   weight: '400',
@@ -80,7 +82,21 @@ export default function RootLayout({
             patience!
           </section>
         ) : (
-          children
+          <>
+            <ToastContainer
+              position='top-center'
+              autoClose={2000}
+              hideProgressBar={true}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme='light'
+            />
+            {children}
+          </>
         )}
         <AnalyticsWrapper />
       </body>
