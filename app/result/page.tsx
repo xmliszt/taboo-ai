@@ -23,6 +23,7 @@ import IUser from '../../types/user.interface';
 import LoadingMask from '../(components)/Loading';
 import ConfirmPopUp from '../(components)/ConfirmPopUp';
 import { generateHashedString, getFormattedToday } from '../../lib/utils';
+import { getUserInfo } from '../../lib/services/frontend/userService';
 
 interface StatItem {
   title: string;
@@ -156,7 +157,36 @@ export default function ResultPage(props: ResultPageProps) {
   const checkUserStatus = async () => {
     const user = getUser();
     setUserCache(user);
-    if (!user) {
+    try {
+      if (user) {
+        const userInfo = await getUserInfo(user.nickname);
+        const level = getLevelCache();
+        const gameID = generateHashedString(
+          userInfo.recovery_key,
+          userInfo.nickname,
+          level?.name ?? '',
+          getFormattedToday()
+        );
+        try {
+          const { game } = await getOneGameByID(gameID);
+          const hasSubmittedGame = game !== null;
+          if (!hasSubmittedGame) {
+            configurePromptPopUp({
+              title: 'Submit Your Results?',
+              content: `Hi, ${user.nickname}. Would you like to submit your results to the global leaderboard?`,
+              yesButtonText: 'Sure!',
+              noButtonText: 'Maybe next time!',
+            });
+            setPromptStep(PromptStep.PromptSaveResult);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        throw Error('No user');
+      }
+    } catch (error) {
+      console.log(error.message);
       confirmAlert({
         title: 'Join the global leaderboard & Compete against other players!',
         message:
@@ -171,29 +201,6 @@ export default function ResultPage(props: ResultPageProps) {
           },
         ],
       });
-    } else {
-      const level = getLevelCache();
-      const gameID = generateHashedString(
-        user.recovery_key,
-        user.nickname,
-        level?.name ?? '',
-        getFormattedToday()
-      );
-      try {
-        const { game } = await getOneGameByID(gameID);
-        const hasSubmittedGame = game !== null;
-        if (!hasSubmittedGame) {
-          configurePromptPopUp({
-            title: 'Submit Your Results?',
-            content: `Hi, ${user.nickname}. Would you like to submit your results to the global leaderboard?`,
-            yesButtonText: 'Sure!',
-            noButtonText: 'Maybe next time!',
-          });
-          setPromptStep(PromptStep.PromptSaveResult);
-        }
-      } catch (error) {
-        console.error(error);
-      }
     }
   };
 
