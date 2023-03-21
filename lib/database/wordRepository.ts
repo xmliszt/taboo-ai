@@ -5,6 +5,7 @@ export const insertWord = async (word: string, tabooWords: string[]) => {
     taboo_words: tabooWords.join(','),
   });
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
 };
@@ -18,6 +19,7 @@ export const updateWord = async (word: string, tabooWords: string[]) => {
     })
     .eq('word', word);
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
 };
@@ -25,6 +27,7 @@ export const updateWord = async (word: string, tabooWords: string[]) => {
 export const getWords = async (word: string) => {
   const { data, error } = await supabase.from('word').select().eq('word', word);
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return {
@@ -35,6 +38,7 @@ export const getWords = async (word: string) => {
 export const getAllWords = async () => {
   const { data, error } = await supabase.from('word').select();
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return {

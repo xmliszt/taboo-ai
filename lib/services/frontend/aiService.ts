@@ -3,6 +3,53 @@ import _ from 'lodash';
 import { CONSTANTS } from '../../../app/constants';
 import IVariation from '../../../types/variation.interface';
 import { formatResponseTextIntoArray } from '../../../app/utilities';
+import IDailyLevel from '../../../types/dailyLevel.interface';
+import dateFormat from 'dateformat';
+
+export async function getTodayTopicLevel(
+  topic: string,
+  difficulty: number
+): Promise<IDailyLevel> {
+  let difficultyString = '';
+  switch (difficulty) {
+    case 1:
+      difficultyString = 'well-known';
+      break;
+    case 2:
+      difficultyString = 'known by some';
+      break;
+    case 3:
+      difficultyString = 'rare';
+      break;
+    default:
+      difficultyString = 'well-known';
+      break;
+  }
+  const response = await fetch('/api/ai', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: `Generate a list of 5 words related to ${topic} that are ${difficultyString}, in the format of an array of string.`,
+    }),
+    cache: 'no-store',
+  });
+  const json = await response.json();
+  const words = JSON.parse(json.response) as string[];
+  if (!words || words.length < 5) {
+    throw Error('Wrong response format!');
+  }
+  const today = new Date();
+  const todayDate = dateFormat(today, 'dd-mm-yyyy');
+  return {
+    name: `${topic}-${difficulty}-${todayDate}`,
+    difficulty: difficulty,
+    words: words,
+    created_date: todayDate,
+  };
+}
 
 export async function getQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {

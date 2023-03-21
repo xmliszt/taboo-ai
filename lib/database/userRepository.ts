@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient';
 export const selectAllUsers = async () => {
   const { data, error } = await supabase.from('user').select();
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return { data };
@@ -14,6 +15,7 @@ export const selectUserByNickname = async (nickname: string) => {
     .select()
     .eq('nickname', nickname);
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return { data };
@@ -35,6 +37,7 @@ export const insertUser = async (
     })
     .select();
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return { data };
@@ -47,6 +50,7 @@ export const deleteUser = async (nickname: string, recoveryKey: string) => {
     .eq('nickname', nickname)
     .eq('recovery_key', recoveryKey);
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
 };
@@ -63,6 +67,7 @@ export const updateUserLastLoginAt = async (
     .eq('recovery_key', recoveryKey)
     .select();
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return { data };
@@ -75,6 +80,7 @@ export const getUserDevices = async (nickname: string, recoveryKey: string) => {
     .eq('nickname', nickname)
     .eq('recovery_key', recoveryKey);
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return { data };
@@ -92,6 +98,7 @@ export const updateUserDevices = async (
     .eq('recovery_key', recoveryKey)
     .select();
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return { data };

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { HASH } from '../../lib/hash';
 
@@ -49,66 +50,76 @@ const DevToggle = () => {
         <label htmlFor='dev-toggle'>Dev Mode</label>
       </div>
       {devOn && (
-        <fieldset
-          id='response-mode'
-          className='p-4 bg-white text-black leading-none rounded-lg opacity-50'
-        >
-          <h2 className='mb-4'>Server Response Mode</h2>
-          <div className='flex flex-col gap-2'>
-            <div className='flex flex-row gap-2 items-center'>
-              <input
-                className='!h-auto'
-                type='checkbox'
-                id='response-success'
-                aria-label='Toggle for response success mode'
-                name='response-success'
-                onChange={onModeChange}
-                checked={selectedMode === 1}
-                value='1'
-              />
-              <label htmlFor='response-success'>success</label>
+        <>
+          <ol className='list-inside underline list-decimal leading-none'>
+            <li>
+              <Link href='/dev'>Review Taboo Word</Link>
+            </li>
+            <li>
+              <Link href='/dev/daily'>Generate Daily Words</Link>
+            </li>
+          </ol>
+          <fieldset
+            id='response-mode'
+            className='p-4 bg-white text-black leading-none rounded-lg opacity-50'
+          >
+            <h2 className='mb-4'>Server Response Mode</h2>
+            <div className='flex flex-col gap-2'>
+              <div className='flex flex-row gap-2 items-center'>
+                <input
+                  className='!h-auto'
+                  type='checkbox'
+                  id='response-success'
+                  aria-label='Toggle for response success mode'
+                  name='response-success'
+                  onChange={onModeChange}
+                  checked={selectedMode === 1}
+                  value='1'
+                />
+                <label htmlFor='response-success'>success</label>
+              </div>
+              <div className='flex flex-row gap-2 items-center'>
+                <input
+                  className='!h-auto'
+                  type='checkbox'
+                  id='response-nomatch'
+                  aria-label='Toggle for response no match mode'
+                  name='response-nomatch'
+                  onChange={onModeChange}
+                  checked={selectedMode === 2}
+                  value='2'
+                />
+                <label htmlFor='response-nomatch'>no-match</label>
+              </div>
+              <div className='flex flex-row gap-2 items-center'>
+                <input
+                  className='!h-auto'
+                  type='checkbox'
+                  id='response-overload'
+                  aria-label='Toggle for overloaded mode'
+                  name='response-overload'
+                  onChange={onModeChange}
+                  checked={selectedMode === 3}
+                  value='3'
+                />
+                <label htmlFor='response-overload'>overloaded</label>
+              </div>
+              <div className='flex flex-row gap-2 items-center'>
+                <input
+                  className='!h-auto'
+                  type='checkbox'
+                  id='response-error'
+                  aria-label='Toggle for server error mode'
+                  name='response-error'
+                  onChange={onModeChange}
+                  checked={selectedMode === 4}
+                  value='4'
+                />
+                <label htmlFor='response-error'>error</label>
+              </div>
             </div>
-            <div className='flex flex-row gap-2 items-center'>
-              <input
-                className='!h-auto'
-                type='checkbox'
-                id='response-nomatch'
-                aria-label='Toggle for response no match mode'
-                name='response-nomatch'
-                onChange={onModeChange}
-                checked={selectedMode === 2}
-                value='2'
-              />
-              <label htmlFor='response-nomatch'>no-match</label>
-            </div>
-            <div className='flex flex-row gap-2 items-center'>
-              <input
-                className='!h-auto'
-                type='checkbox'
-                id='response-overload'
-                aria-label='Toggle for overloaded mode'
-                name='response-overload'
-                onChange={onModeChange}
-                checked={selectedMode === 3}
-                value='3'
-              />
-              <label htmlFor='response-overload'>overloaded</label>
-            </div>
-            <div className='flex flex-row gap-2 items-center'>
-              <input
-                className='!h-auto'
-                type='checkbox'
-                id='response-error'
-                aria-label='Toggle for server error mode'
-                name='response-error'
-                onChange={onModeChange}
-                checked={selectedMode === 4}
-                value='4'
-              />
-              <label htmlFor='response-error'>error</label>
-            </div>
-          </div>
-        </fieldset>
+          </fieldset>
+        </>
       )}
     </div>
   );

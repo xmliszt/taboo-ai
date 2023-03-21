@@ -25,7 +25,7 @@ const getAllLevelsHandler = async (
       res.status(500).json({ error: err, details: err.message });
     }
   } else {
-    res.end();
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 };
 

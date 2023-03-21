@@ -12,6 +12,7 @@ export const insertHighlight = async (
     end: end,
   });
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
 };

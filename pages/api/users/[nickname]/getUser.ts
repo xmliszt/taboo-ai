@@ -19,7 +19,7 @@ const getUserHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ error: 'Internal server error', details: error.message });
     }
   } else {
-    res.status(404).json({ error: 'Not found' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 };
 

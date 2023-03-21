@@ -19,6 +19,7 @@ export const insertNewScore = async (
     })
     .select();
   if (error) {
+    console.error(error);
     throw Error(error.message);
   }
   return {

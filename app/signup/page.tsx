@@ -5,10 +5,8 @@ import BackButton from '../(components)/BackButton';
 import { getScoresCache, setUser } from '../../lib/cache';
 import LoadingMask from '../(components)/Loading';
 import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');

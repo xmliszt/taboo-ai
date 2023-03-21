@@ -11,6 +11,7 @@ import LightDarkToggle from './(components)/LightDarkToggle';
 import { getMaintenance } from '../lib/services/frontend/maintenanceService';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 const grenze = Grenze({
   weight: '400',

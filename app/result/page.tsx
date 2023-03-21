@@ -13,7 +13,6 @@ import { Highlight } from '../../types/chat.interface';
 import { applyHighlightsToMessage } from '../utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { toast } from 'react-toastify';
 import {
   getOneGameByID,

@@ -31,7 +31,6 @@ const DevPage = () => {
     setLevels(levels);
     setSelectedLevel(levels[0]);
     const wordList = await getWords();
-    console.log(wordList);
     setFullWordList(wordList.map((w) => w.word));
   };
 
