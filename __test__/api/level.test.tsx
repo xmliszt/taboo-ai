@@ -57,7 +57,7 @@ describe('/api/level 200', () => {
   it('should return successful response with nothing', async () => {
     mockReq.method = 'POST';
     await handler(mockReq, mockRes);
-    expect(mockRes.end).toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(405);
   });
 });
 
