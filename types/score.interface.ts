@@ -1,7 +1,7 @@
 import { Highlight } from './chat.interface';
 
 // {id} {word} {your question} {ai response} {completion time in seconds} {the higlights for word matches}
-export default interface IScore {
+export interface IDisplayScore {
   id: number;
   target: string;
   question: string;
@@ -9,4 +9,13 @@ export default interface IScore {
   difficulty: number;
   completion: number;
   responseHighlights: Highlight[];
+}
+
+export interface IScore {
+  game_id: string;
+  score_id: number;
+  target: string;
+  question: string;
+  response: string;
+  completion_duration: number;
 }

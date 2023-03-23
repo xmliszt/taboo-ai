@@ -5,7 +5,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import { AiFillDelete } from 'react-icons/ai';
 import { IoMdAddCircle, IoMdRefreshCircle } from 'react-icons/io';
 import { toast } from 'react-toastify';
-import LoadingMask from '../../(components)/Loading';
+import LoadingMask from '../../(components)/LoadingMask';
 import {
   getTodayTopicLevel,
   getWordVariations,

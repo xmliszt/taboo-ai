@@ -16,3 +16,20 @@ export const insertHighlight = async (
     throw Error(error.message);
   }
 };
+
+export const selectHighlightsByIDs = async (
+  gameID: string,
+  scoreID: number
+) => {
+  const { data, error } = await supabase
+    .from('highlight')
+    .select()
+    .eq('game_id', gameID)
+    .eq('score_id', scoreID);
+  if (error) {
+    console.error(error);
+    throw Error(error.message);
+  } else {
+    return { data };
+  }
+};

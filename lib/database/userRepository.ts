@@ -21,6 +21,18 @@ export const selectUserByNickname = async (nickname: string) => {
   return { data };
 };
 
+export const selectUserByRecoveryKey = async (key: string) => {
+  const { data, error } = await supabase
+    .from('user')
+    .select()
+    .eq('recovery_key', key);
+  if (error) {
+    console.error(error);
+    throw Error(error.message);
+  }
+  return { data };
+};
+
 export const insertUser = async (
   nickname: string,
   recoveryKey: string,

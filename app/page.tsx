@@ -48,6 +48,15 @@ export default function HomePage(props: HomePageProps) {
         >
           Choose Topics
         </Link>
+        <Link
+          id='daily-challenge'
+          href='/daily-challenge/loading'
+          data-testid='link-daily-challenge'
+        >
+          <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
+            Daily Challenge
+          </div>
+        </Link>
         {(environment === 'preview' || environment === 'development') && (
           <DevToggle />
         )}

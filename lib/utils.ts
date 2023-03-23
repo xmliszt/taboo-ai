@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import _ from 'lodash';
 import { NextApiRequest } from 'next';
-import IScore from '../types/score.interface';
+import { IDisplayScore } from '../types/score.interface';
 
 export function getIp(req: NextApiRequest): string | undefined {
   let ip: string | undefined;
@@ -26,7 +26,7 @@ export function generateHashedString(...items: string[]): string {
   return truncatedHash;
 }
 
-export function calculateScore(score: IScore): number {
+export function calculateScore(score: IDisplayScore): number {
   return _.round(
     score.difficulty *
       (1 / (score.completion <= 0 ? 1 : score.completion)) *

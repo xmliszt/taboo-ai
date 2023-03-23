@@ -1,4 +1,4 @@
-import IScore from '../types/score.interface';
+import { IDisplayScore } from '../types/score.interface';
 import ILevel from '../types/level.interface';
 import IUser from '../types/user.interface';
 import { HASH } from './hash';
@@ -7,7 +7,7 @@ export function cacheLevel(level: ILevel) {
   localStorage.setItem(HASH.level, JSON.stringify(level));
 }
 
-export function cacheScore(score: IScore) {
+export function cacheScore(score: IDisplayScore) {
   const scores = getScoresCache();
   if (scores !== null) {
     scores.push(score);
@@ -24,7 +24,7 @@ export function getLevelCache(): ILevel | null {
   return null;
 }
 
-export function getScoresCache(): IScore[] | null {
+export function getScoresCache(): IDisplayScore[] | null {
   const scoresString = localStorage.getItem(HASH.scores);
   if (scoresString !== null) return JSON.parse(scoresString);
   return null;

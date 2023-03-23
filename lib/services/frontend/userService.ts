@@ -37,6 +37,13 @@ export const getUserInfo = async (nickname: string): Promise<IUser> => {
   return await request<IUser>(url, 'GET');
 };
 
+export const getUserInfoByRecoveryKey = async (
+  recoveryKey: string
+): Promise<IUser> => {
+  const url = '/api/users/recover/' + recoveryKey + '/get';
+  return await request<IUser>(url, 'GET');
+};
+
 export const removeUser = async (nickname: string, rKey: string) => {
   const url = '/api/users/' + nickname + '/' + rKey + '/delete';
   return await request(url, 'DELETE');

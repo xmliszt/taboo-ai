@@ -1,18 +1,23 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import BackButton from '../(components)/BackButton';
 import { getScoresCache, setUser } from '../../lib/cache';
-import LoadingMask from '../(components)/Loading';
+import LoadingMask from '../(components)/LoadingMask';
 import { confirmAlert } from 'react-confirm-alert';
 import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
+import UserKeyDisplayModal from '../(components)/UserKeyDisplayModal';
+import { CONSTANTS } from '../../lib/constants';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');
+  const [isValidNickname, setIsValidNickname] = useState(true);
+  const [userKey, setUserKey] = useState<string>('');
   const [hasScores, setHasScores] = useState<boolean | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSaveKeyModal, setShowSaveKeyModal] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +29,7 @@ const SignupPage = () => {
 
   const signup = (e: FormEvent) => {
     e.preventDefault();
-    if (nickname.length <= 0) {
+    if (nickname.length <= 0 || !isValidNickname) {
       setErrorMessage('Please enter nickname before submitting!');
     } else {
       confirmAlert({
@@ -42,21 +47,54 @@ const SignupPage = () => {
     try {
       setIsLoading(true);
       const newUser = await createUser(nickname);
-      window.dispatchEvent(new CustomEvent('onSignUpComplete'));
       setUser(newUser);
-      router.push(hasScores ? '/result' : '/');
+      setUserKey(newUser.recovery_key);
+      setShowSaveKeyModal(true);
     } catch (error) {
+      if (error.message === 'User already exists!') {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage(
+          'Sorry! We are unable to submit your nickname at the moment. Please try again later!'
+        );
+      }
       console.error(error);
-      setErrorMessage(
-        'Sorry! We are unable to submit your nickname at the moment. Please try again later!'
-      );
     } finally {
       setIsLoading(false);
     }
   };
 
+  const onUserNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const usernameRegex = /^[a-zA-Z0-9-]+$/;
+    const inputNickname = e.target.value;
+    const isValid = inputNickname.match(usernameRegex);
+    setNickname(e.target.value);
+    if (!isValid) {
+      setErrorMessage(
+        "Nickname must only contains alphanumeric characters A-Z, a-z, 0-9 and '-'."
+      );
+      setIsValidNickname(false);
+    } else {
+      setErrorMessage(null);
+      setIsValidNickname(true);
+    }
+  };
+
+  const onUserConfirmSavedKey = () => {
+    setShowSaveKeyModal(false);
+    window.dispatchEvent(new CustomEvent(CONSTANTS.eventKeys.signUpSuccess));
+    router.push(hasScores ? '/result' : '/');
+  };
+
   return (
     <>
+      {showSaveKeyModal && (
+        <UserKeyDisplayModal
+          userKey={userKey}
+          onConfirm={onUserConfirmSavedKey}
+        />
+      )}
       <LoadingMask
         isLoading={isLoading}
         message='Submitting your nickname...'
@@ -87,17 +125,14 @@ const SignupPage = () => {
               aria-label='input your nickname here'
               placeholder='Enter your nickname...'
               className='h-24 lg:h-36 rounded-3xl w-full text-2xl lg:text-4xl focus:!border-green focus:dark:!border-neon-green'
-              onChange={(e) => {
-                e.preventDefault();
-                setErrorMessage(null);
-                setNickname(e.target.value);
-              }}
+              onChange={onUserNicknameChange}
             />
             <label
               htmlFor='nickname-input'
               className='text-black dark:text-neon-white'
             >
-              ... so that you can identify yourself in the ranking board.
+              Tell us your nickname so that we can <b>uniquely identify you</b>{' '}
+              in the leaderboard!
             </label>
             <div className='flex-grow text-3xl text-red dark:text-neon-red h-full items-center justify-center flex'>
               {errorMessage}

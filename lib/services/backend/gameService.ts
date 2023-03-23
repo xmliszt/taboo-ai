@@ -1,4 +1,4 @@
-import IScore from '../../../types/score.interface';
+import { IDisplayScore } from '../../../types/score.interface';
 import ILevel from '../../../types/level.interface';
 import {
   getBestGamesByNickname,
@@ -18,7 +18,7 @@ import IGame from '../../../types/game.interface';
 
 const saveGame = async (
   level: ILevel,
-  scores: IScore[],
+  scores: IDisplayScore[],
   playerNickname: string,
   playerId: string,
   isPromptVisible: boolean

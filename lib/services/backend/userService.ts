@@ -6,6 +6,7 @@ import {
   updateUserDevices,
   selectUserByNickname,
   selectAllUsers,
+  selectUserByRecoveryKey,
 } from '../../database/userRepository';
 import { generateHashedString } from '../../utils';
 import type IUser from '../../../types/user.interface';
@@ -71,6 +72,14 @@ const getUserByNickname = async (nickname: string): Promise<IUser | null> => {
   return data[0] as IUser;
 };
 
+const getUserByRecoveryKey = async (key: string): Promise<IUser | null> => {
+  const { data } = await selectUserByRecoveryKey(key);
+  if (data.length === 0) {
+    return null;
+  }
+  return data[0] as IUser;
+};
+
 const getAllUsers = async (): Promise<IUser[]> => {
   const { data } = await selectAllUsers();
   if (data.length === 0) {
@@ -83,6 +92,7 @@ export {
   getAllUsers,
   createUser,
   getUserByNickname,
+  getUserByRecoveryKey,
   updateLastLoginAt,
   removeDeviceFromUser,
   addDeviceToUser,

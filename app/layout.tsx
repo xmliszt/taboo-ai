@@ -9,9 +9,10 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import LightDarkToggle from './(components)/LightDarkToggle';
 import { getMaintenance } from '../lib/services/frontend/maintenanceService';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { CONSTANTS } from '../lib/constants';
 
 const grenze = Grenze({
   weight: '400',
@@ -43,22 +44,73 @@ interface IMaintenance {
   isGPTOutage: boolean;
 }
 
+let registeredEvents: string[] = [];
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const [maintenanceData, setMaintenanceData] = useState<IMaintenance>();
   const [isDark, setIsDark] = useState(false);
   const pathName = usePathname();
 
   useEffect(() => {
-    fetchMaintenance();
-  }, []);
+    !isMounted && setIsMounted(true);
+    if (isMounted) {
+      registerEventListeners();
+      fetchMaintenance();
+    }
+
+    return () => {
+      removeEventListeners();
+    };
+  }, [isMounted]);
 
   const fetchMaintenance = async () => {
     const data = await getMaintenance();
     setMaintenanceData(data);
+  };
+
+  const registerEventListeners = () => {
+    console.log('Register event listeners...');
+    if (!registeredEvents.includes(CONSTANTS.eventKeys.signUpSuccess)) {
+      window.addEventListener(
+        CONSTANTS.eventKeys.signUpSuccess,
+        onBackFromSignUpSuccess as EventListener
+      );
+      registeredEvents.push(CONSTANTS.eventKeys.signUpSuccess);
+    }
+    if (!registeredEvents.includes(CONSTANTS.eventKeys.recoverySuccess)) {
+      window.addEventListener(
+        CONSTANTS.eventKeys.recoverySuccess,
+        onBackFromRecoverySuccess as EventListener
+      );
+      registeredEvents.push(CONSTANTS.eventKeys.recoverySuccess);
+    }
+  };
+
+  const removeEventListeners = () => {
+    console.log('Remove event listeners...');
+    window.removeEventListener(
+      CONSTANTS.eventKeys.signUpSuccess,
+      onBackFromSignUpSuccess as EventListener
+    );
+    window.removeEventListener(
+      CONSTANTS.eventKeys.recoverySuccess,
+      onBackFromRecoverySuccess as EventListener
+    );
+    registeredEvents = [];
+  };
+
+  const onBackFromSignUpSuccess = () => {
+    toast.success('Nickname submitted successfully!', { autoClose: 3000 });
+  };
+
+  const onBackFromRecoverySuccess = () => {
+    console.log('Hi');
+    toast.success('Account recovered successfully!', { autoClose: 3000 });
   };
 
   return (
@@ -70,7 +122,9 @@ export default function RootLayout({
     >
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        {!(pathName === '/level') && <WordCarousell />}
+        {!(pathName === '/level' || pathName === '/daily-challenge') && (
+          <WordCarousell />
+        )}
         <LightDarkToggle
           onToggle={(dark) => {
             setIsDark(dark);
@@ -91,9 +145,7 @@ export default function RootLayout({
               newestOnTop={false}
               closeOnClick
               rtl={false}
-              pauseOnFocusLoss
               draggable
-              pauseOnHover
               theme='light'
             />
             {children}

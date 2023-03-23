@@ -9,7 +9,7 @@ const DevToggle = () => {
   const [selectedMode, setSelectedMode] = useState<number>(1);
 
   useEffect(() => {
-    setDevOn(localStorage.getItem('dev') ? true : false);
+    setDevOn(localStorage.getItem(HASH.dev) ? true : false);
     const mode = localStorage.getItem('mode');
     if (mode) {
       setSelectedMode(Number(mode));
@@ -31,6 +31,7 @@ const DevToggle = () => {
   const onModeChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedMode(Number(event.target.value));
+      console.log(event.target.value);
       localStorage.setItem('mode', event.target.value);
     }
   };

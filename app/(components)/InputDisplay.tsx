@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
-import { Author } from '../layout';
-import { Highlight } from '../../../types/chat.interface';
-import { applyHighlightsToMessage, sanitizeHighlights } from '../../utilities';
+import { Author } from '../level/layout';
+import { Highlight } from '../../types/chat.interface';
+import { applyHighlightsToMessage, sanitizeHighlights } from '../utilities';
 
 interface ResponseDisplayProps {
   target: string | null;

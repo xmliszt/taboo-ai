@@ -2,8 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import ILevel from '../../types/level.interface';
-import IScore from '../../types/score.interface';
-import { getScoresCache, getLevelCache, getUser } from '../../lib/cache';
+import { IDisplayScore } from '../../types/score.interface';
+import {
+  getScoresCache,
+  getLevelCache,
+  getUser,
+  clearScores,
+  cacheScore,
+} from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import BackButton from '../(components)/BackButton';
@@ -19,10 +25,14 @@ import {
   saveGame,
 } from '../../lib/services/frontend/gameService';
 import IUser from '../../types/user.interface';
-import LoadingMask from '../(components)/Loading';
+import LoadingMask from '../(components)/LoadingMask';
 import ConfirmPopUp from '../(components)/ConfirmPopUp';
 import { generateHashedString, getFormattedToday } from '../../lib/utils';
 import { getUserInfo } from '../../lib/services/frontend/userService';
+import { CONSTANTS } from '../../lib/constants';
+import { CgSmile } from 'react-icons/cg';
+import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
+import { getHighlights } from '../../lib/services/frontend/highlightService';
 
 interface StatItem {
   title: string;
@@ -48,9 +58,11 @@ enum PromptStep {
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
+  const [isMounted, setIsMounted] = useState(false);
   const [userCache, setUserCache] = useState<IUser | null>(null);
-  const [scores, setScores] = useState<IScore[]>([]);
+  const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
+  const [displayedLevelName, setDisplayedLevelName] = useState<string | null>();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -68,42 +80,36 @@ export default function ResultPage(props: ResultPageProps) {
     return completion <= 0 ? 1 : completion;
   };
 
-  const onBackFromSignUpSuccess = () => {
-    toast.success('Nickname submitted successfully!', { autoClose: 4000 });
-  };
-
-  const registerEvents = () => {
-    window.addEventListener(
-      'onSignUpComplete',
-      onBackFromSignUpSuccess as EventListener
-    );
-  };
-
   useEffect(() => {
-    const scores = getScoresCache();
-    if (!scores) throw Error('No recent results available.');
-    setScores(scores);
-    const level = getLevelCache();
-    if (level) setLevel(level);
-    let total = 0;
-    let totalScore = 0;
-    for (const score of scores ?? []) {
-      total += getCompletionSeconds(score.completion);
-      totalScore += _.round(
-        score.difficulty * (1 / getCompletionSeconds(score.completion)) * 1000,
-        2
+    !isMounted && setIsMounted(true);
+    if (isMounted) {
+      const level = getLevelCache();
+      const scores = getScoresCache();
+      if (!scores) throw Error('No recent results available.');
+      setScores(scores);
+      level?.isDaily && setDisplayedLevelName(level?.dailyLevelName);
+      if (level) setLevel(level);
+      let total = 0;
+      let totalScore = 0;
+      for (const score of scores ?? []) {
+        total += getCompletionSeconds(score.completion);
+        totalScore += _.round(
+          score.difficulty *
+            (1 / getCompletionSeconds(score.completion)) *
+            1000,
+          2
+        );
+      }
+      setTotal(total);
+      setTotalScore(totalScore);
+      window.dispatchEvent(
+        new CustomEvent<{ score: number }>(CONSTANTS.eventKeys.scoreComputed, {
+          detail: { score: totalScore },
+        })
       );
+      level?.isDaily && checkUserStatus();
     }
-    setTotal(total);
-    setTotalScore(totalScore);
-    window.dispatchEvent(
-      new CustomEvent<{ score: number }>('onScoreComputed', {
-        detail: { score: totalScore },
-      })
-    );
-    registerEvents();
-    checkUserStatus();
-  }, []);
+  }, [isMounted]);
 
   useEffect(() => {
     switch (promptStep) {
@@ -177,6 +183,34 @@ export default function ResultPage(props: ResultPageProps) {
               noButtonText: 'Maybe next time!',
             });
             setPromptStep(PromptStep.PromptSaveResult);
+          } else if (level) {
+            const scores = await getScoresByGameID(game.game_id);
+            clearScores();
+            const displayScores: IDisplayScore[] = [];
+            for (const score of scores) {
+              const highlights = await getHighlights(
+                game.game_id,
+                score.score_id
+              );
+              const displayScore: IDisplayScore = {
+                id: score.score_id,
+                target: score.target,
+                question: score.question,
+                response: score.response,
+                difficulty: level.difficulty,
+                completion: score.completion_duration,
+                responseHighlights: highlights.map(
+                  (h): Highlight => ({ start: h.start, end: h.end })
+                ),
+              };
+              displayScores.push(displayScore);
+              cacheScore(displayScore);
+            }
+            setTotal(
+              scores.map((s) => s.completion_duration).reduce((p, c) => p + c)
+            );
+            setTotalScore(game.total_score);
+            setScores(displayScores);
           }
         } catch (error) {
           console.error(error);
@@ -187,13 +221,17 @@ export default function ResultPage(props: ResultPageProps) {
     } catch (error) {
       console.log(error.message);
       confirmAlert({
-        title: 'Join the global leaderboard & Compete against other players!',
+        title: 'Join the global leaderboard!',
         message:
-          'Would you like to save your results and participate in the exciting global rankings?',
+          'Would you like to be registered in the leaderboard and use your scores to compete with other players?',
         buttons: [
           {
             label: 'Yes',
             onClick: () => router.push('/signup'),
+          },
+          {
+            label: 'I want to recover my account!',
+            onClick: () => router.push('/recovery'),
           },
           {
             label: 'No',
@@ -258,7 +296,7 @@ export default function ResultPage(props: ResultPageProps) {
           .replace('image/png', 'image/octet-stream');
         link.href = href;
         const downloadName = `taboo-ai_[${
-          level?.name ?? 'game'
+          displayedLevelName ?? level?.name ?? 'game'
         }]_scores_${Date.now()}.png`;
         link.download = downloadName;
         if (navigator.share) {
@@ -378,14 +416,14 @@ export default function ResultPage(props: ResultPageProps) {
     );
   };
 
-  const calculateScore = (score: IScore): number => {
+  const calculateScore = (score: IDisplayScore): number => {
     return _.round(
       score.difficulty * (1000 / getCompletionSeconds(score.completion)),
       2
     );
   };
 
-  const generateStatsItems = (score: IScore): StatItem[] => {
+  const generateStatsItems = (score: IDisplayScore): StatItem[] => {
     return [
       { title: 'Your Question', content: score.question },
       {
@@ -407,7 +445,7 @@ export default function ResultPage(props: ResultPageProps) {
     ];
   };
 
-  const generateMobileScoreStack = (score: IScore) => {
+  const generateMobileScoreStack = (score: IDisplayScore) => {
     return (
       <div
         key={score.id}
@@ -433,10 +471,10 @@ export default function ResultPage(props: ResultPageProps) {
 
   const renderMobile = () => {
     return (
-      <div className='w-full mt-16 flex flex-col gap-6 justify- px-6'>
+      <div className='w-full flex flex-col gap-6 justify- px-6'>
         <div className='text-center flex justify-center items-center'>
           <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 drop-shadow-lg'>
-            Topic: {level?.name}
+            Topic: {displayedLevelName ?? level?.name}
           </span>
         </div>
         <div className='p-2 dark:border-neon-yellow dark:border-4 rounded-2xl bg-white text-black dark:bg-neon-white dark:text-neon-gray flex flex-col gap-2 justify-center'>
@@ -474,7 +512,7 @@ export default function ResultPage(props: ResultPageProps) {
     ];
     return (
       <div className='w-full max-h-[70%] h-[70%] text-center'>
-        <div className='font-mono relative my-16 lg:my-20 mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
+        <div className='font-mono relative mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
           <table className='relative table-fixed w-full min-w-[1024px]'>
             <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
               <tr>
@@ -504,8 +542,8 @@ export default function ResultPage(props: ResultPageProps) {
                 >
                   {' '}
                   Topic:{' '}
-                  <span className='text-black dark:text-neon-white'>
-                    {level?.name}
+                  <span className='block text-black dark:text-neon-white text-ellipsis overflow-hidden break-words'>
+                    {displayedLevelName ?? level?.name}
                   </span>
                 </td>
                 <td
@@ -514,7 +552,7 @@ export default function ResultPage(props: ResultPageProps) {
                 >
                   {' '}
                   Difficulty:{' '}
-                  <span className='text-black dark:text-neon-white'>
+                  <span className='block text-black dark:text-neon-white'>
                     {level?.difficulty ?? 1}
                     <span>({getDifficulty(level?.difficulty ?? 1)})</span>
                   </span>
@@ -595,25 +633,46 @@ export default function ResultPage(props: ResultPageProps) {
         isLoading={isLoading}
         message='Submitting your scores to the leaderboard...'
       />
-      <BackButton href='/levels' key='back-button' />
+      <BackButton href={level?.isDaily ? '/' : '/levels'} key='back-button' />
       <h1 className='fixed top-0 w-full h-20 py-4 text-center gradient-down dark:gradient-down-dark-black z-10'>
-        Scoreboard
+        Game Results
       </h1>
+
       <section
         ref={screenshotRef}
         className='!leading-screenshot pb-32 lg:pb-48 pt-4'
       >
+        {userCache && (
+          <h1 className='w-full py-4 mt-8 text-center z-10'>
+            <CgSmile className='inline' /> Hi! {userCache?.nickname}{' '}
+            <CgSmile className='inline' />
+          </h1>
+        )}
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
-      <div className='fixed bottom-0 z-20 w-full text-center py-4'>
-        <button
-          className='h-12 lg:h-36 lg:text-4xl w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
-          onClick={() => {
-            router.push('/level');
-          }}
-        >
-          Play This Topic Again
-        </button>
+      <div className='fixed bottom-2 z-20 w-full text-center py-4'>
+        {level?.isDaily ? (
+          <button
+            id='leaderboard'
+            className='h-12 lg:h-24  w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)]'
+            onClick={() => {
+              router.push('/leaderboard');
+            }}
+          >
+            <div className='text-lg lg:text-2xl !text-white hover:!text-black !bg-black dark:!bg-neon-gray hover:!bg-yellow hover:dark:!bg-neon-green color-gradient-animated-background flex items-center justify-center'>
+              Go To The Leaderboard
+            </div>
+          </button>
+        ) : (
+          <button
+            className='h-12 lg:h-24 lg:text-2xl w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
+            onClick={() => {
+              router.push('/level');
+            }}
+          >
+            Play This Topic Again
+          </button>
+        )}
       </div>
       <button
         id='share'

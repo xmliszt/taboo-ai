@@ -1,3 +1,4 @@
+/* stylelint-disable color-hex-length */
 /* stylelint-disable selector-class-pattern */
 @tailwind base;
 @tailwind components;
@@ -76,6 +77,59 @@
       rgb(2 9 4 / 100%) 80%
     );
   }
+
+  .color-gradient-animated-background {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    @apply transition-all bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green dark:text-neon-white;
+  }
+
+  .color-gradient-animated-background::before,
+  .color-gradient-animated-background::after {
+    @apply !rounded-tl-[2rem] !rounded-br-[2rem];
+
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    background: linear-gradient(
+      45deg,
+      #fb0094,
+      #0000ff,
+      #00ff00,
+      #ffff00,
+      #ff0000,
+      #fb0094,
+      #0000ff,
+      #00ff00,
+      #ffff00,
+      #ff0000
+    );
+    background-size: 500%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1 !important;
+    animation: steam 20s linear infinite;
+  }
+
+  .color-gradient-animated-background::after {
+    @apply blur;
+  }
+
+  @keyframes steam {
+    0% {
+      background-position: 0 0;
+    }
+
+    50% {
+      background-position: 400% 0;
+    }
+
+    100% {
+      background-position: 0 0;
+    }
+  }
 }
 
 .unicorn-color {
@@ -95,6 +149,9 @@ button:not(
     #clear,
     #add,
     #delete,
+    #leaderboard,
+    #copy,
+    #paste,
     .Toastify__close-button
   ),
 a#start {

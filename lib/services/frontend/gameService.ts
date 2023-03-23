@@ -1,6 +1,6 @@
 import IGame from '../../../types/game.interface';
 import ILevel from '../../../types/level.interface';
-import IScore from '../../../types/score.interface';
+import { IDisplayScore } from '../../../types/score.interface';
 
 interface ErrorResponse {
   error: string;
@@ -26,7 +26,7 @@ async function request<T>(url: string, method: string, body?: any): Promise<T> {
 
 export const saveGame = async (
   level: ILevel,
-  scores: IScore[],
+  scores: IDisplayScore[],
   player_nickname: string,
   player_id: string,
   prompt_visible: boolean

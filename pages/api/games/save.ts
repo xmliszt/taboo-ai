@@ -3,7 +3,7 @@ import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 import { saveGame } from '../../../lib/services/backend/gameService';
 import IGame from '../../../types/game.interface';
 import type ILevel from '../../../types/level.interface';
-import type IScore from '../../../types/score.interface';
+import type { IDisplayScore } from '../../../types/score.interface';
 
 interface SaveGameResponse {
   data: IGame;
@@ -30,7 +30,7 @@ const saveGameHandler = async (
     prompt_visible,
   }: {
     level: ILevel;
-    scores: IScore[];
+    scores: IDisplayScore[];
     player_nickname: string;
     player_id: string;
     prompt_visible: boolean;

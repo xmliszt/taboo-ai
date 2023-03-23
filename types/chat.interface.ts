@@ -5,6 +5,13 @@ export interface Highlight {
   end: number;
 }
 
+export interface IHighlight {
+  game_id: string;
+  score_id: number;
+  start: number;
+  end: number;
+}
+
 export interface Chat {
   message: string;
   target: string;

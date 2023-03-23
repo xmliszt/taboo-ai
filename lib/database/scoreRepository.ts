@@ -26,3 +26,17 @@ export const insertNewScore = async (
     data,
   };
 };
+
+export const selectScoresByGameID = async (gameID: string) => {
+  const { data, error } = await supabase
+    .from('score')
+    .select()
+    .eq('game_id', gameID);
+  if (error) {
+    console.error(error);
+    throw Error(error.message);
+  }
+  return {
+    data,
+  };
+};

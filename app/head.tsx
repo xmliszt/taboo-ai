@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { CONSTANTS } from '../lib/constants';
 
 export default function Head() {
   const [title, setTitle] = useState<string>('Taboo.AI: Play Taboo with AI');
@@ -43,21 +44,21 @@ export default function Head() {
   useEffect(() => {
     if (isMounted) {
       window.addEventListener(
-        'onTargetChanged',
+        CONSTANTS.eventKeys.targetChanged,
         onTargetChanged as EventListener
       );
       window.addEventListener(
-        'onScoreComputed',
+        CONSTANTS.eventKeys.scoreComputed,
         onScoreComputed as EventListener
       );
     }
     return () => {
       window.removeEventListener(
-        'onTargetChanged',
+        CONSTANTS.eventKeys.targetChanged,
         onTargetChanged as EventListener
       );
       window.removeEventListener(
-        'onScoreComputed',
+        CONSTANTS.eventKeys.scoreComputed,
         onScoreComputed as EventListener
       );
     };
@@ -85,6 +86,10 @@ export default function Head() {
         return isCustomPath ? title : 'Taboo.AI: Share your scores!';
       case '/signup':
         return 'Taboo.AI: Submit Your Nickname';
+      case '/daily-challenge':
+        return 'Taboo.AI: Daily Challenge';
+      case '/recovery':
+        return 'Taboo.AI: Recover Your Scores';
       default:
         return 'Taboo.AI: Play Taboo with AI';
     }

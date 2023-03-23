@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import BackButton from '../(components)/BackButton';
-import LoadingMask from '../(components)/Loading';
+import LoadingMask from '../(components)/LoadingMask';
 import { getLevels } from '../../lib/services/frontend/levelService';
 import ILevel from '../../types/level.interface';
-import Badge from './(components)/Badge';
-import HotBadge from './(components)/HotBadge';
-import NewBadge from './(components)/NewBadge';
-import AuthorBadge from './(components)/AuthorBadge';
-import LevelButton from './(components)/LevelButton';
+import Badge from '../(components)/(Badges)/Badge';
+import HotBadge from '../(components)/(Badges)/HotBadge';
+import NewBadge from '../(components)/(Badges)/NewBadge';
+import AuthorBadge from '../(components)/(Badges)/AuthorBadge';
+import LevelButton from '../(components)/LevelButton';
 
 interface LevelsPageProps {}
 

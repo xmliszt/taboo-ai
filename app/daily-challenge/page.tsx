@@ -22,9 +22,9 @@ import { getMockResponse, getMockVariations } from '../utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 
-interface LevelPageProps {}
+interface DailyLevelProps {}
 
-export default function LevelPage(props: LevelPageProps) {
+export default function DailyLevelPage(props: DailyLevelProps) {
   //SECTION - States
   const [isMounted, setIsMounted] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
@@ -339,7 +339,7 @@ export default function LevelPage(props: LevelPageProps) {
     if (isMounted) {
       clearScores();
       const level = getLevelCache();
-      if (level !== null) {
+      if (level !== null && level.isDaily) {
         reset();
         setDifficulty(level.difficulty);
         setWords(level.words);
@@ -352,7 +352,8 @@ export default function LevelPage(props: LevelPageProps) {
           'Think about your prompt while we generate the Taboo words.'
         );
       } else {
-        throw Error('No level is chosen');
+        toast.error('No daily challenge available! Please try again!');
+        router.push('/');
       }
     }
   }, [isMounted]);
