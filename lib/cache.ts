@@ -51,3 +51,7 @@ export function getUser(): IUser | null {
 export function setUser(user: IUser) {
   localStorage.setItem(HASH.user, JSON.stringify(user));
 }
+
+export function clearUser() {
+  localStorage.removeItem(HASH.user);
+}

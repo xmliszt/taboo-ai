@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BsFillQuestionDiamondFill } from 'react-icons/bs';
+import { BsFillQuestionSquareFill } from 'react-icons/bs';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import CustomWordListLink from './(components)/CustomWordListLink';
@@ -23,8 +23,8 @@ export default function HomePage(props: HomePageProps) {
         className='text-white dark:text-neon-red-light text-xl lg:text-3xl fixed z-40 top-5 left-5 hover:animate-pulse'
       >
         <div className='flex flex-row gap-2'>
-          <span className='text-sm lg:text-lg'>How To Play</span>
-          <BsFillQuestionDiamondFill data-testid='rule-icon' />
+          <BsFillQuestionSquareFill data-testid='rule-icon' />
+          <span className='text-sm lg:text-lg'>Instructions</span>
         </div>
       </Link>
       <section className='flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16'>
@@ -62,7 +62,7 @@ export default function HomePage(props: HomePageProps) {
         )}
         <CustomWordListLink />
       </section>
-      <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-[999]'>
+      <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-10'>
         <SocialLinkButton
           content='Buy Me Coffee'
           icon={<GiCoffeeCup />}

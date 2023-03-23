@@ -211,6 +211,7 @@ export default function ResultPage(props: ResultPageProps) {
             );
             setTotalScore(game.total_score);
             setScores(displayScores);
+            toast.success('Your daily challenge results have been restored!');
           }
         } catch (error) {
           console.error(error);
