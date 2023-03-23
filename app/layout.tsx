@@ -163,11 +163,11 @@ export default function RootLayout({
         />
         {pathName === '/' &&
           (currentUser ? (
-            <div className='fixed top-12 w-full text-center gradient-down dark:gradient-down-dark-black z-10 text-gray flex flex-row gap-2 justify-center items-center'>
+            <div className='fixed top-12 w-full text-center z-10 text-gray flex flex-row gap-2 justify-center items-center'>
               <span>Welcome Back! {currentUser.nickname}</span>
               <button
                 id='submit'
-                className='underline text-red-light dark:text-neon-red-light'
+                className='underline text-red-light dark:text-neon-red-light h-4'
                 aria-label='Click to quit and logout from current account'
                 onClick={quit}
               >
@@ -175,7 +175,7 @@ export default function RootLayout({
               </button>
             </div>
           ) : (
-            <div className='fixed top-12 w-full text-center gradient-down dark:gradient-down-dark-black z-10 text-gray flex flex-row gap-2 justify-center items-center'>
+            <div className='fixed top-12 w-full text-center z-10 text-gray'>
               <Link href='/recovery' className='underline'>
                 Recover Your Scores?
               </Link>

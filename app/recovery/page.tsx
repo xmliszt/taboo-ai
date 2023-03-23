@@ -14,12 +14,21 @@ const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);
   const [recoveryKey, setRecoveryKey] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPasteAllow, setIsPasteAllow] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     if (hasScores === null) {
       const scoresCache = getScoresCache();
       setHasScores(scoresCache !== null);
+    }
+    try {
+      const isAllow =
+        window.isSecureContext || window.navigator.clipboard !== undefined;
+      setIsPasteAllow(isAllow);
+    } catch (error) {
+      console.error(error);
+      setIsPasteAllow(false);
     }
   }, [hasScores]);
 
@@ -75,15 +84,17 @@ const RecoveryPage = () => {
                 setRecoveryKey(e.target.value);
               }}
             />
-            <button
-              id='paste'
-              type='button'
-              className='flex justify-center items-center h-full aspect-square'
-              aria-label='paste recovery key from clipboard'
-              onClick={onPaste}
-            >
-              <BiPaste />
-            </button>
+            {isPasteAllow && (
+              <button
+                id='paste'
+                type='button'
+                className='flex justify-center items-center h-full aspect-square'
+                aria-label='paste recovery key from clipboard'
+                onClick={onPaste}
+              >
+                <BiPaste />
+              </button>
+            )}
           </div>
           <button
             type='submit'
@@ -94,9 +105,9 @@ const RecoveryPage = () => {
           </button>
         </form>
         <article className='text-justify text-gray leading-5'>
-          <h1>
+          <p className='text-2xl'>
             <i>What is Recovery Key?</i>
-          </h1>
+          </p>
           <p>
             <b>Recovery Key</b> is used to restore your saved games. We use{' '}
             <b>Recovery Key</b> to identify who you are and hence retrieve the

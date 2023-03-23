@@ -4,6 +4,7 @@ const allowedOrigins = [
   /taboo-ai\.vercel\.app$/,
   /taboo-.+-xmliszt\.vercel\.app$/,
   /localhost:\d+$/,
+  /192\.168\.\d+\.\d+:\d+$/,
 ];
 
 const checkOrigin = (
