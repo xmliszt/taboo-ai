@@ -1,5 +1,7 @@
 'use client';
 
+import moment from 'moment';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { BiPaste } from 'react-icons/bi';
@@ -8,7 +10,11 @@ import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/LoadingMask';
 import { getScoresCache, setUser } from '../../lib/cache';
 import { CONSTANTS } from '../../lib/constants';
-import { getUserInfoByRecoveryKey } from '../../lib/services/frontend/userService';
+import {
+  addDeviceToUser,
+  getUserInfoByRecoveryKey,
+  updateUserLastLoginTime,
+} from '../../lib/services/frontend/userService';
 
 const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);
@@ -45,6 +51,16 @@ const RecoveryPage = () => {
       setIsLoading(true);
       const user = await getUserInfoByRecoveryKey(recoveryKey);
       setUser(user);
+      await updateUserLastLoginTime(
+        user.nickname,
+        user.recovery_key,
+        moment().valueOf()
+      );
+      await addDeviceToUser(
+        user.nickname,
+        user.recovery_key,
+        navigator.userAgent
+      );
       window.dispatchEvent(
         new CustomEvent(CONSTANTS.eventKeys.recoverySuccess)
       );
@@ -111,9 +127,22 @@ const RecoveryPage = () => {
           </p>
           <p className='text-justify'>
             <b>Recovery Key</b> is used to restore your saved games. We use{' '}
-            <b>Recovery Key</b> to identify who you are and hence retrieve the
-            games for you.
+            <b>Recovery Key</b> to identify who you are, and retrieve your
+            scores in the leaderboard.
           </p>
+          <p className='text-justify'>
+            <b>Forgot about your recovery key?</b> Unfortunately, there is no
+            way to restore if you lost your recovery key as we do not store any
+            of additional information. However, not to worry, you can simply
+            attempt the daily challenge and create another account at the end of
+            the game!{' '}
+          </p>
+          <Link
+            className='underline text-yellow dark:text-neon-green'
+            href='/daily-challenge/loading'
+          >
+            Attempt the daily challenge!
+          </Link>
         </article>
       </section>
     </>

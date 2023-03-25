@@ -6,10 +6,7 @@ import LoadingMask from '../(components)/LoadingMask';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';
-import {
-  getAllGamesByLevel,
-  getBestGamesByLevel,
-} from '../../lib/services/frontend/gameService';
+import { getAllGamesByLevel } from '../../lib/services/frontend/gameService';
 import { toast } from 'react-toastify';
 import { getDailyLevel } from '../../lib/services/frontend/levelService';
 import IGame from '../../types/game.interface';
@@ -127,7 +124,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
             data-style='none'
             onClick={onPrevDate}
             aria-label='Go to previous day'
-            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center hover:opacity-50 transition-all ease-in-out overflow-x-hidden`}
+            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center`}
           >
             <FaChevronLeft />
           </button>
@@ -139,7 +136,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
             data-style='none'
             onClick={onNextDate}
             aria-label='Go to next day'
-            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center hover:opacity-50 transition-all ease-in-out overflow-x-hidden`}
+            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center`}
           >
             <FaChevronRight />
           </button>
@@ -147,7 +144,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
         {!currentDate.isSame(moment(), 'day') && (
           <button
             data-style='none'
-            className='underline text-red-light dark:text-neon-red-light flex-grow-0'
+            className='underline h-8 text-red-light dark:text-neon-red-light'
             aria-label='Jump to today date'
             onClick={() => {
               setCurrentDate(moment());
@@ -238,11 +235,11 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
                   <div className='self-center relative h-full'>
                     <div className='w-4'></div>
                     {data.rank === 1 ? (
-                      <GiTrophy className='absolute bottom-2 -left-6 text-6xl text-yellow dark:text-neon-yellow drop-shadow-lg' />
+                      <GiTrophy className='absolute bottom-1 -left-6 text-6xl text-yellow dark:text-neon-yellow drop-shadow-lg' />
                     ) : data.rank === 2 ? (
-                      <GiTrophy className='absolute bottom-2 -left-5 text-5xl text-neon-silver drop-shadow-lg' />
+                      <GiTrophy className='absolute bottom-1 -left-5 text-5xl text-neon-silver drop-shadow-lg' />
                     ) : data.rank === 3 ? (
-                      <GiTrophy className='absolute bottom-2 -left-5 text-4xl text-neon-bronze drop-shadow-lg' />
+                      <GiTrophy className='absolute bottom-1 -left-5 text-4xl text-neon-bronze drop-shadow-lg' />
                     ) : (
                       <GiLaurelCrown className='absolute bottom-2 -left-5 text-4xl text-gray dark:text-neon-white-light drop-shadow-lg' />
                     )}

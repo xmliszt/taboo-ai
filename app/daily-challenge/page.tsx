@@ -18,9 +18,14 @@ import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import { toast } from 'react-toastify';
 import IVariation from '../../types/variation.interface';
-import { getMockResponse, getMockVariations } from '../utilities';
+import {
+  getDifficulty,
+  getMockResponse,
+  getMockVariations,
+} from '../utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
+import { confirmAlert } from 'react-confirm-alert';
 
 interface DailyLevelProps {}
 
@@ -340,17 +345,30 @@ export default function DailyLevelPage(props: DailyLevelProps) {
       clearScores();
       const level = getLevelCache();
       if (level !== null && level.isDaily) {
-        reset();
-        setDifficulty(level.difficulty);
-        setWords(level.words);
-        const _target = generateNewTarget(level.words);
-        setTarget(_target);
-        setCurrentProgress(1);
-        setIsSuccess(false);
-        setResponseShouldFadeOut(false); // Let new response fade in
-        setResponseText(
-          'Think about your prompt while we generate the Taboo words.'
-        );
+        confirmAlert({
+          title: level.dailyLevelName,
+          message: `Difficulty multiplier: ${
+            level.difficulty
+          } - ${getDifficulty(level.difficulty)}`,
+          buttons: [
+            {
+              label: "Let's Begin!",
+              onClick: () => {
+                reset();
+                setDifficulty(level.difficulty);
+                setWords(level.words);
+                const _target = generateNewTarget(level.words);
+                setTarget(_target);
+                setCurrentProgress(1);
+                setIsSuccess(false);
+                setResponseShouldFadeOut(false); // Let new response fade in
+                setResponseText(
+                  'Think about your prompt while we generate the Taboo words.'
+                );
+              },
+            },
+          ],
+        });
       } else {
         toast.error('No daily challenge available! Please try again!');
         router.push('/');

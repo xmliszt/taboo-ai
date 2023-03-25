@@ -10,6 +10,7 @@ import HotBadge from '../(components)/(Badges)/HotBadge';
 import NewBadge from '../(components)/(Badges)/NewBadge';
 import AuthorBadge from '../(components)/(Badges)/AuthorBadge';
 import LevelButton from '../(components)/LevelButton';
+import { getDifficulty } from '../utilities';
 
 interface LevelsPageProps {}
 
@@ -26,19 +27,6 @@ export default function LevelsPage(props: LevelsPageProps) {
       setLevels(levels);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const getDifficulty = (difficulty: number): string => {
-    switch (difficulty) {
-      case 1:
-        return 'Easy (1)';
-      case 2:
-        return 'Medium (2)';
-      case 3:
-        return 'Hard (3)';
-      default:
-        return 'Unknown (?)';
     }
   };
 
@@ -64,7 +52,7 @@ export default function LevelsPage(props: LevelsPageProps) {
   }, [isMounted]);
 
   return (
-    <section className='flex justify-center'>
+    <section className='w-full flex justify-around px-10'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
       <BackButton href='/' />
       <h1
@@ -73,7 +61,7 @@ export default function LevelsPage(props: LevelsPageProps) {
       >
         {title}
       </h1>
-      <section className='w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 py-10 px-20 mt-16 lg:mt-24 text-center'>
+      <section className='flex-grow grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 py-10 mt-16 lg:mt-24 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>

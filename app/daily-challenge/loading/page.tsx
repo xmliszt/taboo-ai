@@ -10,13 +10,12 @@ import {
   cacheLevel,
   cacheScore,
   clearScores,
+  getLevelCache,
+  getScoresCache,
   getUser,
 } from '../../../lib/cache';
 import LoadingMask from '../../(components)/LoadingMask';
-import {
-  getAllGamesByPlayerID,
-  getBestGamesByNicknameAndLevel,
-} from '../../../lib/services/frontend/gameService';
+import { getBestGamesByNicknameAndLevel } from '../../../lib/services/frontend/gameService';
 import { getScoresByGameID } from '../../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../../lib/services/frontend/highlightService';
 import { Highlight } from '../../../types/chat.interface';
@@ -59,6 +58,24 @@ const DailyLevelLoadingPage = () => {
         )}`,
       };
       const user = getUser();
+      const cachedLevel = getLevelCache();
+      const cachedScores = getScoresCache();
+      console.log(
+        cachedLevel,
+        cachedScores,
+        cachedLevel?.name,
+        convertedLevel.name
+      );
+      if (
+        cachedLevel &&
+        cachedScores &&
+        cachedLevel.name === convertedLevel.name
+      ) {
+        setIsLoading(false);
+        toast.warn("Seems like you have attempted today's challenge.");
+        router.push('/result');
+        return;
+      }
       if (user) {
         const { games } = await getBestGamesByNicknameAndLevel(
           level.name,

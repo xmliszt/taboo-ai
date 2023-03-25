@@ -46,7 +46,9 @@ const addDeviceToUser = async (
     throw Error('User devices not found!');
   }
   const devices = data[0].devices as string[];
-  devices.push(device);
+  if (!devices.includes(device)) {
+    devices.push(device);
+  }
   await updateUserDevices(nickname, recoveryKey, devices);
 };
 

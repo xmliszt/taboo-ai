@@ -22,6 +22,26 @@ async function request<T>(url: string, method: string, body?: any): Promise<T> {
   return data;
 }
 
+async function requestWithoutReturn(
+  url: string,
+  method: string,
+  body?: any
+): Promise<void> {
+  const response = await fetch(url, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const error: ErrorResponse = await response.json();
+    throw new Error(error.error);
+  }
+  return;
+}
+
 export const createUser = async (nickname: string): Promise<IUser> => {
   const url = '/api/users/create';
   const userAgent = navigator.userAgent;
@@ -55,7 +75,7 @@ export const updateUserLastLoginTime = async (
   lastLoginAt: number
 ) => {
   const url = '/api/users/' + nickname + '/' + rKey + '/updateLastLogin';
-  return await request(url, 'PUT', { lastLoginAt });
+  await requestWithoutReturn(url, 'PUT', { lastLoginAt });
 };
 
 export const addDeviceToUser = async (
@@ -64,7 +84,7 @@ export const addDeviceToUser = async (
   userAgent: string
 ) => {
   const url = '/api/users/' + nickname + '/' + rKey + '/addDevice';
-  return await request(url, 'PUT', { device: userAgent });
+  return await request(url, 'POST', { device: userAgent });
 };
 
 export const removeDeviceFromUser = async (

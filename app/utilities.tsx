@@ -154,3 +154,16 @@ export const getMockVariations = async (
 export const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+export const getDifficulty = (difficulty: number): string => {
+  switch (difficulty) {
+    case 1:
+      return 'Easy (1)';
+    case 2:
+      return 'Medium (2)';
+    case 3:
+      return 'Hard (3)';
+    default:
+      return 'Unknown (?)';
+  }
+};
