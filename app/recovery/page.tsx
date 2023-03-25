@@ -104,11 +104,11 @@ const RecoveryPage = () => {
             Submit
           </button>
         </form>
-        <article className='text-justify text-gray leading-5'>
-          <p className='text-2xl'>
+        <article className=' text-gray leading-5'>
+          <p className='text-xl'>
             <i>What is Recovery Key?</i>
           </p>
-          <p>
+          <p className='text-justify'>
             <b>Recovery Key</b> is used to restore your saved games. We use{' '}
             <b>Recovery Key</b> to identify who you are and hence retrieve the
             games for you.

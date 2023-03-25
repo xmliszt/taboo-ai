@@ -1,5 +1,6 @@
 'use client';
 
+import moment from 'moment';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 import { AiFillDelete } from 'react-icons/ai';
@@ -7,7 +8,7 @@ import { IoMdAddCircle, IoMdRefreshCircle } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import LoadingMask from '../../(components)/LoadingMask';
 import {
-  getTodayTopicLevel,
+  generateDailyLevel,
   getWordVariations,
 } from '../../../lib/services/frontend/aiService';
 import {
@@ -35,6 +36,8 @@ const DailyWordGenerationPage = () => {
   const [fullWordList, setFullWordList] = useState<string[]>([]);
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
   const [isVariationLoading, setIsVariationLoading] = useState(false);
+  const tomorrow = moment().add(1, 'day');
+  const tomorrowDate = tomorrow.format('MMMM Do YYYY, dddd');
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -52,7 +55,7 @@ const DailyWordGenerationPage = () => {
       try {
         setIsLoading(true);
         setLoadingMessage("Generate today's level...");
-        const level = await getTodayTopicLevel(topic, difficulty);
+        const level = await generateDailyLevel(tomorrow, topic, difficulty);
         setIsLoading(false);
         setLevel(level);
       } catch (error) {
@@ -110,7 +113,7 @@ const DailyWordGenerationPage = () => {
       try {
         setIsLoading(true);
         setLoadingMessage('Submitting new level for today...');
-        const dailyLevel = await getDailyLevel();
+        const dailyLevel = await getDailyLevel(tomorrow);
         if (!dailyLevel) {
           await createDailyLevel(level);
           toast.success('Daily level submitted successfully!');
@@ -209,7 +212,7 @@ const DailyWordGenerationPage = () => {
         const target = words[i];
         setSelectedWord(target);
         try {
-          await autoGenerateWithDelay(1000, target);
+          await autoGenerateWithDelay(1000, i, target);
         } catch {
           continue;
         }
@@ -220,6 +223,7 @@ const DailyWordGenerationPage = () => {
 
   const autoGenerateWithDelay = async (
     delay: number,
+    idx: number,
     target: string
   ): Promise<void> => {
     return new Promise((res, rej) => {
@@ -233,7 +237,9 @@ const DailyWordGenerationPage = () => {
             if (target && variations) {
               await saveVariations(variations);
               setFullWordList((wordList) => [...wordList, target]);
-              toast.success('Taboo words saved successfully!');
+              toast.success(
+                `Taboo words for '${target}' saved successfully! [${idx + 1}/5]`
+              );
             } else {
               toast.error('No target word or variations available!');
             }
@@ -258,11 +264,14 @@ const DailyWordGenerationPage = () => {
           onSubmit={onSubmit}
           className='w-full flex flex-col gap-4 text-center pt-16 items-center'
         >
-          <label htmlFor='topic-input'>Enter Today&apos;s Topic</label>
+          <label htmlFor='topic-input'>Enter Tomorrow&apos;s Topic</label>
+          <label htmlFor='topic-input' className='italic text-gray'>
+            Tomorrow is: {tomorrowDate}
+          </label>
           <input
             id='topic-input'
             type='text'
-            placeholder="Today's Topic..."
+            placeholder="Tomorrow's Topic..."
             onChange={onInputChange}
             className='w-64 border-yellow'
           />

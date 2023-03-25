@@ -3,7 +3,6 @@ import {
   insertDailyLevel,
   selectDailyLevel,
 } from '../../database/levelRespository';
-import dateFormat from 'dateformat';
 
 const submitNewDailyLevel = async (
   level: IDailyLevel
@@ -12,8 +11,8 @@ const submitNewDailyLevel = async (
   return newLevel.level;
 };
 
-const getDailyLevel = async (): Promise<IDailyLevel> => {
-  const level = await selectDailyLevel(dateFormat(new Date(), 'dd-mm-yyyy'));
+const getDailyLevel = async (dateKey: string): Promise<IDailyLevel> => {
+  const level = await selectDailyLevel(dateKey);
   return level.level;
 };
 

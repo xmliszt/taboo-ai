@@ -17,6 +17,7 @@ import IUser from '../types/user.interface';
 import { clearUser, getUser } from '../lib/cache';
 import { confirmAlert } from 'react-confirm-alert';
 import Link from 'next/link';
+import { BsFillQuestionSquareFill } from 'react-icons/bs';
 
 const grenze = Grenze({
   weight: '400',
@@ -156,31 +157,56 @@ export default function RootLayout({
         {!(pathName === '/level' || pathName === '/daily-challenge') && (
           <WordCarousell />
         )}
-        <LightDarkToggle
-          onToggle={(dark) => {
-            setIsDark(dark);
-          }}
-        />
-        {pathName === '/' &&
-          (currentUser ? (
-            <div className='fixed top-12 w-full text-center z-10 text-gray flex flex-row gap-2 justify-center items-center'>
-              <span>Welcome Back! {currentUser.nickname}</span>
-              <button
-                id='submit'
-                className='underline text-red-light dark:text-neon-red-light h-4'
-                aria-label='Click to quit and logout from current account'
-                onClick={quit}
-              >
-                Quit
-              </button>
-            </div>
+        <section
+          id='header-section'
+          className='w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 grid grid-cols-[1fr_auto_1fr] text-center items-center content-start gradient-down dark:gradient-down-dark'
+        >
+          {pathName === '/' ? (
+            <Link
+              href='/rule'
+              aria-label='Link to rule page'
+              className='text-white dark:text-neon-red-light text-xl lg:text-3xl hover:animate-pulse'
+            >
+              <div className='flex flex-row gap-2 items-center'>
+                <BsFillQuestionSquareFill data-testid='rule-icon' />
+                <span className='text-sm lg:text-lg dark:text-xs'>
+                  Instructions
+                </span>
+              </div>
+            </Link>
           ) : (
-            <div className='fixed top-12 w-full text-center z-10 text-gray'>
-              <Link href='/recovery' className='underline'>
-                Recover Your Scores?
-              </Link>
-            </div>
-          ))}
+            <div></div>
+          )}
+
+          {pathName === '/' ? (
+            currentUser ? (
+              <div className='flex-grow text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-sm'>
+                <span>Welcome Back! {currentUser.nickname}</span>
+                <button
+                  id='submit'
+                  className='underline text-red-light dark:text-neon-red-light h-4'
+                  aria-label='Click to quit and logout from current account'
+                  onClick={quit}
+                >
+                  Quit
+                </button>
+              </div>
+            ) : (
+              <div className='flex-grow text-center text-gray dark:text-sm'>
+                <Link href='/recovery' className='underline'>
+                  Recover Your Scores?
+                </Link>
+              </div>
+            )
+          ) : (
+            <div></div>
+          )}
+          <LightDarkToggle
+            onToggle={(dark) => {
+              setIsDark(dark);
+            }}
+          />
+        </section>
 
         {maintenanceData?.isGPTOutage ? (
           <section className='flex justify-center items-center text-3xl leading-normal h-full w-full p-16'>

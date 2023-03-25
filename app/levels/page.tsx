@@ -74,7 +74,7 @@ export default function LevelsPage(props: LevelsPageProps) {
         {title}
       </h1>
       <section className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 p-10 mt-16 lg:mt-24 text-center'>
-        <HotBadge>
+        <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
         {levels.map((level) =>

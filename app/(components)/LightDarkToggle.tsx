@@ -34,7 +34,7 @@ const LightDarkToggle = (props: LightDarkToggleProps) => {
       id='theme'
       aria-label='toggle light/dark button'
       data-testid='light-dark-toggle-button'
-      className='fixed z-50 top-4 right-5 lg:top-3.5 opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl dark:text-neon-blue'
+      className='opacity-100 hover:animate-pulse transition-all text-2xl lg:text-5xl dark:text-neon-blue justify-self-end'
       onClick={onToggle}
     >
       {isDark ? <MdDarkMode /> : <MdOutlineWbTwilight />}

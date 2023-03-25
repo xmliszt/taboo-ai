@@ -40,8 +40,12 @@ export async function createDailyLevel(level: IDailyLevel) {
   await request('/api/levels/daily/create', 'POST', level);
 }
 
-export async function getDailyLevel(): Promise<IDailyLevel | null> {
-  const response = await fetch('/api/levels/daily/get');
+export async function getDailyLevel(
+  date: moment.Moment
+): Promise<IDailyLevel | null> {
+  const response = await fetch(
+    '/api/levels/daily/get?date=' + date.format('DD-MM-YYYY')
+  );
   const status = response.status;
   if (status === 404) {
     return null;

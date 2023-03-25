@@ -4,9 +4,10 @@ import { CONSTANTS } from '../../constants';
 import IVariation from '../../../types/variation.interface';
 import { formatResponseTextIntoArray } from '../../../app/utilities';
 import IDailyLevel from '../../../types/dailyLevel.interface';
-import dateFormat from 'dateformat';
+import moment from 'moment';
 
-export async function getTodayTopicLevel(
+export async function generateDailyLevel(
+  date: moment.Moment,
   topic: string,
   difficulty: number
 ): Promise<IDailyLevel> {
@@ -41,8 +42,7 @@ export async function getTodayTopicLevel(
   if (!words || words.length < 5) {
     throw Error('Wrong response format!');
   }
-  const today = new Date();
-  const todayDate = dateFormat(today, 'dd-mm-yyyy');
+  const todayDate = date.format('DD-MM-YYYY');
   return {
     name: `${topic}-${difficulty}-${todayDate}`,
     difficulty: difficulty,
