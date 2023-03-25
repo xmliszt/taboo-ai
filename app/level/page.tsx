@@ -431,7 +431,7 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   return (
-    <>
+    <section className='flex justify-center h-full'>
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
@@ -453,7 +453,7 @@ export default function LevelPage(props: LevelPageProps) {
         <span className='text-xs lg:text-sm lg:block'>TIMER {status}</span>
       </div>
       <section
-        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
+        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-black ${
           isValidInput ? '' : 'bg-red dark:bg-neon-red-light'
         } ${showSuccessBackground && 'bg-green dark:bg-neon-green'}`}
       >
@@ -516,6 +516,7 @@ export default function LevelPage(props: LevelPageProps) {
             <div className='flex relative items-center justify-center gap-4 px-4'>
               <button
                 id='clear'
+                data-style='none'
                 type='button'
                 aria-label='Clear input button'
                 disabled={
@@ -560,6 +561,7 @@ export default function LevelPage(props: LevelPageProps) {
               />
               <button
                 id='submit'
+                data-style='none'
                 disabled={
                   isGeneratingVariations ||
                   isCountingdown ||
@@ -593,6 +595,6 @@ export default function LevelPage(props: LevelPageProps) {
           </div>
         </section>
       </section>
-    </>
+    </section>
   );
 }

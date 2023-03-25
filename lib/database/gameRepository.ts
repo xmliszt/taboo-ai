@@ -115,9 +115,7 @@ async function getGamesByPlayerId(
 }
 
 async function getGamesByLevel(
-  level: string,
-  page: number,
-  limit: number
+  level: string
 ): Promise<{ data: IGame[] | null; total: number | null } | null> {
   const {
     data,
@@ -126,8 +124,7 @@ async function getGamesByLevel(
   } = await supabase
     .from('game')
     .select('*', { count: 'exact' })
-    .eq('level', level)
-    .range(page * limit, (page + 1) * limit - 1);
+    .eq('level', level);
 
   if (error) {
     console.error('Error getting games by level:', error);

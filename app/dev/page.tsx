@@ -214,6 +214,7 @@ const DevPage = () => {
                   disabled={isAutoGenerating}
                   className='absolute -top-5 -right-2 rounded-full p-2 bg-yellow text-lg'
                   id='delete'
+                  data-style='none'
                   onClick={() => {
                     refreshWord(word);
                   }}
@@ -241,6 +242,7 @@ const DevPage = () => {
                 disabled={isAutoGenerating}
                 className='absolute -top-5 right-0 rounded-full p-2 bg-red text-xs'
                 id='delete'
+                data-style='none'
                 onClick={() => {
                   deleteWord(idx);
                 }}
@@ -267,6 +269,7 @@ const DevPage = () => {
             disabled={isAutoGenerating}
             className='text-2xl'
             id='add'
+            data-style='none'
             onClick={addNewWord}
           >
             <IoMdAddCircle />

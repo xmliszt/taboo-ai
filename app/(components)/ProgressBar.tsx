@@ -17,7 +17,7 @@ export default function ProgressBar(props: ProgressBarProps) {
             ? 'bg-green text-white dark:bg-neon-green dark:text-neon-gray border-2 border-white'
             : n == c
             ? 'bg-yellow border-white border-4 text-black dark:bg-neon-yellow dark:text-neon-black dark:border-neon-green'
-            : 'bg-white text-black dark:bg-neon-black dark:text-neon-white'
+            : 'bg-white text-black dark:bg-neon-gray dark:text-neon-white'
         }`}
       >
         {n}

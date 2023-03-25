@@ -27,13 +27,9 @@ const getGamesHandler = async (
     return res.status(405).send({ error: 'Method not allowed.' });
   }
 
-  if (level && limit && pageIndex) {
+  if (level) {
     try {
-      const data = await retrieveAllGamesByLevel(
-        String(level),
-        Number(pageIndex),
-        Number(limit)
-      );
+      const data = await retrieveAllGamesByLevel(String(level));
       if (!data) {
         return res.status(404).send({
           error: `Games with ${level} not found`,

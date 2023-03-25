@@ -472,7 +472,7 @@ export default function ResultPage(props: ResultPageProps) {
 
   const renderMobile = () => {
     return (
-      <div className='w-full flex flex-col gap-6 justify- px-6'>
+      <div className='w-full flex flex-col gap-6 mb-8 mt-6 px-4'>
         <div className='text-center flex justify-center items-center'>
           <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 drop-shadow-lg'>
             Topic: {displayedLevelName ?? level?.name}
@@ -512,9 +512,9 @@ export default function ResultPage(props: ResultPageProps) {
       'Score (Difficulty x (1/Time Taken) x 1000)',
     ];
     return (
-      <div className='w-full max-h-[70%] h-[70%] text-center'>
-        <div className='font-mono relative mx-4 rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
-          <table className='relative table-fixed w-full min-w-[1024px]'>
+      <div className='mt-6 lg:mt-16 px-4 w-full h-full text-center'>
+        <div className='font-mono relative rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
+          <table className='relative table-fixed w-full'>
             <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
               <tr>
                 {headers.map((header, idx) => (
@@ -613,7 +613,7 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   return (
-    <>
+    <section className='relative'>
       <ConfirmPopUp
         show={showSaveResultPrompt}
         title={promptTitle}
@@ -635,32 +635,32 @@ export default function ResultPage(props: ResultPageProps) {
         message='Submitting your scores to the leaderboard...'
       />
       <BackButton href={level?.isDaily ? '/' : '/levels'} key='back-button' />
-      <h1 className='fixed top-0 w-full h-20 py-4 text-center gradient-down dark:gradient-down-dark-black z-10'>
-        Game Results
-      </h1>
-
+      <div className='flex justify-center'>
+        <h1 className='fixed z-50 h-20 py-4 text-center'>Game Results</h1>
+      </div>
       <section
         ref={screenshotRef}
-        className='!leading-screenshot pb-32 lg:pb-48 pt-4'
+        className='!leading-screenshot pb-20 lg:pb-48 pt-4'
       >
         {userCache && (
-          <h1 className='w-full py-4 mt-8 text-center z-10'>
+          <h1 className='w-full mt-10 lg:mt-16 text-center z-50'>
             <CgSmile className='inline' /> Hi! {userCache?.nickname}{' '}
             <CgSmile className='inline' />
           </h1>
         )}
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
-      <div className='fixed bottom-2 z-20 w-full text-center py-4'>
+      <div className='fixed bottom-2 z-50 w-full text-center py-4'>
         {level?.isDaily ? (
           <button
             id='leaderboard'
+            data-style='none'
             className='h-12 lg:h-24  w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)]'
             onClick={() => {
               router.push('/leaderboard');
             }}
           >
-            <div className='text-lg lg:text-2xl !text-white hover:!text-black !bg-black dark:!bg-neon-gray hover:!bg-yellow hover:dark:!bg-neon-green color-gradient-animated-background flex items-center justify-center'>
+            <div className='text-lg lg:text-2xl !text-white hover:!text-black !bg-black dark:!bg-neon-gray hover:!bg-yellow hover:dark:!bg-neon-green color-gradient-animated-background-golden flex items-center justify-center'>
               Go To The Leaderboard
             </div>
           </button>
@@ -677,12 +677,13 @@ export default function ResultPage(props: ResultPageProps) {
       </div>
       <button
         id='share'
+        data-style='none'
         aria-label='result button'
         className='text-2xl lg:text-5xl fixed top-4 right-14 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
         onClick={share}
       >
         <MdShare />
       </button>
-    </>
+    </section>
   );
 }

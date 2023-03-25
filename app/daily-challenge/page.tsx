@@ -432,7 +432,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
   //!SECTION
 
   return (
-    <>
+    <section className='flex justify-center h-full'>
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
@@ -449,14 +449,16 @@ export default function DailyLevelPage(props: DailyLevelProps) {
           {CONSTANTS.errors.overloaded}
         </div>
       )}
-      <div className='fixed top-2 lg:top-2 w-full flex flex-col gap-1 justify-center items-center'>
+      <div className='fixed z-50 top-2 lg:top-2 flex flex-col gap-1 justify-center items-center'>
         <Timer time={time} />
         <span className='text-xs lg:text-sm lg:block'>TIMER {status}</span>
       </div>
       <section
-        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
-          isValidInput ? '' : 'bg-red dark:bg-neon-red-light'
-        } ${showSuccessBackground && 'bg-green dark:bg-neon-green'}`}
+        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out ${
+          isValidInput
+            ? 'bg-black dark:bg-neon-black'
+            : 'bg-red dark:bg-neon-red-light'
+        } ${showSuccessBackground && '!bg-green dark:!bg-neon-green'}`}
       >
         <section className='fixed top-20 lg:top-24 left-0 right-0  w-full z-30 flex justify-center'>
           <ProgressBar
@@ -517,6 +519,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
             <div className='flex relative items-center justify-center gap-4 px-4'>
               <button
                 id='clear'
+                data-style='none'
                 type='button'
                 aria-label='Clear input button'
                 disabled={
@@ -561,6 +564,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
               />
               <button
                 id='submit'
+                data-style='none'
                 disabled={
                   isGeneratingVariations ||
                   isCountingdown ||
@@ -594,6 +598,6 @@ export default function DailyLevelPage(props: DailyLevelProps) {
           </div>
         </section>
       </section>
-    </>
+    </section>
   );
 }

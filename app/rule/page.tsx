@@ -6,11 +6,11 @@ interface RulePageProps {}
 
 export default function RulePage(props: RulePageProps) {
   return (
-    <>
+    <section className='flex justify-center'>
       <BackButton href='/' />
       <h1
         data-testid='heading-rule-title'
-        className='fixed w-full top-0 h-14 lg:h-20 pt-4 lg:pt-6 text-center text-white z-40 bg-gray dark:bg-neon-gray rounded-b-2xl drop-shadow-lg'
+        className='h-32 fixed top-0 z-50 leading-normal text-white pt-4 text-xl'
       >
         How To Play Taboo.AI?
       </h1>
@@ -61,6 +61,6 @@ export default function RulePage(props: RulePageProps) {
           </p>
         </article>
       </section>
-    </>
+    </section>
   );
 }

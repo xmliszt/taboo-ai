@@ -87,6 +87,7 @@ const RecoveryPage = () => {
             {isPasteAllow && (
               <button
                 id='paste'
+                data-style='none'
                 type='button'
                 className='flex justify-center items-center h-full aspect-square'
                 aria-label='paste recovery key from clipboard'

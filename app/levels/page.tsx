@@ -64,16 +64,16 @@ export default function LevelsPage(props: LevelsPageProps) {
   }, [isMounted]);
 
   return (
-    <>
+    <section className='flex justify-center'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
       <BackButton href='/' />
       <h1
         data-testid='levels-heading-title'
-        className='fixed w-full top-0 z-20 h-20 gradient-down dark:gradient-down-dark-black text-center drop-shadow-lg py-4 dark:text-neon-blue pointer-events-none'
+        className='fixed top-0 z-50 h-20 text-center pt-4 dark:text-neon-blue pointer-events-none'
       >
         {title}
       </h1>
-      <section className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 p-10 mt-16 lg:mt-24 text-center'>
+      <section className='w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 py-10 px-20 mt-16 lg:mt-24 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
@@ -117,6 +117,6 @@ export default function LevelsPage(props: LevelsPageProps) {
           )
         )}
       </section>
-    </>
+    </section>
   );
 }

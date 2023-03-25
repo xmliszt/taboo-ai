@@ -48,16 +48,12 @@ export const getOneGameByID = async (game_id: string) => {
 
 export const getAllGames = async (page: number, limit = 50) => {
   const url = `/api/games/get?pageIndex=${page}&limit=${limit}`;
-  return await request<{ games: IGame[] }>(url, 'GET');
+  return await request<{ games: IGame[]; total: number }>(url, 'GET');
 };
 
-export const getAllGamesByLevel = async (
-  level: string,
-  page: number,
-  limit = 50
-) => {
-  const url = `/api/games/get?level=${level}&pageIndex=${page}&limit=${limit}`;
-  return await request<{ games: IGame[] }>(url, 'GET');
+export const getAllGamesByLevel = async (level: string) => {
+  const url = `/api/games/get?level=${level}`;
+  return await request<{ games: IGame[]; total: number }>(url, 'GET');
 };
 
 export const getAllGamesByPlayerID = async (
@@ -66,7 +62,7 @@ export const getAllGamesByPlayerID = async (
   limit = 50
 ) => {
   const url = `/api/games/get?player_id=${player_id}&pageIndex=${page}&limit=${limit}`;
-  return await request<{ games: IGame[] }>(url, 'GET');
+  return await request<{ games: IGame[]; total: number }>(url, 'GET');
 };
 
 export const getAllGamesByPlayerNickname = async (
@@ -75,7 +71,7 @@ export const getAllGamesByPlayerNickname = async (
   limit = 50
 ) => {
   const url = `/api/games/get?player_nickname=${player_nickname}&pageIndex=${page}&limit=${limit}`;
-  return await request<{ games: IGame[] }>(url, 'GET');
+  return await request<{ games: IGame[]; total: number }>(url, 'GET');
 };
 
 export const getBestGamesByLevel = async (level: string, limit = 5) => {
@@ -93,6 +89,6 @@ export const getBestGamesByNicknameAndLevel = async (
   nickname: string,
   limit = 5
 ) => {
-  const url = `/api/games/best/get?level=${level}&player_nickname=${nickname}limit=${limit}`;
+  const url = `/api/games/best/get?level=${level}&player_nickname=${nickname}&limit=${limit}`;
   return await request<{ games: IGame[] }>(url, 'GET');
 };

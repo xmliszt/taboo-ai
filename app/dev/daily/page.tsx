@@ -333,6 +333,7 @@ const DailyWordGenerationPage = () => {
                       disabled={isAutoGenerating}
                       className='absolute -top-2 -right-1 rounded-full p-0 bg-yellow text-base'
                       id='delete'
+                      data-style='none'
                       onClick={() => {
                         refreshWord(word);
                       }}
@@ -364,6 +365,7 @@ const DailyWordGenerationPage = () => {
                     disabled={isAutoGenerating}
                     className='absolute -top-2 right-2 rounded-full p-1 bg-red text-sm'
                     id='delete'
+                    data-style='none'
                     onClick={() => {
                       deleteWord(idx);
                     }}
@@ -390,6 +392,7 @@ const DailyWordGenerationPage = () => {
                 disabled={isAutoGenerating || !selectedWord}
                 className='text-2xl'
                 id='add'
+                data-style='none'
                 onClick={addNewWord}
               >
                 <IoMdAddCircle />

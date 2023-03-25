@@ -13,7 +13,10 @@ import {
   getUser,
 } from '../../../lib/cache';
 import LoadingMask from '../../(components)/LoadingMask';
-import { getAllGamesByPlayerID } from '../../../lib/services/frontend/gameService';
+import {
+  getAllGamesByPlayerID,
+  getBestGamesByNicknameAndLevel,
+} from '../../../lib/services/frontend/gameService';
 import { getScoresByGameID } from '../../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../../lib/services/frontend/highlightService';
 import { Highlight } from '../../../types/chat.interface';
@@ -35,7 +38,7 @@ const DailyLevelLoadingPage = () => {
   const fetchDailyLevel = async () => {
     try {
       setIsLoading(true);
-      const level = await getDailyLevel();
+      const level = await getDailyLevel(moment());
       if (!level) {
         toast.error(
           'Sorry! It seems that there is no new challenge for today!'
@@ -57,7 +60,11 @@ const DailyLevelLoadingPage = () => {
       };
       const user = getUser();
       if (user) {
-        const { games } = await getAllGamesByPlayerID(user.recovery_key, 0, 5);
+        const { games } = await getBestGamesByNicknameAndLevel(
+          level.name,
+          user.nickname,
+          5
+        );
         if (games.length > 0) {
           const mostRecentGame = games[0];
           if (mostRecentGame.level === level.name) {

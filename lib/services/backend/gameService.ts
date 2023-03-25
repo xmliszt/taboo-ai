@@ -133,12 +133,10 @@ const retrieveBestGamesByNickname = async (
 };
 
 const retrieveAllGamesByLevel = async (
-  level: string,
-  page: number,
-  limit: number
+  level: string
 ): Promise<{ data: IGame[] | null; total: number | null } | null> => {
   try {
-    const games = await getGamesByLevel(level, page, limit);
+    const games = await getGamesByLevel(level);
     if (!games) {
       throw new Error(`Failed to get best games by level ${level}`);
     }

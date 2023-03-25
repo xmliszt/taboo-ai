@@ -49,6 +49,7 @@ export default function UserKeyDisplayModal(props: UserKeyDisplayModalProps) {
           </p>
           <button
             id='copy'
+            data-style='none'
             className='flex-grow-0 h-full aspect-square rounded-md bg-white dark:bg-neon-gray text-black dark:text-neon-white p-2 flex justify-center items-center'
             onClick={copyToClipboard}
           >

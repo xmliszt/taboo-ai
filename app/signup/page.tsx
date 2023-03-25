@@ -117,13 +117,14 @@ const SignupPage = () => {
               aria-label='lable for the nickname input'
               className='text-black dark:text-neon-white text-xl lg:text-3xl'
             >
-              Nickname
+              Register Your Nickname
             </label>
             <input
               id='nickname-input'
               type='text'
               aria-label='input your nickname here'
               placeholder='Enter your nickname...'
+              maxLength={12}
               className='h-24 lg:h-36 rounded-3xl w-full text-2xl lg:text-4xl focus:!border-green focus:dark:!border-neon-green'
               onChange={onUserNicknameChange}
             />
@@ -134,7 +135,7 @@ const SignupPage = () => {
               Tell us your nickname so that we can <b>uniquely identify you</b>{' '}
               in the leaderboard!
             </label>
-            <div className='flex-grow text-3xl text-red dark:text-neon-red h-full items-center justify-center flex'>
+            <div className='flex-grow text-2xl text-red dark:text-neon-red h-full items-center justify-center flex'>
               {errorMessage}
             </div>
             <button className='h-24 lg:h-36 text-2xl lg:text-4xl !bg-green dark:!bg-neon-black !text-white dark:!text-neon-white'>

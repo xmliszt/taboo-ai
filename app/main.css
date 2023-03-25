@@ -56,32 +56,19 @@
   }
 
   .gradient-up-dark {
-    background: linear-gradient(0deg, #112022 20%, rgb(0 0 0 / 0%) 100%);
+    background: linear-gradient(0deg, #02090e 20%, #02090e00 100%);
   }
 
   .gradient-down-dark {
-    background: linear-gradient(
-      0deg,
-      rgb(0 0 0 / 0%) 0%,
-      rgb(0 0 0 / 50%) 10%,
-      rgb(0 0 0 / 100%) 20%
-    );
+    background: linear-gradient(0deg, #02090e00 0%, #02090e80 10%, #02090e 20%);
   }
 
   .gradient-up-dark-black {
-    background: linear-gradient(
-      0deg,
-      rgb(2 9 4 / 100%) 20%,
-      rgb(0 0 0 / 0%) 100%
-    );
+    background: linear-gradient(0deg, #02090e 20%, #02090e00 100%);
   }
 
   .gradient-down-dark-black {
-    background: linear-gradient(
-      0deg,
-      rgb(0 0 0 / 0%) 0%,
-      rgb(2 9 4 / 100%) 80%
-    );
+    background: linear-gradient(0deg, #02090e00 0%, #02090e 80%);
   }
 
   .color-gradient-animated-background {
@@ -183,20 +170,7 @@ b {
   @apply font-bold text-yellow dark:text-neon-yellow;
 }
 
-button:not(
-    #back,
-    #theme,
-    #submit,
-    #share,
-    #reset,
-    #clear,
-    #add,
-    #delete,
-    #leaderboard,
-    #copy,
-    #paste,
-    .Toastify__close-button
-  ),
+button:not(.Toastify__close-button, [data-style='none']),
 a#start {
   @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green hover:rounded-[2rem];
 }

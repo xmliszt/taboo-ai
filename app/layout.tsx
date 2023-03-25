@@ -159,7 +159,13 @@ export default function RootLayout({
         )}
         <section
           id='header-section'
-          className='w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 grid grid-cols-[1fr_auto_1fr] text-center items-center content-start gradient-down dark:gradient-down-dark'
+          className={`w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 grid grid-cols-[1fr_auto_1fr] text-center items-center content-start ${
+            pathName === '/daily-challenge' ||
+            pathName === '/level' ||
+            pathName === '/ai'
+              ? ''
+              : 'gradient-down dark:gradient-down-dark'
+          } `}
         >
           {pathName === '/' ? (
             <Link
@@ -184,6 +190,7 @@ export default function RootLayout({
                 <span>Welcome Back! {currentUser.nickname}</span>
                 <button
                   id='submit'
+                  data-style='none'
                   className='underline text-red-light dark:text-neon-red-light h-4'
                   aria-label='Click to quit and logout from current account'
                   onClick={quit}
