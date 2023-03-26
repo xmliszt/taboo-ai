@@ -6,18 +6,35 @@ import LoadingMask from '../(components)/LoadingMask';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';
-import { getAllGamesByLevel } from '../../lib/services/frontend/gameService';
+import {
+  getAllGamesByLevel,
+  getOneGameByID,
+} from '../../lib/services/frontend/gameService';
 import { toast } from 'react-toastify';
-import { getDailyLevel } from '../../lib/services/frontend/levelService';
+import {
+  getDailyLevel,
+  getDailyLevelByName,
+} from '../../lib/services/frontend/levelService';
 import IGame from '../../types/game.interface';
 import { GiTrophy, GiLaurelCrown } from 'react-icons/gi';
 import { MdLeaderboard } from 'react-icons/md';
-import { getUser } from '../../lib/cache';
+import {
+  cacheLevel,
+  cacheScore,
+  clearLevel,
+  clearScores,
+  getUser,
+} from '../../lib/cache';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
+import { getHighlights } from '../../lib/services/frontend/highlightService';
+import { buildLevelForDisplay, buildScoresForDisplay } from '../utilities';
 
 interface LeaderboardPageProps {}
 
 interface LeaderboardRowData {
+  game_id: string;
   rank: number;
   nickname: string;
   total_score: number;
@@ -31,6 +48,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
     []
   );
   const [myRank, setMyRank] = useState<number | undefined>();
+  const router = useRouter();
 
   const onPrevDate = () => {
     setCurrentDate((d) => moment(d).subtract(1, 'day'));
@@ -81,7 +99,8 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
         prevScore = game.total_score;
       }
       leaderboardData.push({
-        rank,
+        game_id: game.game_id,
+        rank: rank,
         nickname: game.player_nickname,
         total_score: game.total_score,
       });
@@ -223,7 +242,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
                   key={idx}
                   className={`${
                     data.rank === 1
-                      ? 'border-2 border-yellow dark:border-neon-yellow box-border !h-[4.5rem]'
+                      ? 'border-4 border-yellow dark:border-neon-yellow box-border !h-[4.5rem]'
                       : 'border-none'
                   } ${
                     data.rank === myRank ? 'animate-pulse' : ''
@@ -262,13 +281,16 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
                   >
                     {data.total_score}
                   </div>
-                  <button
+                  {/* <button
                     data-style='none'
+                    onClick={() => {
+                      openDetails(data);
+                    }}
                     aria-label={`See the detail score of ${data.nickname}`}
                     className='h-12 p-4 flex justify-center items-center rounded-full aspect-square bg-white-faded text-black border-2 border-yellow dark:border-neon-yellow drop-shadow-lg dark:bg-neon-gray dark:text-neon-yellow text-xl'
                   >
                     <MdLeaderboard />
-                  </button>
+                  </button> */}
                 </div>
               ))}
             </section>

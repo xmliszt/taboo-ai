@@ -2,6 +2,7 @@ import IDailyLevel from '../../../types/dailyLevel.interface';
 import {
   insertDailyLevel,
   selectDailyLevel,
+  selectDailyLevelByName,
 } from '../../database/levelRespository';
 
 const submitNewDailyLevel = async (
@@ -16,4 +17,9 @@ const getDailyLevel = async (dateKey: string): Promise<IDailyLevel> => {
   return level.level;
 };
 
-export { submitNewDailyLevel, getDailyLevel };
+const getDailyLevelByName = async (name: string): Promise<IDailyLevel> => {
+  const level = await selectDailyLevelByName(name);
+  return level.level;
+};
+
+export { submitNewDailyLevel, getDailyLevel, getDailyLevelByName };

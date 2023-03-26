@@ -40,3 +40,18 @@ export const selectDailyLevel = async (today: string) => {
     level: level,
   };
 };
+
+export const selectDailyLevelByName = async (name: string) => {
+  const { data, error } = await supabase
+    .from('daily_level')
+    .select()
+    .eq('name', name);
+  if (error) {
+    console.error(error);
+    throw Error(error.message);
+  }
+  const level = data[0] as IDailyLevel;
+  return {
+    level: level,
+  };
+};

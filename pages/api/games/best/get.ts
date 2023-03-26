@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { maskPlayerID } from '../../../../app/utilities';
 import withMiddleware from '../../../../lib/middleware/middlewareWrapper';
 import {
   retrieveBestGamesByLevel,
@@ -37,6 +38,7 @@ const getBestGamesHandler = async (
           error: `Games with ${player_nickname} and ${level} not found`,
         });
       }
+      games.forEach((game) => maskPlayerID(game));
       return res.status(200).send({ games });
     } catch (error) {
       console.error(error);
@@ -55,6 +57,7 @@ const getBestGamesHandler = async (
           error: `Games with ${level} not found`,
         });
       }
+      games.forEach((game) => maskPlayerID(game));
       return res.status(200).send({ games });
     } catch (error) {
       console.error(error);
@@ -73,6 +76,7 @@ const getBestGamesHandler = async (
           error: `Games with ${player_nickname} not found`,
         });
       }
+      games.forEach((game) => maskPlayerID(game));
       return res.status(200).send({ games });
     } catch (error) {
       console.error(error);

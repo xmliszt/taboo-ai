@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { maskPlayerID } from '../../../app/utilities';
 import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 import {
   retrieveAllGames,
@@ -35,9 +36,10 @@ const getGamesHandler = async (
           error: `Games with ${level} not found`,
         });
       }
-      return res
-        .status(200)
-        .send({ games: data.data ?? [], total: data.total ?? 0 });
+      const games = data.data ?? [];
+      const total = data.total ?? 0;
+      games.forEach((game) => maskPlayerID(game));
+      return res.status(200).send({ games: games, total: total });
     } catch (error) {
       console.error(error);
       return res
@@ -56,9 +58,10 @@ const getGamesHandler = async (
           error: `Games with ${player_nickname} not found`,
         });
       }
-      return res
-        .status(200)
-        .send({ games: data.data ?? [], total: data.total ?? 0 });
+      const games = data.data ?? [];
+      const total = data.total ?? 0;
+      games.forEach((game) => maskPlayerID(game));
+      return res.status(200).send({ games: games, total: total });
     } catch (error) {
       console.error(error);
       return res
@@ -77,9 +80,10 @@ const getGamesHandler = async (
           error: `Games with ${player_id} not found`,
         });
       }
-      return res
-        .status(200)
-        .send({ games: data.data ?? [], total: data.total ?? 0 });
+      const games = data.data ?? [];
+      const total = data.total ?? 0;
+      games.forEach((game) => maskPlayerID(game));
+      return res.status(200).send({ games: games, total: total });
     } catch (error) {
       console.error(error);
       return res
@@ -94,9 +98,10 @@ const getGamesHandler = async (
           error: `Games not found`,
         });
       }
-      return res
-        .status(200)
-        .send({ games: data.data ?? [], total: data.total ?? 0 });
+      const games = data.data ?? [];
+      const total = data.total ?? 0;
+      games.forEach((game) => maskPlayerID(game));
+      return res.status(200).send({ games: games, total: total });
     } catch (error) {
       console.error(error);
       return res

@@ -19,6 +19,7 @@ import { getBestGamesByNicknameAndLevel } from '../../../lib/services/frontend/g
 import { getScoresByGameID } from '../../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../../lib/services/frontend/highlightService';
 import { Highlight } from '../../../types/chat.interface';
+import { buildLevelForDisplay, buildScoresForDisplay } from '../../utilities';
 
 /**
  * Load the daily level before caching the level and enter the game.
@@ -45,18 +46,7 @@ const DailyLevelLoadingPage = () => {
         router.push('/');
         return;
       }
-      const createdDate = moment(level.created_date, 'DD-MM-YYYY');
-      const convertedLevel: ILevel = {
-        name: level.name,
-        difficulty: level.difficulty,
-        author: 'Taboo.AI',
-        isDaily: true,
-        words: level.words,
-        createdAt: createdDate.valueOf(),
-        dailyLevelName: `Daily Challenge: ${createdDate.format(
-          'ddd, MMM Do YYYY'
-        )}`,
-      };
+      const convertedLevel = buildLevelForDisplay(level);
       const user = getUser();
       const cachedLevel = getLevelCache();
       const cachedScores = getScoresCache();
@@ -93,17 +83,12 @@ const DailyLevelLoadingPage = () => {
                 mostRecentGame.game_id,
                 score.score_id
               );
-              cacheScore({
-                id: score.score_id,
-                target: score.target,
-                question: score.question,
-                response: score.response,
-                difficulty: level.difficulty,
-                completion: score.completion_duration,
-                responseHighlights: highlights.map(
-                  (h): Highlight => ({ start: h.start, end: h.end })
-                ),
-              });
+              const displayScore = buildScoresForDisplay(
+                convertedLevel,
+                score,
+                highlights
+              );
+              cacheScore(displayScore);
             }
             setIsLoading(false);
             toast.warn("Seems like you have attempted today's challenge.");

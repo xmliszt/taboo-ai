@@ -14,7 +14,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { CONSTANTS } from '../lib/constants';
 import IUser from '../types/user.interface';
-import { clearUser, getUser } from '../lib/cache';
+import {
+  clearCache,
+  clearLevel,
+  clearScores,
+  clearUser,
+  getUser,
+} from '../lib/cache';
 import { confirmAlert } from 'react-confirm-alert';
 import Link from 'next/link';
 import { BsFillQuestionSquareFill } from 'react-icons/bs';
@@ -94,8 +100,10 @@ export default function RootLayout({
         {
           label: 'Yes',
           onClick: () => {
-            clearUser();
             setCurrentUser(undefined);
+            clearScores();
+            clearLevel();
+            clearUser();
             toast.warn('You have been logged out!');
           },
         },

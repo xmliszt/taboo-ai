@@ -9,4 +9,7 @@ export const HASH = {
   level: getHash('level'),
   scores: getHash('scores'),
   dev: getHash('dev'),
+  game_id: getHash('game_id'),
+  is_prompt_visible: getHash('is_prompt_visible'),
+  preview_player_nickname: getHash('preview_player_nickname'),
 };

@@ -57,3 +57,19 @@ export async function getDailyLevel(
     throw new Error(error.error);
   }
 }
+
+export async function getDailyLevelByName(
+  name: string
+): Promise<IDailyLevel | null> {
+  const response = await fetch('/api/levels/daily/get?name=' + name);
+  const status = response.status;
+  if (status === 404) {
+    return null;
+  } else if (response.ok) {
+    const json: { level: IDailyLevel } = await response.json();
+    return json.level;
+  } else {
+    const error: ErrorResponse = await response.json();
+    throw new Error(error.error);
+  }
+}

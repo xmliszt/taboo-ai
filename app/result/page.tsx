@@ -16,7 +16,7 @@ import BackButton from '../(components)/BackButton';
 import _, { uniqueId } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Highlight } from '../../types/chat.interface';
-import { applyHighlightsToMessage } from '../utilities';
+import { applyHighlightsToMessage, buildScoresForDisplay } from '../utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
 import { toast } from 'react-toastify';
@@ -183,7 +183,7 @@ export default function ResultPage(props: ResultPageProps) {
               noButtonText: 'Maybe next time!',
             });
             setPromptStep(PromptStep.PromptSaveResult);
-          } else if (level) {
+          } else if (level && game) {
             const scores = await getScoresByGameID(game.game_id);
             clearScores();
             const displayScores: IDisplayScore[] = [];
@@ -192,17 +192,11 @@ export default function ResultPage(props: ResultPageProps) {
                 game.game_id,
                 score.score_id
               );
-              const displayScore: IDisplayScore = {
-                id: score.score_id,
-                target: score.target,
-                question: score.question,
-                response: score.response,
-                difficulty: level.difficulty,
-                completion: score.completion_duration,
-                responseHighlights: highlights.map(
-                  (h): Highlight => ({ start: h.start, end: h.end })
-                ),
-              };
+              const displayScore = buildScoresForDisplay(
+                level,
+                score,
+                highlights
+              );
               displayScores.push(displayScore);
               cacheScore(displayScore);
             }
@@ -222,16 +216,16 @@ export default function ResultPage(props: ResultPageProps) {
     } catch (error) {
       console.log(error.message);
       confirmAlert({
-        title: 'Join the global leaderboard!',
+        title: 'Join the global leaderboard 🎉',
         message:
-          'Would you like to be registered in the leaderboard and use your scores to compete with other players?',
+          'Tell us your nickname and join the others in the global leaderboard 🏅!',
         buttons: [
           {
             label: 'Yes',
             onClick: () => router.push('/signup'),
           },
           {
-            label: 'I want to recover my account!',
+            label: 'I want to recover my game records!',
             onClick: () => router.push('/recovery'),
           },
           {
@@ -251,10 +245,9 @@ export default function ResultPage(props: ResultPageProps) {
 
   const onPromptYesButtonClick = async () => {
     if (promptStep === PromptStep.PromptSaveResult) {
-      setPromptStep(PromptStep.PromptIsVisible);
-    } else if (promptStep === PromptStep.PromptIsVisible) {
       await saveGameAsync(true);
       setPromptStep(PromptStep.Finished);
+      // setPromptStep(PromptStep.PromptIsVisible);
     }
   };
 
@@ -426,7 +419,10 @@ export default function ResultPage(props: ResultPageProps) {
 
   const generateStatsItems = (score: IDisplayScore): StatItem[] => {
     return [
-      { title: 'Your Question', content: score.question },
+      {
+        title: 'Player Inputs',
+        content: score.question,
+      },
       {
         title: "AI's Response",
         content: score.response,
@@ -506,7 +502,7 @@ export default function ResultPage(props: ResultPageProps) {
     const headers = [
       'Index',
       'Taboo Word',
-      'Your Question',
+      'Player Inputs',
       "AI's Response",
       'Time Taken',
       'Score (Difficulty x (1/Time Taken) x 1000)',

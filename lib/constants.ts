@@ -14,4 +14,5 @@ export const CONSTANTS = {
     aiModeFail:
       'Taboo AI is unable to generate the list of words related to the topic',
   },
+  mask: 'XXXXXXXXXXX',
 };

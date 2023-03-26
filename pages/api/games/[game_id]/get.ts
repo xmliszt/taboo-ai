@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { maskPlayerID } from '../../../../app/utilities';
 import withMiddleware from '../../../../lib/middleware/middlewareWrapper';
 import { retrieveGameById } from '../../../../lib/services/backend/gameService';
 import IGame from '../../../../types/game.interface';
@@ -31,6 +32,7 @@ const getGameByIDHandler = async (
     if (!game) {
       return res.status(200).send({ game: null, error: 'not found' });
     } else {
+      maskPlayerID(game);
       return res.status(200).send({ game });
     }
   } catch (error) {

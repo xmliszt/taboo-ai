@@ -1,6 +1,12 @@
 import _ from 'lodash';
 import IVariation from '../types/variation.interface';
-import { Highlight } from '../types/chat.interface';
+import { Highlight, IHighlight } from '../types/chat.interface';
+import { IDisplayScore, IScore } from '../types/score.interface';
+import ILevel from '../types/level.interface';
+import IGame from '../types/game.interface';
+import { CONSTANTS } from '../lib/constants';
+import IDailyLevel from '../types/dailyLevel.interface';
+import moment from 'moment';
 
 /**
  * Sanitize the array of Highlight objects such that Highlight
@@ -166,4 +172,39 @@ export const getDifficulty = (difficulty: number): string => {
     default:
       return 'Unknown (?)';
   }
+};
+
+export const buildScoresForDisplay = (
+  level: ILevel,
+  score: IScore,
+  highlights: IHighlight[]
+): IDisplayScore => {
+  return {
+    id: score.score_id,
+    target: score.target,
+    question: score.question,
+    response: score.response,
+    difficulty: level.difficulty,
+    completion: score.completion_duration,
+    responseHighlights: highlights.map(
+      (h): Highlight => ({ start: h.start, end: h.end })
+    ),
+  };
+};
+
+export const buildLevelForDisplay = (level: IDailyLevel): ILevel => {
+  const dateObject = moment(level.created_date, 'DD-MM-YYYY');
+  return {
+    name: level.name,
+    difficulty: level.difficulty,
+    author: 'Taboo.AI',
+    isDaily: true,
+    words: level.words,
+    createdAt: dateObject.valueOf(),
+    dailyLevelName: `Daily Challenge: ${dateObject.format('ddd, MMM Do YYYY')}`,
+  };
+};
+
+export const maskPlayerID = (game: IGame) => {
+  game.player_id = CONSTANTS.mask;
 };
