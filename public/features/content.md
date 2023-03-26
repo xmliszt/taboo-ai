@@ -40,3 +40,9 @@ To access the recovery, simply click on the **"Recover your scores?** link on th
 ![Enter recovery key to recover](/features/feature-img-8.png)
 
 You will be prompted with the **Recovery Key**. Simply input the correct **Recovery Key** and click "Submit" and your session will be restored!
+
+## Search Categories
+
+![Search Topics](/features/feature-img-9.png)
+
+As the number of topics is growing bigger and bigger, now you can **search** for your topics in the topic selection page. Just enter your search query in the text field and the relevant topics will be shown to you!

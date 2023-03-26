@@ -15,7 +15,7 @@ import { getDifficulty } from '../utilities';
 interface LevelsPageProps {}
 
 export default function LevelsPage(props: LevelsPageProps) {
-  const title = 'Choose A Category';
+  const title = 'Choose A Topic';
   const [isMounted, setIsMounted] = useState(false);
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -75,13 +75,15 @@ export default function LevelsPage(props: LevelsPageProps) {
           onChange={onSearchChange}
         />
       </div>
-      <section className='flex-grow grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 py-10 mt-20 lg:mt-36 text-center'>
+      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 py-10 mt-20 lg:mt-36 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
         {levels
           .filter((level) =>
-            level.name.includes(searchTerm ? searchTerm.toLowerCase() : '')
+            level.name
+              .toLowerCase()
+              .includes(searchTerm ? searchTerm.toLowerCase() : '')
           )
           .map((level) =>
             level.new ? (

@@ -5,6 +5,7 @@
 - **Brand New Daily Challenge mode** with **Wall of Fame (Leaderboard)** for players to compete.
 - **Nickname creation** for players to create their unique nicknames.
 - **Recovery mode** for players who want to restore their game records on **new devices** or when they **switch to new browsers** or clear cache in existing browser.
+- **Search** function added to "Topic Selection" page.
 - Improved UI.
 
 ## 22 Feb - Release Notes (V1.4)
