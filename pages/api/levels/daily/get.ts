@@ -16,12 +16,12 @@ const getDailyLevelHandler = async (
       return res.status(400).json({ error: 'Date or name is required!' });
     }
     if (date) {
-      const requestDate = moment(date, 'DD-MM-YYYY');
-      if (requestDate.isAfter(moment(), 'day')) {
-        return res
-          .status(400)
-          .json({ error: 'Requesting future daily level is not allowed!' });
-      }
+      // const requestDate = moment(date, 'DD-MM-YYYY');
+      // if (requestDate.isAfter(moment(), 'day')) {
+      //   return res
+      //     .status(400)
+      //     .json({ error: 'Requesting future daily level is not allowed!' });
+      // }
       try {
         const newLevel = await getDailyLevel(date as string);
         if (!newLevel) {

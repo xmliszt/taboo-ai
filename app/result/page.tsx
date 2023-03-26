@@ -605,7 +605,9 @@ export default function ResultPage(props: ResultPageProps) {
                 >
                   Total Score
                 </td>
-                <td className='px-3 pt-4 pb-8 font-extrabold'>{totalScore}</td>
+                <td className='px-3 pt-4 pb-8 font-extrabold'>
+                  {_.round(totalScore, 2)}
+                </td>
               </tr>
             </tbody>
           </table>

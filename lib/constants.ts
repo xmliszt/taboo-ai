@@ -8,6 +8,8 @@ export const CONSTANTS = {
     targetChanged: 'onTargetChanged',
     scoreComputed: 'onScoreComputed',
     noScoreAvailable: 'onNoScoreAvailable',
+    fetchLevelError: 'onFetchLevelError',
+    alreadyAttemptedLevel: 'onAlreadyAttemptedLevel',
   },
   errors: {
     overloaded:

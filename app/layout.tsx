@@ -145,6 +145,20 @@ export default function RootLayout({
       );
       registeredEvents.push(CONSTANTS.eventKeys.noScoreAvailable);
     }
+    if (!registeredEvents.includes(CONSTANTS.eventKeys.fetchLevelError)) {
+      window.addEventListener(
+        CONSTANTS.eventKeys.fetchLevelError,
+        onErrorFetchingLevel as EventListener
+      );
+      registeredEvents.push(CONSTANTS.eventKeys.fetchLevelError);
+    }
+    if (!registeredEvents.includes(CONSTANTS.eventKeys.alreadyAttemptedLevel)) {
+      window.addEventListener(
+        CONSTANTS.eventKeys.alreadyAttemptedLevel,
+        onAlreadyAttemptedLevel as EventListener
+      );
+      registeredEvents.push(CONSTANTS.eventKeys.alreadyAttemptedLevel);
+    }
   };
 
   const removeEventListeners = () => {
@@ -160,6 +174,14 @@ export default function RootLayout({
     window.removeEventListener(
       CONSTANTS.eventKeys.noScoreAvailable,
       onNoScoreAvailable as EventListener
+    );
+    window.removeEventListener(
+      CONSTANTS.eventKeys.fetchLevelError,
+      onErrorFetchingLevel as EventListener
+    );
+    window.removeEventListener(
+      CONSTANTS.eventKeys.alreadyAttemptedLevel,
+      onAlreadyAttemptedLevel as EventListener
     );
     registeredEvents = [];
   };
@@ -179,6 +201,14 @@ export default function RootLayout({
       'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
       { autoClose: 3000 }
     );
+  };
+
+  const onErrorFetchingLevel = () => {
+    toast.error('Unable to fetch daily challenge! Please try again later!');
+  };
+
+  const onAlreadyAttemptedLevel = () => {
+    toast.warn("Seems like you have attempted today's challenge.");
   };
 
   return (

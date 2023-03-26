@@ -20,6 +20,7 @@ import { getScoresByGameID } from '../../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../../lib/services/frontend/highlightService';
 import { Highlight } from '../../../types/chat.interface';
 import { buildLevelForDisplay, buildScoresForDisplay } from '../../utilities';
+import { CONSTANTS } from '../../../lib/constants';
 
 /**
  * Load the daily level before caching the level and enter the game.
@@ -62,7 +63,9 @@ const DailyLevelLoadingPage = () => {
         cachedLevel.name === convertedLevel.name
       ) {
         setIsLoading(false);
-        toast.warn("Seems like you have attempted today's challenge.");
+        window.dispatchEvent(
+          new CustomEvent(CONSTANTS.eventKeys.alreadyAttemptedLevel)
+        );
         router.push('/result');
         return;
       }
@@ -91,7 +94,9 @@ const DailyLevelLoadingPage = () => {
               cacheScore(displayScore);
             }
             setIsLoading(false);
-            toast.warn("Seems like you have attempted today's challenge.");
+            window.dispatchEvent(
+              new CustomEvent(CONSTANTS.eventKeys.alreadyAttemptedLevel)
+            );
             router.push('/result');
             return;
           }
@@ -102,7 +107,9 @@ const DailyLevelLoadingPage = () => {
       router.push('/daily-challenge');
     } catch (error) {
       console.error(error);
-      toast.error('Unable to fetch daily challenge! Please try again later!');
+      window.dispatchEvent(
+        new CustomEvent(CONSTANTS.eventKeys.fetchLevelError)
+      );
       router.push('/');
     } finally {
       setIsLoading(false);
