@@ -31,7 +31,7 @@ export default function LevelButton({
       data-testid={`level-link-${level?.name ?? 'ai'}`}
       className={`${
         isAI && 'unicorn-color'
-      } h-full w-full text-xs lg:text-2xl px-2 py-2 lg:px-10 lg:py-4 break-words ${customClass}`}
+      } h-12 lg:h-24 w-full text-xs lg:text-2xl px-2 py-2 lg:px-10 lg:py-4 break-words ${customClass}`}
       onClick={() => goToLevel()}
     >
       {isAI ? 'AI Mode' : level?.name}

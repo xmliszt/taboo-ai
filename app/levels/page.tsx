@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/LoadingMask';
 import { getLevels } from '../../lib/services/frontend/levelService';
@@ -19,6 +19,7 @@ export default function LevelsPage(props: LevelsPageProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string | undefined>();
 
   const fetchLevels = async () => {
     setIsLoading(true);
@@ -43,6 +44,11 @@ export default function LevelsPage(props: LevelsPageProps) {
     }
   };
 
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setSearchTerm(e.target.value);
+  };
+
   useEffect(() => {
     !isMounted && setIsMounted(true);
   }, []);
@@ -52,7 +58,7 @@ export default function LevelsPage(props: LevelsPageProps) {
   }, [isMounted]);
 
   return (
-    <section className='w-full flex justify-around px-10'>
+    <section className='w-full h-full flex justify-around px-10 overflow-y-scroll scrollbar-hide'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
       <BackButton href='/' />
       <h1
@@ -61,49 +67,61 @@ export default function LevelsPage(props: LevelsPageProps) {
       >
         {title}
       </h1>
-      <section className='flex-grow grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 h-auto gap-10 lg:gap-16 py-10 mt-16 lg:mt-24 text-center'>
+      <div className='w-full fixed z-50 h-12 top-12 lg:top-20 px-12 bg-black dark:bg-neon-black'>
+        <input
+          className='w-full'
+          placeholder='Search for levels...'
+          type='text'
+          onChange={onSearchChange}
+        />
+      </div>
+      <section className='flex-grow grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 py-10 mt-20 lg:mt-36 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
-        {levels.map((level) =>
-          level.new ? (
-            <Badge
-              key={level.name}
-              label={getDifficulty(level.difficulty)}
-              customClass={getDifficultyColor(level.difficulty)}
-            >
-              <NewBadge>
-                {level.author ? (
-                  <AuthorBadge label={level.author}>
+        {levels
+          .filter((level) =>
+            level.name.includes(searchTerm ? searchTerm.toLowerCase() : '')
+          )
+          .map((level) =>
+            level.new ? (
+              <Badge
+                key={level.name}
+                label={getDifficulty(level.difficulty)}
+                customClass={getDifficultyColor(level.difficulty)}
+              >
+                <NewBadge>
+                  {level.author ? (
+                    <AuthorBadge label={level.author}>
+                      <LevelButton
+                        level={level}
+                        customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                      />
+                    </AuthorBadge>
+                  ) : (
                     <LevelButton
                       level={level}
                       customClass='!border-4 !border-yellow !dark:border-neon-yellow'
                     />
+                  )}
+                </NewBadge>
+              </Badge>
+            ) : (
+              <Badge
+                key={level.name}
+                label={getDifficulty(level.difficulty)}
+                customClass={getDifficultyColor(level.difficulty)}
+              >
+                {level.author ? (
+                  <AuthorBadge label={level.author}>
+                    <LevelButton level={level} />
                   </AuthorBadge>
                 ) : (
-                  <LevelButton
-                    level={level}
-                    customClass='!border-4 !border-yellow !dark:border-neon-yellow'
-                  />
-                )}
-              </NewBadge>
-            </Badge>
-          ) : (
-            <Badge
-              key={level.name}
-              label={getDifficulty(level.difficulty)}
-              customClass={getDifficultyColor(level.difficulty)}
-            >
-              {level.author ? (
-                <AuthorBadge label={level.author}>
                   <LevelButton level={level} />
-                </AuthorBadge>
-              ) : (
-                <LevelButton level={level} />
-              )}
-            </Badge>
-          )
-        )}
+                )}
+              </Badge>
+            )
+          )}
       </section>
     </section>
   );
