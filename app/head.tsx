@@ -72,8 +72,6 @@ export default function Head() {
         return 'Taboo.AI: AI Mode';
       case '/whatsnew':
         return "Taboo.AI: What's New";
-      case '/upcoming':
-        return 'Taboo.AI: Upcoming Features';
       case '/levels':
         return 'Taboo.AI: Choose Topics';
       case '/rule':

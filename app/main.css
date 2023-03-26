@@ -49,8 +49,8 @@
   .gradient-down {
     background: linear-gradient(
       0deg,
-      rgb(255 255 255 / 0%) 0%,
-      rgb(76 69 92 / 50%) 10%,
+      rgb(76 69 92 / 0%) 0%,
+      rgb(76 69 92 / 80%) 10%,
       rgb(76 69 62 / 100%) 20%
     );
   }

@@ -5,7 +5,6 @@ https://taboo-ai.vercel.app/level
 https://taboo-ai.vercel.app/ai
 https://taboo-ai.vercel.app/results
 https://taboo-ai.vercel.app/whatsnew
-https://taboo-ai.vercel.app/upcoming
 https://taboo-ai.vercel.app/buymecoffee
 https://taboo-ai.vercel.app/leaderboard
 https://taboo-ai.vercel.app/signup

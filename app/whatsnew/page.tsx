@@ -12,13 +12,6 @@ export default async function WhatsNewPage(props: WhatsNewPageProps) {
     <section className='flex flex-col items-center'>
       <BackButton href='/' />
       <div className='h-32 fixed bottom-0 w-full z-10 gradient-up dark:gradient-up-dark-black pointer-events-none'></div>
-      <Link
-        href='/upcoming'
-        aria-label='Link to see upcoming features'
-        className='h-32 fixed top-0 z-50 leading-normal text-white pt-4 text-xl underline underline-offset-2 hover:text-yellow transition-colors dark:text-neon-white hover:dark:text-neon-yellow'
-      >
-        See Upcoming Features
-      </Link>
       <article
         data-testid='content-article'
         className='leading-normal w-10/12 pt-24 lg:pt-32 pb-20'
