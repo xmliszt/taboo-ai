@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import * as levelRepository from '../../lib/db/levelRespository';
-import handler from '../../pages/api/level';
-import ILevel from '../../app/levels/(models)/level.interface';
+import * as levelRepository from '../../lib/database/levelRespository';
+import handler from '../../pages/api/levels/get';
 
 jest.mock('../../lib/middleware/middlewareWrapper', () => jest.fn((fn) => fn));
 
-jest.mock('../../lib/db/levelRespository', () => ({
+jest.mock('../../lib/database/levelRespository', () => ({
   queryAllLevels: jest.fn().mockReturnValue({
     levels: [
       {
@@ -58,7 +57,7 @@ describe('/api/level 200', () => {
   it('should return successful response with nothing', async () => {
     mockReq.method = 'POST';
     await handler(mockReq, mockRes);
-    expect(mockRes.end).toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(405);
   });
 });
 

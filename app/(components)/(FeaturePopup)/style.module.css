@@ -1,0 +1,89 @@
+.markdown {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.markdown * {
+  line-height: 2rem;
+}
+
+.markdown a {
+  font-style: italic;
+  text-decoration: underline;
+  color: #ff6f6f !important;
+}
+
+.markdown hr {
+  opacity: 0.5;
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.markdown strong {
+  color: #ffb327 !important;
+  font-weight: bold;
+}
+
+.markdown h1 {
+  font-size: 2rem !important;
+  font-weight: 900;
+  margin-bottom: 2rem;
+}
+
+.markdown h2 {
+  font-size: 1.5rem !important;
+  font-weight: 900;
+  margin-bottom: 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.markdown h3 {
+  font-size: 1.3rem !important;
+  font-weight: 900;
+}
+
+.markdown h4 {
+  font-size: 1.2rem !important;
+  font-weight: 900;
+}
+
+.markdown h5 {
+  font-size: 1rem !important;
+  font-weight: 900;
+}
+
+.markdown p {
+  font-weight: 100 !important;
+}
+
+.markdown li::before {
+  content: ' ⫍ ';
+}
+
+.markdown blockquote {
+  background-color: darkgray;
+  border-radius: 0.3rem;
+  padding: 0 0.5rem;
+  color: darkslategrey;
+  margin-bottom: 0.5rem;
+  font-weight: 900;
+  font-variant: small-caps;
+}
+
+.markdown pre {
+  background-color: #212121;
+  padding: 1rem;
+  border-radius: 0.3rem;
+  box-shadow: 0 0 20px #00000050;
+  margin: 1rem 0;
+}
+
+@media (min-width: 1300px) {
+  .markdown img {
+    padding: 3rem 10rem;
+  }
+}
+
+.markdown img {
+  padding: 1rem 0;
+  image-rendering: optimizespeed;
+}

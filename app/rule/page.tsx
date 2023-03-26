@@ -1,16 +1,17 @@
 'use client';
 
+import Link from 'next/link';
 import BackButton from '../(components)/BackButton';
 
 interface RulePageProps {}
 
 export default function RulePage(props: RulePageProps) {
   return (
-    <>
+    <section className='flex justify-center'>
       <BackButton href='/' />
       <h1
         data-testid='heading-rule-title'
-        className='fixed w-full top-0 h-14 lg:h-20 pt-4 lg:pt-6 text-center text-white z-40 bg-gray dark:bg-neon-gray rounded-b-2xl drop-shadow-lg'
+        className='h-32 fixed top-0 z-50 leading-normal text-white pt-4 text-xl'
       >
         How To Play Taboo.AI?
       </h1>
@@ -45,6 +46,45 @@ export default function RulePage(props: RulePageProps) {
             3. Successfully trick AI into saying <b>all 5 words</b> given to win
             the game. You can view your scores and share them with your friends!
           </p>
+          <div className='flex flex-row justify-start gap-8 items-center'>
+            <Link
+              id='start'
+              href='/levels'
+              data-testid='link-start'
+              className='px-4 py-2'
+            >
+              Choose Topics to Start Playing!
+            </Link>
+          </div>
+          <br />
+          <hr />
+          <br />
+          <p className='text-justify'>
+            Participate in the <b>Daily Challenge</b>: Same game rule, but 5
+            different words every day. Compete your scores with other players
+            around the world in the <b>Wall of Fame (Leaderboard)</b>
+          </p>
+          <div className='flex flex-row justify-start gap-8 items-center'>
+            <Link
+              id='daily-challenge'
+              href='/daily-challenge/loading'
+              data-testid='link-daily-challenge'
+            >
+              <div className='px-4 py-2 color-gradient-animated-background'>
+                Daily Challenge
+              </div>
+            </Link>
+            <Link
+              id='daily-wall-of-fame'
+              href='/leaderboard'
+              data-testid='link-daily-wall-of-fame'
+            >
+              <div className='px-4 py-2 color-gradient-animated-background-golden'>
+                Daily Wall of Fame
+              </div>
+            </Link>
+          </div>
+          <br />
           <p className='text-justify text-gray text-sm'>
             Disclaimer: The game is solely relying on{' '}
             <a href='https://openai.com/api/pricing/'>
@@ -61,6 +101,6 @@ export default function RulePage(props: RulePageProps) {
           </p>
         </article>
       </section>
-    </>
+    </section>
   );
 }

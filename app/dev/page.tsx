@@ -1,23 +1,20 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import IVariation from '../(models)/variationModel';
-import {
-  getWordVariations,
-  isWordVariationsExist,
-} from '../../lib/services/aiService';
-import { getLevels } from '../../lib/services/levelService';
-import ILevel from '../levels/(models)/level.interface';
+import IVariation from '../../types/variation.interface';
+import { getWordVariations } from '../../lib/services/frontend/aiService';
+import { getLevels } from '../../lib/services/frontend/levelService';
+import ILevel from '../../types/level.interface';
 import { IoMdAddCircle, IoMdRefreshCircle } from 'react-icons/io';
-import { AiFillDelete, AiFillRest } from 'react-icons/ai';
-import {
-  getFullWordList,
-  getTabooWords,
-  saveTabooWords,
-} from '../../lib/services/wordService';
+import { AiFillDelete } from 'react-icons/ai';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import _ from 'lodash';
+import {
+  getVariations,
+  getWords,
+  saveVariations,
+} from '../../lib/services/frontend/wordService';
 
 const DevPage = () => {
   const [levels, setLevels] = useState<ILevel[]>([]);
@@ -33,7 +30,7 @@ const DevPage = () => {
     const levels = await getLevels();
     setLevels(levels);
     setSelectedLevel(levels[0]);
-    const wordList = await getFullWordList();
+    const wordList = await getWords();
     setFullWordList(wordList.map((w) => w.word));
   };
 
@@ -46,12 +43,12 @@ const DevPage = () => {
     setCurrentEditingIndex(-1);
     setEditText('');
     setSelectedLevel(selectedLevel);
-    const wordList = await getFullWordList();
+    const wordList = await getWords();
     setFullWordList(wordList.map((w) => w.word));
   };
 
   const getVariationsForWord = async (word: string) => {
-    const savedWords = await getTabooWords(word);
+    const savedWords = await getVariations(word);
     if (savedWords.length > 0) {
       const variations: IVariation = { target: word, variations: savedWords };
       setVariations(variations);
@@ -108,7 +105,7 @@ const DevPage = () => {
 
   const onSave = async () => {
     if (currentTarget && variations) {
-      await saveTabooWords(currentTarget, variations);
+      await saveVariations(variations);
       setFullWordList((wordList) => [...wordList, currentTarget]);
       toast.success('Taboo words saved successfully!');
     } else {
@@ -123,7 +120,11 @@ const DevPage = () => {
       for (let i = 0; i < words.length; i++) {
         const target = words[i];
         setCurrentTarget(target);
-        await autoGenerateWithDelay(1000, target);
+        try {
+          await autoGenerateWithDelay(1000, target);
+        } catch {
+          continue;
+        }
       }
     }
     setIsAutoGenerating(false);
@@ -136,13 +137,13 @@ const DevPage = () => {
     return new Promise((res, rej) => {
       setTimeout(async () => {
         try {
-          const savedWords = await getTabooWords(target);
+          const savedWords = await getVariations(target);
           if (savedWords.length > 0) {
             res();
           } else {
             const variations = await getWordVariations(target);
             if (target && variations) {
-              await saveTabooWords(target, variations);
+              await saveVariations(variations);
               setFullWordList((wordList) => [...wordList, target]);
               toast.success('Taboo words saved successfully!');
             } else {
@@ -213,6 +214,7 @@ const DevPage = () => {
                   disabled={isAutoGenerating}
                   className='absolute -top-5 -right-2 rounded-full p-2 bg-yellow text-lg'
                   id='delete'
+                  data-style='none'
                   onClick={() => {
                     refreshWord(word);
                   }}
@@ -240,6 +242,7 @@ const DevPage = () => {
                 disabled={isAutoGenerating}
                 className='absolute -top-5 right-0 rounded-full p-2 bg-red text-xs'
                 id='delete'
+                data-style='none'
                 onClick={() => {
                   deleteWord(idx);
                 }}
@@ -266,6 +269,7 @@ const DevPage = () => {
             disabled={isAutoGenerating}
             className='text-2xl'
             id='add'
+            data-style='none'
             onClick={addNewWord}
           >
             <IoMdAddCircle />

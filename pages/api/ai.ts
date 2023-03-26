@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../lib/middleware/middlewareWrapper';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;
   if (!apiKey) return res.status(500).json({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
@@ -42,11 +42,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json({ response: responseText });
       }
     } catch (err) {
-      res.status(500).json({ error: err });
+      res.status(500).json({ error: err.message });
     }
   } else {
     res.end();
   }
 };
 
-export default withMiddleware(handler);
+export default withMiddleware(aiHandler);

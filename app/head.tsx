@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { CONSTANTS } from '../lib/constants';
 
 export default function Head() {
   const [title, setTitle] = useState<string>('Taboo.AI: Play Taboo with AI');
@@ -43,21 +44,21 @@ export default function Head() {
   useEffect(() => {
     if (isMounted) {
       window.addEventListener(
-        'onTargetChanged',
+        CONSTANTS.eventKeys.targetChanged,
         onTargetChanged as EventListener
       );
       window.addEventListener(
-        'onScoreComputed',
+        CONSTANTS.eventKeys.scoreComputed,
         onScoreComputed as EventListener
       );
     }
     return () => {
       window.removeEventListener(
-        'onTargetChanged',
+        CONSTANTS.eventKeys.targetChanged,
         onTargetChanged as EventListener
       );
       window.removeEventListener(
-        'onScoreComputed',
+        CONSTANTS.eventKeys.scoreComputed,
         onScoreComputed as EventListener
       );
     };
@@ -71,8 +72,6 @@ export default function Head() {
         return 'Taboo.AI: AI Mode';
       case '/whatsnew':
         return "Taboo.AI: What's New";
-      case '/upcoming':
-        return 'Taboo.AI: Upcoming Features';
       case '/levels':
         return 'Taboo.AI: Choose Topics';
       case '/rule':
@@ -83,12 +82,25 @@ export default function Head() {
         return isCustomPath ? title : 'Taboo.AI: Play Taboo with AI';
       case '/result':
         return isCustomPath ? title : 'Taboo.AI: Share your scores!';
+      case '/signup':
+        return 'Taboo.AI: Submit Your Nickname';
+      case '/daily-challenge':
+        return 'Taboo.AI: Daily Challenge';
+      case '/recovery':
+        return 'Taboo.AI: Recover Your Scores';
       default:
         return 'Taboo.AI: Play Taboo with AI';
     }
   };
   return (
     <>
+      {/* <script
+        async
+        type='text/javascript'
+        src='https://app.termly.io/embed.min.js'
+        data-auto-block='on'
+        data-website-uuid='641b2885-7d6f-4021-9f3a-6be59c54b67f'
+      ></script> */}
       <title>{title}</title>
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />

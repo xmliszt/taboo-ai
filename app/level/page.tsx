@@ -1,32 +1,26 @@
 'use client';
 
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
-import Timer from './(components)/Timer';
+import Timer from '../(components)/Timer';
 import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
-} from '../../lib/services/aiService';
-import InputDisplay from './(components)/InputDisplay';
+} from '../../lib/services/frontend/aiService';
+import InputDisplay from '../(components)/InputDisplay';
 import _ from 'lodash';
-import { Author } from './(models)/Author.enum';
-import ProgressBar from './(components)/ProgressBar';
-import { CONSTANTS } from '../constants';
+import { Author } from './layout';
+import ProgressBar from '../(components)/ProgressBar';
+import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import {
-  cacheScore,
-  clearScores,
-  getLevelCache,
-  getScoresCache,
-} from '../../lib/cache';
-import { Highlight } from './(models)/Chat.interface';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import IVariation from '../(models)/variationModel';
+import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
+import { Highlight } from '../../types/chat.interface';
+import { toast } from 'react-toastify';
+import IVariation from '../../types/variation.interface';
 import { getMockResponse, getMockVariations } from '../utilities';
-import { saveGame } from '../../lib/services/gameService';
-import { getTabooWords } from '../../lib/services/wordService';
+import { getVariations } from '../../lib/services/frontend/wordService';
+import { HASH } from '../../lib/hash';
 
 interface LevelPageProps {}
 
@@ -79,6 +73,10 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   const generateNewTarget = (words: string[]): string => {
+    if (words.length === 0) {
+      words = pickedWords;
+      setPickedWords([]);
+    }
     const _target = words[Math.floor(Math.random() * words.length)];
     const picked = [...pickedWords];
     picked.push(_target);
@@ -87,7 +85,7 @@ export default function LevelPage(props: LevelPageProps) {
     _.remove(unused, (s) => s === _target);
     setWords(unused);
     window.dispatchEvent(
-      new CustomEvent<{ target: string }>('onTargetChanged', {
+      new CustomEvent<{ target: string }>(CONSTANTS.eventKeys.targetChanged, {
         detail: { target: _target },
       })
     );
@@ -198,7 +196,7 @@ export default function LevelPage(props: LevelPageProps) {
         if (
           (process.env.NEXT_PUBLIC_ENV === 'development' ||
             process.env.NEXT_PUBLIC_ENV === 'preview') &&
-          localStorage.getItem('dev')
+          localStorage.getItem(HASH.dev)
         ) {
           responseText = await getMockResponse(
             target ?? '',
@@ -259,7 +257,7 @@ export default function LevelPage(props: LevelPageProps) {
       setShowSuccessBackground(false);
     }, 1000);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
-      toast.success('Game Over! Generating Results...');
+      toast.success('Game Over! Generating Results...', { autoClose: 4000 });
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
@@ -272,7 +270,7 @@ export default function LevelPage(props: LevelPageProps) {
     callback: (variations?: IVariation) => void
   ) => {
     setRetryCount(retries);
-    if (localStorage.getItem('dev')) {
+    if (localStorage.getItem(HASH.dev)) {
       getMockVariations(target, true)
         .then((variations) => {
           callback(variations);
@@ -285,7 +283,7 @@ export default function LevelPage(props: LevelPageProps) {
           }
         });
     } else {
-      const savedWords = await getTabooWords(target);
+      const savedWords = await getVariations(target);
       if (savedWords.length > 0) {
         callback({ target: target, variations: savedWords });
       } else {
@@ -365,21 +363,7 @@ export default function LevelPage(props: LevelPageProps) {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      const level = getLevelCache();
-      const scores = getScoresCache();
-      if (level && scores) {
-        // saveGame(level, scores)
-        //   .catch((err) => {
-        //     console.error(err);
-        //   })
-        //   .finally(() => {
-        //     router.push('/result');
-        //   });
-        router.push('/result');
-      } else {
-        console.error("Can't save game due to missing level or scores cache!");
-        router.push('/result');
-      }
+      router.push('/result');
     } else if (currentProgress === 1) {
       return;
     } else {
@@ -447,19 +431,7 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   return (
-    <>
-      <ToastContainer
-        position='top-center'
-        autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
+    <section className='flex justify-center h-full'>
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
@@ -481,7 +453,7 @@ export default function LevelPage(props: LevelPageProps) {
         <span className='text-xs lg:text-sm lg:block'>TIMER {status}</span>
       </div>
       <section
-        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-gray ${
+        className={`flex flex-col gap-4 text-center h-full w-full transition-colors ease-in-out dark:bg-neon-black ${
           isValidInput ? '' : 'bg-red dark:bg-neon-red-light'
         } ${showSuccessBackground && 'bg-green dark:bg-neon-green'}`}
       >
@@ -495,7 +467,7 @@ export default function LevelPage(props: LevelPageProps) {
         <section className='mt-8 absolute bottom-40 top-20 lg:bottom-60 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
           <div
             hidden={!isValidInput || showSuccessBackground}
-            className={`h-10 w-full absolute z-20 top-0 gradient-down dark:gradient-down-dark transition-colors`}
+            className={`h-10 w-full absolute z-20 top-0 transition-colors`}
           ></div>
           <div className='h-full w-full flex-grow leading-normal absolute'>
             {responseText.length > 0 ? (
@@ -528,7 +500,7 @@ export default function LevelPage(props: LevelPageProps) {
           ></div>
           <div></div>
         </section>
-        <section className='absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-black rounded-t-3xl transition-colors  drop-shadow-[0_-5px_20px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_-15px_50px_rgba(0,0,0,1)] z-30'>
+        <section className='absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-gray rounded-t-3xl transition-colors  drop-shadow-[0_-5px_20px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_-15px_50px_rgba(0,0,0,1)] z-30'>
           <section className='relative w-full h-14 lg:h-24 z-10 top-0'>
             <div className='z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark rounded-tl-3xl transition-colors'></div>
             <h1 className='absolute left-10 right-10 px-5 flex-grow text-center lg:py-6 py-4 text-xl lg:text-3xl text-red dark:text-neon-red whitespace-nowrap overflow-x-scroll scrollbar-hide'>
@@ -544,6 +516,7 @@ export default function LevelPage(props: LevelPageProps) {
             <div className='flex relative items-center justify-center gap-4 px-4'>
               <button
                 id='clear'
+                data-style='none'
                 type='button'
                 aria-label='Clear input button'
                 disabled={
@@ -588,6 +561,7 @@ export default function LevelPage(props: LevelPageProps) {
               />
               <button
                 id='submit'
+                data-style='none'
                 disabled={
                   isGeneratingVariations ||
                   isCountingdown ||
@@ -621,6 +595,6 @@ export default function LevelPage(props: LevelPageProps) {
           </div>
         </section>
       </section>
-    </>
+    </section>
   );
 }

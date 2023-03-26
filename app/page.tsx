@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { BsFillQuestionDiamondFill } from 'react-icons/bs';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
+import HotBadge from './(components)/(Badges)/HotBadge';
+import NewBadge from './(components)/(Badges)/NewBadge';
 import CustomWordListLink from './(components)/CustomWordListLink';
 import DevToggle from './(components)/DevToggle';
 import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
@@ -12,22 +13,12 @@ interface HomePageProps {}
 
 export default function HomePage(props: HomePageProps) {
   const title = 'Taboo.AI';
-  const versionNumber = 'V1.4';
+  const versionNumber = `V${process.env.TABOO_AI_VERSION}`;
   const environment = process.env.VERCEL_ENV;
 
   return (
-    <main className='h-full w-full overflow-auto'>
-      <Link
-        href='/rule'
-        aria-label='Link to rule page'
-        className='text-white dark:text-neon-red-light text-xl lg:text-3xl fixed z-40 top-5 left-5 hover:animate-pulse'
-      >
-        <div className='flex flex-row gap-2'>
-          <span className='text-sm lg:text-lg'>How To Play</span>
-          <BsFillQuestionDiamondFill data-testid='rule-icon' />
-        </div>
-      </Link>
-      <section className='flex flex-col justify-center items-center h-full w-screen gap-8 lg:gap-16'>
+    <main className='h-full w-full overflow-auto scrollbar-hide'>
+      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-8 lg:gap-16 py-32'>
         <div className='w-full relative'>
           <h1
             data-testid='heading-title'
@@ -48,12 +39,34 @@ export default function HomePage(props: HomePageProps) {
         >
           Choose Topics
         </Link>
+        <NewBadge location='TOP-RIGHT'>
+          <Link
+            id='daily-challenge'
+            href='/daily-challenge/loading'
+            data-testid='link-daily-challenge'
+          >
+            <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
+              Daily Challenge
+            </div>
+          </Link>
+        </NewBadge>
+        <HotBadge>
+          <Link
+            id='daily-wall-of-fame'
+            href='/leaderboard'
+            data-testid='link-daily-wall-of-fame'
+          >
+            <div className='text-2xl px-8 py-2 color-gradient-animated-background-golden'>
+              Daily Wall of Fame
+            </div>
+          </Link>
+        </HotBadge>
         {(environment === 'preview' || environment === 'development') && (
           <DevToggle />
         )}
         <CustomWordListLink />
       </section>
-      <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-[999]'>
+      <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-10'>
         <SocialLinkButton
           content='Buy Me Coffee'
           icon={<GiCoffeeCup />}

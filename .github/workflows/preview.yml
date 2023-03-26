@@ -1,11 +1,15 @@
 name: Vercel Preview Deployment
 env:
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+  STAGING_PROJECT_ID: afnspgpybjajgolahgri
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   push:
     branches:
       - 'preview'
+  workflow_dispatch:
 jobs:
   Unit-Test:
     timeout-minutes: 60
@@ -21,6 +25,14 @@ jobs:
         run: npm ci
       - name: Running Jest Tests
         run: npm test
+  Deploy-Staging-Database:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: supabase/setup-cli@v1
+      - run: |
+          supabase link --project-ref $STAGING_PROJECT_ID
+          supabase db push
   Deploy-Preview:
     needs: Unit-Test
     timeout-minutes: 60
