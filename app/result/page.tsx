@@ -85,7 +85,13 @@ export default function ResultPage(props: ResultPageProps) {
     if (isMounted) {
       const level = getLevelCache();
       const scores = getScoresCache();
-      if (!scores) throw Error('No recent results available.');
+      if (!scores) {
+        router.push('/');
+        window.dispatchEvent(
+          new CustomEvent(CONSTANTS.eventKeys.noScoreAvailable)
+        );
+        return;
+      }
       setScores(scores);
       level?.isDaily && setDisplayedLevelName(level?.dailyLevelName);
       if (level) setLevel(level);
@@ -468,7 +474,7 @@ export default function ResultPage(props: ResultPageProps) {
 
   const renderMobile = () => {
     return (
-      <div className='w-full flex flex-col gap-6 mb-8 mt-6 px-4'>
+      <div className='w-full flex flex-col gap-6 mb-8 mt-10 px-4'>
         <div className='text-center flex justify-center items-center'>
           <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 drop-shadow-lg'>
             Topic: {displayedLevelName ?? level?.name}

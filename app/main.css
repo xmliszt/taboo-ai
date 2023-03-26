@@ -27,7 +27,7 @@
   }
 
   .gradient-right-dark {
-    background: linear-gradient(90deg, #02090e 70%, rgb(255 255 255 / 0%) 100%);
+    background: linear-gradient(90deg, #112022 70%, #11202200 100%);
   }
 
   .gradient-left {
@@ -35,7 +35,7 @@
   }
 
   .gradient-left-dark {
-    background: linear-gradient(90deg, rgb(255 255 255 / 0%) 0%, #02090e 30%);
+    background: linear-gradient(90deg, #11202200 0%, #112022 30%);
   }
 
   .gradient-up {

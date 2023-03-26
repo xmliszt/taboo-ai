@@ -114,6 +114,7 @@ const RecoveryPage = () => {
             )}
           </div>
           <button
+            disabled={recoveryKey.length <= 0}
             type='submit'
             className='py-4 px-6'
             aria-label='submit recovery key'
@@ -132,8 +133,8 @@ const RecoveryPage = () => {
           </p>
           <p className='text-justify'>
             <b>Forgot about your recovery key?</b> Unfortunately, there is no
-            way to restore if you lost your recovery key as we do not store any
-            of additional information. However, not to worry, you can simply
+            way to restore if you lost your recovery key, as we do not store any
+            additional information. However, not to worry! You can simply
             attempt the daily challenge and create another account at the end of
             the game!{' '}
           </p>

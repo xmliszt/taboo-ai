@@ -467,7 +467,7 @@ export default function LevelPage(props: LevelPageProps) {
         <section className='mt-8 absolute bottom-40 top-20 lg:bottom-60 flex-grow w-full flex flex-col gap-4 justify-center items-center'>
           <div
             hidden={!isValidInput || showSuccessBackground}
-            className={`h-10 w-full absolute z-20 top-0 gradient-down dark:gradient-down-dark transition-colors`}
+            className={`h-10 w-full absolute z-20 top-0 transition-colors`}
           ></div>
           <div className='h-full w-full flex-grow leading-normal absolute'>
             {responseText.length > 0 ? (
@@ -500,7 +500,7 @@ export default function LevelPage(props: LevelPageProps) {
           ></div>
           <div></div>
         </section>
-        <section className='absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-black rounded-t-3xl transition-colors  drop-shadow-[0_-5px_20px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_-15px_50px_rgba(0,0,0,1)] z-30'>
+        <section className='absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-gray rounded-t-3xl transition-colors  drop-shadow-[0_-5px_20px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_-15px_50px_rgba(0,0,0,1)] z-30'>
           <section className='relative w-full h-14 lg:h-24 z-10 top-0'>
             <div className='z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark rounded-tl-3xl transition-colors'></div>
             <h1 className='absolute left-10 right-10 px-5 flex-grow text-center lg:py-6 py-4 text-xl lg:text-3xl text-red dark:text-neon-red whitespace-nowrap overflow-x-scroll scrollbar-hide'>

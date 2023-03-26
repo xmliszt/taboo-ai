@@ -57,14 +57,10 @@ export function clearUser() {
 }
 
 //ANCHOR - Feature pop up
-export function getHasReadFeaturePopup(): boolean {
-  const hasReadString = localStorage.getItem(HASH.hasReadFeaturePopup);
-  if (hasReadString) {
-    return JSON.parse(hasReadString);
-  }
-  return false;
+export function getFeaturePopupString(): string | null {
+  return localStorage.getItem(HASH.hasReadFeaturePopup);
 }
 
-export function setHasReadFeaturePopup(hasRead: boolean) {
-  localStorage.setItem(HASH.hasReadFeaturePopup, JSON.stringify(hasRead));
+export function setFeaturePopupString(s: string) {
+  localStorage.setItem(HASH.hasReadFeaturePopup, s);
 }

@@ -5,9 +5,10 @@ import content from '../../../public/features/content.md';
 import style from './style.module.css';
 import { KeyboardEvent, useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
-import { setHasReadFeaturePopup } from '../../../lib/cache';
+import { setFeaturePopupString } from '../../../lib/cache';
 import SocialLinkButton from '../SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
+import { CONSTANTS } from '../../../lib/constants';
 
 interface FeaturePopupProps {}
 
@@ -16,13 +17,13 @@ export default function FeaturePopup(props: FeaturePopupProps) {
 
   const close = () => {
     setIsClosed(true);
-    setHasReadFeaturePopup(true);
+    setFeaturePopupString(CONSTANTS.featurePopupString);
   };
 
   const escClose = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       setIsClosed(true);
-      setHasReadFeaturePopup(true);
+      setFeaturePopupString(CONSTANTS.featurePopupString);
     }
   };
   return (

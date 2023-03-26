@@ -18,7 +18,7 @@ import {
   clearLevel,
   clearScores,
   clearUser,
-  getHasReadFeaturePopup,
+  getFeaturePopupString,
   getUser,
 } from '../lib/cache';
 import { confirmAlert } from 'react-confirm-alert';
@@ -73,8 +73,14 @@ export default function RootLayout({
   useEffect(() => {
     !isMounted && setIsMounted(true);
     if (isMounted) {
-      const hasReadFeaturePopup = getHasReadFeaturePopup();
-      setShowFeaturePopup(!hasReadFeaturePopup);
+      const featurePopupString = getFeaturePopupString();
+      if (!featurePopupString) {
+        setShowFeaturePopup(true);
+      } else if (featurePopupString !== CONSTANTS.featurePopupString) {
+        setShowFeaturePopup(true);
+      } else {
+        setShowFeaturePopup(false);
+      }
       registerEventListeners();
       fetchMaintenance();
       fetchCurrentUser();
@@ -97,9 +103,9 @@ export default function RootLayout({
 
   const quit = () => {
     confirmAlert({
-      title: 'Sure to log out?',
+      title: 'Are you sure?',
       message:
-        'By logging out, you will no longer be able to participate in the global leaderboard and submit your scores from the daily challenge.',
+        'Quitting will remove your stored nickname and any saved scores locally. You will need to recover or submit new nickname in order to participate in the leaderboard rankings again.',
       buttons: [
         {
           label: 'Yes',
@@ -132,6 +138,13 @@ export default function RootLayout({
       );
       registeredEvents.push(CONSTANTS.eventKeys.recoverySuccess);
     }
+    if (!registeredEvents.includes(CONSTANTS.eventKeys.noScoreAvailable)) {
+      window.addEventListener(
+        CONSTANTS.eventKeys.noScoreAvailable,
+        onNoScoreAvailable as EventListener
+      );
+      registeredEvents.push(CONSTANTS.eventKeys.noScoreAvailable);
+    }
   };
 
   const removeEventListeners = () => {
@@ -144,6 +157,10 @@ export default function RootLayout({
       CONSTANTS.eventKeys.recoverySuccess,
       onBackFromRecoverySuccess as EventListener
     );
+    window.removeEventListener(
+      CONSTANTS.eventKeys.noScoreAvailable,
+      onNoScoreAvailable as EventListener
+    );
     registeredEvents = [];
   };
 
@@ -155,6 +172,13 @@ export default function RootLayout({
   const onBackFromRecoverySuccess = () => {
     fetchCurrentUser();
     toast.success('Account recovered successfully!', { autoClose: 3000 });
+  };
+
+  const onNoScoreAvailable = () => {
+    toast.warn(
+      'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+      { autoClose: 3000 }
+    );
   };
 
   return (
@@ -184,13 +208,11 @@ export default function RootLayout({
             <Link
               href='/rule'
               aria-label='Link to rule page'
-              className='text-white dark:text-neon-red-light text-xl lg:text-3xl hover:animate-pulse'
+              className='text-white dark:text-neon-red-light text-xl dark:text-sm lg:dark:text-2xl lg:text-3xl hover:animate-pulse'
             >
               <div className='flex flex-row gap-2 items-center'>
                 <BsFillQuestionSquareFill data-testid='rule-icon' />
-                <span className='text-sm lg:text-lg dark:text-xs'>
-                  Instructions
-                </span>
+                <span>Instructions</span>
               </div>
             </Link>
           ) : (
@@ -199,12 +221,12 @@ export default function RootLayout({
 
           {pathName === '/' ? (
             currentUser ? (
-              <div className='flex-grow text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-sm'>
+              <div className='flex-grow text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
                 <span>Welcome Back! {currentUser.nickname}</span>
                 <button
                   id='submit'
                   data-style='none'
-                  className='underline text-red-light dark:text-neon-red-light h-4'
+                  className='underline text-base dark:text-xs lg:text-xl lg:dark:text-lg text-red-light dark:text-neon-red-light'
                   aria-label='Click to quit and logout from current account'
                   onClick={quit}
                 >

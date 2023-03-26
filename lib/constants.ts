@@ -7,6 +7,7 @@ export const CONSTANTS = {
     recoverySuccess: 'onRecoverySuccess',
     targetChanged: 'onTargetChanged',
     scoreComputed: 'onScoreComputed',
+    noScoreAvailable: 'onNoScoreAvailable',
   },
   errors: {
     overloaded:
@@ -15,4 +16,5 @@ export const CONSTANTS = {
       'Taboo AI is unable to generate the list of words related to the topic',
   },
   mask: 'XXXXXXXXXXX',
+  featurePopupString: 'v2.0',
 };
