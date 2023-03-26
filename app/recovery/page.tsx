@@ -79,7 +79,7 @@ const RecoveryPage = () => {
     <>
       <LoadingMask isLoading={isLoading} message='Recovering account...' />
       <BackButton href={hasScores ? '/result' : '/'} />
-      <h1 className='fixed top-0 w-full h-20 py-4 text-center gradient-down dark:gradient-down-dark-black z-10'>
+      <h1 className='fixed top-0 w-full h-20 py-4 text-center z-10'>
         Recover Your Scores
       </h1>
       <section className='w-full h-full py-16 px-8 flex flex-col justify-center items-center gap-4'>
@@ -141,7 +141,7 @@ const RecoveryPage = () => {
             className='underline text-yellow dark:text-neon-green'
             href='/daily-challenge/loading'
           >
-            Attempt the daily challenge!
+            👉🏻 Attempt the daily challenge!
           </Link>
         </article>
       </section>

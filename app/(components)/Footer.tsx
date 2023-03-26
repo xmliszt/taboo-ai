@@ -60,6 +60,20 @@ export default function Footer() {
         >
           Cookie Policy
         </a>
+        <a
+          aria-label='Read Taboo AI new features'
+          href='/whatsnew'
+          className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
+        >
+          New Features
+        </a>
+        <a
+          aria-label='Read Taboo AI releases roadmap'
+          href='/roadmap'
+          className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
+        >
+          Releases Roadmap
+        </a>
       </article>
     </footer>
   );

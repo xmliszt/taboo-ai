@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import BackButton from '../(components)/BackButton';
 
 interface RulePageProps {}
@@ -45,6 +46,45 @@ export default function RulePage(props: RulePageProps) {
             3. Successfully trick AI into saying <b>all 5 words</b> given to win
             the game. You can view your scores and share them with your friends!
           </p>
+          <div className='flex flex-row justify-start gap-8 items-center'>
+            <Link
+              id='start'
+              href='/levels'
+              data-testid='link-start'
+              className='px-4 py-2'
+            >
+              Choose Topics to Start Playing!
+            </Link>
+          </div>
+          <br />
+          <hr />
+          <br />
+          <p className='text-justify'>
+            Participate in the <b>Daily Challenge</b>: Same game rule, but 5
+            different words every day. Compete your scores with other players
+            around the world in the <b>Wall of Fame (Leaderboard)</b>
+          </p>
+          <div className='flex flex-row justify-start gap-8 items-center'>
+            <Link
+              id='daily-challenge'
+              href='/daily-challenge/loading'
+              data-testid='link-daily-challenge'
+            >
+              <div className='px-4 py-2 color-gradient-animated-background'>
+                Daily Challenge
+              </div>
+            </Link>
+            <Link
+              id='daily-wall-of-fame'
+              href='/leaderboard'
+              data-testid='link-daily-wall-of-fame'
+            >
+              <div className='px-4 py-2 color-gradient-animated-background-golden'>
+                Daily Wall of Fame
+              </div>
+            </Link>
+          </div>
+          <br />
           <p className='text-justify text-gray text-sm'>
             Disclaimer: The game is solely relying on{' '}
             <a href='https://openai.com/api/pricing/'>

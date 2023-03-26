@@ -15,15 +15,16 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { CONSTANTS } from '../lib/constants';
 import IUser from '../types/user.interface';
 import {
-  clearCache,
   clearLevel,
   clearScores,
   clearUser,
+  getHasReadFeaturePopup,
   getUser,
 } from '../lib/cache';
 import { confirmAlert } from 'react-confirm-alert';
 import Link from 'next/link';
 import { BsFillQuestionSquareFill } from 'react-icons/bs';
+import FeaturePopup from './(components)/(FeaturePopup)/FeaturePopup';
 
 const grenze = Grenze({
   weight: '400',
@@ -66,11 +67,14 @@ export default function RootLayout({
   const [maintenanceData, setMaintenanceData] = useState<IMaintenance>();
   const [currentUser, setCurrentUser] = useState<IUser | undefined>();
   const [isDark, setIsDark] = useState(false);
+  const [showFeaturePopup, setShowFeaturePopup] = useState(false);
   const pathName = usePathname();
 
   useEffect(() => {
     !isMounted && setIsMounted(true);
     if (isMounted) {
+      const hasReadFeaturePopup = getHasReadFeaturePopup();
+      setShowFeaturePopup(!hasReadFeaturePopup);
       registerEventListeners();
       fetchMaintenance();
       fetchCurrentUser();
@@ -165,9 +169,10 @@ export default function RootLayout({
         {!(pathName === '/level' || pathName === '/daily-challenge') && (
           <WordCarousell />
         )}
+        {showFeaturePopup && <FeaturePopup />}
         <section
           id='header-section'
-          className={`w-full fixed top-0 h-14 lg:h-20 gap-2 z-40 p-4 grid grid-cols-[1fr_auto_1fr] text-center items-center content-start ${
+          className={`w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 grid grid-cols-[1fr_auto_1fr] text-center items-center content-start ${
             pathName === '/daily-challenge' ||
             pathName === '/level' ||
             pathName === '/ai'

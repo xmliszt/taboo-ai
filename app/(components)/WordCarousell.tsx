@@ -141,7 +141,7 @@ export default function WordCarousell() {
   return (
     <div
       id='word-carousell-container'
-      className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif pointer-events-none z-0'
+      className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif pointer-events-none -z-10'
     ></div>
   );
 }

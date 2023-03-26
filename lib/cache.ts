@@ -55,3 +55,16 @@ export function setUser(user: IUser) {
 export function clearUser() {
   localStorage.removeItem(HASH.user);
 }
+
+//ANCHOR - Feature pop up
+export function getHasReadFeaturePopup(): boolean {
+  const hasReadString = localStorage.getItem(HASH.hasReadFeaturePopup);
+  if (hasReadString) {
+    return JSON.parse(hasReadString);
+  }
+  return false;
+}
+
+export function setHasReadFeaturePopup(hasRead: boolean) {
+  localStorage.setItem(HASH.hasReadFeaturePopup, JSON.stringify(hasRead));
+}
