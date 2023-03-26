@@ -9,7 +9,7 @@ import {
 } from '../../lib/services/frontend/aiService';
 import InputDisplay from '../(components)/InputDisplay';
 import _ from 'lodash';
-import { Author } from './layout';
+import { Author } from '../../lib/enums/Author';
 import ProgressBar from '../(components)/ProgressBar';
 import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';

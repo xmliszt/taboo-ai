@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash';
-import { Author } from '../level/layout';
+import { Author } from '../../lib/enums/Author';
 import { Highlight } from '../../types/chat.interface';
 import { applyHighlightsToMessage, sanitizeHighlights } from '../utilities';
 

@@ -1,5 +1,4 @@
-import { Author } from '../app/level/layout';
-
+import { Author } from '../lib/enums/Author';
 export interface Highlight {
   start: number;
   end: number;
