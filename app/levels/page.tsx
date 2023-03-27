@@ -67,7 +67,7 @@ export default function LevelsPage(props: LevelsPageProps) {
       >
         {title}
       </h1>
-      <div className='w-full fixed z-50 h-12 top-12 lg:top-20 px-12 bg-black dark:bg-neon-black'>
+      <div className='w-full fixed z-20 h-12 top-12 lg:top-20 px-12 bg-black dark:bg-neon-black'>
         <input
           className='w-full'
           placeholder='Search for levels...'

@@ -347,9 +347,9 @@ export default function DailyLevelPage(props: DailyLevelProps) {
       if (level !== null && level.isDaily) {
         confirmAlert({
           title: level.dailyLevelName,
-          message: `Difficulty multiplier: ${
-            level.difficulty
-          } - ${getDifficulty(level.difficulty)}`,
+          message: `${
+            level.dailyLevelTopic && 'Topic: ' + level.dailyLevelTopic + ' | '
+          }Difficulty: ${getDifficulty(level.difficulty)}`,
           buttons: [
             {
               label: "Let's Begin!",
@@ -368,6 +368,8 @@ export default function DailyLevelPage(props: DailyLevelProps) {
               },
             },
           ],
+          closeOnClickOutside: false,
+          closeOnEscape: false,
         });
       } else {
         toast.error('No daily challenge available! Please try again!');

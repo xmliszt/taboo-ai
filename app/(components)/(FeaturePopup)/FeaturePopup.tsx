@@ -54,16 +54,13 @@ export default function FeaturePopup(props: FeaturePopupProps) {
               <ReactMarkdown className={`${style.markdown} pb-16`}>
                 {content}
               </ReactMarkdown>
-              <div className='sticky bottom-0 w-full flex flex-col gap-2 justify-center items-center dark:bg-neon-gray bg-white-faded px-2 py-4 rounded-2xl drop-shadow-lg'>
-                <span>
-                  Join our Discord community for more updates and share your
-                  experience with others!
-                </span>
+              <div className='sticky bottom-0 w-full flex px-2'>
                 <SocialLinkButton
-                  content='Join Discord!'
+                  content='Join our Discord for more updates!'
                   icon={<SiDiscord />}
                   href='https://discord.gg/dgqs29CHC2'
                   newTab={true}
+                  customClass='flex-grow'
                   accentColorClass='bg-purple dark:bg-neon-purple'
                   dropShadowClass='hover:drop-shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
                 />

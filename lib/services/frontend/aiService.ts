@@ -45,6 +45,7 @@ export async function generateDailyLevel(
   const todayDate = date.format('DD-MM-YYYY');
   return {
     name: `${topic}-${difficulty}-${todayDate}`,
+    topic: topic,
     difficulty: difficulty,
     words: words,
     created_date: todayDate,

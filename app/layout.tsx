@@ -15,6 +15,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { CONSTANTS } from '../lib/constants';
 import IUser from '../types/user.interface';
 import {
+  clearCachedGame,
   clearLevel,
   clearScores,
   clearUser,
@@ -105,12 +106,13 @@ export default function RootLayout({
     confirmAlert({
       title: 'Are you sure?',
       message:
-        'Quitting will remove your stored nickname and any saved scores locally. You will need to recover or submit new nickname in order to participate in the leaderboard rankings again.',
+        'Quitting will remove all your saved games locally. You will need to recover or submit new nickname in order to participate in the leaderboard rankings again.',
       buttons: [
         {
           label: 'Yes',
           onClick: () => {
             setCurrentUser(undefined);
+            clearCachedGame();
             clearScores();
             clearLevel();
             clearUser();
@@ -238,11 +240,11 @@ export default function RootLayout({
             <Link
               href='/rule'
               aria-label='Link to rule page'
-              className='text-white dark:text-neon-red-light text-xl dark:text-sm lg:dark:text-2xl lg:text-3xl hover:animate-pulse'
+              className='text-white dark:text-neon-red-light text-xl dark:text-sm lg:dark:text-2xl lg:text-3xl'
             >
               <div className='flex flex-row gap-2 items-center'>
                 <BsFillQuestionSquareFill data-testid='rule-icon' />
-                <span>Instructions</span>
+                <span>Help</span>
               </div>
             </Link>
           ) : (
@@ -252,7 +254,7 @@ export default function RootLayout({
           {pathName === '/' ? (
             currentUser ? (
               <div className='flex-grow text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
-                <span>Welcome Back! {currentUser.nickname}</span>
+                <span>{currentUser.nickname}</span>
                 <button
                   id='submit'
                   data-style='none'

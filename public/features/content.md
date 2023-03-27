@@ -4,7 +4,7 @@
 
 ![Wall of Fame](/features/feature-img-1.png)
 
-Taboo.AI now has an exiting **Wall of Fame (Leaderboard)** for you to compete against other players around the world! Every day there will be a **new daily challenge** Taboo Word Set for you to try. For the fairness of the game, every player will have the same words to play with in the same challenge. Players are then ranked based on their final scores.
+Taboo.AI now has an exciting **Wall of Fame (Leaderboard)** for you to compete against other players around the world! Every day there will be a **new daily challenge** Taboo Word Set for you to try. For the fairness of the game, every player will have the same words to play with in the same challenge. Players are then ranked based on their final scores.
 
 ![How to access](/features/feature-img-2.png)
 

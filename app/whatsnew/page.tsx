@@ -26,13 +26,9 @@ export default async function WhatsNewPage(props: WhatsNewPageProps) {
         className='leading-normal w-10/12 pt-24 lg:pt-32 pb-24'
       >
         <ReactMarkdown className={`${style.markdown}`}>{content}</ReactMarkdown>
-        <div className='sticky bottom-20 w-full flex flex-col gap-2 justify-center items-center dark:bg-neon-gray bg-white-faded text-black dark:text-neon-white px-2 py-4 rounded-2xl drop-shadow-lg'>
-          <span>
-            Join our Discord community for more updates and share your
-            experience with others!
-          </span>
+        <div className='sticky z-40 bottom-14 w-full flex gap-2 justify-center px-2 mt-2'>
           <SocialLinkButton
-            content='Join Discord!'
+            content='Join our Discord for more updates!'
             icon={<SiDiscord />}
             href='https://discord.gg/dgqs29CHC2'
             newTab={true}
