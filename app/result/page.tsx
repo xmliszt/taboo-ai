@@ -11,6 +11,8 @@ import {
   cacheScore,
   getCachedGame,
   setCachedGame,
+  clearCachedGame,
+  clearLevel,
 } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
@@ -175,6 +177,16 @@ export default function ResultPage(props: ResultPageProps) {
     const cachedGame = getCachedGame();
     if (!user) {
       showJoinLeaderboardPrompt();
+      return;
+    }
+    if (user.nickname !== cachedGame?.player_nickname) {
+      clearCachedGame();
+      clearScores();
+      clearLevel();
+      router.push('/');
+      window.dispatchEvent(
+        new CustomEvent(CONSTANTS.eventKeys.noScoreAvailable)
+      );
       return;
     }
     if (cachedGame && level) {
