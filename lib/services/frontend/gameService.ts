@@ -1,3 +1,4 @@
+import moment from 'moment';
 import IGame from '../../../types/game.interface';
 import ILevel from '../../../types/level.interface';
 import { IDisplayScore } from '../../../types/score.interface';
@@ -32,13 +33,14 @@ export const saveGame = async (
   prompt_visible: boolean
 ) => {
   const url = `/api/games/save`;
-  await request<{ data: IGame }>(url, 'POST', {
+  const { data } = await request<{ data: IGame }>(url, 'POST', {
     level,
     scores,
     player_nickname: player_nickname,
     player_id: player_id,
     prompt_visible: prompt_visible,
   });
+  return data as IGame;
 };
 
 export const getOneGameByID = async (game_id: string) => {
@@ -72,6 +74,21 @@ export const getAllGamesByPlayerNickname = async (
 ) => {
   const url = `/api/games/get?player_nickname=${player_nickname}&pageIndex=${page}&limit=${limit}`;
   return await request<{ games: IGame[]; total: number }>(url, 'GET');
+};
+
+export const getGameByPlayerNicknameFilterByDate = async (
+  player_nickname: string,
+  date: moment.Moment
+) => {
+  const url = `/api/games/get?player_nickname=${player_nickname}&pageIndex=0&limit=5`;
+  const { games } = await request<{ games: IGame[]; total: number }>(
+    url,
+    'GET'
+  );
+  const targetGame = games.find((game) =>
+    moment(game.created_at).isSame(date, 'day')
+  );
+  return targetGame;
 };
 
 export const getBestGamesByLevel = async (level: string, limit = 5) => {

@@ -8,6 +8,7 @@ interface ConfirmButtonProps {
 }
 
 interface ConfirmPopUpProps {
+  disabled?: boolean;
   show: boolean;
   title: string;
   content: string;
@@ -50,6 +51,7 @@ const ConfirmPopUp = (props: ConfirmPopUpProps) => {
             <section className='h-12 lg:h-16 w-full flex flex-row gap-4'>
               {props.buttons.map((buttonProps, idx) => (
                 <button
+                  disabled={props.disabled}
                   key={idx}
                   className='h-full flex-grow !bg-black dark:!bg-neon-gray !text-white'
                   onClick={props.buttons[idx].onClick}

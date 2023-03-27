@@ -61,8 +61,8 @@ export default function RulePage(props: RulePageProps) {
           <br />
           <p className='text-justify'>
             Participate in the <b>Daily Challenge</b>: Same game rule, but 5
-            different words every day. Compete your scores with other players
-            around the world in the <b>Wall of Fame (Leaderboard)</b>
+            different words every day. Use your scores to compete against other
+            players around the world in the <b>Wall of Fame (Leaderboard)</b>
           </p>
           <div className='flex flex-row justify-start gap-8 items-center'>
             <Link
@@ -87,16 +87,16 @@ export default function RulePage(props: RulePageProps) {
           <br />
           <p className='text-justify text-gray text-sm'>
             Disclaimer: The game is solely relying on{' '}
-            <a href='https://openai.com/api/pricing/'>
-              OpenAI Curie Language Model
+            <a className='underline' href='https://openai.com/api/pricing/'>
+              OpenAI AI Model
             </a>{' '}
-            to generate AI response and taboo words. Without it, the game will
-            not be possible. However, sometimes even paid model has overloaded
+            to generate responses and taboo words. Without it, the game will not
+            be possible. However, sometimes even paid model has overloaded
             requests from all over the world. Hence you might experience some
             internet hiccups here and there. But not to worry! Just simply try
             again and submit your prompt again until it succeeds. (Usually the
             downtime won&apos;t be that long, after at most 5 tries you should
-            be able to get your reponse!) I will pause the timer for you so you
+            be able to get your reponse!) Timer will be paused for you so you
             won&apos;t be at disadvantage if such incident happens 😉
           </p>
         </article>

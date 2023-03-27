@@ -1,7 +1,7 @@
 'use client';
 
 import moment from 'moment';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 import { AiFillDelete } from 'react-icons/ai';
 import { IoMdAddCircle, IoMdRefreshCircle } from 'react-icons/io';
@@ -21,9 +21,10 @@ import {
 } from '../../../lib/services/frontend/wordService';
 import IDailyLevel from '../../../types/dailyLevel.interface';
 import IVariation from '../../../types/variation.interface';
+import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 
 const DailyWordGenerationPage = () => {
-  const [topic, setTopic] = useState<string | undefined>();
+  const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<number>(1);
   const [level, setLevel] = useState<IDailyLevel | undefined>();
   const [selectedWord, setSelectedWord] = useState<string | undefined>();
@@ -36,8 +37,35 @@ const DailyWordGenerationPage = () => {
   const [fullWordList, setFullWordList] = useState<string[]>([]);
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
   const [isVariationLoading, setIsVariationLoading] = useState(false);
-  const tomorrow = moment().add(1, 'day');
-  const tomorrowDate = tomorrow.format('MMMM Do YYYY, dddd');
+  const [levelExists, setLevelExists] = useState(false);
+  const [targetDate, setTargetDate] = useState<moment.Moment>(
+    moment().add(1, 'day')
+  );
+
+  useEffect(() => {
+    setIsLoading(true);
+    getDailyLevel(targetDate)
+      .then((level) => {
+        setLevelExists(level !== null);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [targetDate]);
+
+  const resetAll = () => {
+    setTopic('');
+    setLevel(undefined);
+    setVariations(undefined);
+    setEditText(undefined);
+    setCurrentEditingIndex(-1);
+    setSelectedWord(undefined);
+    setSelectedIndex(undefined);
+  };
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -46,21 +74,22 @@ const DailyWordGenerationPage = () => {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setVariations(undefined);
-    setEditText(undefined);
-    setCurrentEditingIndex(-1);
-    setSelectedWord(undefined);
-    setSelectedIndex(undefined);
+    if (levelExists) {
+      return;
+    }
+    resetAll();
     if (topic && difficulty) {
       try {
         setIsLoading(true);
         setLoadingMessage("Generate today's level...");
-        const level = await generateDailyLevel(tomorrow, topic, difficulty);
-        setIsLoading(false);
+        const level = await generateDailyLevel(targetDate, topic, difficulty);
         setLevel(level);
+        await generateForAll(level);
       } catch (error) {
         console.error(error);
         toast.error('Error generating level!');
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -113,7 +142,7 @@ const DailyWordGenerationPage = () => {
       try {
         setIsLoading(true);
         setLoadingMessage('Submitting new level for today...');
-        const dailyLevel = await getDailyLevel(tomorrow);
+        const dailyLevel = await getDailyLevel(targetDate);
         if (!dailyLevel) {
           await createDailyLevel(level);
           toast.success('Daily level submitted successfully!');
@@ -204,8 +233,8 @@ const DailyWordGenerationPage = () => {
     }
   };
 
-  const generateForAll = async () => {
-    const words = level?.words;
+  const generateForAll = async (level: IDailyLevel) => {
+    const words = level.words;
     setIsAutoGenerating(true);
     if (words) {
       for (let i = 0; i < words.length; i++) {
@@ -231,6 +260,7 @@ const DailyWordGenerationPage = () => {
         try {
           const savedWords = await getVariations(target);
           if (savedWords.length > 0) {
+            setFullWordList((wordList) => [...wordList, target]);
             res();
           } else {
             const variations = await getWordVariations(target);
@@ -264,23 +294,44 @@ const DailyWordGenerationPage = () => {
           onSubmit={onSubmit}
           className='w-full flex flex-col gap-4 text-center pt-16 items-center'
         >
-          <label htmlFor='topic-input'>Enter Tomorrow&apos;s Topic</label>
-          <label htmlFor='topic-input' className='italic text-gray'>
-            Tomorrow is: {tomorrowDate}
-          </label>
+          <label htmlFor='topic-input'>Enter Daily Challenge Topic</label>
+          <div className='flex flex-row gap-2 items-center'>
+            <BiLeftArrow
+              onClick={() => {
+                setTargetDate((date) => {
+                  resetAll();
+                  return moment(date).subtract(1, 'day');
+                });
+              }}
+            />
+            <label htmlFor='topic-input' className='flex-grow italic text-gray'>
+              {targetDate.format('MMMM Do YYYY, dddd')}
+            </label>
+            <BiRightArrow
+              onClick={() => {
+                setTargetDate((date) => {
+                  resetAll();
+                  return moment(date).add(1, 'day');
+                });
+              }}
+            />
+          </div>
           <input
             id='topic-input'
             type='text'
-            placeholder="Tomorrow's Topic..."
+            placeholder='Daily Challenge Topic...'
+            value={topic}
             onChange={onInputChange}
             className='w-64 border-yellow'
+            disabled={levelExists}
           />
           <div className='flex flex-row gap-4 items-center'>
-            <label htmlFor='difficulty'>Difficulty Level: </label>
+            <label htmlFor='difficulty'>Difficulty: </label>
             <select
               name='difficulty'
               id='difficulty'
               value={difficulty}
+              disabled={levelExists}
               aria-labelledby='difficultyLabel'
               aria-label='select difficulty'
               onChange={onDifficultyChanged}
@@ -294,9 +345,9 @@ const DailyWordGenerationPage = () => {
           <button
             type='submit'
             className='h-8 w-32 !rounded-3xl'
-            disabled={!topic || !difficulty}
+            disabled={!topic || !difficulty || levelExists}
           >
-            Generate!
+            {levelExists ? 'Level Existed' : 'Generate!'}
           </button>
         </form>
         {level && (
@@ -409,7 +460,9 @@ const DailyWordGenerationPage = () => {
               <button
                 disabled={isAutoGenerating}
                 className='!rounded-full !px-2'
-                onClick={generateForAll}
+                onClick={() => {
+                  generateForAll(level);
+                }}
               >
                 AUTO GENERATE
               </button>

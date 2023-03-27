@@ -82,9 +82,26 @@ const SignupPage = () => {
   };
 
   const onUserConfirmSavedKey = () => {
-    setShowSaveKeyModal(false);
-    window.dispatchEvent(new CustomEvent(CONSTANTS.eventKeys.signUpSuccess));
-    router.push(hasScores ? '/result' : '/');
+    confirmAlert({
+      title: 'Have you saved your Recovery Key?',
+      message:
+        'Make sure you have saved your Recovery Key because it will not be shown again.',
+      buttons: [
+        {
+          label: 'Yes I have saved it!',
+          onClick: () => {
+            setShowSaveKeyModal(false);
+            window.dispatchEvent(
+              new CustomEvent(CONSTANTS.eventKeys.signUpSuccess)
+            );
+            router.push(hasScores ? '/result' : '/');
+          },
+        },
+        {
+          label: 'Wait, let me save it!',
+        },
+      ],
+    });
   };
 
   return (

@@ -7,4 +7,5 @@ export default interface ILevel {
   createdAt?: number;
   isDaily?: boolean;
   dailyLevelName?: string;
+  dailyLevelTopic?: string;
 }

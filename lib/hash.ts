@@ -9,5 +9,6 @@ export const HASH = {
   level: getHash('level'),
   scores: getHash('scores'),
   dev: getHash('dev'),
+  game: getHash('game'),
   hasReadFeaturePopup: getHash('has-read-feature-popup'),
 };

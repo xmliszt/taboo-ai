@@ -202,6 +202,7 @@ export const buildLevelForDisplay = (level: IDailyLevel): ILevel => {
     words: level.words,
     createdAt: dateObject.valueOf(),
     dailyLevelName: `Daily Challenge: ${dateObject.format('ddd, MMM Do YYYY')}`,
+    dailyLevelTopic: level.topic,
   };
 };
 

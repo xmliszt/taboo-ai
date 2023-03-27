@@ -2,11 +2,23 @@ import { IDisplayScore } from '../types/score.interface';
 import ILevel from '../types/level.interface';
 import IUser from '../types/user.interface';
 import { HASH } from './hash';
+import IGame from '../types/game.interface';
 
+//ANCHOR - Level
 export function cacheLevel(level: ILevel) {
   localStorage.setItem(HASH.level, JSON.stringify(level));
 }
 
+export function getLevelCache(): ILevel | null {
+  const levelString = localStorage.getItem(HASH.level);
+  return levelString ? JSON.parse(levelString) : null;
+}
+
+export function clearLevel() {
+  localStorage.removeItem(HASH.level);
+}
+
+//ANCHOR - Scores
 export function cacheScore(score: IDisplayScore) {
   const scores = getScoresCache();
   if (scores !== null) {
@@ -18,28 +30,13 @@ export function cacheScore(score: IDisplayScore) {
   }
 }
 
-export function getLevelCache(): ILevel | null {
-  const levelString = localStorage.getItem(HASH.level);
-  if (levelString !== null) return JSON.parse(levelString);
-  return null;
-}
-
 export function getScoresCache(): IDisplayScore[] | null {
   const scoresString = localStorage.getItem(HASH.scores);
-  if (scoresString !== null) return JSON.parse(scoresString);
-  return null;
-}
-
-export function clearLevel() {
-  localStorage.removeItem(HASH.level);
+  return scoresString ? JSON.parse(scoresString) : null;
 }
 
 export function clearScores() {
   localStorage.removeItem(HASH.scores);
-}
-
-export function clearCache() {
-  localStorage.clear();
 }
 
 //ANCHOR - User data storage
@@ -63,4 +60,18 @@ export function getFeaturePopupString(): string | null {
 
 export function setFeaturePopupString(s: string) {
   localStorage.setItem(HASH.hasReadFeaturePopup, s);
+}
+
+//ANCHOR - Submitted Game
+export function getCachedGame(): IGame | null {
+  const gameString = localStorage.getItem(HASH.game);
+  return gameString ? JSON.parse(gameString) : null;
+}
+
+export function setCachedGame(game: IGame) {
+  localStorage.setItem(HASH.game, JSON.stringify(game));
+}
+
+export function clearCachedGame() {
+  localStorage.removeItem(HASH.game);
 }
