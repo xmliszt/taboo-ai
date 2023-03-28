@@ -9,6 +9,7 @@ import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
 import UserKeyDisplayModal from '../(components)/UserKeyDisplayModal';
 import { CONSTANTS } from '../../lib/constants';
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');
@@ -91,9 +92,9 @@ const SignupPage = () => {
           label: 'Yes I have saved it!',
           onClick: () => {
             setShowSaveKeyModal(false);
-            window.dispatchEvent(
-              new CustomEvent(CONSTANTS.eventKeys.signUpSuccess)
-            );
+            toast.success('Nickname submitted successfully!', {
+              autoClose: 3000,
+            });
             router.push(hasScores ? '/result' : '/');
           },
         },
