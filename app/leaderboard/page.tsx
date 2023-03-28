@@ -264,7 +264,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
                     )}
                   </div>
                   <div
-                    className={`flex-grow self-center overflow-scroll scrollbar-hide text-left ${
+                    className={`flex-grow self-center text-left ${
                       data.rank === 1
                         ? 'text-yellow dark:text-neon-yellow'
                         : 'dark:text-neon-white'

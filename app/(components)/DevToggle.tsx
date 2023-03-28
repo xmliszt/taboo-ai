@@ -1,12 +1,21 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { cacheScore, getLevelCache } from '../../lib/cache';
+import { CONSTANTS } from '../../lib/constants';
 import { HASH } from '../../lib/hash';
+import ILevel from '../../types/level.interface';
+import { getRandomInt } from '../utilities';
 
-const DevToggle = () => {
+interface DevToggleProps {}
+
+const DevToggle = (props: DevToggleProps) => {
   const [devOn, setDevOn] = useState<boolean>(false);
   const [selectedMode, setSelectedMode] = useState<number>(1);
+  const router = useRouter();
+  const path = usePathname();
 
   useEffect(() => {
     setDevOn(localStorage.getItem(HASH.dev) ? true : false);
@@ -31,9 +40,32 @@ const DevToggle = () => {
   const onModeChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedMode(Number(event.target.value));
-      console.log(event.target.value);
       localStorage.setItem('mode', event.target.value);
     }
+  };
+
+  const autoCompleteLevel = () => {
+    const level = getLevelCache();
+    if (level) {
+      for (let i = 1; i <= 5; i++) {
+        const target = level.words[i - 1];
+        cacheScore({
+          id: i,
+          target: target,
+          question: `Sample Question`,
+          response: `Sample Response: ${target}`,
+          difficulty: level.difficulty,
+          completion: getRandomInt(1, 100),
+          responseHighlights: [
+            {
+              start: 17,
+              end: 17 + target.length,
+            },
+          ],
+        });
+      }
+    }
+    router.push('/result');
   };
 
   return (
@@ -120,6 +152,13 @@ const DevToggle = () => {
               </div>
             </div>
           </fieldset>
+          <button
+            disabled={path !== '/level' && path !== '/daily-challenge'}
+            className='h-6 !rounded-full'
+            onClick={autoCompleteLevel}
+          >
+            auto complete
+          </button>
         </>
       )}
     </div>
