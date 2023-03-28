@@ -58,8 +58,6 @@ interface IMaintenance {
   isGPTOutage: boolean;
 }
 
-let registeredEvents: string[] = [];
-
 export default function RootLayout({
   children,
 }: {
@@ -84,14 +82,9 @@ export default function RootLayout({
       } else {
         setShowFeaturePopup(false);
       }
-      registerEventListeners();
       fetchMaintenance();
       fetchCurrentUser();
     }
-
-    return () => {
-      removeEventListeners();
-    };
   }, [isMounted]);
 
   const fetchMaintenance = async () => {
@@ -131,112 +124,6 @@ export default function RootLayout({
         { label: 'No' },
       ],
     });
-  };
-
-  const registerEventListeners = () => {
-    console.log('Register event listeners...');
-    if (!registeredEvents.includes(CONSTANTS.eventKeys.signUpSuccess)) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.signUpSuccess,
-        onBackFromSignUpSuccess as EventListener
-      );
-      registeredEvents.push(CONSTANTS.eventKeys.signUpSuccess);
-    }
-    if (!registeredEvents.includes(CONSTANTS.eventKeys.recoverySuccess)) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.recoverySuccess,
-        onBackFromRecoverySuccess as EventListener
-      );
-      registeredEvents.push(CONSTANTS.eventKeys.recoverySuccess);
-    }
-    if (!registeredEvents.includes(CONSTANTS.eventKeys.noScoreAvailable)) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.noScoreAvailable,
-        onNoScoreAvailable as EventListener
-      );
-      registeredEvents.push(CONSTANTS.eventKeys.noScoreAvailable);
-    }
-    if (!registeredEvents.includes(CONSTANTS.eventKeys.fetchLevelError)) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.fetchLevelError,
-        onErrorFetchingLevel as EventListener
-      );
-      registeredEvents.push(CONSTANTS.eventKeys.fetchLevelError);
-    }
-    if (!registeredEvents.includes(CONSTANTS.eventKeys.alreadyAttemptedLevel)) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.alreadyAttemptedLevel,
-        onAlreadyAttemptedLevel as EventListener
-      );
-      registeredEvents.push(CONSTANTS.eventKeys.alreadyAttemptedLevel);
-    }
-    if (!registeredEvents.includes(CONSTANTS.eventKeys.notYourScore)) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.notYourScore,
-        onNotYourScore as EventListener
-      );
-      registeredEvents.push(CONSTANTS.eventKeys.notYourScore);
-    }
-  };
-
-  const removeEventListeners = () => {
-    console.log('Remove event listeners...');
-    window.removeEventListener(
-      CONSTANTS.eventKeys.signUpSuccess,
-      onBackFromSignUpSuccess as EventListener
-    );
-    window.removeEventListener(
-      CONSTANTS.eventKeys.recoverySuccess,
-      onBackFromRecoverySuccess as EventListener
-    );
-    window.removeEventListener(
-      CONSTANTS.eventKeys.noScoreAvailable,
-      onNoScoreAvailable as EventListener
-    );
-    window.removeEventListener(
-      CONSTANTS.eventKeys.fetchLevelError,
-      onErrorFetchingLevel as EventListener
-    );
-    window.removeEventListener(
-      CONSTANTS.eventKeys.alreadyAttemptedLevel,
-      onAlreadyAttemptedLevel as EventListener
-    );
-    window.removeEventListener(
-      CONSTANTS.eventKeys.notYourScore,
-      onNotYourScore as EventListener
-    );
-    registeredEvents = [];
-  };
-
-  const onBackFromSignUpSuccess = () => {
-    fetchCurrentUser();
-    toast.success('Nickname submitted successfully!', { autoClose: 3000 });
-  };
-
-  const onBackFromRecoverySuccess = () => {
-    fetchCurrentUser();
-    toast.success('Account recovered successfully!', { autoClose: 3000 });
-  };
-
-  const onNoScoreAvailable = () => {
-    toast.warn(
-      'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-      { autoClose: 3000 }
-    );
-  };
-
-  const onErrorFetchingLevel = () => {
-    toast.error('Unable to fetch daily challenge! Please try again later!');
-  };
-
-  const onAlreadyAttemptedLevel = () => {
-    toast.warn("Seems like you have attempted today's challenge.");
-  };
-
-  const onNotYourScore = () => {
-    toast.warn(
-      'We have detected a different account from the stored game data.'
-    );
   };
 
   return (
@@ -316,22 +203,20 @@ export default function RootLayout({
             patience!
           </section>
         ) : (
-          <>
-            <ToastContainer
-              position='top-center'
-              autoClose={2000}
-              hideProgressBar={true}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              draggable
-              theme='light'
-            />
-            {children}
-          </>
+          children
         )}
         <AnalyticsWrapper />
       </body>
+      <ToastContainer
+        position='top-center'
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        draggable
+        theme='light'
+      />
     </html>
   );
 }

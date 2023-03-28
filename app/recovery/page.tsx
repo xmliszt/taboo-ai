@@ -61,9 +61,7 @@ const RecoveryPage = () => {
         user.recovery_key,
         navigator.userAgent
       );
-      window.dispatchEvent(
-        new CustomEvent(CONSTANTS.eventKeys.recoverySuccess)
-      );
+      toast.success('Account recovered successfully!', { autoClose: 3000 });
       router.push(hasScores ? '/result' : '/');
     } catch (error) {
       console.error(error);

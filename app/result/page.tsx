@@ -137,10 +137,11 @@ export default function ResultPage(props: ResultPageProps) {
       } catch {
         setIsLoading(false);
         if (!scores || !level) {
-          router.push('/');
-          window.dispatchEvent(
-            new CustomEvent(CONSTANTS.eventKeys.noScoreAvailable)
+          toast.warn(
+            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+            { autoClose: 3000 }
           );
+          router.push('/');
           return;
         } else {
           setLevel(level);
@@ -153,10 +154,11 @@ export default function ResultPage(props: ResultPageProps) {
       }
     } else {
       if (!scores || !level) {
-        router.push('/');
-        window.dispatchEvent(
-          new CustomEvent(CONSTANTS.eventKeys.noScoreAvailable)
+        toast.warn(
+          'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+          { autoClose: 3000 }
         );
+        router.push('/');
         return;
       } else {
         setLevel(level);

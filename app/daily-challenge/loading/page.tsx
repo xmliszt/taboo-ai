@@ -74,9 +74,7 @@ const DailyLevelLoadingPage = () => {
             cacheScore(displayScore);
           }
           setIsLoading(false);
-          window.dispatchEvent(
-            new CustomEvent(CONSTANTS.eventKeys.alreadyAttemptedLevel)
-          );
+          toast.warn("Seems like you have attempted today's challenge.");
           router.push('/result');
           return;
         }
@@ -86,9 +84,7 @@ const DailyLevelLoadingPage = () => {
       router.push('/daily-challenge');
     } catch (error) {
       console.error(error);
-      window.dispatchEvent(
-        new CustomEvent(CONSTANTS.eventKeys.fetchLevelError)
-      );
+      toast.error('Unable to fetch daily challenge! Please try again later!');
       router.push('/');
     } finally {
       setIsLoading(false);
