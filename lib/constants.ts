@@ -10,6 +10,7 @@ export const CONSTANTS = {
     noScoreAvailable: 'onNoScoreAvailable',
     fetchLevelError: 'onFetchLevelError',
     alreadyAttemptedLevel: 'onAlreadyAttemptedLevel',
+    notYourScore: 'onNotYourScore',
   },
   errors: {
     overloaded:

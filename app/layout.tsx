@@ -26,6 +26,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import Link from 'next/link';
 import { BsFillQuestionSquareFill } from 'react-icons/bs';
 import FeaturePopup from './(components)/(FeaturePopup)/FeaturePopup';
+import LoadingMask from './(components)/LoadingMask';
 
 const grenze = Grenze({
   weight: '400',
@@ -69,6 +70,7 @@ export default function RootLayout({
   const [currentUser, setCurrentUser] = useState<IUser | undefined>();
   const [isDark, setIsDark] = useState(false);
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const pathName = usePathname();
 
   useEffect(() => {
@@ -93,8 +95,15 @@ export default function RootLayout({
   }, [isMounted]);
 
   const fetchMaintenance = async () => {
-    const data = await getMaintenance();
-    setMaintenanceData(data);
+    setIsLoading(true);
+    try {
+      const data = await getMaintenance();
+      setMaintenanceData(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchCurrentUser = () => {
@@ -161,6 +170,13 @@ export default function RootLayout({
       );
       registeredEvents.push(CONSTANTS.eventKeys.alreadyAttemptedLevel);
     }
+    if (!registeredEvents.includes(CONSTANTS.eventKeys.notYourScore)) {
+      window.addEventListener(
+        CONSTANTS.eventKeys.notYourScore,
+        onNotYourScore as EventListener
+      );
+      registeredEvents.push(CONSTANTS.eventKeys.notYourScore);
+    }
   };
 
   const removeEventListeners = () => {
@@ -184,6 +200,10 @@ export default function RootLayout({
     window.removeEventListener(
       CONSTANTS.eventKeys.alreadyAttemptedLevel,
       onAlreadyAttemptedLevel as EventListener
+    );
+    window.removeEventListener(
+      CONSTANTS.eventKeys.notYourScore,
+      onNotYourScore as EventListener
     );
     registeredEvents = [];
   };
@@ -213,6 +233,12 @@ export default function RootLayout({
     toast.warn("Seems like you have attempted today's challenge.");
   };
 
+  const onNotYourScore = () => {
+    toast.warn(
+      'We have detected a different account from the stored game data.'
+    );
+  };
+
   return (
     <html
       lang='en'
@@ -222,9 +248,10 @@ export default function RootLayout({
     >
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        {!(pathName === '/level' || pathName === '/daily-challenge') && (
+        <LoadingMask isLoading={isLoading} message='Fetching data for you...' />
+        {/* {!(pathName === '/level' || pathName === '/daily-challenge') && (
           <WordCarousell />
-        )}
+        )} */}
         {showFeaturePopup && <FeaturePopup />}
         <section
           id='header-section'

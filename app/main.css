@@ -96,15 +96,9 @@
     background: linear-gradient(
       45deg,
       #ff722b,
-      #ff8a2b,
-      #ff8a2b,
-      #ffa705,
-      #ffb52b,
       #ffef61,
       #ffffa9,
       #ffef61,
-      #ffb52b,
-      #ff8a2b,
       #ff722b
     );
     background-size: 500%;
@@ -115,7 +109,7 @@
   }
 
   .color-gradient-animated-background-golden::after {
-    @apply blur-xl;
+    @apply blur;
   }
 
   .color-gradient-animated-background::before,
@@ -129,11 +123,9 @@
     background: linear-gradient(
       45deg,
       #fb0094,
-      #0000ff,
-      #00ff00,
-      #ffff00,
-      #00ff00,
-      #0000ff,
+      #0088ff,
+      #5500ff,
+      #0088ff,
       #fb0094
     );
     background-size: 500%;

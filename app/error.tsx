@@ -1,10 +1,19 @@
 'use client';
 
+import { useEffect } from 'react';
 import BackButton from './(components)/BackButton';
-import { useRouter } from 'next/navigation';
 
-export default function Error({ error }: { error: Error; reset: () => void }) {
-  const router = useRouter();
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
     <div className='w-full h-screen flex flex-col justify-center items-center gap-10'>
       <BackButton href='/' />
@@ -18,10 +27,10 @@ export default function Error({ error }: { error: Error; reset: () => void }) {
         aria-label='reset button'
         className='text-2xl lg:text-4xl text-red-light hover:text-yellow transition-all'
         onClick={() => {
-          router.push('/');
+          reset();
         }}
       >
-        Back To Home
+        Try Again
       </button>
     </div>
   );

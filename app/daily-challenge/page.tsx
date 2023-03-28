@@ -325,11 +325,13 @@ export default function DailyLevelPage(props: DailyLevelProps) {
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
           setIsGeneratingVariations(false);
+          let _variations = [target];
           if (variations && variations.target === target) {
-            setVariations(variations.variations);
-          } else {
-            setVariations([target]);
+            _variations = variations.variations;
           }
+          setVariations(
+            _variations.map((word) => _.startCase(_.toLower(word)))
+          );
           setResponseShouldFadeOut(true);
           setResponseText('');
           startCountdown();
@@ -356,8 +358,11 @@ export default function DailyLevelPage(props: DailyLevelProps) {
               onClick: () => {
                 reset();
                 setDifficulty(level.difficulty);
-                setWords(level.words);
-                const _target = generateNewTarget(level.words);
+                const words = level.words.map((word) =>
+                  _.startCase(_.toLower(word))
+                );
+                setWords(words);
+                const _target = generateNewTarget(words);
                 setTarget(_target);
                 setCurrentProgress(1);
                 setIsSuccess(false);
