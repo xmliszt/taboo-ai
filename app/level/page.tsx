@@ -284,7 +284,7 @@ export default function LevelPage(props: LevelPageProps) {
         });
     } else {
       const savedWords = await getVariations(target);
-      if (savedWords.length > 0) {
+      if (savedWords.length > 1) {
         callback({ target: target, variations: savedWords });
       } else {
         getWordVariations(target)
@@ -320,9 +320,15 @@ export default function LevelPage(props: LevelPageProps) {
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
           setIsGeneratingVariations(false);
-          let _variations = [target];
+          const _variations = [target];
           if (variations && variations.target === target) {
-            _variations = variations.variations;
+            setVariations(
+              variations.variations.map((variation) =>
+                _.startCase(_.trim(_.toLower(variation)))
+              )
+            );
+          } else {
+            setVariations([target]);
           }
           setVariations(
             _variations.map((word) => _.startCase(_.toLower(word)))
@@ -344,7 +350,9 @@ export default function LevelPage(props: LevelPageProps) {
       if (level !== null) {
         reset();
         setDifficulty(level.difficulty);
-        const words = level.words.map((word) => _.startCase(_.toLower(word)));
+        const words = level.words.map((word) =>
+          _.startCase(_.trim(_.toLower(word)))
+        );
         setWords(words);
         const _target = generateNewTarget(words);
         setTarget(_target);
