@@ -25,7 +25,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IVariation from '../(models)/variationModel';
 import { getMockResponse, getMockVariations } from '../utilities';
-import { saveGame } from '../../lib/services/gameService';
 import { getTabooWords } from '../../lib/services/wordService';
 
 interface LevelPageProps {}
@@ -286,7 +285,7 @@ export default function LevelPage(props: LevelPageProps) {
         });
     } else {
       const savedWords = await getTabooWords(target);
-      if (savedWords.length > 0) {
+      if (savedWords.length > 1) {
         callback({ target: target, variations: savedWords });
       } else {
         getWordVariations(target)
@@ -323,7 +322,11 @@ export default function LevelPage(props: LevelPageProps) {
         setTimeout(() => {
           setIsGeneratingVariations(false);
           if (variations && variations.target === target) {
-            setVariations(variations.variations);
+            setVariations(
+              variations.variations.map((variation) =>
+                _.startCase(_.trim(_.toLower(variation)))
+              )
+            );
           } else {
             setVariations([target]);
           }
@@ -346,7 +349,7 @@ export default function LevelPage(props: LevelPageProps) {
         setDifficulty(level.difficulty);
         setWords(level.words);
         const _target = generateNewTarget(level.words);
-        setTarget(_target);
+        setTarget(_.startCase(_.trim(_.toLower(_target))));
         setCurrentProgress(1);
         setIsSuccess(false);
         setResponseShouldFadeOut(false); // Let new response fade in
