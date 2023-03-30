@@ -807,7 +807,7 @@ export default function ResultPage(props: ResultPageProps) {
         )}
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
-      <div className='fixed bottom-2 z-50 w-full text-center py-4'>
+      <div className='fixed bottom-2 z-40 w-full text-center py-4'>
         {level?.isDaily ? (
           <button
             id='leaderboard'
