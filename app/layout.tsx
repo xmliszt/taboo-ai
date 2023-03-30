@@ -52,37 +52,39 @@ export default function RootLayout({
 }) {
   const [isDark, setIsDark] = useState(false);
   const pathName = usePathname();
-  const maintenanceMode = JSON.parse(
-    process.env.NEXT_PUBLIC_MAINTENANCE || 'false'
-  );
+  // const maintenanceMode = JSON.parse(
+  //   process.env.NEXT_PUBLIC_MAINTENANCE || 'false'
+  // );
 
-  return maintenanceMode ? (
-    <html
-      lang='en'
-      className={`${isDark && 'dark'} ${
-        isDark ? orbitron.className : grenze.className
-      } font-serif`}
-    >
-      <head />
-      <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        <header
-          id='header-section'
-          className={
-            'w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 text-center bg-black dark:bg-neon-black'
-          }
-        >
-          <LightDarkToggle
-            onToggle={(dark) => {
-              setIsDark(dark);
-            }}
-          />
-        </header>
-        <Maintenance />
-        <WordCarousell />
-        <AnalyticsWrapper />
-      </body>
-    </html>
-  ) : (
+  // return
+  //  maintenanceMode ? (
+  //   <html
+  //     lang='en'
+  //     className={`${isDark && 'dark'} ${
+  //       isDark ? orbitron.className : grenze.className
+  //     } font-serif`}
+  //   >
+  //     <head />
+  //     <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
+  //       <header
+  //         id='header-section'
+  //         className={
+  //           'w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 text-center bg-black dark:bg-neon-black'
+  //         }
+  //       >
+  //         <LightDarkToggle
+  //           onToggle={(dark) => {
+  //             setIsDark(dark);
+  //           }}
+  //         />
+  //       </header>
+  //       <Maintenance />
+  //       <WordCarousell />
+  //       <AnalyticsWrapper />
+  //     </body>
+  //   </html>
+  // ) : (
+  return (
     <html
       lang='en'
       className={`${isDark && 'dark'} ${
@@ -140,4 +142,5 @@ export default function RootLayout({
       </body>
     </html>
   );
+  // );
 }
