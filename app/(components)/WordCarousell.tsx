@@ -90,7 +90,7 @@ const getOpacityAndBlurClass = (size: string): string => {
   return 'opacity-10 blur-xxxxs';
 };
 
-const wordDensity = 15;
+const wordDensity = 20;
 
 export default function WordCarousell() {
   const [hasDisplayed, setHasDisplayed] = useState(false);

@@ -20,7 +20,7 @@ export const updateWord = async (word: string, tabooWords: string[]) => {
         .map((word) => word.toLowerCase())
         .join(','),
     })
-    .eq('word', word);
+    .ilike('word', `%${word.toLowerCase()}%`);
   if (error) {
     console.error(error);
     throw Error(error.message);
@@ -28,7 +28,10 @@ export const updateWord = async (word: string, tabooWords: string[]) => {
 };
 
 export const getWords = async (word: string) => {
-  const { data, error } = await supabase.from('word').select().eq('word', word);
+  const { data, error } = await supabase
+    .from('word')
+    .select()
+    .ilike('word', `%${word.toLowerCase()}%`); // case insensitive matching
   if (error) {
     console.error(error);
     throw Error(error.message);

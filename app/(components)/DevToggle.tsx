@@ -84,14 +84,6 @@ const DevToggle = (props: DevToggleProps) => {
       </div>
       {devOn && (
         <>
-          <ol className='list-inside underline list-decimal leading-none'>
-            <li>
-              <Link href='/dev'>Review Taboo Word</Link>
-            </li>
-            <li>
-              <Link href='/dev/daily'>Generate Daily Words</Link>
-            </li>
-          </ol>
           <fieldset
             id='response-mode'
             className='p-4 bg-white text-black leading-none rounded-lg opacity-50'

@@ -145,10 +145,9 @@ export default function ResultPage(props: ResultPageProps) {
           return;
         } else {
           setLevel(level);
+          updateDisplayedScores(scores);
           if (level.isDaily) {
             showResultSubmissionPrompt();
-          } else {
-            updateDisplayedScores(scores);
           }
         }
       }
@@ -162,10 +161,9 @@ export default function ResultPage(props: ResultPageProps) {
         return;
       } else {
         setLevel(level);
+        updateDisplayedScores(scores);
         if (level.isDaily) {
           showJoinLeaderboardPrompt();
-        } else {
-          updateDisplayedScores(scores);
         }
       }
     }
@@ -378,9 +376,9 @@ export default function ResultPage(props: ResultPageProps) {
         const href = canvas
           .toDataURL('image/png')
           .replace('image/png', 'image/octet-stream');
-        const downloadName = `taboo-ai_[${
-          displayedLevelName ?? level?.name ?? 'game'
-        }]_scores_${Date.now()}.png`;
+        const downloadName = `taboo-ai-scores-${moment().format(
+          'DDMMYYYYHHmmss'
+        )}.png`;
         performNavigatorShare(text, href, downloadName);
       });
     }
@@ -422,25 +420,28 @@ export default function ResultPage(props: ResultPageProps) {
       if (navigator.share) {
         navigator
           .share({
-            title: 'WebShare API Demo',
-            url: 'https://codepen.io/ayoisaiah/pen/YbNazJ',
+            title:
+              totalScore > 0
+                ? `I scored ${totalScore} in Taboo.AI!`
+                : 'Look at my results at Taboo.AI!',
+            url: 'https://taboo-ai.vercel.app',
           })
           .then(() => {
-            console.log('Thanks for sharing!');
+            console.log('Shared');
+            return;
           })
           .catch(console.error);
-      } else {
-        copy(title)
-          .then(() => {
-            toast.success('Sharing content has been copied to clipboard!');
-          })
-          .catch((error) => {
-            console.error(error);
-            toast.error(
-              'Sorry, we are unable to generate the sharing content at the moment. Please try again later.'
-            );
-          });
       }
+      copy(title)
+        .then(() => {
+          toast.success('Sharing content has been copied to clipboard!');
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error(
+            'Sorry, we are unable to generate the sharing content at the moment. Please try again later.'
+          );
+        });
     }
   };
 
@@ -809,7 +810,7 @@ export default function ResultPage(props: ResultPageProps) {
         )}
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
-      <div className='fixed bottom-2 z-50 w-full text-center py-4'>
+      <div className='fixed bottom-2 z-40 w-full text-center py-4'>
         {level?.isDaily ? (
           <button
             id='leaderboard'

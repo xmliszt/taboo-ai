@@ -34,7 +34,7 @@ const ConfirmPopUp = (props: ConfirmPopUpProps) => {
         <div
           onClick={close}
           onKeyDown={escClose}
-          className='w-full h-full fixed top-0 left-0 bg-[rgba(0,0,0,0.5)] backdrop-blur-sm z-[999] flex justify-center items-center leading-normal animate-fade-in'
+          className='w-full h-full fixed top-0 left-0 bg-[rgba(0,0,0,0.5)] backdrop-blur-sm z-40 flex justify-center items-center leading-normal animate-fade-in'
         >
           <div
             onClick={(e) => {

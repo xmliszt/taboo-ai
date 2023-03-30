@@ -18,7 +18,11 @@ import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import { toast } from 'react-toastify';
 import IVariation from '../../types/variation.interface';
-import { getMockResponse, getMockVariations } from '../utilities';
+import {
+  formatStringForDisplay,
+  getMockResponse,
+  getMockVariations,
+} from '../utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 
@@ -284,7 +288,7 @@ export default function LevelPage(props: LevelPageProps) {
         });
     } else {
       const savedWords = await getVariations(target);
-      if (savedWords.length > 0) {
+      if (savedWords.length > 1) {
         callback({ target: target, variations: savedWords });
       } else {
         getWordVariations(target)
@@ -325,7 +329,7 @@ export default function LevelPage(props: LevelPageProps) {
             _variations = variations.variations;
           }
           setVariations(
-            _variations.map((word) => _.startCase(_.toLower(word)))
+            _variations.map((variation) => formatStringForDisplay(variation))
           );
           setResponseShouldFadeOut(true);
           setResponseText('');
@@ -344,7 +348,7 @@ export default function LevelPage(props: LevelPageProps) {
       if (level !== null) {
         reset();
         setDifficulty(level.difficulty);
-        const words = level.words.map((word) => _.startCase(_.toLower(word)));
+        const words = level.words.map((word) => formatStringForDisplay(word));
         setWords(words);
         const _target = generateNewTarget(words);
         setTarget(_target);
@@ -434,7 +438,7 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   return (
-    <section className='flex justify-center h-full'>
+    <section className='flex justify-center h-full bg-black dark:bg-neon-black'>
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}

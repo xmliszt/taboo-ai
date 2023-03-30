@@ -19,5 +19,5 @@ export const CONSTANTS = {
       'Taboo AI is unable to generate the list of words related to the topic',
   },
   mask: 'XXXXXXXXXXX',
-  featurePopupString: 'v2.0',
+  featurePopupString: 'v2.0', // The current feature release version
 };
