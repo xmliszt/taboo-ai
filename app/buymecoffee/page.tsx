@@ -10,7 +10,7 @@ const BuyMeCoffeePage = () => {
         <a
           href='/images/bmc_qr.png'
           download='BuyMeCoffee-TabooAI_by_LiYuxuan.png'
-          className='mt-16'
+          className='mt-16 lg:mt-24'
         >
           <Image
             width={200}

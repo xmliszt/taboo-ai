@@ -53,7 +53,7 @@ const UserDisplay = () => {
 
   if (pathName === '/') {
     return currentUser ? (
-      <div className='flex-grow text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
+      <div className='text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
         <span>{currentUser.nickname}</span>
         <button
           id='submit'
