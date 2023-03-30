@@ -161,6 +161,10 @@ export const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+export const formatStringForDisplay = (s: string) => {
+  return _.startCase(_.trim(_.toLower(s)));
+};
+
 export const getDifficulty = (difficulty: number): string => {
   switch (difficulty) {
     case 1:

@@ -101,6 +101,7 @@ export default function RootLayout({
 
   const fetchCurrentUser = () => {
     const user = getUser();
+    console.log(user);
     user && setCurrentUser(user);
   };
 
@@ -206,17 +207,17 @@ export default function RootLayout({
           children
         )}
         <AnalyticsWrapper />
+        <ToastContainer
+          position='top-center'
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          draggable
+          theme='light'
+        />
       </body>
-      <ToastContainer
-        position='top-center'
-        autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        draggable
-        theme='light'
-      />
     </html>
   );
 }

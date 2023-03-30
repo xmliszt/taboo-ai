@@ -18,7 +18,11 @@ import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import { toast } from 'react-toastify';
 import IVariation from '../../types/variation.interface';
-import { getMockResponse, getMockVariations } from '../utilities';
+import {
+  formatStringForDisplay,
+  getMockResponse,
+  getMockVariations,
+} from '../utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 
@@ -320,18 +324,12 @@ export default function LevelPage(props: LevelPageProps) {
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
           setIsGeneratingVariations(false);
-          const _variations = [target];
+          let _variations = [target];
           if (variations && variations.target === target) {
-            setVariations(
-              variations.variations.map((variation) =>
-                _.startCase(_.trim(_.toLower(variation)))
-              )
-            );
-          } else {
-            setVariations([target]);
+            _variations = variations.variations;
           }
           setVariations(
-            _variations.map((word) => _.startCase(_.toLower(word)))
+            _variations.map((variation) => formatStringForDisplay(variation))
           );
           setResponseShouldFadeOut(true);
           setResponseText('');
@@ -350,9 +348,7 @@ export default function LevelPage(props: LevelPageProps) {
       if (level !== null) {
         reset();
         setDifficulty(level.difficulty);
-        const words = level.words.map((word) =>
-          _.startCase(_.trim(_.toLower(word)))
-        );
+        const words = level.words.map((word) => formatStringForDisplay(word));
         setWords(words);
         const _target = generateNewTarget(words);
         setTarget(_target);

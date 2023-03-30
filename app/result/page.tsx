@@ -145,10 +145,9 @@ export default function ResultPage(props: ResultPageProps) {
           return;
         } else {
           setLevel(level);
+          updateDisplayedScores(scores);
           if (level.isDaily) {
             showResultSubmissionPrompt();
-          } else {
-            updateDisplayedScores(scores);
           }
         }
       }
@@ -162,10 +161,9 @@ export default function ResultPage(props: ResultPageProps) {
         return;
       } else {
         setLevel(level);
+        updateDisplayedScores(scores);
         if (level.isDaily) {
           showJoinLeaderboardPrompt();
-        } else {
-          updateDisplayedScores(scores);
         }
       }
     }

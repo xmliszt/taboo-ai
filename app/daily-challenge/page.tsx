@@ -19,6 +19,7 @@ import { Highlight } from '../../types/chat.interface';
 import { toast } from 'react-toastify';
 import IVariation from '../../types/variation.interface';
 import {
+  formatStringForDisplay,
   getDifficulty,
   getMockResponse,
   getMockVariations,
@@ -330,7 +331,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
             _variations = variations.variations;
           }
           setVariations(
-            _variations.map((word) => _.startCase(_.toLower(word)))
+            _variations.map((word) => formatStringForDisplay(word))
           );
           setResponseShouldFadeOut(true);
           setResponseText('');
@@ -359,7 +360,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
                 reset();
                 setDifficulty(level.difficulty);
                 const words = level.words.map((word) =>
-                  _.startCase(_.toLower(word))
+                  formatStringForDisplay(word)
                 );
                 setWords(words);
                 const _target = generateNewTarget(words);
