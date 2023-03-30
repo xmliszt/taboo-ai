@@ -1,13 +1,11 @@
 import Image from 'next/image';
 const BuyMeCoffeeQR = '/images/bmc_qr.png';
 import { GiCoffeeCup } from 'react-icons/gi';
-import BackButton from '../(components)/BackButton';
 import SocialLinkButton from '../(components)/SocialLinkButton';
 
 const BuyMeCoffeePage = () => {
   return (
     <>
-      <BackButton href='/' />
       <section className='w-full h-full flex flex-col gap-8 items-center overflow-y-scroll scrollbar-hide leading-normal'>
         <a
           href='/images/bmc_qr.png'

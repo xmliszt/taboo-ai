@@ -1,13 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { cacheScore, getLevelCache } from '../../lib/cache';
-import { CONSTANTS } from '../../lib/constants';
 import { HASH } from '../../lib/hash';
-import ILevel from '../../types/level.interface';
-import { getRandomInt } from '../utilities';
+import { getRandomInt } from '../../lib/utilities';
 
 interface DevToggleProps {}
 

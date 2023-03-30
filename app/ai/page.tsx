@@ -5,7 +5,6 @@ import { getCreativeLevel } from '../../lib/services/frontend/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';
-import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/LoadingMask';
 
 interface AiPageProps {}
@@ -59,7 +58,6 @@ export default function AiPage(props: AiPageProps) {
           !isValid || somethingWrong ? 'bg-red dark:bg-neon-red-light' : ''
         }`}
       >
-        <BackButton href='/levels' />
         <form onSubmit={submitForm}>
           <div className='flex flex-col gap-6 justify-center items-center'>
             <label

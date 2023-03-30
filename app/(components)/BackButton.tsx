@@ -1,20 +1,48 @@
 'use client';
 
-import { FiPower } from 'react-icons/fi';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { BiHomeAlt, BiLeftArrowAlt } from 'react-icons/bi';
 
-interface BackButtonProps {
-  href?: string;
-}
+interface BackButtonProps {}
 
 export default function BackButton(props: BackButtonProps = {}) {
+  const [buttonStyle, setButtonStyle] = useState<'BACK' | 'HOME'>('BACK');
+
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    switch (pathname) {
+      case '/result':
+      case '/whatsnew':
+      case '/roadmap':
+      case '/leaderboard':
+        setButtonStyle('HOME');
+        break;
+      default:
+        setButtonStyle('BACK');
+        break;
+    }
+  }, [pathname]);
 
   const back = () => {
-    if (props.href !== undefined) {
-      router.push(props.href);
-    } else {
-      router.back();
+    switch (buttonStyle) {
+      case 'BACK':
+        router.back();
+        break;
+      case 'HOME':
+        router.push('/');
+        break;
+    }
+  };
+
+  const renderIcon = () => {
+    switch (buttonStyle) {
+      case 'BACK':
+        return <BiLeftArrowAlt />;
+      case 'HOME':
+        return <BiHomeAlt />;
     }
   };
 
@@ -23,12 +51,12 @@ export default function BackButton(props: BackButtonProps = {}) {
       id='back'
       data-style='none'
       aria-label='back button'
-      className='fixed hover:animate-pulse z-50 top-5 left-4 lg:text-4xl hover:cursor-pointer drop-shadow-lg dark:text-neon-blue'
+      className='hover:animate-pulse text-2xl lg:text-4xl hover:cursor-pointer drop-shadow-lg dark:text-neon-blue'
       onClick={() => {
         back();
       }}
     >
-      <FiPower />
+      {renderIcon()}
     </button>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/LoadingMask';
 import { getLevels } from '../../lib/services/frontend/levelService';
 import ILevel from '../../types/level.interface';
@@ -10,7 +9,7 @@ import HotBadge from '../(components)/(Badges)/HotBadge';
 import NewBadge from '../(components)/(Badges)/NewBadge';
 import AuthorBadge from '../(components)/(Badges)/AuthorBadge';
 import LevelButton from '../(components)/LevelButton';
-import { getDifficulty } from '../utilities';
+import { getDifficulty } from '../../lib/utilities';
 
 interface LevelsPageProps {}
 
@@ -60,7 +59,6 @@ export default function LevelsPage(props: LevelsPageProps) {
   return (
     <section className='w-full h-full flex justify-around px-10 overflow-y-scroll scrollbar-hide'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
-      <BackButton href='/' />
       <h1
         data-testid='levels-heading-title'
         className='fixed top-0 z-50 h-20 text-center pt-4 dark:text-neon-blue pointer-events-none'

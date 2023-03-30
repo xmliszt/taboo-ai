@@ -4,12 +4,6 @@ import { TbBrandNextjs } from 'react-icons/tb';
 import { SiOpenai } from 'react-icons/si';
 import { FiGithub } from 'react-icons/fi';
 
-declare global {
-  interface Window {
-    displayPreferenceModal: () => void;
-  }
-}
-
 export default function Footer() {
   return (
     <footer

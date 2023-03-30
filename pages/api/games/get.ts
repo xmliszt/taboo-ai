@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { maskPlayerID } from '../../../app/utilities';
+import { maskPlayerID } from '../../../lib/utilities';
 import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 import {
   retrieveAllGames,

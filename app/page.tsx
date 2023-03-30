@@ -1,10 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import HotBadge from './(components)/(Badges)/HotBadge';
 import NewBadge from './(components)/(Badges)/NewBadge';
 import CustomWordListLink from './(components)/CustomWordListLink';
-import DevToggle from './(components)/DevToggle';
 import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
 import Footer from './(components)/Footer';
 import SocialLinkButton from './(components)/SocialLinkButton';
@@ -13,8 +14,7 @@ interface HomePageProps {}
 
 export default function HomePage(props: HomePageProps) {
   const title = 'Taboo.AI';
-  const versionNumber = `V${process.env.TABOO_AI_VERSION}`;
-  const environment = process.env.VERCEL_ENV;
+  const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
@@ -61,9 +61,6 @@ export default function HomePage(props: HomePageProps) {
             </div>
           </Link>
         </HotBadge>
-        {(environment === 'preview' || environment === 'development') && (
-          <DevToggle />
-        )}
         <CustomWordListLink />
       </section>
       <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-10'>

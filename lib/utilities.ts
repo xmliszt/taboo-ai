@@ -1,12 +1,56 @@
 import _ from 'lodash';
+import crypto from 'crypto';
 import IVariation from '../types/variation.interface';
 import { Highlight, IHighlight } from '../types/chat.interface';
 import { IDisplayScore, IScore } from '../types/score.interface';
 import ILevel from '../types/level.interface';
 import IGame from '../types/game.interface';
-import { CONSTANTS } from '../lib/constants';
+import { CONSTANTS } from './constants';
 import IDailyLevel from '../types/dailyLevel.interface';
 import moment from 'moment';
+import { NextApiRequest } from 'next';
+
+export function getIp(req: NextApiRequest): string | undefined {
+  let ip: string | undefined;
+  if (req.headers['x-forwarded-for']) {
+    if (req.headers['x-forwarded-for'] as string[]) {
+      ip = req.headers['x-forwarded-for'][0];
+    } else if (req.headers['x-forwarded-for'] as string) {
+      ip = (req.headers['x-forwarded-for'] as string).split(',')[0];
+    }
+  } else if (req.headers['x-real-ip']) {
+    ip = req.socket.remoteAddress;
+  } else {
+    ip = req.socket.remoteAddress;
+  }
+  return ip;
+}
+
+export function generateHashedString(...items: string[]): string {
+  const stringToHash = items.join('_');
+  const hash = crypto.createHash('sha256').update(stringToHash).digest('hex');
+  const truncatedHash = hash.substring(0, 8);
+  return truncatedHash;
+}
+
+export function calculateScore(score: IDisplayScore): number {
+  return _.round(
+    score.difficulty *
+      (1 / (score.completion <= 0 ? 1 : score.completion)) *
+      1000,
+    2
+  );
+}
+
+export function getFormattedToday(): string {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+    date
+  );
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${day}-${month}-${year}`;
+}
 
 /**
  * Sanitize the array of Highlight objects such that Highlight
@@ -43,37 +87,6 @@ export const sanitizeHighlights = (highlights: Highlight[]): Highlight[] => {
     }
   }
   return results;
-};
-
-export const applyHighlightsToMessage = (
-  message: string,
-  highlights: Highlight[],
-  onNormalMessagePart: (s: string) => JSX.Element,
-  onHighlightMessagePart: (s: string) => JSX.Element
-): JSX.Element[] => {
-  let parts = [];
-  if (highlights.length === 0) parts = [<span key={message}>{message}</span>];
-  else {
-    let startIndex = 0;
-    let endIndex = 0;
-    for (const highlight of highlights) {
-      endIndex = highlight.start;
-      while (/[\W_]/g.test(message[endIndex])) {
-        endIndex++;
-      }
-      // Normal part
-      parts.push(onNormalMessagePart(message.substring(startIndex, endIndex)));
-      startIndex = endIndex;
-      endIndex = highlight.end;
-      // Highlighted part
-      parts.push(
-        onHighlightMessagePart(message.substring(startIndex, endIndex))
-      );
-      startIndex = endIndex;
-    }
-    parts.push(onNormalMessagePart(message.substring(endIndex)));
-  }
-  return parts;
 };
 
 export const formatResponseTextIntoArray = (

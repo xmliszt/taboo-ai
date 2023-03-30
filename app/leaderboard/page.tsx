@@ -1,6 +1,5 @@
 'use client';
 
-import BackButton from '../(components)/BackButton';
 import { isMobile } from 'react-device-detect';
 import LoadingMask from '../(components)/LoadingMask';
 import { useEffect, useState } from 'react';
@@ -29,7 +28,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../lib/services/frontend/highlightService';
-import { buildLevelForDisplay, buildScoresForDisplay } from '../utilities';
+import {
+  buildLevelForDisplay,
+  buildScoresForDisplay,
+} from '../../lib/utilities';
 
 interface LeaderboardPageProps {}
 
@@ -227,7 +229,6 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
         isLoading={isLoading}
         message='Fetching the Wall of Fame'
       />
-      <BackButton href='/' />
       <h1 className='fixed top-0 h-20 py-4 text-center z-50'>
         Daily Wall of Fame
       </h1>

@@ -1,4 +1,3 @@
-import BackButton from '../(components)/BackButton';
 import ReactMarkdown from 'react-markdown';
 import content from './roadmap.md';
 import style from './style.module.css';
@@ -10,7 +9,6 @@ interface RoadmapPageProps {}
 export default async function RoadmapPage(props: RoadmapPageProps) {
   return (
     <section className='flex flex-col items-center'>
-      <BackButton href='/' />
       <div className='h-32 fixed bottom-0 w-full z-10 gradient-up dark:gradient-up-dark-black pointer-events-none'></div>
       <Link
         href='/whatsnew'

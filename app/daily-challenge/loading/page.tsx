@@ -20,7 +20,10 @@ import {
 } from '../../../lib/services/frontend/gameService';
 import { getScoresByGameID } from '../../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../../lib/services/frontend/highlightService';
-import { buildLevelForDisplay, buildScoresForDisplay } from '../../utilities';
+import {
+  buildLevelForDisplay,
+  buildScoresForDisplay,
+} from '../../../lib/utilities';
 import { CONSTANTS } from '../../../lib/constants';
 
 /**

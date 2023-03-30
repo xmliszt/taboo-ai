@@ -1,14 +1,12 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import BackButton from '../(components)/BackButton';
 import { getScoresCache, setUser } from '../../lib/cache';
 import LoadingMask from '../(components)/LoadingMask';
 import { confirmAlert } from 'react-confirm-alert';
 import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
 import UserKeyDisplayModal from '../(components)/UserKeyDisplayModal';
-import { CONSTANTS } from '../../lib/constants';
 import { toast } from 'react-toastify';
 
 const SignupPage = () => {
@@ -117,7 +115,6 @@ const SignupPage = () => {
         isLoading={isLoading}
         message='Submitting your nickname...'
       />
-      <BackButton href={hasScores ? '/result' : '/'} />
       <section className='w-full h-full flex justify-center items-center leading-normal'>
         <div
           className={`h-4/5 aspect-square max-w-[80vw] max-h-[80vh] rounded-3xl drop-shadow-lg bg-white dark:bg-neon-gray p-4 lg:p-16 transition-all ${

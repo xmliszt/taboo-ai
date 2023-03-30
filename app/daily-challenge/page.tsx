@@ -23,7 +23,7 @@ import {
   getDifficulty,
   getMockResponse,
   getMockVariations,
-} from '../utilities';
+} from '../../lib/utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 import { confirmAlert } from 'react-confirm-alert';
