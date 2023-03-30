@@ -137,9 +137,9 @@ export default function RootLayout({
       <head />
       <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
         <LoadingMask isLoading={isLoading} message='Fetching data for you...' />
-        {/* {!(pathName === '/level' || pathName === '/daily-challenge') && (
+        {!(pathName === '/level' || pathName === '/daily-challenge') && (
           <WordCarousell />
-        )} */}
+        )}
         {showFeaturePopup && <FeaturePopup />}
         <section
           id='header-section'
