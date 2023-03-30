@@ -1,4 +1,4 @@
-import { generateHashedString } from './utils';
+import { generateHashedString } from './utilities';
 
 export function getHash(key: string): string {
   return generateHashedString('taboo-ai', key);

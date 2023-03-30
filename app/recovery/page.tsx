@@ -6,10 +6,8 @@ import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { BiPaste } from 'react-icons/bi';
 import { toast } from 'react-toastify';
-import BackButton from '../(components)/BackButton';
 import LoadingMask from '../(components)/LoadingMask';
 import { getScoresCache, setUser } from '../../lib/cache';
-import { CONSTANTS } from '../../lib/constants';
 import {
   addDeviceToUser,
   getUserInfoByRecoveryKey,
@@ -76,7 +74,6 @@ const RecoveryPage = () => {
   return (
     <>
       <LoadingMask isLoading={isLoading} message='Recovering account...' />
-      <BackButton href={hasScores ? '/result' : '/'} />
       <h1 className='fixed top-0 w-full h-20 py-4 text-center z-10'>
         Recover Your Scores
       </h1>

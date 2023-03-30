@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
 import { Author } from '../../lib/enums/Author';
 import { Highlight } from '../../types/chat.interface';
-import { applyHighlightsToMessage, sanitizeHighlights } from '../utilities';
+import { sanitizeHighlights } from '../../lib/utilities';
 
 interface ResponseDisplayProps {
   target: string | null;
@@ -15,6 +15,39 @@ interface ResponseDisplayProps {
 }
 
 export default function InputDisplay(props: ResponseDisplayProps) {
+  const applyHighlightsToMessage = (
+    message: string,
+    highlights: Highlight[],
+    onNormalMessagePart: (s: string) => JSX.Element,
+    onHighlightMessagePart: (s: string) => JSX.Element
+  ): JSX.Element[] => {
+    let parts = [];
+    if (highlights.length === 0) parts = [<span key={message}>{message}</span>];
+    else {
+      let startIndex = 0;
+      let endIndex = 0;
+      for (const highlight of highlights) {
+        endIndex = highlight.start;
+        while (/[\W_]/g.test(message[endIndex])) {
+          endIndex++;
+        }
+        // Normal part
+        parts.push(
+          onNormalMessagePart(message.substring(startIndex, endIndex))
+        );
+        startIndex = endIndex;
+        endIndex = highlight.end;
+        // Highlighted part
+        parts.push(
+          onHighlightMessagePart(message.substring(startIndex, endIndex))
+        );
+        startIndex = endIndex;
+      }
+      parts.push(onNormalMessagePart(message.substring(endIndex)));
+    }
+    return parts;
+  };
+
   const makeNormalMessagePart = (message: string) => {
     return (
       <span

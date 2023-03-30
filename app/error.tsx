@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import BackButton from './(components)/BackButton';
 
 export default function Error({
   error,
@@ -16,7 +15,6 @@ export default function Error({
 
   return (
     <div className='w-full h-screen flex flex-col justify-center items-center gap-10'>
-      <BackButton href='/' />
       <h1 className='text-white text-center !text-xl lg:!text-3xl'>
         Something went wrong!
       </h1>

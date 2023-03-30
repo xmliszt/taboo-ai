@@ -2,7 +2,7 @@ import ILevel from '../../../types/level.interface';
 import _ from 'lodash';
 import { CONSTANTS } from '../../constants';
 import IVariation from '../../../types/variation.interface';
-import { formatResponseTextIntoArray } from '../../../app/utilities';
+import { formatResponseTextIntoArray } from '../../utilities';
 import IDailyLevel from '../../../types/dailyLevel.interface';
 import moment from 'moment';
 

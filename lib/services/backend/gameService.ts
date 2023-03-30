@@ -13,7 +13,7 @@ import {
 } from '../../database/gameRepository';
 import { insertHighlight } from '../../database/highlightRepository';
 import { insertNewScore } from '../../database/scoreRepository';
-import { calculateScore } from '../../utils';
+import { calculateScore } from '../../utilities';
 import IGame from '../../../types/game.interface';
 
 const saveGame = async (

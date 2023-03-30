@@ -15,15 +15,13 @@ import {
 } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
-import BackButton from '../(components)/BackButton';
 import _, { uniqueId } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Highlight } from '../../types/chat.interface';
 import {
-  applyHighlightsToMessage,
   buildLevelForDisplay,
   buildScoresForDisplay,
-} from '../utilities';
+} from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
 import { toast } from 'react-toastify';
@@ -458,6 +456,39 @@ export default function ResultPage(props: ResultPageProps) {
     }
   };
 
+  const applyHighlightsToMessage = (
+    message: string,
+    highlights: Highlight[],
+    onNormalMessagePart: (s: string) => JSX.Element,
+    onHighlightMessagePart: (s: string) => JSX.Element
+  ): JSX.Element[] => {
+    let parts = [];
+    if (highlights.length === 0) parts = [<span key={message}>{message}</span>];
+    else {
+      let startIndex = 0;
+      let endIndex = 0;
+      for (const highlight of highlights) {
+        endIndex = highlight.start;
+        while (/[\W_]/g.test(message[endIndex])) {
+          endIndex++;
+        }
+        // Normal part
+        parts.push(
+          onNormalMessagePart(message.substring(startIndex, endIndex))
+        );
+        startIndex = endIndex;
+        endIndex = highlight.end;
+        // Highlighted part
+        parts.push(
+          onHighlightMessagePart(message.substring(startIndex, endIndex))
+        );
+        startIndex = endIndex;
+      }
+      parts.push(onNormalMessagePart(message.substring(endIndex)));
+    }
+    return parts;
+  };
+
   const generateDesktopResponseCellContent = (
     responseText: string,
     highlights: Highlight[] = []
@@ -794,7 +825,6 @@ export default function ResultPage(props: ResultPageProps) {
         isLoading={isLoading}
         message={loadingMessage}
       />
-      <BackButton href={level?.isDaily ? '/' : '/levels'} key='back-button' />
       <div className='flex justify-center'>
         <h1 className='fixed z-50 h-20 py-4 text-center'>Game Results</h1>
       </div>

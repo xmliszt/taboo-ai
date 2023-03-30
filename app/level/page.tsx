@@ -22,7 +22,7 @@ import {
   formatStringForDisplay,
   getMockResponse,
   getMockVariations,
-} from '../utilities';
+} from '../../lib/utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 

@@ -1,14 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import BackButton from '../(components)/BackButton';
 
 interface RulePageProps {}
 
 export default function RulePage(props: RulePageProps) {
   return (
     <section className='flex justify-center'>
-      <BackButton href='/' />
       <h1
         data-testid='heading-rule-title'
         className='h-32 fixed top-0 z-50 leading-normal text-white pt-4 text-xl'

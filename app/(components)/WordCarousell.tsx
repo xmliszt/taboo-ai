@@ -1,5 +1,5 @@
 import { createElement, useEffect, useRef, useState } from 'react';
-import { getRandomInt } from '../utilities';
+import { getRandomInt } from '../../lib/utilities';
 
 const sizes = [
   'text-base lg:text-lg',

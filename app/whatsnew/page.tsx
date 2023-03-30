@@ -1,4 +1,3 @@
-import BackButton from '../(components)/BackButton';
 import ReactMarkdown from 'react-markdown';
 import content from '../../public/features/content.md';
 import style from './style.module.css';
@@ -12,7 +11,6 @@ interface WhatsNewPageProps {}
 export default async function WhatsNewPage(props: WhatsNewPageProps) {
   return (
     <section className='flex flex-col items-center'>
-      <BackButton href='/' />
       <div className='h-32 fixed bottom-0 w-full z-10 gradient-up dark:gradient-up-dark-black pointer-events-none'></div>
       <Link
         href='/roadmap'

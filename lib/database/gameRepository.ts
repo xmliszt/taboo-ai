@@ -1,6 +1,6 @@
 import IGame from '../../types/game.interface';
 import { supabase } from '../supabaseClient';
-import { generateHashedString, getFormattedToday } from '../utils';
+import { generateHashedString, getFormattedToday } from '../utilities';
 
 async function insertNewGame(
   levelName: string,
