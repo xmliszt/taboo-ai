@@ -438,7 +438,7 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   return (
-    <section className='flex justify-center h-full'>
+    <section className='flex justify-center h-full bg-black dark:bg-neon-black'>
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}

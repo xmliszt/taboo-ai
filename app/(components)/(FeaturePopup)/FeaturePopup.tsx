@@ -3,9 +3,12 @@
 import ReactMarkdown from 'react-markdown';
 import content from '../../../public/features/content.md';
 import style from './style.module.css';
-import { KeyboardEvent, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
-import { setFeaturePopupString } from '../../../lib/cache';
+import {
+  getFeaturePopupString,
+  setFeaturePopupString,
+} from '../../../lib/cache';
 import SocialLinkButton from '../SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
 import { CONSTANTS } from '../../../lib/constants';
@@ -14,6 +17,18 @@ interface FeaturePopupProps {}
 
 export default function FeaturePopup(props: FeaturePopupProps) {
   const [isClosed, setIsClosed] = useState<boolean>(false);
+  const [showFeaturePopup, setShowFeaturePopup] = useState(false);
+
+  useEffect(() => {
+    const featurePopupString = getFeaturePopupString();
+    if (!featurePopupString) {
+      setShowFeaturePopup(true);
+    } else if (featurePopupString !== CONSTANTS.featurePopupString) {
+      setShowFeaturePopup(true);
+    } else {
+      setShowFeaturePopup(false);
+    }
+  }, []);
 
   const close = () => {
     setIsClosed(true);
@@ -27,7 +42,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
     }
   };
   return (
-    <>
+    <div hidden={!showFeaturePopup}>
       {!isClosed && (
         <div
           onClick={close}
@@ -69,6 +84,6 @@ export default function FeaturePopup(props: FeaturePopupProps) {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
