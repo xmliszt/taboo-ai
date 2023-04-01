@@ -93,7 +93,7 @@ const RecoveryPage = () => {
           <label htmlFor='recovery-key-input'>Enter your recovery key</label>
           <div className='flex flex-row gap-2 h-12'>
             <input
-              type='text'
+              type='password'
               id='recovery-key-input'
               placeholder='Recovery key...'
               className='flex-grow h-full'

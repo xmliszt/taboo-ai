@@ -2,6 +2,9 @@ import Image from 'next/image';
 const BuyMeCoffeeQR = '/images/bmc_qr.png';
 import { GiCoffeeCup } from 'react-icons/gi';
 import SocialLinkButton from '../(components)/SocialLinkButton';
+import ReactMarkdown from 'react-markdown';
+import content from './content.md';
+import style from './style.module.css';
 
 const BuyMeCoffeePage = () => {
   return (
@@ -30,19 +33,11 @@ const BuyMeCoffeePage = () => {
 
         <article
           id='disclaimer'
-          className='text-center px-8 lg:px-16 leading-normal text-sm lg:text-3xl pb-8'
+          className='text-justify px-10 lg:px-32 !leading-[1.3rem] lg:!leading-[2rem] text-sm lg:text-3xl pb-8'
         >
-          <p>
-            Taboo.AI is made possible with the integration with{' '}
-            <b>OpenAI GPT API services</b>. To provide you with the smooth
-            gameplay experience without{' '}
-            <b>frequent internet hiccups and API overloads</b>, a paid
-            subscription to <b>the gpt-3.5-turbo Model</b> API service was made
-            monthly by the developer. Your coffee bought for the developer will
-            definitely help him continue maintain and update the game to bring
-            more fun and interesting components to you in the future!{' '}
-          </p>
-          <p>❤️ Thanks in advance!</p>
+          <ReactMarkdown className={`${style.markdown}`}>
+            {content}
+          </ReactMarkdown>
         </article>
       </section>
     </>
