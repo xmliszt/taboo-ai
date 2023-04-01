@@ -1,6 +1,6 @@
 # Taboo.AI Releases Roadmap
 
-## 26 Mar - Release Notes (V2.0)
+## 02 Apr - Release Notes (V2.0)
 
 - **Brand New Daily Challenge mode** with **Wall of Fame (Leaderboard)** for players to compete.
 - **Nickname creation** for players to create their unique nicknames.

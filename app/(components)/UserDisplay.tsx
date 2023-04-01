@@ -43,6 +43,7 @@ const UserDisplay = () => {
             toast({
               title: 'You have been logged out!',
               status: 'warning',
+              duration: 1500,
             });
             setTimeout(() => {
               router.refresh();

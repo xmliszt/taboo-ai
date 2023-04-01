@@ -452,6 +452,7 @@ export default function ResultPage(props: ResultPageProps) {
           toast({
             title: 'Sharing content has been copied to clipboard!',
             status: 'success',
+            duration: 2000,
           });
         })
         .catch((error) => {

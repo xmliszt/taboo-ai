@@ -64,6 +64,7 @@ const RecoveryPage = () => {
       toast({
         title: 'Account recovered successfully!',
         status: 'success',
+        duration: 1000,
       });
       delayRouterPush(router, hasScores ? '/result' : '/', { delay: 1000 });
     } catch (error) {
