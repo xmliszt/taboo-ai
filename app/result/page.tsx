@@ -21,6 +21,7 @@ import { Highlight } from '../../types/chat.interface';
 import {
   buildLevelForDisplay,
   buildScoresForDisplay,
+  delayRouterPush,
 } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
@@ -144,7 +145,7 @@ export default function ResultPage(props: ResultPageProps) {
             duration: 3000,
             position: 'top',
           });
-          router.push('/');
+          delayRouterPush(router, '/');
           return;
         } else {
           setLevel(level);
@@ -163,7 +164,7 @@ export default function ResultPage(props: ResultPageProps) {
           duration: 3000,
           position: 'top',
         });
-        router.push('/');
+        delayRouterPush(router, '/');
         return;
       } else {
         setLevel(level);

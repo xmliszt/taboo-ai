@@ -13,6 +13,7 @@ import {
   updateUserLastLoginTime,
 } from '../../lib/services/frontend/userService';
 import { useToast } from '@chakra-ui/react';
+import { delayRouterPush } from '../../lib/utilities';
 
 const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);
@@ -65,7 +66,7 @@ const RecoveryPage = () => {
         status: 'success',
         position: 'top',
       });
-      router.push(hasScores ? '/result' : '/');
+      delayRouterPush(router, hasScores ? '/result' : '/');
     } catch (error) {
       console.error(error);
       toast({

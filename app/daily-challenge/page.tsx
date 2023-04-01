@@ -18,6 +18,7 @@ import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import IVariation from '../../types/variation.interface';
 import {
+  delayRouterPush,
   formatStringForDisplay,
   getDifficulty,
   getMockResponse,
@@ -398,7 +399,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
           status: 'error',
           position: 'top',
         });
-        router.push('/');
+        delayRouterPush(router, '/');
       }
     }
   }, [isMounted]);

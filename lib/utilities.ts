@@ -9,6 +9,23 @@ import { CONSTANTS } from './constants';
 import IDailyLevel from '../types/dailyLevel.interface';
 import moment from 'moment';
 import { NextApiRequest } from 'next';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
+
+interface DelayRouterPushProps {
+  delay?: number;
+  completion?: () => void;
+}
+
+export function delayRouterPush(
+  router: AppRouterInstance,
+  destination: string,
+  configuration?: DelayRouterPushProps
+) {
+  setTimeout(() => {
+    router.push(destination);
+    configuration?.completion && configuration.completion();
+  }, configuration?.delay ?? 2000);
+}
 
 export function getIp(req: NextApiRequest): string | undefined {
   let ip: string | undefined;

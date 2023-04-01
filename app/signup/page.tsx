@@ -9,6 +9,7 @@ import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
 import UserKeyDisplayModal from '../(components)/UserKeyDisplayModal';
 import { useToast } from '@chakra-ui/react';
+import { delayRouterPush } from '../../lib/utilities';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');
@@ -98,7 +99,7 @@ const SignupPage = () => {
               duration: 3000,
               position: 'top',
             });
-            router.push(hasScores ? '/result' : '/');
+            delayRouterPush(router, hasScores ? '/result' : '/');
           },
         },
         {

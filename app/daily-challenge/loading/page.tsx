@@ -17,6 +17,7 @@ import { getHighlights } from '../../../lib/services/frontend/highlightService';
 import {
   buildLevelForDisplay,
   buildScoresForDisplay,
+  delayRouterPush,
 } from '../../../lib/utilities';
 import { useToast } from '@chakra-ui/react';
 
@@ -40,13 +41,17 @@ const DailyLevelLoadingPage = () => {
       setIsLoading(true);
       const level = await getDailyLevel(moment());
       if (!level) {
-        setIsLoading(false);
         toast({
           title: 'Sorry! It seems that there is no new challenge for today!',
           status: 'error',
           position: 'top',
         });
-        router.push('/');
+        delayRouterPush(router, '/', {
+          delay: 3000,
+          completion: () => {
+            setIsLoading(false);
+          },
+        });
         return;
       }
       const convertedLevel = buildLevelForDisplay(level);
@@ -73,13 +78,17 @@ const DailyLevelLoadingPage = () => {
             );
             cacheScore(displayScore);
           }
-          setIsLoading(false);
           toast({
             title: "Seems like you have attempted today's challenge.",
             status: 'warning',
             position: 'top',
           });
-          router.push('/result');
+          delayRouterPush(router, '/result', {
+            delay: 3000,
+            completion: () => {
+              setIsLoading(false);
+            },
+          });
           return;
         }
       }
@@ -93,7 +102,7 @@ const DailyLevelLoadingPage = () => {
         status: 'error',
         position: 'top',
       });
-      router.push('/');
+      delayRouterPush(router, '/');
     } finally {
       setIsLoading(false);
     }
