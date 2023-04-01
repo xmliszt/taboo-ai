@@ -135,11 +135,15 @@ const RecoveryPage = () => {
             scores in the leaderboard.
           </p>
           <p className='text-justify'>
-            <b>Forgot about your recovery key?</b> Unfortunately, there is no
-            way to restore if you lost your recovery key, as we do not store any
-            additional information. However, not to worry! You can simply
-            attempt the daily challenge and create another account at the end of
-            the game!{' '}
+            <b>Forgot about your recovery key?</b> We understand that losing
+            your recovery key can be frustrating, but unfortunately, we
+            don&apos;t have any way to retrieve it as we don&apos;t store any
+            additional information for security reasons. However, don&apos;t
+            worry! We have a solution for you. You can simply try our daily
+            challenge and create a new nickname and get a new recovery key at
+            the end of the game. We apologize for any inconvenience this may
+            have caused, but we hope this alternative method helps you get back
+            on track.{' '}
           </p>
           <Link
             className='underline text-yellow dark:text-neon-green'

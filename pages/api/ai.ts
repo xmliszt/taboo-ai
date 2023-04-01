@@ -6,9 +6,21 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!apiKey) return res.status(500).json({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
     const prompt = req.body.prompt;
+    const system = req.body.system;
     const temperature = parseFloat(req.body.temperature);
     const maxToken = parseInt(req.body.maxToken);
 
+    const messages = [];
+    if (system && typeof system === 'string') {
+      messages.push({
+        role: 'system',
+        content: system,
+      });
+    }
+    messages.push({
+      role: 'user',
+      content: prompt,
+    });
     try {
       const response = await fetch(
         'https://api.openai.com/v1/chat/completions',
@@ -21,12 +33,7 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           body: JSON.stringify({
             model: 'gpt-3.5-turbo',
-            messages: [
-              {
-                role: 'user',
-                content: prompt,
-              },
-            ],
+            messages: messages,
             temperature: Number.isNaN(temperature) ? 0.9 : temperature,
             max_tokens: Number.isNaN(maxToken) ? 500 : maxToken,
             n: 1,
