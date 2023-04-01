@@ -1,4 +1,6 @@
-import { createElement, useEffect, useRef, useState } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { getRandomInt } from '../../lib/utilities';
 
 const sizes = [

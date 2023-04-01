@@ -1,27 +1,41 @@
+/**
+ * /levels -> [Home]
+ * /daily-challenge -> [Home]
+ * /level -> [Back]
+ * /leaderboard -> [Home]
+ * /result -> [Home]
+ * /whatsnew -> [Home]
+ * /roadmap -> [Home]
+ * /rule -> [Home]
+ * /buymecoffee -> [Home]
+ * /signup -> [Home]
+ * /recovery -> [Home]
+ * /ai -> [Back]
+ */
 'use client';
 
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BiHomeAlt, BiLeftArrowAlt } from 'react-icons/bi';
+import { BsFillQuestionSquareFill } from 'react-icons/bs';
 
 interface BackButtonProps {}
 
 export default function BackButton(props: BackButtonProps = {}) {
-  const [buttonStyle, setButtonStyle] = useState<'BACK' | 'HOME'>('BACK');
+  const [buttonStyle, setButtonStyle] = useState<'BACK' | 'HOME'>('HOME');
 
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     switch (pathname) {
-      case '/result':
-      case '/whatsnew':
-      case '/roadmap':
-      case '/leaderboard':
-        setButtonStyle('HOME');
+      case '/ai':
+      case '/level':
+        setButtonStyle('BACK');
         break;
       default:
-        setButtonStyle('BACK');
+        setButtonStyle('HOME');
         break;
     }
   }, [pathname]);
@@ -46,7 +60,18 @@ export default function BackButton(props: BackButtonProps = {}) {
     }
   };
 
-  return (
+  return pathname === '/' ? (
+    <Link
+      href='/rule'
+      aria-label='Link to rule page'
+      className='text-white dark:text-neon-red-light text-xl dark:text-sm lg:dark:text-2xl lg:text-3xl'
+    >
+      <div className='flex flex-row gap-2 items-center'>
+        <BsFillQuestionSquareFill data-testid='rule-icon' />
+        <span>Help</span>
+      </div>
+    </Link>
+  ) : (
     <button
       id='back'
       data-style='none'

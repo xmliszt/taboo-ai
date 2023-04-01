@@ -5,33 +5,15 @@ import LoadingMask from '../(components)/LoadingMask';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';
-import {
-  getAllGamesByLevel,
-  getOneGameByID,
-} from '../../lib/services/frontend/gameService';
+import { getAllGamesByLevel } from '../../lib/services/frontend/gameService';
 import { toast } from 'react-toastify';
-import {
-  getDailyLevel,
-  getDailyLevelByName,
-} from '../../lib/services/frontend/levelService';
+import { getDailyLevel } from '../../lib/services/frontend/levelService';
 import IGame from '../../types/game.interface';
 import { GiTrophy, GiLaurelCrown } from 'react-icons/gi';
 import { MdLeaderboard } from 'react-icons/md';
-import {
-  cacheLevel,
-  cacheScore,
-  clearLevel,
-  clearScores,
-  getUser,
-} from '../../lib/cache';
+import { getUser } from '../../lib/cache';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
-import { getHighlights } from '../../lib/services/frontend/highlightService';
-import {
-  buildLevelForDisplay,
-  buildScoresForDisplay,
-} from '../../lib/utilities';
 
 interface LeaderboardPageProps {}
 

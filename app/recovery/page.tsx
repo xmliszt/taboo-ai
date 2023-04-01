@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { BiPaste } from 'react-icons/bi';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import LoadingMask from '../(components)/LoadingMask';
 import { getScoresCache, setUser } from '../../lib/cache';
 import {
@@ -13,6 +13,7 @@ import {
   getUserInfoByRecoveryKey,
   updateUserLastLoginTime,
 } from '../../lib/services/frontend/userService';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);

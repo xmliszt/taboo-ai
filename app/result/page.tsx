@@ -24,6 +24,7 @@ import {
 } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import { toast } from 'react-toastify';
 import {
   getGameByPlayerNicknameFilterByDate,
