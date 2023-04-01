@@ -13,12 +13,19 @@ import { usePathname } from 'next/navigation';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import useToast from '../../lib/hook/useToast';
 import { useRouter } from 'next/navigation';
+import IUser from '../../types/user.interface';
+import { useEffect, useState } from 'react';
 
 const UserDisplay = () => {
+  const [user, setUser] = useState<IUser | undefined>();
   const pathName = usePathname();
   const router = useRouter();
   const { toast } = useToast();
-  const user = getUser();
+
+  useEffect(() => {
+    const _user = getUser();
+    _user && setUser(_user);
+  }, []);
 
   const quit = () => {
     confirmAlert({
