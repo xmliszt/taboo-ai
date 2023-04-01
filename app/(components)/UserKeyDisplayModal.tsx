@@ -19,6 +19,7 @@ export default function UserKeyDisplayModal(props: UserKeyDisplayModalProps) {
     toast({
       title: 'Recovery Key is copied to clipboard!',
       status: 'success',
+      duration: 2000,
     });
     setIsCopied(true);
   };

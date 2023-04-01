@@ -96,6 +96,7 @@ const SignupPage = () => {
             toast({
               title: 'Nickname submitted successfully!',
               status: 'success',
+              duration: 1000,
             });
             delayRouterPush(router, hasScores ? '/result' : '/');
           },

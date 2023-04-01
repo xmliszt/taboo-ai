@@ -16,7 +16,7 @@ export default function useToast() {
       title: title,
       status: status,
       position: 'top',
-      duration: duration ?? 1000,
+      duration: duration ?? 3000,
     });
   };
 

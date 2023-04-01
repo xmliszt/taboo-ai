@@ -10,6 +10,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import './global.css';
 import './main.css';
+import DevToggle from './(components)/DevToggle';
 
 const lightFont = Grenze({
   weight: '400',

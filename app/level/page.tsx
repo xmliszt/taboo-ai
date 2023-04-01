@@ -331,6 +331,7 @@ export default function LevelPage(props: LevelPageProps) {
       toast({
         title: 'Generating new taboo words...',
         status: 'info',
+        duration: 1000,
       });
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
