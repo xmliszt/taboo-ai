@@ -1,32 +1,32 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { MdDarkMode, MdOutlineWbTwilight } from 'react-icons/md';
 
-interface LightDarkToggleProps {
-  onToggle: (isDark: boolean) => void;
-}
+interface LightDarkToggleProps {}
 
 const LightDarkToggle = (props: LightDarkToggleProps) => {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-  }, []);
+    const darkMode = localStorage.getItem('theme');
+    localStorage.setItem('theme', darkMode ?? 'light');
+    const isDark = darkMode === 'dark';
+    isDark ? setDarkTheme() : setLightTheme();
+  }, [isDark]);
 
-  useEffect(() => {
-    if (isMounted) {
-      const dark = localStorage.getItem('theme') === 'dark';
-      setIsDark(dark);
-      props.onToggle(dark);
-    }
-  }, [isMounted]);
+  const setDarkTheme = () => {
+    document.getElementsByTagName('html')[0].classList.add('dark');
+    document.getElementsByTagName('html')[0].classList.remove('light');
+  };
+
+  const setLightTheme = () => {
+    document.getElementsByTagName('html')[0].classList.add('light');
+    document.getElementsByTagName('html')[0].classList.remove('dark');
+  };
 
   const onToggle = () => {
-    const dark = !isDark;
-    setIsDark(dark);
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-    props.onToggle(dark);
+    setIsDark((dark) => !dark);
   };
 
   return (

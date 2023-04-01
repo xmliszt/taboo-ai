@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('tailwindcss').Config} */
+
+const { fontFamily } = require('tailwindcss/defaultTheme');
 const scrollBarHide = require('tailwind-scrollbar-hide');
 module.exports = {
   darkMode: 'class',
@@ -10,6 +12,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        light: ['var(--font-light)', ...fontFamily.serif],
+        dark: ['var(--font-dark)', ...fontFamily.sans],
+      },
       blur: {
         xxxxs: '2px',
         xxxs: '1.5px',

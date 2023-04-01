@@ -13,6 +13,7 @@ import {
 } from '../../lib/cache';
 import { toast } from 'react-toastify';
 import { usePathname } from 'next/navigation';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const UserDisplay = () => {
   const [isMounted, setIsMounted] = useState(false);
