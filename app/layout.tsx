@@ -1,13 +1,15 @@
+'use client';
+
 import { Orbitron, Grenze } from '@next/font/google';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 import WordCarousell from './(components)/WordCarousell';
 import FeaturePopup from './(components)/(FeaturePopup)/FeaturePopup';
 import Maintenance from './(components)/Maintenance';
 import Header from './(components)/Header';
+import { ChakraProvider } from '@chakra-ui/react';
 
 import './global.css';
 import './main.css';
-import ToastContainerWrapper from './(components)/ToastContainerWrapper';
 
 const lightFont = Grenze({
   weight: '400',
@@ -47,19 +49,19 @@ export default function RootLayout({
   );
 
   return (
-    <html
-      lang='en'
-      className={`${lightFont.variable} dark:${darkFont.variable} font-light dark:font-dark`}
-    >
+    <html lang='en'>
       <head />
-      <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        <Header maintenanceOn={maintenanceMode} />
-        {maintenanceMode && <Maintenance />}
-        {!maintenanceMode && children}
-        {!maintenanceMode && <FeaturePopup />}
-        <AnalyticsWrapper />
-        <WordCarousell />
-        <ToastContainerWrapper />
+      <body
+        className={`bg-black dark:bg-neon-black dark:text-neon-white text-white ${lightFont.variable} ${darkFont.variable} font-light dark:font-dark`}
+      >
+        <ChakraProvider>
+          <Header maintenanceOn={maintenanceMode} />
+          {maintenanceMode && <Maintenance />}
+          {!maintenanceMode && children}
+          {!maintenanceMode && <FeaturePopup />}
+          <AnalyticsWrapper />
+          <WordCarousell />
+        </ChakraProvider>
       </body>
     </html>
   );

@@ -15,6 +15,9 @@
     "test:e2e:trace": "playwright test --trace on"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.5.5",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@next-auth/supabase-adapter": "^0.2.1",
     "@next/font": "^13.1.1",
     "@supabase/supabase-js": "^2.8.0",
@@ -27,6 +30,7 @@
     "dateformat": "^5.0.3",
     "eslint-config-next": "13.1.1",
     "file-loader": "^1.1.6",
+    "framer-motion": "^10.10.0",
     "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "lru-cache": "^7.12.0",
@@ -40,7 +44,6 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
     "react-markdown": "^8.0.5",
-    "react-toastify": "^9.1.1",
     "tailwind-scrollbar-hide": "^1.1.7",
     "typescript": "4.9.4",
     "use-timer": "^2.0.1"
@@ -51,7 +54,6 @@
     "@types/dateformat": "^5.0.0",
     "@types/jest": "^29.2.5",
     "@types/lodash": "^4.14.191",
-    "@types/react-toastify": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "autoprefixer": "^10.4.13",

@@ -25,7 +25,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { toast } from 'react-toastify';
 import {
   getGameByPlayerNicknameFilterByDate,
   saveGame,
@@ -40,6 +39,7 @@ import IGame from '../../types/game.interface';
 import IUser from '../../types/user.interface';
 import moment from 'moment';
 import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
+import { useToast } from '@chakra-ui/react';
 
 interface StatItem {
   title: string;
@@ -86,6 +86,7 @@ export default function ResultPage(props: ResultPageProps) {
   const [user, setUser] = useState<IUser | undefined>();
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
+  const toast = useToast();
 
   const getCompletionSeconds = (completion: number): number => {
     return completion <= 0 ? 1 : completion;
@@ -136,10 +137,13 @@ export default function ResultPage(props: ResultPageProps) {
       } catch {
         setIsLoading(false);
         if (!scores || !level) {
-          toast.warn(
-            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-            { autoClose: 3000 }
-          );
+          toast({
+            title:
+              'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+            status: 'warning',
+            duration: 3000,
+            position: 'top',
+          });
           router.push('/');
           return;
         } else {
@@ -152,10 +156,13 @@ export default function ResultPage(props: ResultPageProps) {
       }
     } else {
       if (!scores || !level) {
-        toast.warn(
-          'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-          { autoClose: 3000 }
-        );
+        toast({
+          title:
+            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+          status: 'warning',
+          duration: 3000,
+          position: 'top',
+        });
         router.push('/');
         return;
       } else {
@@ -182,14 +189,20 @@ export default function ResultPage(props: ResultPageProps) {
           promptVisible
         );
         setCachedGame(savedGame);
-        toast.success(
-          'Congratulations! Your results have been submitted to global leaderboard successfully!'
-        );
+        toast({
+          title:
+            'Congratulations! Your results have been submitted to global leaderboard successfully!',
+          status: 'success',
+          position: 'top',
+        });
       } catch (error) {
         console.error(error);
-        toast.error(
-          'We are currently unable to submit the scores. Please try again later.'
-        );
+        toast({
+          title:
+            'We are currently unable to submit the scores. Please try again later.',
+          status: 'error',
+          position: 'top',
+        });
       }
     }
   };
@@ -228,10 +241,18 @@ export default function ResultPage(props: ResultPageProps) {
       }
       updateDisplayedScores(displayScores);
       setCachedGame(game);
-      toast.success('Your daily challenge results have been restored!');
+      toast({
+        title: 'Your daily challenge results have been restored!',
+        status: 'success',
+        position: 'top',
+      });
     } catch (error) {
       console.error(error);
-      toast.error('Sorry, we are unable to restore the game results.');
+      toast({
+        title: 'Sorry, we are unable to restore the game results.',
+        status: 'error',
+        position: 'top',
+      });
     }
   };
 
@@ -433,13 +454,20 @@ export default function ResultPage(props: ResultPageProps) {
       }
       copy(title)
         .then(() => {
-          toast.success('Sharing content has been copied to clipboard!');
+          toast({
+            title: 'Sharing content has been copied to clipboard!',
+            status: 'success',
+            position: 'top',
+          });
         })
         .catch((error) => {
           console.error(error);
-          toast.error(
-            'Sorry, we are unable to generate the sharing content at the moment. Please try again later.'
-          );
+          toast({
+            title:
+              'Sorry, we are unable to generate the sharing content at the moment. Please try again later.',
+            status: 'error',
+            position: 'top',
+          });
         });
     }
   };

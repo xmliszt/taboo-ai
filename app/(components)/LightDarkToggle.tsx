@@ -10,8 +10,12 @@ const LightDarkToggle = (props: LightDarkToggleProps) => {
 
   useEffect(() => {
     const darkMode = localStorage.getItem('theme');
-    localStorage.setItem('theme', darkMode ?? 'light');
     const isDark = darkMode === 'dark';
+    setIsDark(isDark);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
     isDark ? setDarkTheme() : setLightTheme();
   }, [isDark]);
 

@@ -16,7 +16,6 @@ import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
 import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
-import { toast } from 'react-toastify';
 import IVariation from '../../types/variation.interface';
 import {
   formatStringForDisplay,
@@ -25,6 +24,7 @@ import {
 } from '../../lib/utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
+import { useToast } from '@chakra-ui/react';
 
 interface LevelPageProps {}
 
@@ -74,8 +74,9 @@ export default function LevelPage(props: LevelPageProps) {
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  //!SECTION
+  const toast = useToast();
 
+  //!SECTION
   const generateNewTarget = (words: string[]): string => {
     if (words.length === 0) {
       words = pickedWords;
@@ -233,7 +234,11 @@ export default function LevelPage(props: LevelPageProps) {
         setInputShouldFadeOut(true); // Input start fading out
         setIsInputConfirmed(false); // Reset input ping animation
         setResponseShouldFadeOut(true); // Fade out current response if any
-        toast.error(CONSTANTS.errors.overloaded);
+        toast({
+          title: CONSTANTS.errors.overloaded,
+          status: 'error',
+          position: 'top',
+        });
         setIsLoading(false);
         start();
       }
@@ -261,7 +266,12 @@ export default function LevelPage(props: LevelPageProps) {
       setShowSuccessBackground(false);
     }, 1000);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
-      toast.success('Game Over! Generating Results...', { autoClose: 4000 });
+      toast({
+        title: 'Game Over! Generating Results...',
+        status: 'success',
+        duration: 4000,
+        position: 'top',
+      });
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
@@ -320,7 +330,11 @@ export default function LevelPage(props: LevelPageProps) {
     if (target) {
       setVariations([target]);
       setIsGeneratingVariations(true);
-      toast.info('Generating new taboo words...');
+      toast({
+        title: 'Generating new taboo words...',
+        status: 'info',
+        position: 'top',
+      });
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
           setIsGeneratingVariations(false);

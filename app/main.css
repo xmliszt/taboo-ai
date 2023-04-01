@@ -195,8 +195,3 @@ h1 {
 .react-confirm-alert button {
   border-radius: 2rem !important;
 }
-
-.Toastify__toast-body {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  line-height: 1rem;
-}

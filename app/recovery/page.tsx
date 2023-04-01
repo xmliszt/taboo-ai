@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { BiPaste } from 'react-icons/bi';
-import { toast, ToastContainer } from 'react-toastify';
 import LoadingMask from '../(components)/LoadingMask';
 import { getScoresCache, setUser } from '../../lib/cache';
 import {
@@ -13,13 +12,14 @@ import {
   getUserInfoByRecoveryKey,
   updateUserLastLoginTime,
 } from '../../lib/services/frontend/userService';
-import 'react-toastify/dist/ReactToastify.css';
+import { useToast } from '@chakra-ui/react';
 
 const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);
   const [recoveryKey, setRecoveryKey] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPasteAllow, setIsPasteAllow] = useState(false);
+  const toast = useToast();
   const router = useRouter();
 
   useEffect(() => {
@@ -60,13 +60,20 @@ const RecoveryPage = () => {
         user.recovery_key,
         navigator.userAgent
       );
-      toast.success('Account recovered successfully!', { autoClose: 3000 });
+      toast({
+        title: 'Account recovered successfully!',
+        status: 'success',
+        position: 'top',
+      });
       router.push(hasScores ? '/result' : '/');
     } catch (error) {
       console.error(error);
-      toast.error(
-        'Sorry, we are unable to retrieve information about this account.'
-      );
+      toast({
+        title:
+          'Sorry, we are unable to retrieve information about this account.',
+        status: 'error',
+        position: 'top',
+      });
     } finally {
       setIsLoading(false);
     }

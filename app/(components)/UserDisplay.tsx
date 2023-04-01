@@ -11,14 +11,15 @@ import {
   clearUser,
   getUser,
 } from '../../lib/cache';
-import { toast } from 'react-toastify';
 import { usePathname } from 'next/navigation';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { useToast } from '@chakra-ui/react';
 
 const UserDisplay = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [currentUser, setCurrentUser] = useState<IUser | undefined>();
   const pathName = usePathname();
+  const toast = useToast();
 
   useEffect(() => {
     !isMounted && setIsMounted(true);
@@ -44,7 +45,11 @@ const UserDisplay = () => {
             clearScores();
             clearLevel();
             clearUser();
-            toast.warn('You have been logged out!');
+            toast({
+              title: 'You have been logged out!',
+              status: 'warning',
+              position: 'top',
+            });
           },
         },
         { label: 'No' },

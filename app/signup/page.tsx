@@ -8,7 +8,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
 import UserKeyDisplayModal from '../(components)/UserKeyDisplayModal';
-import { toast } from 'react-toastify';
+import { useToast } from '@chakra-ui/react';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');
@@ -19,6 +19,7 @@ const SignupPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSaveKeyModal, setShowSaveKeyModal] = useState<boolean>(false);
   const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     if (hasScores === null) {
@@ -91,8 +92,11 @@ const SignupPage = () => {
           label: 'Yes I have saved it!',
           onClick: () => {
             setShowSaveKeyModal(false);
-            toast.success('Nickname submitted successfully!', {
-              autoClose: 3000,
+            toast({
+              title: 'Nickname submitted successfully!',
+              status: 'success',
+              duration: 3000,
+              position: 'top',
             });
             router.push(hasScores ? '/result' : '/');
           },

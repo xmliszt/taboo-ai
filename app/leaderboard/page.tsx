@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';
 import { getAllGamesByLevel } from '../../lib/services/frontend/gameService';
-import { toast } from 'react-toastify';
 import { getDailyLevel } from '../../lib/services/frontend/levelService';
 import IGame from '../../types/game.interface';
 import { GiTrophy, GiLaurelCrown } from 'react-icons/gi';
@@ -14,6 +13,7 @@ import { MdLeaderboard } from 'react-icons/md';
 import { getUser } from '../../lib/cache';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@chakra-ui/react';
 
 interface LeaderboardPageProps {}
 
@@ -32,7 +32,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
     []
   );
   const [myRank, setMyRank] = useState<number | undefined>();
-  const router = useRouter();
+  const toast = useToast();
 
   const onPrevDate = () => {
     setCurrentDate((d) => moment(d).subtract(1, 'day'));
@@ -65,9 +65,12 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error(
-        'Sorry we are unable to fetch the data for current leaderboard! Please try again later!'
-      );
+      toast({
+        title:
+          'Sorry we are unable to fetch the data for current leaderboard! Please try again later!',
+        status: 'error',
+        position: 'top',
+      });
     } finally {
       setIsLoading(false);
     }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { getDailyLevel } from '../../../lib/services/frontend/levelService';
 import moment from 'moment';
@@ -19,7 +18,7 @@ import {
   buildLevelForDisplay,
   buildScoresForDisplay,
 } from '../../../lib/utilities';
-import 'react-toastify/dist/ReactToastify.css';
+import { useToast } from '@chakra-ui/react';
 
 /**
  * Load the daily level before caching the level and enter the game.
@@ -29,6 +28,7 @@ const DailyLevelLoadingPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     !isMounted && setIsMounted(true);
@@ -41,9 +41,11 @@ const DailyLevelLoadingPage = () => {
       const level = await getDailyLevel(moment());
       if (!level) {
         setIsLoading(false);
-        toast.error(
-          'Sorry! It seems that there is no new challenge for today!'
-        );
+        toast({
+          title: 'Sorry! It seems that there is no new challenge for today!',
+          status: 'error',
+          position: 'top',
+        });
         router.push('/');
         return;
       }
@@ -72,7 +74,11 @@ const DailyLevelLoadingPage = () => {
             cacheScore(displayScore);
           }
           setIsLoading(false);
-          toast.warn("Seems like you have attempted today's challenge.");
+          toast({
+            title: "Seems like you have attempted today's challenge.",
+            status: 'warning',
+            position: 'top',
+          });
           router.push('/result');
           return;
         }
@@ -82,7 +88,11 @@ const DailyLevelLoadingPage = () => {
       router.push('/daily-challenge');
     } catch (error) {
       console.error(error);
-      toast.error('Unable to fetch daily challenge! Please try again later!');
+      toast({
+        title: 'Unable to fetch daily challenge! Please try again later!',
+        status: 'error',
+        position: 'top',
+      });
       router.push('/');
     } finally {
       setIsLoading(false);

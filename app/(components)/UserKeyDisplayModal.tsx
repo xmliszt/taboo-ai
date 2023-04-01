@@ -2,9 +2,9 @@
 
 import { TiTick } from 'react-icons/ti';
 import { BiCopy } from 'react-icons/bi';
-import { toast } from 'react-toastify';
 import { useState } from 'react';
 import copy from 'clipboard-copy';
+import { useToast } from '@chakra-ui/react';
 
 interface UserKeyDisplayModalProps {
   userKey: string;
@@ -12,10 +12,15 @@ interface UserKeyDisplayModalProps {
 }
 export default function UserKeyDisplayModal(props: UserKeyDisplayModalProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const toast = useToast();
 
   const copyToClipboard = async () => {
     await copy(props.userKey);
-    toast.success('Recovery Key is copied to clipboard!');
+    toast({
+      title: 'Recovery Key is copied to clipboard!',
+      status: 'success',
+      position: 'top',
+    });
     setIsCopied(true);
   };
 
