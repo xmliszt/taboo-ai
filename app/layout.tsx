@@ -52,7 +52,7 @@ export default function RootLayout({
     <html lang='en'>
       <head />
       <body
-        className={`bg-black dark:bg-neon-black dark:text-neon-white text-white ${lightFont.variable} ${darkFont.variable} font-light dark:font-dark`}
+        className={`${lightFont.variable} ${darkFont.variable} font-light dark:font-dark bg-black dark:bg-neon-black text-white dark:text-neon-white`}
       >
         <ChakraProvider>
           <Header maintenanceOn={maintenanceMode} />

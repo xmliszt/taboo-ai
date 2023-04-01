@@ -24,7 +24,7 @@ import {
 } from '../../lib/utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
-import { useToast } from '@chakra-ui/react';
+import useToast from '../../lib/hook/useToast';
 
 interface LevelPageProps {}
 
@@ -74,7 +74,7 @@ export default function LevelPage(props: LevelPageProps) {
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const toast = useToast();
+  const { toast } = useToast();
 
   //!SECTION
   const generateNewTarget = (words: string[]): string => {
@@ -237,7 +237,6 @@ export default function LevelPage(props: LevelPageProps) {
         toast({
           title: CONSTANTS.errors.overloaded,
           status: 'error',
-          position: 'top',
         });
         setIsLoading(false);
         start();
@@ -270,7 +269,6 @@ export default function LevelPage(props: LevelPageProps) {
         title: 'Game Over! Generating Results...',
         status: 'success',
         duration: 4000,
-        position: 'top',
       });
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
@@ -333,7 +331,6 @@ export default function LevelPage(props: LevelPageProps) {
       toast({
         title: 'Generating new taboo words...',
         status: 'info',
-        position: 'top',
       });
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {

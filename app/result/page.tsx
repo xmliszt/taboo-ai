@@ -40,7 +40,7 @@ import IGame from '../../types/game.interface';
 import IUser from '../../types/user.interface';
 import moment from 'moment';
 import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
-import { useToast } from '@chakra-ui/react';
+import useToast from '../../lib/hook/useToast';
 
 interface StatItem {
   title: string;
@@ -87,7 +87,7 @@ export default function ResultPage(props: ResultPageProps) {
   const [user, setUser] = useState<IUser | undefined>();
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const getCompletionSeconds = (completion: number): number => {
     return completion <= 0 ? 1 : completion;
@@ -143,7 +143,6 @@ export default function ResultPage(props: ResultPageProps) {
               'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
             status: 'warning',
             duration: 3000,
-            position: 'top',
           });
           delayRouterPush(router, '/');
           return;
@@ -162,7 +161,6 @@ export default function ResultPage(props: ResultPageProps) {
             'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
           status: 'warning',
           duration: 3000,
-          position: 'top',
         });
         delayRouterPush(router, '/');
         return;
@@ -194,7 +192,6 @@ export default function ResultPage(props: ResultPageProps) {
           title:
             'Congratulations! Your results have been submitted to global leaderboard successfully!',
           status: 'success',
-          position: 'top',
         });
       } catch (error) {
         console.error(error);
@@ -202,7 +199,6 @@ export default function ResultPage(props: ResultPageProps) {
           title:
             'We are currently unable to submit the scores. Please try again later.',
           status: 'error',
-          position: 'top',
         });
       }
     }
@@ -245,14 +241,12 @@ export default function ResultPage(props: ResultPageProps) {
       toast({
         title: 'Your daily challenge results have been restored!',
         status: 'success',
-        position: 'top',
       });
     } catch (error) {
       console.error(error);
       toast({
         title: 'Sorry, we are unable to restore the game results.',
         status: 'error',
-        position: 'top',
       });
     }
   };
@@ -458,7 +452,6 @@ export default function ResultPage(props: ResultPageProps) {
           toast({
             title: 'Sharing content has been copied to clipboard!',
             status: 'success',
-            position: 'top',
           });
         })
         .catch((error) => {
@@ -467,7 +460,6 @@ export default function ResultPage(props: ResultPageProps) {
             title:
               'Sorry, we are unable to generate the sharing content at the moment. Please try again later.',
             status: 'error',
-            position: 'top',
           });
         });
     }

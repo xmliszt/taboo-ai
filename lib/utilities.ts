@@ -24,7 +24,7 @@ export function delayRouterPush(
   setTimeout(() => {
     router.push(destination);
     configuration?.completion && configuration.completion();
-  }, configuration?.delay ?? 2000);
+  }, configuration?.delay ?? 1000);
 }
 
 export function getIp(req: NextApiRequest): string | undefined {

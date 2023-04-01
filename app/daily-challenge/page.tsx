@@ -28,7 +28,7 @@ import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { useToast } from '@chakra-ui/react';
+import useToast from '../../lib/hook/useToast';
 
 interface DailyLevelProps {}
 
@@ -78,7 +78,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const toast = useToast();
+  const { toast } = useToast();
 
   //!SECTION
   const generateNewTarget = (words: string[]): string => {
@@ -241,7 +241,6 @@ export default function DailyLevelPage(props: DailyLevelProps) {
         toast({
           title: CONSTANTS.errors.overloaded,
           status: 'error',
-          position: 'top',
         });
         setIsLoading(false);
         start();
@@ -274,7 +273,6 @@ export default function DailyLevelPage(props: DailyLevelProps) {
         title: 'Game Over! Generating Results...',
         status: 'success',
         duration: 4000,
-        position: 'top',
       });
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
@@ -337,7 +335,6 @@ export default function DailyLevelPage(props: DailyLevelProps) {
       toast({
         title: 'Generating new taboo words...',
         status: 'info',
-        position: 'top',
       });
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
@@ -397,7 +394,6 @@ export default function DailyLevelPage(props: DailyLevelProps) {
         toast({
           title: 'No daily challenge available! Please try again!',
           status: 'error',
-          position: 'top',
         });
         delayRouterPush(router, '/');
       }

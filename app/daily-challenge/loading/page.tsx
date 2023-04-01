@@ -19,7 +19,7 @@ import {
   buildScoresForDisplay,
   delayRouterPush,
 } from '../../../lib/utilities';
-import { useToast } from '@chakra-ui/react';
+import useToast from '../../../lib/hook/useToast';
 
 /**
  * Load the daily level before caching the level and enter the game.
@@ -29,7 +29,7 @@ const DailyLevelLoadingPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  const toast = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     !isMounted && setIsMounted(true);
@@ -44,7 +44,6 @@ const DailyLevelLoadingPage = () => {
         toast({
           title: 'Sorry! It seems that there is no new challenge for today!',
           status: 'error',
-          position: 'top',
         });
         delayRouterPush(router, '/', {
           delay: 3000,
@@ -81,7 +80,6 @@ const DailyLevelLoadingPage = () => {
           toast({
             title: "Seems like you have attempted today's challenge.",
             status: 'warning',
-            position: 'top',
           });
           delayRouterPush(router, '/result', {
             delay: 3000,
@@ -100,7 +98,6 @@ const DailyLevelLoadingPage = () => {
       toast({
         title: 'Unable to fetch daily challenge! Please try again later!',
         status: 'error',
-        position: 'top',
       });
       delayRouterPush(router, '/');
     } finally {

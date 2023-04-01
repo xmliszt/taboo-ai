@@ -12,8 +12,7 @@ import { GiTrophy, GiLaurelCrown } from 'react-icons/gi';
 import { MdLeaderboard } from 'react-icons/md';
 import { getUser } from '../../lib/cache';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@chakra-ui/react';
+import useToast from '../../lib/hook/useToast';
 
 interface LeaderboardPageProps {}
 
@@ -32,7 +31,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
     []
   );
   const [myRank, setMyRank] = useState<number | undefined>();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const onPrevDate = () => {
     setCurrentDate((d) => moment(d).subtract(1, 'day'));
@@ -69,7 +68,6 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
         title:
           'Sorry we are unable to fetch the data for current leaderboard! Please try again later!',
         status: 'error',
-        position: 'top',
       });
     } finally {
       setIsLoading(false);

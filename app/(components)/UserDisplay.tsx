@@ -1,9 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
-import IUser from '../../types/user.interface';
 import {
   clearCachedGame,
   clearLevel,
@@ -13,23 +11,14 @@ import {
 } from '../../lib/cache';
 import { usePathname } from 'next/navigation';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { useToast } from '@chakra-ui/react';
+import useToast from '../../lib/hook/useToast';
+import { useRouter } from 'next/navigation';
 
 const UserDisplay = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [currentUser, setCurrentUser] = useState<IUser | undefined>();
   const pathName = usePathname();
-  const toast = useToast();
-
-  useEffect(() => {
-    !isMounted && setIsMounted(true);
-    isMounted && fetchCurrentUser();
-  }, [isMounted]);
-
-  const fetchCurrentUser = () => {
-    const user = getUser();
-    user && setCurrentUser(user);
-  };
+  const router = useRouter();
+  const { toast } = useToast();
+  const user = getUser();
 
   const quit = () => {
     confirmAlert({
@@ -40,7 +29,6 @@ const UserDisplay = () => {
         {
           label: 'Yes',
           onClick: () => {
-            setCurrentUser(undefined);
             clearCachedGame();
             clearScores();
             clearLevel();
@@ -48,8 +36,10 @@ const UserDisplay = () => {
             toast({
               title: 'You have been logged out!',
               status: 'warning',
-              position: 'top',
             });
+            setTimeout(() => {
+              router.refresh();
+            }, 1000);
           },
         },
         { label: 'No' },
@@ -58,9 +48,9 @@ const UserDisplay = () => {
   };
 
   if (pathName === '/') {
-    return currentUser ? (
+    return user ? (
       <div className='text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
-        <span>{currentUser.nickname}</span>
+        <span>{user.nickname}</span>
         <button
           id='submit'
           data-style='none'
@@ -72,7 +62,7 @@ const UserDisplay = () => {
         </button>
       </div>
     ) : (
-      <div className='flex-grow text-center text-gray dark:text-sm'>
+      <div className='text-center text-gray dark:text-sm'>
         <Link href='/recovery' className='underline'>
           Recover Your Scores?
         </Link>

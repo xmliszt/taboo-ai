@@ -84,7 +84,7 @@ export const addDeviceToUser = async (
   userAgent: string
 ) => {
   const url = '/api/users/' + nickname + '/' + rKey + '/addDevice';
-  return await request(url, 'POST', { device: userAgent });
+  return await request<{ message: string }>(url, 'POST', { device: userAgent });
 };
 
 export const removeDeviceFromUser = async (

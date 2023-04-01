@@ -1,3 +1,5 @@
+'use client';
+
 import { usePathname } from 'next/navigation';
 import BackButton from './BackButton';
 import LightDarkToggle from './LightDarkToggle';
@@ -16,7 +18,7 @@ const Header = ({ maintenanceOn }: HeaderProps) => {
         'w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 text-center bg-black dark:bg-neon-black'
       }
     >
-      <LightDarkToggle />
+      {/* <LightDarkToggle /> */}
     </header>
   ) : (
     <header
@@ -31,7 +33,7 @@ const Header = ({ maintenanceOn }: HeaderProps) => {
     >
       <BackButton />
       <UserDisplay />
-      <LightDarkToggle />
+      {/* <LightDarkToggle /> */}
     </header>
   );
 };

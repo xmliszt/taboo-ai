@@ -12,15 +12,15 @@ import {
   getUserInfoByRecoveryKey,
   updateUserLastLoginTime,
 } from '../../lib/services/frontend/userService';
-import { useToast } from '@chakra-ui/react';
 import { delayRouterPush } from '../../lib/utilities';
+import useToast from '../../lib/hook/useToast';
 
 const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);
   const [recoveryKey, setRecoveryKey] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPasteAllow, setIsPasteAllow] = useState(false);
-  const toast = useToast();
+  const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
@@ -64,16 +64,14 @@ const RecoveryPage = () => {
       toast({
         title: 'Account recovered successfully!',
         status: 'success',
-        position: 'top',
       });
-      delayRouterPush(router, hasScores ? '/result' : '/');
+      delayRouterPush(router, hasScores ? '/result' : '/', { delay: 1000 });
     } catch (error) {
       console.error(error);
       toast({
         title:
           'Sorry, we are unable to retrieve information about this account.',
         status: 'error',
-        position: 'top',
       });
     } finally {
       setIsLoading(false);

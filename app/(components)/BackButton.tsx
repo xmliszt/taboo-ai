@@ -1,7 +1,7 @@
 /**
  * /levels -> [Home]
  * /daily-challenge -> [Home]
- * /level -> [Back]
+ * /level -> [/levels]
  * /leaderboard -> [Home]
  * /result -> [Home]
  * /whatsnew -> [Home]
@@ -10,7 +10,7 @@
  * /buymecoffee -> [Home]
  * /signup -> [Home]
  * /recovery -> [Home]
- * /ai -> [Back]
+ * /ai -> [/levels]
  */
 'use client';
 
@@ -23,8 +23,7 @@ import { BsFillQuestionSquareFill } from 'react-icons/bs';
 interface BackButtonProps {}
 
 export default function BackButton(props: BackButtonProps = {}) {
-  const [buttonStyle, setButtonStyle] = useState<'BACK' | 'HOME'>('HOME');
-
+  const [buttonStyle, setButtonStyle] = useState<'HOME' | 'BACK'>('HOME');
   const router = useRouter();
   const pathname = usePathname();
 
@@ -41,11 +40,12 @@ export default function BackButton(props: BackButtonProps = {}) {
   }, [pathname]);
 
   const back = () => {
-    switch (buttonStyle) {
-      case 'BACK':
-        router.back();
+    switch (pathname) {
+      case '/ai':
+      case '/level':
+        router.push('/levels');
         break;
-      case 'HOME':
+      default:
         router.push('/');
         break;
     }

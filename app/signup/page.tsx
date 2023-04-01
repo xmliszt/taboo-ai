@@ -8,8 +8,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
 import UserKeyDisplayModal from '../(components)/UserKeyDisplayModal';
-import { useToast } from '@chakra-ui/react';
 import { delayRouterPush } from '../../lib/utilities';
+import useToast from '../../lib/hook/useToast';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');
@@ -20,7 +20,7 @@ const SignupPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSaveKeyModal, setShowSaveKeyModal] = useState<boolean>(false);
   const router = useRouter();
-  const toast = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (hasScores === null) {
@@ -96,8 +96,6 @@ const SignupPage = () => {
             toast({
               title: 'Nickname submitted successfully!',
               status: 'success',
-              duration: 3000,
-              position: 'top',
             });
             delayRouterPush(router, hasScores ? '/result' : '/');
           },
