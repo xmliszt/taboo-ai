@@ -212,7 +212,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
             localStorage.getItem('mode') ?? '1'
           );
         } else {
-          responseText = await getQueryResponse(prompt);
+          responseText = await getQueryResponse(prompt, target);
         }
         setIsInputConfirmed(false); // Reset input ping animation
         if (responseText === undefined || responseText === null) {
