@@ -129,48 +129,51 @@ export default function ResultPage(props: ResultPageProps) {
     level?.isDaily && setDisplayedLevelTopic(level?.dailyLevelTopic);
     if (user) {
       setUser(user);
-      try {
-        setIsLoading(true);
-        setLoadingMessage('Restoring your saved game...');
-        await restoreCurrentUserGameForToday(user);
-        setIsLoading(false);
-        return;
-      } catch {
-        setIsLoading(false);
-        if (!scores || !level) {
-          toast({
-            title:
-              'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-            status: 'warning',
-            duration: 3000,
-          });
-          delayRouterPush(router, '/');
+      if (level?.isDaily) {
+        try {
+          setIsLoading(true);
+          setLoadingMessage('Restoring your saved game...');
+          await restoreCurrentUserGameForToday(user);
+          setIsLoading(false);
           return;
-        } else {
-          setLevel(level);
-          updateDisplayedScores(scores);
-          if (level.isDaily) {
-            showResultSubmissionPrompt();
+        } catch {
+          setIsLoading(false);
+          if (!scores || !level) {
+            toast({
+              title:
+                'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+              status: 'warning',
+              duration: 3000,
+            });
+            delayRouterPush(router, '/');
+            return;
+          } else {
+            setLevel(level);
+            updateDisplayedScores(scores);
+            if (level.isDaily) {
+              showResultSubmissionPrompt();
+            }
+            return;
           }
         }
       }
+    }
+    if (!scores || !level) {
+      toast({
+        title:
+          'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+        status: 'warning',
+        duration: 3000,
+      });
+      delayRouterPush(router, '/');
+      return;
     } else {
-      if (!scores || !level) {
-        toast({
-          title:
-            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-          status: 'warning',
-          duration: 3000,
-        });
-        delayRouterPush(router, '/');
-        return;
-      } else {
-        setLevel(level);
-        updateDisplayedScores(scores);
-        if (level.isDaily) {
-          showJoinLeaderboardPrompt();
-        }
+      setLevel(level);
+      updateDisplayedScores(scores);
+      if (level.isDaily) {
+        showJoinLeaderboardPrompt();
       }
+      return;
     }
   };
 

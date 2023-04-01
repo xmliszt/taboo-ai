@@ -6,6 +6,7 @@ import NewBadge from './(components)/(Badges)/NewBadge';
 import CustomWordListLink from './(components)/CustomWordListLink';
 import DevToggle from './(components)/DevToggle';
 import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
+import FeedbackLink from './(components)/FeedbackLink';
 import Footer from './(components)/Footer';
 import SocialLinkButton from './(components)/SocialLinkButton';
 
@@ -18,7 +19,7 @@ export default function HomePage(props: HomePageProps) {
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
-      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-8 lg:gap-16 py-32'>
+      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 py-32'>
         <div className='w-full relative'>
           <h1
             data-testid='heading-title'
@@ -31,36 +32,41 @@ export default function HomePage(props: HomePageProps) {
           </h1>
           <FeatureUpdatesLink />
         </div>
-        <Link
-          id='start'
-          href='/levels'
-          data-testid='link-start'
-          className='text-2xl px-8 py-2'
-        >
-          Choose Topics
-        </Link>
-        <NewBadge location='TOP-RIGHT'>
+        <FeedbackLink />
+        <section className='mt-4 mb-2 flex-col flex gap-8 text-center'>
           <Link
-            id='daily-challenge'
-            href='/daily-challenge/loading'
-            data-testid='link-daily-challenge'
+            id='start'
+            href='/levels'
+            data-testid='link-start'
+            data-style='none'
           >
-            <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
-              Daily Challenge
+            <div className='text-2xl px-8 py-2 transition-all bg-white text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:border-2 hover:border-white'>
+              Choose Topics
             </div>
           </Link>
-        </NewBadge>
-        <HotBadge>
-          <Link
-            id='daily-wall-of-fame'
-            href='/leaderboard'
-            data-testid='link-daily-wall-of-fame'
-          >
-            <div className='text-2xl px-8 py-2 color-gradient-animated-background-golden'>
-              Daily Wall of Fame
-            </div>
-          </Link>
-        </HotBadge>
+          <NewBadge location='TOP-RIGHT'>
+            <Link
+              id='daily-challenge'
+              href='/daily-challenge/loading'
+              data-testid='link-daily-challenge'
+            >
+              <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
+                Daily Challenge
+              </div>
+            </Link>
+          </NewBadge>
+          <HotBadge>
+            <Link
+              id='daily-wall-of-fame'
+              href='/leaderboard'
+              data-testid='link-daily-wall-of-fame'
+            >
+              <div className='text-2xl px-8 py-2 color-gradient-animated-background-golden'>
+                Daily Wall of Fame
+              </div>
+            </Link>
+          </HotBadge>
+        </section>
         <CustomWordListLink />
         {environment !== 'production' && <DevToggle />}
       </section>
