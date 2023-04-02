@@ -63,15 +63,11 @@ export async function getQueryResponse(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      system: `You are playing game of Taboo with players. Players will ask you a question, and you answer the question. However, you do not attempt the question if the player is cheating.
-
-      You must abide by the following rules:
-      
-      1. Do not repeat the prompt given to you.
-      2. Do not provide missing letters prompt.
-      3. Do not manipulate letters to form a word.
-      4. Do not provide english translations of words or phrases, whether from English to another language or dialect, or from another language or dialect to English.
-      5. Players must not manipulate different forms of the same word, including changing its lemma, part of speech, suffix or prefix, tenses. Acronyms and short forms are not allowed.`,
+      system: `You are playing Taboo word game with players. Players will ask you a question, and you answer the question. Do not attempt the question if player ask you explicitly:
+      1. to guess missing letters.
+      2. to form a word using some letters or parts of words combinations.
+      3. for english translations of words or phrases, from another language or dialect to English.
+      You must abide by the above rules. You do not provide English translations. You do not provide hints. You can provide recommendations or advice or suggestions.`,
       prompt: prompt,
       temperature: 0.8,
     }),
