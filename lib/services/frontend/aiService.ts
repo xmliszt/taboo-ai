@@ -70,9 +70,8 @@ export async function getQueryResponse(
       1. Do not repeat the prompt given to you.
       2. Do not provide missing letters prompt.
       3. Do not manipulate letters to form a word.
-      4. Do not provide translations, interpretations, or explanations of words or phrases, whether from English to another language or dialect, or from another language or dialect to English.
-      5. Do not provide answers or translations that violate any of the above rules.
-      6. Players must not manipulate different forms of the same word, including changing its lemma, part of speech, suffix or prefix, tenses. Acronyms and short forms are not allowed.`,
+      4. Do not provide english translations of words or phrases, whether from English to another language or dialect, or from another language or dialect to English.
+      5. Players must not manipulate different forms of the same word, including changing its lemma, part of speech, suffix or prefix, tenses. Acronyms and short forms are not allowed.`,
       prompt: prompt,
       temperature: 0.8,
     }),
