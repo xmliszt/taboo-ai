@@ -13,8 +13,8 @@
 }
 
 .markdown strong {
-  color: burlywood !important;
-  font-weight: normal;
+  color: #f8b857 !important;
+  font-weight: 700;
 }
 
 .markdown h1 {

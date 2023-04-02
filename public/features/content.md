@@ -1,10 +1,12 @@
 # **Brand New Features!**
 
+Exciting news! Taboo.AI now has a **Wall of Fame (Leaderboard)** for players to compete globally in **daily challenges** with the same word set. **Create a unique nickname** to join and get a **Recovery Key** to restore scores on other devices. You can also **search for topics** with the new search feature. **No login needed**, just fun!
+
 ## Daily Challenge & Wall of Fame (Leaderboard)!
 
 ![Wall of Fame](/features/feature-img-1.png)
 
-Taboo.AI now has an exciting **Wall of Fame (Leaderboard)** for you to compete against other players around the world! Every day there will be a **new daily challenge** Taboo Word Set for you to try. For the fairness of the game, every player will have the same words to play with in the same challenge. Players are then ranked based on their final scores.
+Compete globally with the new **Wall of Fame Leaderboard** in Taboo.AI! Take on a **fresh daily challenge set**, with the same word set for all players to ensure fairness. Top players are ranked based on final scores.
 
 ![How to access](/features/feature-img-2.png)
 
@@ -14,24 +16,24 @@ To access the daily challenge, simply go to the [home page](https://taboo-ai.ver
 
 ![Join the leaderboard](/features/feature-img-3.png)
 
-With the **Wall of Fame (Leaderboard)**, you can now submit your game scores to join the rankings. To do so, you will have to **create a nickname** for yourself that is unique, so that we can identify you. At the start, you will not have a nickname, but not to worry! Simply play one round of the **Daily Challenge** and we will prompt you to create a nickname to save your game scores.
+You can now submit your game scores to join the **Wall of Fame (Leaderboard)** and compete with other players! To get started, you'll need to create a **unique nickname** so we can identify you. Don't worry if you don't have one yet - just play one round of the **Daily Challenge** and we'll prompt you to create a nickname to save your scores.
 
 ![Nickname Creation](/features/feature-img-4.png)
 
-After completing the **Daily Challenge**, we will prompt you to create the nickname and join the leaderboard once we detect that you have not registered with us. By clicking **YES**, you will be directly to the nickname creation page.
+Once you **complete the Daily Challenge** and if you haven't registered with us yet, we will ask if you want to **create a nickname and join the leaderboard**. Just click **"YES"** and we'll take you straight to the nickname creation page.
 
 
 ![Recovery Key](/features/feature-img-5.png)
 
-After creating the nickname successfully, we will generate this important **Recovery Key** that will only be availble to you. **Recovery Key** is used to restore your games on other devices, or in situtations where you have cleared your browser caches or re-installed your browser. We use this **Recovery Key** to uniquely identify you and retrieve your game scores for you. Hence, keep this **Recovery Key** somewhere that only you know :)
+Once you create your nickname, we'll give you an exclusive **Recovery Key**. This key is crucial for restoring your games on different devices or after clearing your browser history. We use it to **uniquely identify you and retrieve your scores**. So be sure to **keep your Recovery Key confidential and safe**!
 
 ![Submit Scores to Leaderboard](/features/feature-img-6.png)
 
-Afterwards, you will be able to choose to submit your **Daily Challenge** scores to the **Wall of Fame (Leaderboard)** or not. If you do so, you will be able to see your scores ranked among other players who have submitted theirs. It is perfectly fine if you don't want to rank yourself in the leaderboard!
+Once you've completed the Daily Challenge and created your unique nickname with the Recovery Key, you'll have the option to **submit your scores to the Wall of Fame (Leaderboard)**. If you choose to do so, your scores will be ranked against other players who have submitted their scores as well. However, it's totally up to you whether you want to participate in the leaderboard or not - there's no pressure!
 
 ## Recover Your Scores / Playing on a new device?
 
-Since there is no login mechanism in the game (because we don't want to make things unnecessarily complicated but just want you to have fun!), **Recovery Key** that you got when you created your nickname with us, will be the **only way** for you to restore your scores.
+We decided **not to include a login mechanism** in the game to make things simple and enjoyable for you. So, the Recovery Key you received when creating your nickname with us will be the **sole way** for you to recover your scores.
 
 ![How To Recover?](/features/feature-img-7.png)
 
@@ -45,4 +47,4 @@ You will be prompted with the **Recovery Key**. Simply input the correct **Recov
 
 ![Search Topics](/features/feature-img-9.png)
 
-As the number of topics is growing bigger and bigger, now you can **search** for your topics in the topic selection page. Just enter your search query in the text field and the relevant topics will be shown to you!
+We've made it easier to find the topic you're looking for with our new search feature on the topic selection page. Simply enter your search query in the text field and we'll display the relevant topics for you. With our growing selection of topics, we want to make sure you can easily find what you're looking for.
