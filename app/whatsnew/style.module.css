@@ -13,8 +13,8 @@
 }
 
 .markdown strong {
-  color: burlywood !important;
-  font-weight: normal;
+  color: #f2c25a !important;
+  font-weight: 700;
 }
 
 .markdown h1 {
@@ -80,4 +80,8 @@
 .markdown img {
   padding: 1rem 0;
   image-rendering: optimizespeed;
+}
+
+.markdown a {
+  @apply underline;
 }

@@ -1,16 +1,18 @@
 'use client';
 
-import './global.css';
-import './main.css';
 import { Orbitron, Grenze } from '@next/font/google';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
 import WordCarousell from './(components)/WordCarousell';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import LightDarkToggle from './(components)/LightDarkToggle';
-import { getMaintenance } from '../lib/services/maintenanceService';
+import FeaturePopup from './(components)/(FeaturePopup)/FeaturePopup';
+import Maintenance from './(components)/Maintenance';
+import Header from './(components)/Header';
+import { ChakraProvider } from '@chakra-ui/react';
 
-const grenze = Grenze({
+import './global.css';
+import './main.css';
+import DevToggle from './(components)/DevToggle';
+
+const lightFont = Grenze({
   weight: '400',
   subsets: ['latin'],
   fallback: [
@@ -21,9 +23,10 @@ const grenze = Grenze({
     'Times',
     'serif',
   ],
+  variable: '--font-light',
 });
 
-const orbitron = Orbitron({
+const darkFont = Orbitron({
   weight: '400',
   subsets: ['latin'],
   fallback: [
@@ -34,55 +37,32 @@ const orbitron = Orbitron({
     'Times',
     'serif',
   ],
+  variable: '--font-dark',
 });
-
-interface IMaintenance {
-  isGPTOutage: boolean;
-}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [maintenanceData, setMaintenanceData] = useState<IMaintenance>();
-  const [isDark, setIsDark] = useState(false);
-  const pathName = usePathname();
-
-  useEffect(() => {
-    fetchMaintenance();
-  }, []);
-
-  const fetchMaintenance = async () => {
-    const data = await getMaintenance();
-    setMaintenanceData(data);
-  };
+  const maintenanceMode = JSON.parse(
+    process.env.NEXT_PUBLIC_MAINTENANCE || 'false'
+  );
 
   return (
-    <html
-      lang='en'
-      className={`${isDark && 'dark'} ${
-        isDark ? orbitron.className : grenze.className
-      } font-serif`}
-    >
+    <html lang='en'>
       <head />
-      <body className='bg-black dark:bg-neon-black dark:text-neon-white text-white'>
-        {!(pathName === '/level') && <WordCarousell />}
-        <LightDarkToggle
-          onToggle={(dark) => {
-            setIsDark(dark);
-          }}
-        />
-        {maintenanceData?.isGPTOutage ? (
-          <section className='flex justify-center items-center text-3xl leading-normal h-full w-full p-16'>
-            OpenAI API is experiencing unexpected outage. We will be back once
-            the outage from OpenAI has been resolved! Thank you for your
-            patience!
-          </section>
-        ) : (
-          children
-        )}
-        <AnalyticsWrapper />
+      <body
+        className={`${lightFont.variable} ${darkFont.variable} font-light dark:font-dark bg-black dark:bg-neon-black text-white dark:text-neon-white`}
+      >
+        <ChakraProvider>
+          <Header maintenanceOn={maintenanceMode} />
+          {maintenanceMode && <Maintenance />}
+          {!maintenanceMode && children}
+          {!maintenanceMode && <FeaturePopup />}
+          <AnalyticsWrapper />
+          <WordCarousell />
+        </ChakraProvider>
       </body>
     </html>
   );

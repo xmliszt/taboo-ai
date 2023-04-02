@@ -1,4 +1,4 @@
-import LoadingMask from './(components)/Loading';
+import LoadingMask from './(components)/LoadingMask';
 
 export default function Loading() {
   return (

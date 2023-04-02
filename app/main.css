@@ -1,3 +1,4 @@
+/* stylelint-disable color-hex-length */
 /* stylelint-disable selector-class-pattern */
 @tailwind base;
 @tailwind components;
@@ -26,7 +27,7 @@
   }
 
   .gradient-right-dark {
-    background: linear-gradient(90deg, #02090e 70%, rgb(255 255 255 / 0%) 100%);
+    background: linear-gradient(90deg, #112022 70%, #11202200 100%);
   }
 
   .gradient-left {
@@ -34,7 +35,7 @@
   }
 
   .gradient-left-dark {
-    background: linear-gradient(90deg, rgb(255 255 255 / 0%) 0%, #02090e 30%);
+    background: linear-gradient(90deg, #11202200 0%, #112022 30%);
   }
 
   .gradient-up {
@@ -48,33 +49,108 @@
   .gradient-down {
     background: linear-gradient(
       0deg,
-      rgb(255 255 255 / 0%) 0%,
-      rgb(76 69 62 / 100%) 80%
+      rgb(76 69 92 / 0%) 0%,
+      rgb(76 69 92 / 80%) 10%,
+      rgb(76 69 62 / 100%) 20%
     );
   }
 
   .gradient-up-dark {
-    background: linear-gradient(0deg, #112022 20%, rgb(0 0 0 / 0%) 100%);
+    background: linear-gradient(0deg, #02090e 20%, #02090e00 100%);
   }
 
   .gradient-down-dark {
-    background: linear-gradient(0deg, rgb(0 0 0 / 0%) 0%, #112022 80%);
+    background: linear-gradient(0deg, #02090e00 0%, #02090e80 10%, #02090e 20%);
   }
 
   .gradient-up-dark-black {
-    background: linear-gradient(
-      0deg,
-      rgb(2 9 4 / 100%) 20%,
-      rgb(0 0 0 / 0%) 100%
-    );
+    background: linear-gradient(0deg, #02090e 20%, #02090e00 100%);
   }
 
   .gradient-down-dark-black {
+    background: linear-gradient(0deg, #02090e00 0%, #02090e 80%);
+  }
+
+  .color-gradient-animated-background {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    @apply transition-all bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green dark:text-neon-white;
+  }
+
+  .color-gradient-animated-background-golden {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    @apply transition-all bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green dark:text-neon-white;
+  }
+
+  .color-gradient-animated-background-golden::before,
+  .color-gradient-animated-background-golden::after {
+    @apply !rounded-tl-[2rem] !rounded-br-[2rem];
+
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
     background: linear-gradient(
-      0deg,
-      rgb(0 0 0 / 0%) 0%,
-      rgb(2 9 4 / 100%) 80%
+      45deg,
+      #ff722b,
+      #ffef61,
+      #ffffa9,
+      #ffef61,
+      #ff722b
     );
+    background-size: 500%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1 !important;
+    animation: steam 20s linear infinite forwards;
+  }
+
+  .color-gradient-animated-background-golden::after {
+    @apply blur;
+  }
+
+  .color-gradient-animated-background::before,
+  .color-gradient-animated-background::after {
+    @apply !rounded-tl-[2rem] !rounded-br-[2rem];
+
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    background: linear-gradient(
+      45deg,
+      #fb0094,
+      #0088ff,
+      #5500ff,
+      #0088ff,
+      #fb0094
+    );
+    background-size: 500%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1 !important;
+    animation: steam 20s linear infinite forwards;
+  }
+
+  .color-gradient-animated-background::after {
+    @apply blur;
+  }
+
+  @keyframes steam {
+    0% {
+      background-position: 0 0;
+    }
+
+    50% {
+      background-position: 400% 0;
+    }
+
+    100% {
+      background-position: 0 0;
+    }
   }
 }
 
@@ -86,18 +162,7 @@ b {
   @apply font-bold text-yellow dark:text-neon-yellow;
 }
 
-button:not(
-    #back,
-    #theme,
-    #submit,
-    #share,
-    #reset,
-    #clear,
-    #add,
-    #delete,
-    .Toastify__close-button
-  ),
-a#start {
+button:not(.Toastify__close-button, [data-style='none']) {
   @apply transition-all drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem] hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green hover:rounded-[2rem];
 }
 
@@ -115,7 +180,17 @@ h1 {
   @apply text-base lg:text-5xl;
 }
 
-.Toastify__toast-body {
+.react-confirm-alert {
+  line-height: 1.2rem;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  line-height: 1rem;
+}
+
+.react-confirm-alert h1 {
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.react-confirm-alert button {
+  border-radius: 2rem !important;
 }

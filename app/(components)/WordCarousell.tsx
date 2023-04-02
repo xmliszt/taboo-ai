@@ -1,3 +1,8 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { getRandomInt } from '../../lib/utilities';
+
 const sizes = [
   'text-base lg:text-lg',
   'text-lg lg:text-2xl',
@@ -59,58 +64,12 @@ const words = [
 ];
 
 const animationClasses = [
-  'animate-[moveIn_15s_linear_infinite]',
-  'animate-[moveIn_16s_linear_infinite]',
-  'animate-[moveIn_17s_linear_infinite]',
-  'animate-[moveIn_18s_linear_infinite]',
-  'animate-[moveIn_19s_linear_infinite]',
-  'animate-[moveIn_20s_linear_infinite]',
-  'animate-[moveIn_21s_linear_infinite]',
-  'animate-[moveIn_22s_linear_infinite]',
-  'animate-[moveIn_23s_linear_infinite]',
-  'animate-[moveIn_24s_linear_infinite]',
-  'animate-[moveIn_25s_linear_infinite]',
-  'animate-[moveIn_26s_linear_infinite]',
-  'animate-[moveIn_27s_linear_infinite]',
-  'animate-[moveIn_28s_linear_infinite]',
-  'animate-[moveIn_29s_linear_infinite]',
-  'animate-[moveIn_30s_linear_infinite]',
-  'animate-[moveIn_31s_linear_infinite]',
-  'animate-[moveIn_32s_linear_infinite]',
-  'animate-[moveIn_33s_linear_infinite]',
-  'animate-[moveIn_34s_linear_infinite]',
-  'animate-[moveIn_35s_linear_infinite]',
-  'animate-[moveIn_36s_linear_infinite]',
-  'animate-[moveIn_37s_linear_infinite]',
-  'animate-[moveIn_38s_linear_infinite]',
-  'animate-[moveIn_39s_linear_infinite]',
-  'animate-[moveIn_40s_linear_infinite]',
-  'animate-[moveIn_41s_linear_infinite]',
-  'animate-[moveIn_42s_linear_infinite]',
-  'animate-[moveIn_43s_linear_infinite]',
-  'animate-[moveIn_44s_linear_infinite]',
-  'animate-[moveIn_45s_linear_infinite]',
-  'animate-[moveIn_46s_linear_infinite]',
-  'animate-[moveIn_47s_linear_infinite]',
-  'animate-[moveIn_48s_linear_infinite]',
-  'animate-[moveIn_49s_linear_infinite]',
-  'animate-[moveIn_50s_linear_infinite]',
-  'animate-[moveIn_51s_linear_infinite]',
-  'animate-[moveIn_52s_linear_infinite]',
-  'animate-[moveIn_53s_linear_infinite]',
-  'animate-[moveIn_54s_linear_infinite]',
-  'animate-[moveIn_55s_linear_infinite]',
-  'animate-[moveIn_56s_linear_infinite]',
-  'animate-[moveIn_57s_linear_infinite]',
-  'animate-[moveIn_58s_linear_infinite]',
-  'animate-[moveIn_59s_linear_infinite]',
-  'animate-[moveIn_60s_linear_infinite]',
-  'animate-[moveIn_61s_linear_infinite]',
-  'animate-[moveIn_62s_linear_infinite]',
-  'animate-[moveIn_63s_linear_infinite]',
-  'animate-[moveIn_64s_linear_infinite]',
-  'animate-[moveIn_65s_linear_infinite]',
-  'animate-[moveIn_66s_linear_infinite]',
+  'animate-carousell-10',
+  'animate-carousell-12',
+  'animate-carousell-14',
+  'animate-carousell-16',
+  'animate-carousell-18',
+  'animate-carousell-20',
 ];
 
 const getAnimationClass = (): string => {
@@ -133,29 +92,58 @@ const getOpacityAndBlurClass = (size: string): string => {
   return 'opacity-10 blur-xxxxs';
 };
 
-let cache: JSX.Element[];
+const wordDensity = 20;
 
 export default function WordCarousell() {
-  const wordsElements =
-    !cache || cache?.length === 0
-      ? words.map((word) => {
-          const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-          const animationClass = getAnimationClass();
-          const opacityBlurClass = getOpacityAndBlurClass(sizeClass);
-          return (
-            <div
-              key={word}
-              className={`${animationClass} ${opacityBlurClass} ${sizeClass} w-full`}
-            >
-              {word}
-            </div>
-          );
-        })
-      : cache;
-  cache = wordsElements;
+  const [hasDisplayed, setHasDisplayed] = useState(false);
+  useEffect(() => {
+    if (!hasDisplayed) {
+      displayCarousell();
+      setHasDisplayed(true);
+    }
+  }, [hasDisplayed]);
+
+  const displayCarousell = () => {
+    const wordCarousellContainer = document.getElementById(
+      'word-carousell-container'
+    );
+    if (wordCarousellContainer) {
+      for (let i = 0; i < wordDensity; i++) {
+        delayRender(i, wordCarousellContainer, getRandomInt(0, 1000) / 100);
+      }
+    }
+  };
+
+  const delayRender = async (
+    index: number,
+    container: HTMLElement,
+    delay: number
+  ) => {
+    return new Promise<void>((res) => {
+      setTimeout(() => {
+        const word = words[Math.floor(Math.random() * words.length)];
+        const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
+        const opacityBlurClass = getOpacityAndBlurClass(sizeClass);
+        const animationClass = getAnimationClass();
+        const wordElement = document.createElement('div');
+        wordElement.classList.add('w-full');
+        wordElement.classList.add(animationClass);
+        sizeClass.split(' ').forEach((cls) => wordElement.classList.add(cls));
+        opacityBlurClass
+          .split(' ')
+          .forEach((cls) => wordElement.classList.add(cls));
+        wordElement.setAttribute('key', String(index));
+        wordElement.innerHTML = word;
+        container.appendChild(wordElement);
+        res();
+      }, delay * 1000);
+    });
+  };
+
   return (
-    <div className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif pointer-events-none'>
-      {wordsElements}
-    </div>
+    <div
+      id='word-carousell-container'
+      className='fixed top-0 h-full w-full leading-normal font-extrabold font-serif pointer-events-none -z-10'
+    ></div>
   );
 }

@@ -16,6 +16,7 @@ export default function Custom404() {
       <p className='text-white text-center'>Ooops page not found &gt;_&lt;!</p>
       <button
         id='reset'
+        data-style='none'
         aria-label='reset button'
         className='text-2xl lg:text-4xl text-red-light hover:text-yellow transition-all'
         onClick={() => {

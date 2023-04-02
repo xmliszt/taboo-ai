@@ -3,7 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 const allowedOrigins = [
   /taboo-ai\.vercel\.app$/,
   /taboo-.+-xmliszt\.vercel\.app$/,
-  /localhost:3000$/,
+  /localhost:\d+$/,
+  /192\.168\.\d+\.\d+:\d+$/,
 ];
 
 const checkOrigin = (

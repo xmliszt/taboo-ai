@@ -4,5 +4,11 @@ https://taboo-ai.vercel.app/levels
 https://taboo-ai.vercel.app/level
 https://taboo-ai.vercel.app/ai
 https://taboo-ai.vercel.app/results
+https://taboo-ai.vercel.app/roadmap
 https://taboo-ai.vercel.app/whatsnew
-https://taboo-ai.vercel.app/upcoming
+https://taboo-ai.vercel.app/buymecoffee
+https://taboo-ai.vercel.app/leaderboard
+https://taboo-ai.vercel.app/signup
+https://taboo-ai.vercel.app/recovery
+https://taboo-ai.vercel.app/daily-challenge
+https://taboo-ai.vercel.app/daily-challenge/loading
