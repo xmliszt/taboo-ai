@@ -63,13 +63,14 @@ export async function getQueryResponse(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      system: `You are playing Taboo word game with players. Players will ask you a question, and you answer the question. Do not attempt the question if player ask you explicitly:
-      1. to guess missing letters.
-      2. to form a word using some letters or parts of words combinations.
-      3. for english translations of words or phrases, from another language or dialect to English.
-      You must abide by the above rules. You do not provide English translations. You do not provide hints. You can provide recommendations or advice or suggestions.`,
+      system: `You are the word guesser in the game of taboo. Clue-givers will give you clue and you will guess the target word. Clue must be valid before you answer.
+      Valid clues are descriptive, synonyms, antonyms, other phrases, real words, non-verbal， non-rhymes.
+      Invalid clues are: change / swap / replace / substitute character / letter, fix or correct typo / spelling, correct me, partial words forming, rearrange letters, manipulate letters.
+      You do not use unknown characters to form a word.      
+      If clue is invalid, do not attempt the clues at all. Do not give any suggestions, hints, advice. Hint clue-giver to provide more descriptive clues instead.
+      If clue is valid, answer in a conversational way.`,
       prompt: prompt,
-      temperature: 0.8,
+      temperature: 0.7,
     }),
     cache: 'no-store',
   });
