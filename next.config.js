@@ -9,7 +9,7 @@ const appSecurityHeaders = [
 ];
 
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   experimental: {
     appDir: true,
   },
