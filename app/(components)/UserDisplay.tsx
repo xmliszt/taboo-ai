@@ -15,17 +15,42 @@ import useToast from '../../lib/hook/useToast';
 import { useRouter } from 'next/navigation';
 import IUser from '../../types/user.interface';
 import { useEffect, useState } from 'react';
+import { getUserInfo } from '../../lib/services/frontend/userService';
 
 const UserDisplay = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const [user, setUser] = useState<IUser | undefined>();
   const pathName = usePathname();
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    const _user = getUser();
-    _user && setUser(_user);
-  }, []);
+    !isMounted && setIsMounted(true);
+    if (isMounted) {
+      const _user = getUser();
+      if (_user) {
+        checkUserExists(_user.nickname).then((exists) => {
+          exists && setUser(_user);
+          !exists && clearUser();
+        });
+      }
+    }
+  }, [isMounted]);
+
+  const checkUserExists = async (nickname: string) => {
+    try {
+      await getUserInfo(nickname);
+      return true;
+    } catch (error) {
+      console.error(error);
+      toast({
+        title:
+          'Sorry, this nickname no longer exists. Please create a new nickname!',
+        status: 'error',
+      });
+      return false;
+    }
+  };
 
   const quit = () => {
     confirmAlert({
