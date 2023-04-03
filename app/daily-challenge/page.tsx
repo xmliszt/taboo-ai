@@ -14,7 +14,12 @@ import ProgressBar from '../(components)/ProgressBar';
 import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
+import {
+  cacheScore,
+  clearScores,
+  getLevelCache,
+  getUser,
+} from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import IVariation from '../../types/variation.interface';
 import {
@@ -29,6 +34,8 @@ import { HASH } from '../../lib/hash';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import useToast from '../../lib/hook/useToast';
+import { getGameByPlayerNicknameFilterByDate } from '../../lib/services/frontend/gameService';
+import moment from 'moment';
 
 interface DailyLevelProps {}
 
@@ -323,10 +330,6 @@ export default function DailyLevelPage(props: DailyLevelProps) {
     setIsCountdown(true);
   };
 
-  useEffect(() => {
-    !isMounted && setIsMounted(true);
-  }, []);
-
   //SECTION - When target changed
   useEffect(() => {
     if (target) {
@@ -356,50 +359,90 @@ export default function DailyLevelPage(props: DailyLevelProps) {
   }, [target]);
   //!SECTION
 
+  const checkIfLevelAttempted = async () => {
+    const user = getUser();
+    if (user) {
+      try {
+        setIsLoading(true);
+        const game = await getGameByPlayerNicknameFilterByDate(
+          user.nickname,
+          moment()
+        );
+        if (game) {
+          toast({
+            title: "Seems like you have attempted today's challenge.",
+            status: 'warning',
+          });
+          delayRouterPush(router, '/result', {
+            delay: 3000,
+            completion: () => {
+              setIsLoading(false);
+            },
+          });
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        console.error(error);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const generateLevel = () => {
+    clearScores();
+    const level = getLevelCache();
+    if (level !== null && level.isDaily) {
+      showAntiCheatingAlert(() => {
+        confirmAlert({
+          title: level.dailyLevelName,
+          message: `${
+            level.dailyLevelTopic && 'Topic: ' + level.dailyLevelTopic + ' | '
+          }Difficulty: ${getDifficulty(level.difficulty)}`,
+          buttons: [
+            {
+              label: "Let's Begin!",
+              onClick: () => {
+                reset();
+                setDifficulty(level.difficulty);
+                const words = level.words.map((word) =>
+                  formatStringForDisplay(word)
+                );
+                setWords(words);
+                const _target = generateNewTarget(words);
+                setTarget(_target);
+                setCurrentProgress(1);
+                setIsSuccess(false);
+                setResponseShouldFadeOut(false); // Let new response fade in
+                setResponseText(
+                  'Think about your prompt while we generate the Taboo words.'
+                );
+              },
+            },
+          ],
+          closeOnClickOutside: false,
+          closeOnEscape: false,
+        });
+      });
+    } else {
+      toast({
+        title: 'No daily challenge available! Please try again!',
+        status: 'error',
+      });
+      delayRouterPush(router, '/');
+    }
+  };
+
   //SECTION - At the start of the game
   useEffect(() => {
+    !isMounted && setIsMounted(true);
     if (isMounted) {
-      clearScores();
-      const level = getLevelCache();
-      if (level !== null && level.isDaily) {
-        showAntiCheatingAlert(() => {
-          confirmAlert({
-            title: level.dailyLevelName,
-            message: `${
-              level.dailyLevelTopic && 'Topic: ' + level.dailyLevelTopic + ' | '
-            }Difficulty: ${getDifficulty(level.difficulty)}`,
-            buttons: [
-              {
-                label: "Let's Begin!",
-                onClick: () => {
-                  reset();
-                  setDifficulty(level.difficulty);
-                  const words = level.words.map((word) =>
-                    formatStringForDisplay(word)
-                  );
-                  setWords(words);
-                  const _target = generateNewTarget(words);
-                  setTarget(_target);
-                  setCurrentProgress(1);
-                  setIsSuccess(false);
-                  setResponseShouldFadeOut(false); // Let new response fade in
-                  setResponseText(
-                    'Think about your prompt while we generate the Taboo words.'
-                  );
-                },
-              },
-            ],
-            closeOnClickOutside: false,
-            closeOnEscape: false,
-          });
-        });
-      } else {
-        toast({
-          title: 'No daily challenge available! Please try again!',
-          status: 'error',
-        });
-        delayRouterPush(router, '/');
-      }
+      checkIfLevelAttempted().then((attempted) => {
+        !attempted && generateLevel();
+      });
     }
   }, [isMounted]);
   //!SECTION

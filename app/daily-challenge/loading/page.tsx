@@ -4,21 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getDailyLevel } from '../../../lib/services/frontend/levelService';
 import moment from 'moment';
-import {
-  cacheLevel,
-  cacheScore,
-  clearScores,
-  getUser,
-} from '../../../lib/cache';
+import { cacheLevel } from '../../../lib/cache';
 import LoadingMask from '../../(components)/LoadingMask';
-import { getGameByPlayerNicknameFilterByDate } from '../../../lib/services/frontend/gameService';
-import { getScoresByGameID } from '../../../lib/services/frontend/scoreService';
-import { getHighlights } from '../../../lib/services/frontend/highlightService';
-import {
-  buildLevelForDisplay,
-  buildScoresForDisplay,
-  delayRouterPush,
-} from '../../../lib/utilities';
+import { buildLevelForDisplay, delayRouterPush } from '../../../lib/utilities';
 import useToast from '../../../lib/hook/useToast';
 
 /**
@@ -54,42 +42,6 @@ const DailyLevelLoadingPage = () => {
         return;
       }
       const convertedLevel = buildLevelForDisplay(level);
-      const user = getUser();
-
-      if (user) {
-        const game = await getGameByPlayerNicknameFilterByDate(
-          user.nickname,
-          moment()
-        );
-        if (game) {
-          const scores = await getScoresByGameID(game.game_id);
-          cacheLevel(convertedLevel);
-          clearScores();
-          for (const score of scores) {
-            const highlights = await getHighlights(
-              game.game_id,
-              score.score_id
-            );
-            const displayScore = buildScoresForDisplay(
-              convertedLevel,
-              score,
-              highlights
-            );
-            cacheScore(displayScore);
-          }
-          toast({
-            title: "Seems like you have attempted today's challenge.",
-            status: 'warning',
-          });
-          delayRouterPush(router, '/result', {
-            delay: 3000,
-            completion: () => {
-              setIsLoading(false);
-            },
-          });
-          return;
-        }
-      }
       cacheLevel(convertedLevel);
       setIsLoading(false);
       router.push('/daily-challenge');
