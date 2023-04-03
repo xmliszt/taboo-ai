@@ -138,7 +138,11 @@ export default function ResultPage(props: ResultPageProps) {
           return;
         } catch {
           setIsLoading(false);
-          if (!scores || !level) {
+          if (
+            !scores ||
+            !level ||
+            (scores && scores.length < CONSTANTS.numberOfQuestionsPerGame)
+          ) {
             toast({
               title:
                 'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
@@ -158,7 +162,11 @@ export default function ResultPage(props: ResultPageProps) {
         }
       }
     }
-    if (!scores || !level) {
+    if (
+      !scores ||
+      !level ||
+      (scores && scores.length < CONSTANTS.numberOfQuestionsPerGame)
+    ) {
       toast({
         title:
           'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
