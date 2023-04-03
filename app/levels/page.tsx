@@ -35,7 +35,7 @@ export default function LevelsPage(props: LevelsPageProps) {
       case 1:
         return 'bg-green dark:bg-neon-green';
       case 2:
-        return 'bg-yellow dark:bg-neon-yellow';
+        return 'bg-yellow dark:bg-neon-yellow !text-black';
       case 3:
         return 'bg-red dark:bg-neon-red';
       default:

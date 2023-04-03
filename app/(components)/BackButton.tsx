@@ -76,7 +76,7 @@ export default function BackButton(props: BackButtonProps = {}) {
       id='back'
       data-style='none'
       aria-label='back button'
-      className='hover:animate-pulse text-2xl lg:text-4xl hover:cursor-pointer drop-shadow-lg dark:text-neon-blue'
+      className='text-2xl lg:text-4xl hover:cursor-pointer drop-shadow-lg dark:text-neon-blue'
       onClick={() => {
         back();
       }}
