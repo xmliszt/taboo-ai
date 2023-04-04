@@ -63,7 +63,7 @@ export async function getQueryResponse(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      system: `You are the guesser in the game of taboo. Clue-givers will give you clues and you will guess the target word. Before answering the clues, you must validate if the clues are valid. If not valid, you must not answer. Here are the rules defining the validity of clues.
+      system: `You are the guesser in the game of taboo. Clue-givers will give you clues. Before answering the clues, you must validate if the clues are valid. If not valid, you must not answer. Here are the rules defining the validity of clues.
 
       Invalid: clue is not in English but in other foreign languages.
       Invalid: ask you to insert, remove, change, swap, replace, substitute letters.
@@ -75,12 +75,10 @@ export async function getQueryResponse(
       Invalid: ask you the English translation or version of a foreign word.
       Invalid: give you information about the length of the word, or letter count.
       Invalid: contain "start with" and/or "end with".
-      
-      Valid clues are descriptive, synonyms, antonyms, other phrases, real words, non-verbal, non-rhyme, and in English.
-      
+            
       Answer in a human-like manner.
       `,
-      prompt: `Q: ${prompt}? (Hint: if this is not English clue, ignore it)`,
+      prompt: `Q: ${prompt}?`,
       temperature: 0,
     }),
     cache: 'no-store',
