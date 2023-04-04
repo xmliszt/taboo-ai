@@ -18,7 +18,9 @@ import {
   cacheScore,
   clearScores,
   getLevelCache,
+  getTipsAck,
   getUser,
+  setTipsAck,
 } from '../../lib/cache';
 import { Highlight } from '../../types/chat.interface';
 import IVariation from '../../types/variation.interface';
@@ -36,6 +38,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import useToast from '../../lib/hook/useToast';
 import { getGameByPlayerNicknameFilterByDate } from '../../lib/services/frontend/gameService';
 import moment from 'moment';
+import ILevel from '../../types/level.interface';
 
 interface DailyLevelProps {}
 
@@ -396,37 +399,14 @@ export default function DailyLevelPage(props: DailyLevelProps) {
     clearScores();
     const level = getLevelCache();
     if (level !== null && level.isDaily) {
-      showAntiCheatingAlert(() => {
-        confirmAlert({
-          title: level.dailyLevelName,
-          message: `${
-            level.dailyLevelTopic && 'Topic: ' + level.dailyLevelTopic + ' | '
-          }Difficulty: ${getDifficulty(level.difficulty)}`,
-          buttons: [
-            {
-              label: "Let's Begin!",
-              onClick: () => {
-                reset();
-                setDifficulty(level.difficulty);
-                const words = level.words.map((word) =>
-                  formatStringForDisplay(word)
-                );
-                setWords(words);
-                const _target = generateNewTarget(words);
-                setTarget(_target);
-                setCurrentProgress(1);
-                setIsSuccess(false);
-                setResponseShouldFadeOut(false); // Let new response fade in
-                setResponseText(
-                  'Think about your prompt while we generate the Taboo words.'
-                );
-              },
-            },
-          ],
-          closeOnClickOutside: false,
-          closeOnEscape: false,
+      const tipsAck = getTipsAck();
+      if (tipsAck) {
+        showDailyLevelStartingAlert(level);
+      } else {
+        showTipsAlert(() => {
+          showDailyLevelStartingAlert(level);
         });
-      });
+      }
     } else {
       toast({
         title: 'No daily challenge available! Please try again!',
@@ -434,6 +414,38 @@ export default function DailyLevelPage(props: DailyLevelProps) {
       });
       delayRouterPush(router, '/');
     }
+  };
+
+  const showDailyLevelStartingAlert = (level: ILevel) => {
+    confirmAlert({
+      title: level.dailyLevelName,
+      message: `${
+        level.dailyLevelTopic && 'Topic: ' + level.dailyLevelTopic + ' | '
+      }Difficulty: ${getDifficulty(level.difficulty)}`,
+      buttons: [
+        {
+          label: "Let's Begin!",
+          onClick: () => {
+            reset();
+            setDifficulty(level.difficulty);
+            const words = level.words.map((word) =>
+              formatStringForDisplay(word)
+            );
+            setWords(words);
+            const _target = generateNewTarget(words);
+            setTarget(_target);
+            setCurrentProgress(1);
+            setIsSuccess(false);
+            setResponseShouldFadeOut(false); // Let new response fade in
+            setResponseText(
+              'Think about your prompt while we generate the Taboo words.'
+            );
+          },
+        },
+      ],
+      closeOnClickOutside: false,
+      closeOnEscape: false,
+    });
   };
 
   //SECTION - At the start of the game
@@ -456,6 +468,35 @@ export default function DailyLevelPage(props: DailyLevelProps) {
         {
           label: 'OK! I will play fairly.',
           onClick: () => {
+            setTimeout(() => {
+              completion();
+            }, 1000);
+          },
+        },
+      ],
+      closeOnClickOutside: false,
+      closeOnEscape: false,
+    });
+  };
+
+  const showTipsAlert = (completion: () => void) => {
+    confirmAlert({
+      title: '😎 How to write your clues?',
+      message:
+        'Just like the traditional Taboo game, you are playing the role as the clue-giver! Your clue will help the AI guess out the correct target word. Here are some tips on how to make best-performing clues! 📄 Use complete sentence with context like "Guess a noun. It is a kind of flying vehicle that carries passengers." 🎨 Be creative and think out of the box! One word can have many different meanings and use cases, try to think about scenarios that do not fall inside the taboo word list.',
+      buttons: [
+        {
+          label: 'OK!',
+          onClick: () => {
+            setTimeout(() => {
+              completion();
+            }, 1000);
+          },
+        },
+        {
+          label: 'OK! And do not prompt me again',
+          onClick: () => {
+            setTipsAck(true);
             setTimeout(() => {
               completion();
             }, 1000);

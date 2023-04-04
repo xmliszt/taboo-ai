@@ -62,6 +62,15 @@ export function setFeaturePopupString(s: string) {
   localStorage.setItem(HASH.hasReadFeaturePopup, s);
 }
 
+//ANCHOR - Acknowledgement
+export function getTipsAck(): boolean {
+  return JSON.parse(localStorage.getItem(HASH.hasReadTips) ?? 'false');
+}
+
+export function setTipsAck(ack: boolean) {
+  localStorage.setItem(HASH.hasReadTips, JSON.stringify(ack));
+}
+
 //ANCHOR - Submitted Game
 export function getCachedGame(): IGame | null {
   const gameString = localStorage.getItem(HASH.game);

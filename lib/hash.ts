@@ -11,4 +11,5 @@ export const HASH = {
   dev: getHash('dev'),
   game: getHash('game'),
   hasReadFeaturePopup: getHash('has-read-feature-popup'),
+  hasReadTips: getHash('has-read-tips'),
 };
