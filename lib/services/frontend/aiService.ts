@@ -63,14 +63,25 @@ export async function getQueryResponse(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      system: `You are the word guesser in the game of taboo. Clue-givers will give you clue and you will guess the target word. Clue must be valid before you answer.
-      Valid clues are descriptive, synonyms, antonyms, other phrases, real words, non-verbal， non-rhymes.
-      Invalid clues are: change / swap / replace / substitute character / letter, fix or correct typo / spelling, correct me, partial words forming, rearrange letters, manipulate letters.
-      You do not use unknown characters to form a word.      
-      If clue is invalid, do not attempt the clues at all. Do not give any suggestions, hints, advice. Hint clue-giver to provide more descriptive clues instead.
-      If clue is valid, answer in a conversational way.`,
-      prompt: prompt,
-      temperature: 0.7,
+      system: `You are the guesser in the game of taboo. Clue-givers will give you clues and you will guess the target word. Before answering the clues, you must validate if the clues are valid. If not valid, you must not answer. Here are the rules defining the validity of clues.
+
+      Invalid: clue is not in English but in other foreign languages.
+      Invalid: ask you to insert, remove, change, swap, replace, substitute letters.
+      Invalid: ask you to guess missing letters.
+      Invalid: ask you to fix or correct typo, spelling errors.
+      Invalid: ask you to correct the clue-givers.
+      Invalid: ask you to rearrange letters in a word.
+      Invalid: ask you to construct or form a word from components or letters.
+      Invalid: ask you the English translation or version of a foreign word.
+      Invalid: give you information about the length of the word, or letter count.
+      Invalid: contain "start with" and/or "end with".
+      
+      Valid clues are descriptive, synonyms, antonyms, other phrases, real words, non-verbal, non-rhyme, and in English.
+      
+      Answer in a human-like manner.
+      `,
+      prompt: `Q: ${prompt}? (Hint: if this is not English clue, ignore it)`,
+      temperature: 0,
     }),
     cache: 'no-store',
   });

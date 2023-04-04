@@ -451,7 +451,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
     confirmAlert({
       title: '❗️Please do not attempt to cheat!',
       message:
-        "We understand that winning is important, but let's not forget about the spirit of the game. Cheating not only ruins the fun for other players, but it also goes against the fair play principles we hold dear 😌. Taboo.AI is not only a game but also an educational tool. We strive to provide a fun way to broaden your knowledge while improving your English skills. We want to create a safe and fair environment for everyone to enjoy. So let's play fairly and have some fun while learning! ℹ️ Any cheating found will be immediately removed from the leaderboard.",
+        "We understand that winning is important, but let's not forget about the spirit of the game. Cheating not only ruins the fun for other players, but it also goes against the fair play principles we hold dear 😌. Taboo.AI is not only a game but also an educational tool. We strive to provide a fun way to broaden your knowledge while improving your English skills. We want to create a safe and fair environment for everyone to enjoy. So let's play fairly and have some fun while learning! ℹ️ We have implemented anti-cheat measures in the AI. Any cheating found will be immediately removed from the leaderboard. If multiple attempts found, we might have to block your IP address.",
       buttons: [
         {
           label: 'OK! I will play fairly.',
