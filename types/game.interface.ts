@@ -6,4 +6,6 @@ export default interface IGame {
   total_score: number;
   created_at: string;
   prompt_visible: boolean;
+  ai_score?: number;
+  ai_explanation?: string;
 }

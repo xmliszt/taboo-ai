@@ -220,6 +220,8 @@ export const buildScoresForDisplay = (
     response: score.response,
     difficulty: level.difficulty,
     completion: score.completion_duration,
+    ai_score: score.ai_score,
+    ai_explanation: score.ai_explanation,
     responseHighlights: highlights.map(
       (h): Highlight => ({ start: h.start, end: h.end })
     ),

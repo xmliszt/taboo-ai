@@ -8,6 +8,8 @@ export interface IDisplayScore {
   response: string;
   difficulty: number;
   completion: number;
+  ai_score?: number;
+  ai_explanation?: string;
   responseHighlights: Highlight[];
 }
 
@@ -17,5 +19,12 @@ export interface IScore {
   target: string;
   question: string;
   response: string;
+  ai_score: number;
+  ai_explanation: string;
   completion_duration: number;
+}
+
+export interface IAIScore {
+  score?: number;
+  explanation?: string;
 }
