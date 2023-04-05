@@ -5,7 +5,9 @@ export const insertNewScore = async (
   target: string,
   question: string,
   response: string,
-  completion: number
+  completion: number,
+  ai_score?: number,
+  ai_explanation?: string
 ) => {
   const { data, error } = await supabase
     .from('score')
@@ -16,6 +18,8 @@ export const insertNewScore = async (
       question: question,
       response: response,
       completion_duration: completion,
+      ai_score: ai_score,
+      ai_explanation: ai_explanation,
     })
     .select();
   if (error) {

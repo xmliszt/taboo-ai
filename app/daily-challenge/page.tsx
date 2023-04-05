@@ -459,31 +459,11 @@ export default function DailyLevelPage(props: DailyLevelProps) {
   }, [isMounted]);
   //!SECTION
 
-  const showAntiCheatingAlert = (completion: () => void) => {
-    confirmAlert({
-      title: '❗️Please do not attempt to cheat!',
-      message:
-        "We understand that winning is important, but let's not forget about the spirit of the game. Cheating not only ruins the fun for other players, but it also goes against the fair play principles we hold dear 😌. Taboo.AI is not only a game but also an educational tool. We strive to provide a fun way to broaden your knowledge while improving your English skills. We want to create a safe and fair environment for everyone to enjoy. So let's play fairly and have some fun while learning! ℹ️ We have implemented anti-cheat measures in the AI. Any cheating found will be immediately removed from the leaderboard. If multiple attempts found, we might have to block your IP address.",
-      buttons: [
-        {
-          label: 'OK! I will play fairly.',
-          onClick: () => {
-            setTimeout(() => {
-              completion();
-            }, 1000);
-          },
-        },
-      ],
-      closeOnClickOutside: false,
-      closeOnEscape: false,
-    });
-  };
-
   const showTipsAlert = (completion: () => void) => {
     confirmAlert({
-      title: '😎 How to write your clues?',
+      title: '😎 Ready to write your best clues?',
       message:
-        'Just like the traditional Taboo game, you are playing the role as the clue-giver! Your clue will help the AI guess out the correct target word. Here are some tips on how to make best-performing clues! 📄 Use complete sentence with context like "Guess a noun. It is a kind of flying vehicle that carries passengers." 🎨 Be creative and think out of the box! One word can have many different meanings and use cases, try to think about scenarios that do not fall inside the taboo word list.',
+        'With our comprehensive scoring system, you can write the best scoring clues and boost your score like never before! 🎨 Get creative and think outside the box to come up with informative and detailed clues that will impress the AI and earn you maximum points. ✅ Make sure your clues have a broad knowledge scope, demonstrating your vast knowledge and impressing your opponent - Taboo AI. ⛔️ Avoid cheating at all costs and focus on providing high-quality clues that challenge the other players and demonstrate your expertise.',
       buttons: [
         {
           label: 'OK!',

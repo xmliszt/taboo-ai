@@ -1,5 +1,12 @@
 # Taboo.AI Releases Roadmap
 
+## 06 Apr - Release Notes (V2.1)
+
+- **New scoring system** ensures that players will be rewarded for their **overall performance**, rather than just their speed.
+- Added **topic name** for daily challenge in the Wall of Fame (leaderboard).
+- In **result** page, now user can unfold/fold the result of each stage, so that the overview will not be too long to scroll. User can expand and see the details if want to.
+- In **result** page, added button with question mark to review the new scoring system rules.
+
 ## 02 Apr - Release Notes (V2.0)
 
 - **Brand New Daily Challenge mode** with **Wall of Fame (Leaderboard)** for players to compete.

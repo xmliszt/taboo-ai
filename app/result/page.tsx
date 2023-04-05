@@ -42,6 +42,9 @@ import moment from 'moment';
 import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
 import useToast from '../../lib/hook/useToast';
 import { getAIJudgeScore } from '../../lib/services/frontend/aiService';
+import { BsQuestionCircle } from 'react-icons/bs';
+import Image from 'next/image';
+import { RiCloseCircleLine } from 'react-icons/ri';
 
 interface StatItem {
   title: string;
@@ -68,6 +71,7 @@ interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const [showScoreExplained, setShowScoreExplained] = useState(false);
   const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
   const [displayedLevelName, setDisplayedLevelName] = useState<string | null>();
@@ -149,20 +153,21 @@ export default function ResultPage(props: ResultPageProps) {
     const scores = getScoresCache();
     if (scores && scores.length === CONSTANTS.numberOfQuestionsPerGame) {
       // AI judging
-      if (
-        !scores.some(
-          (score) =>
-            score.ai_score !== undefined && score.ai_explanation !== undefined
-        )
-      ) {
-        setLoadingMessage(
-          `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
-        );
-        setIsLoading(true);
-        for (let i = 0; i < scores.length; i++) {
-          const score = scores[i];
-          const userInput = score.question;
-          const target = score.target;
+      setLoadingMessage(
+        `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
+      );
+      setIsLoading(true);
+      for (let i = 0; i < scores.length; i++) {
+        const score = scores[i];
+        const userInput = score.question;
+        const target = score.target;
+        if (score.ai_score && score.ai_score > 0 && score.ai_explanation) {
+          setLoadingMessage(
+            `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
+              scores.length
+            }]`
+          );
+        } else {
           await performAIJudging(5, target, userInput, (aiJudgeScore) => {
             scores[i].ai_score = aiJudgeScore.score;
             scores[i].ai_explanation = aiJudgeScore.explanation;
@@ -173,20 +178,11 @@ export default function ResultPage(props: ResultPageProps) {
             );
           });
         }
-        setIsLoading(false);
-        setLoadingMessage('Loading...');
-        clearScores();
-        scores.forEach((score) => cacheScore(score));
       }
-    } else {
-      toast({
-        title:
-          'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-        status: 'warning',
-        duration: 3000,
-      });
-      delayRouterPush(router, '/');
-      return;
+      setIsLoading(false);
+      setLoadingMessage('Loading...');
+      clearScores();
+      scores.forEach((score) => cacheScore(score));
     }
     level?.isDaily && setDisplayedLevelName(level?.dailyLevelName);
     level?.isDaily && setDisplayedLevelTopic(level?.dailyLevelTopic);
@@ -213,8 +209,20 @@ export default function ResultPage(props: ResultPageProps) {
           } else {
             setLevel(level);
             updateDisplayedScores(scores);
-            if (level.isDaily) {
+            if (
+              level.isDaily &&
+              scores.length === CONSTANTS.numberOfQuestionsPerGame
+            ) {
               showResultSubmissionPrompt();
+            } else {
+              toast({
+                title:
+                  'Sorry! You do not have a complete set of game records. Try play some games before accessing the scores!',
+                status: 'warning',
+                duration: 3000,
+              });
+              delayRouterPush(router, '/');
+              return;
             }
             return;
           }
@@ -249,6 +257,7 @@ export default function ResultPage(props: ResultPageProps) {
         const savedGame = await saveGame(
           level,
           scores,
+          totalScore,
           user.nickname,
           user.recovery_key,
           promptVisible
@@ -757,7 +766,7 @@ export default function ResultPage(props: ResultPageProps) {
         )}`,
       },
       {
-        title: `AI Score (${(promptMultiplier ?? 0) * 100}%)`,
+        title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
         content: `${(
           score.ai_score ?? 50
         ).toString()} x ${promptMultiplier} = ${_.round(
@@ -880,7 +889,7 @@ export default function ResultPage(props: ResultPageProps) {
       'Time Taken',
       'Total Score',
       `Time Score (${(timeMultipler ?? 0) * 100}%)`,
-      `AI Score (${(promptMultiplier ?? 0) * 100}%)`,
+      `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
       'AI Explanation',
     ];
     return (
@@ -1055,11 +1064,42 @@ export default function ResultPage(props: ResultPageProps) {
         id='share'
         data-style='none'
         aria-label='result button'
-        className='text-2xl lg:text-5xl fixed top-4 right-4 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
+        className='text-2xl lg:text-5xl fixed top-4 right-4 lg:right-8 hover:opacity-50 transition-all ease-in-out z-40'
         onClick={openShare}
       >
         <MdShare />
       </button>
+      <button
+        data-style='none'
+        aria-label='score system explained button'
+        className='text-2xl lg:text-5xl fixed top-4 right-12 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
+        onClick={() => {
+          setShowScoreExplained(true);
+        }}
+      >
+        <BsQuestionCircle />
+      </button>
+      <div
+        hidden={!showScoreExplained}
+        id='modal-rule-page'
+        className='fixed top-0 left-0 w-full h-full bg-black flex justify-center items-center z-50 animate-fade-in'
+      >
+        <button
+          data-style='none'
+          className='absolute top-4 right-4 text-2xl lg:text-5xl hover:opacity-50 transition-all ease-in-out'
+          onClick={() => {
+            setShowScoreExplained(false);
+          }}
+        >
+          <RiCloseCircleLine />
+        </button>
+        <Image
+          alt='scoring system explained'
+          src='/images/Artboard%20Rule.png'
+          width={1024}
+          height={720}
+        />
+      </div>
     </section>
   );
 }
