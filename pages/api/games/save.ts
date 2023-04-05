@@ -25,12 +25,14 @@ const saveGameHandler = async (
   const {
     level,
     scores,
+    final_score,
     player_nickname,
     player_id,
     prompt_visible,
   }: {
     level: ILevel;
     scores: IDisplayScore[];
+    final_score: number;
     player_nickname: string;
     player_id: string;
     prompt_visible: boolean;
@@ -40,6 +42,7 @@ const saveGameHandler = async (
     const savedGame = await saveGame(
       level,
       scores,
+      final_score,
       player_nickname,
       player_id,
       prompt_visible

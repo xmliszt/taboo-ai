@@ -28,6 +28,7 @@ async function request<T>(url: string, method: string, body?: any): Promise<T> {
 export const saveGame = async (
   level: ILevel,
   scores: IDisplayScore[],
+  final_score: number,
   player_nickname: string,
   player_id: string,
   prompt_visible: boolean
@@ -36,6 +37,7 @@ export const saveGame = async (
   const { data } = await request<{ data: IGame }>(url, 'POST', {
     level,
     scores,
+    final_score,
     player_nickname: player_nickname,
     player_id: player_id,
     prompt_visible: prompt_visible,

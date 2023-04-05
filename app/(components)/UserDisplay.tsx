@@ -8,6 +8,7 @@ import {
   clearScores,
   clearUser,
   getUser,
+  setTipsAck,
 } from '../../lib/cache';
 import { usePathname } from 'next/navigation';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -65,6 +66,7 @@ const UserDisplay = () => {
             clearScores();
             clearLevel();
             clearUser();
+            setTipsAck(false);
             toast({
               title: 'You have been logged out!',
               status: 'warning',

@@ -13,6 +13,7 @@ import { MdLeaderboard } from 'react-icons/md';
 import { getUser } from '../../lib/cache';
 import Link from 'next/link';
 import useToast from '../../lib/hook/useToast';
+import IDailyLevel from '../../types/dailyLevel.interface';
 
 interface LeaderboardPageProps {}
 
@@ -26,6 +27,7 @@ interface LeaderboardRowData {
 const LeaderboardPage = (props: LeaderboardPageProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentDate, setCurrentDate] = useState<moment.Moment>(moment());
+  const [currentDayLevel, setCurrentDayLevel] = useState<IDailyLevel | null>();
   const [isNextDayDisabled, setIsNextDayDisabled] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardRowData[]>(
     []
@@ -54,6 +56,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
     try {
       setIsLoading(true);
       const currentDayLevel = await getDailyLevel(currentDate);
+      setCurrentDayLevel(currentDayLevel);
       if (!currentDayLevel) {
         setLeaderboardData([]);
         setMyRank(undefined);
@@ -122,7 +125,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
       <>
         <section
           id='date-selector'
-          className='w-full h-12 flex flex-row gap-4 mt-8 justify-between items-center p-2 bg-white dark:bg-neon-gray rounded-full text-base'
+          className='w-full h-12 flex flex-row gap-4 justify-between items-center p-2 bg-white dark:bg-neon-gray rounded-full text-base'
         >
           <button
             data-style='none'
@@ -165,7 +168,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
     return (
       <section
         id='date-selector'
-        className='w-full h-12 flex flex-row gap-4 mt-8 justify-between items-center p-2 bg-white dark:bg-neon-gray rounded-full text-base'
+        className='w-full h-12 flex flex-row gap-4 justify-between items-center p-2 bg-white dark:bg-neon-gray rounded-full text-base'
       >
         <button
           data-style='none'
@@ -216,6 +219,11 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
         Daily Wall of Fame
       </h1>
       <section className='pt-12 px-4 lg:px-20 lg:pt-20 pb-8 h-full w-full flex flex-col gap-4 overflow-y-hidden scrollbar-hide'>
+        {currentDayLevel && (
+          <div className='h-6 text-center flex justify-center items-center mt-4'>
+            <span>Day Topic: {currentDayLevel.topic}</span>
+          </div>
+        )}
         {isMobile ? renderMobileDateSelector() : renderDesktopSelector()}
         <div id='leaderboard-table' className='relative w-full h-full'>
           <div className='!absolute w-full h-full -z-10 !rounded-none scale-95 color-gradient-animated-background-golden'></div>
