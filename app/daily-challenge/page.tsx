@@ -494,7 +494,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
           },
         },
         {
-          label: 'OK! And do not prompt me again',
+          label: "OK, and don't show me again",
           onClick: () => {
             setTipsAck(true);
             setTimeout(() => {
