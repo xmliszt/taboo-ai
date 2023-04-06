@@ -29,3 +29,11 @@ So why not give the new and improved Taboo.AI a try today and experience the exc
 ![unfold state](/features/unfold.png)
 
 On mobile device, the result page now **folds** all the sub-result for each stage by default. You can **unfold** it simply by tapping on the sub-result section. You can also **fold it back** so that your entire result does not get too long. With each combination, you can use the **share** button to take a screenshot of the result page and show off to your friends and family!
+
+## Timer alert
+
+![timer warning](/features/timer-warning.png)
+![timer alert](/features/timer.png)
+
+Based on the new **scoring system** implemented, your time score portion is **inversely linearly related** to the time take for you to complete the stage. As seen from the explanation diagram above, your time score is (100) minus the time taken in seconds. Therefore, if you spend more than 100 seconds, you will not get any point from the time portion. The timer will warn you when it is past 50 seconds, and will become red when it is past 100 seconds.
+
