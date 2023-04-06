@@ -99,12 +99,12 @@ export default function Head() {
       <meta charSet='UTF-8' />
       <meta
         name='description'
-        content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
+        content='Play Taboo.AI, the daily challenge game that tests your knowledge and vocabulary in various topics! Join the fun, compete with friends on the leaderboard, and improve your English language skills along the way.'
       />
       <meta property='og:title' content={title} />
       <meta
         property='og:description'
-        content='Play Taboo Game for free with ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
+        content='Play Taboo.AI, the daily challenge game that tests your knowledge and vocabulary in various topics! Join the fun, compete with friends on the leaderboard, and improve your English language skills along the way.'
       />
       <meta property='og:image' content='https://i.ibb.co/44Gz4P1/Poster.png' />
       <meta property='og:image:alt' content={title} />
@@ -114,7 +114,7 @@ export default function Head() {
       <meta property='og:type' content='website' />
       <meta
         name='keywords'
-        content='taboo,online,free,game,ai,taboo ai,chatgpt,openai,word game,nextjs,vercel,web app,web game,charades,online game,topics,knowledge,guess,conversation,score,rank'
+        content='taboo,online,free,game,ai,taboo ai,chatgpt,openai,word game,nextjs,vercel,web app,web game,charades,online game,topics,knowledge,guess,conversation,score,rank,leaderboard,daily challenge'
       />
       <meta name='author' content='Li Yuxuan' />
       <meta
@@ -125,7 +125,7 @@ export default function Head() {
       <meta name='twitter:title' content={title} />
       <meta
         name='twitter:description'
-        content='Play Taboo Game for free ChatGPT AI. Trick the AI into saying the Taboo Words. Ask AI to generate the Taboo Words by topics. Powered by OpenAI.'
+        content='Play Taboo.AI, the daily challenge game that tests your knowledge and vocabulary in various topics! Join the fun, compete with friends on the leaderboard, and improve your English language skills along the way.'
       />
       <meta
         name='twitter:image'

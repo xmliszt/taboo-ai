@@ -2,7 +2,6 @@
 
 import { Orbitron, Grenze } from '@next/font/google';
 import { AnalyticsWrapper } from './(components)/AnalayticsWrapper';
-import WordCarousell from './(components)/WordCarousell';
 import FeaturePopup from './(components)/(FeaturePopup)/FeaturePopup';
 import Maintenance from './(components)/Maintenance';
 import Header from './(components)/Header';
@@ -10,7 +9,6 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import './global.css';
 import './main.css';
-import DevToggle from './(components)/DevToggle';
 
 const lightFont = Grenze({
   weight: '400',
@@ -61,7 +59,6 @@ export default function RootLayout({
           {!maintenanceMode && children}
           {!maintenanceMode && <FeaturePopup />}
           <AnalyticsWrapper />
-          <WordCarousell />
         </ChakraProvider>
       </body>
     </html>

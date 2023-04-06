@@ -44,28 +44,24 @@ export default function HomePage(props: HomePageProps) {
               Choose Topics
             </div>
           </Link>
-          <NewBadge location='TOP-RIGHT'>
-            <Link
-              id='daily-challenge'
-              href='/daily-challenge/loading'
-              data-testid='link-daily-challenge'
-            >
-              <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
-                Daily Challenge
-              </div>
-            </Link>
-          </NewBadge>
-          <HotBadge>
-            <Link
-              id='daily-wall-of-fame'
-              href='/leaderboard'
-              data-testid='link-daily-wall-of-fame'
-            >
-              <div className='text-2xl px-8 py-2 color-gradient-animated-background-golden'>
-                Daily Wall of Fame
-              </div>
-            </Link>
-          </HotBadge>
+          <Link
+            id='daily-challenge'
+            href='/daily-challenge/loading'
+            data-testid='link-daily-challenge'
+          >
+            <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
+              Daily Challenge
+            </div>
+          </Link>
+          <Link
+            id='daily-wall-of-fame'
+            href='/leaderboard'
+            data-testid='link-daily-wall-of-fame'
+          >
+            <div className='text-2xl px-8 py-2 color-gradient-animated-background-golden'>
+              Daily Wall of Fame
+            </div>
+          </Link>
         </section>
         <CustomWordListLink />
         {environment !== 'production' && <DevToggle />}
