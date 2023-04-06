@@ -3,11 +3,11 @@
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
       <loc>https://taboo-ai.vercel.app/</loc>
-      <lastmod>2023-04-01</lastmod>
+      <lastmod>2023-04-07</lastmod>
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/rule</loc>
-      <lastmod>2023-04-01</lastmod>
+      <lastmod>2023-04-07</lastmod>
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/level</loc>
@@ -22,16 +22,16 @@
       <lastmod>2023-04-01</lastmod>
     </url>
     <url>
-      <loc>https://taboo-ai.vercel.app/results</loc>
-      <lastmod>2023-04-01</lastmod>
+      <loc>https://taboo-ai.vercel.app/result</loc>
+      <lastmod>2023-04-07</lastmod>
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/whatsnew</loc>
-      <lastmod>2023-04-01</lastmod>
+      <lastmod>2023-04-07</lastmod>
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/roadmap</loc>
-      <lastmod>2023-04-01</lastmod>
+      <lastmod>2023-04-07</lastmod>
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/buymecoffee</loc>
@@ -51,7 +51,7 @@
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/daily-challenge</loc>
-      <lastmod>2023-04-01</lastmod>
+      <lastmod>2023-04-07</lastmod>
     </url>
     <url>
       <loc>https://taboo-ai.vercel.app/daily-challenge/loading</loc>
