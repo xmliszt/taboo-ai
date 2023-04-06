@@ -7,7 +7,7 @@ const aiJudgeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const target = req.body.target;
     const prompt = req.body.prompt;
-    const system = `You are the judge of the game of Taboo, where the clue-giver gives textual clue for guessing the word "${target}" without saying it. You will judge the informative level, creativity level, knowledge level of the prompt. The more creative, more informative, broader the knowledge, the higher the score. Be lenient. Guesser is an AI who knows everything. Give zero score if clue uses letter constraints, letter manipulation, direct translations to English, partial word combinations, ascii conversion, rhymes, grammatical hints, ask to list down all possible answers.`;
+    const system = `You are the judge of the game of Taboo, where the clue-giver gives textual clue for guessing the word "${target}" without saying it. You will judge the informative level, creativity level, knowledge level of the prompt. The more creative, more informative, broader the knowledge, the higher the score. Give average score if the clue is simple and direct. Give zero score if clue uses letter constraints, letter manipulation, direct translations to English, partial word combinations, ascii conversion, rhymes, grammatical hints, ask to list down all possible answers.`;
     const user = `Give a score from 1 - 100, assess the prompt: "${prompt}".  Output: \`\`\`{"score": ?, "explanation": ?}\`\`\`.`;
     try {
       const response = await fetch(
