@@ -91,6 +91,7 @@ export async function getAIJudgeScore(
   });
   const json = await response.json();
   const responseText = json.response;
+  const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
   const regex =
     /.*"*[Ss]core"*:\s*(\d+)[,.]*\s*"*[Ee]xplanation"*:\s*"*(.+)"*/gim;
   let matches;
@@ -103,7 +104,7 @@ export async function getAIJudgeScore(
     }
     score = Number(_.trim(matches[1]));
     score = Number.isNaN(score) ? 0 : score;
-    explanation = _.trim(matches[2]);
+    explanation = _.trim(_.trim(matches[2]), punctuation);
   }
   if (score === undefined || explanation === undefined) {
     throw Error('Unable to generate clue assessment scores');
