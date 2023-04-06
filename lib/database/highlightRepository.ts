@@ -2,12 +2,14 @@ import { supabase } from '../supabaseClient';
 export const insertHighlight = async (
   gameID: string,
   scoreID: number,
+  highlightID: number,
   start: number,
   end: number
 ) => {
   const { error } = await supabase.from('highlight').insert({
     game_id: gameID,
     score_id: scoreID,
+    highlight_id: highlightID,
     start: start,
     end: end,
   });

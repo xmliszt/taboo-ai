@@ -48,10 +48,12 @@ const saveGame = async (
       score.ai_explanation
     );
     const savedScoreID: number = data[0].score_id;
-    for (const highlight of score.responseHighlights) {
+    for (let i = 0; i < score.responseHighlights.length; i++) {
+      const highlight = score.responseHighlights[i];
       await insertHighlight(
         savedGameID,
         savedScoreID,
+        i,
         highlight.start,
         highlight.end
       );

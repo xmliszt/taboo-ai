@@ -161,7 +161,9 @@ export default function ResultPage(props: ResultPageProps) {
         const score = scores[i];
         const userInput = score.question;
         const target = score.target;
-        if (score.ai_score && score.ai_score > 0 && score.ai_explanation) {
+        const aiScore = score.ai_score;
+        const aiExplanation = score.ai_explanation;
+        if (aiScore !== undefined && aiExplanation !== undefined) {
           setLoadingMessage(
             `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
               scores.length
