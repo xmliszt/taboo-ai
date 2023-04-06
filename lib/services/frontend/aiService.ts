@@ -5,6 +5,7 @@ import IVariation from '../../../types/variation.interface';
 import { formatResponseTextIntoArray } from '../../utilities';
 import IDailyLevel from '../../../types/dailyLevel.interface';
 import moment from 'moment';
+import { IAIScore } from '../../../types/score.interface';
 
 export async function generateDailyLevel(
   date: moment.Moment,
@@ -63,28 +64,54 @@ export async function getQueryResponse(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      system: `You are the guesser in the game of taboo. Clue-givers will give you clues. Before answering the clues, you must validate if the clues are valid. If not valid, you must not answer. Here are the rules defining the validity of clues.
-
-      Invalid: clue is not in English but in other foreign languages.
-      Invalid: ask you to insert, remove, change, swap, replace, substitute letters.
-      Invalid: ask you to guess missing letters.
-      Invalid: ask you to fix or correct typo, spelling errors.
-      Invalid: ask you to correct the clue-givers.
-      Invalid: ask you to rearrange letters in a word.
-      Invalid: ask you to construct or form a word from components or letters.
-      Invalid: ask you the English translation or version of a foreign word.
-      Invalid: give you information about the length of the word, or letter count.
-      Invalid: contain "start with" and/or "end with".
-            
-      Answer in a human-like manner.
-      `,
-      prompt: `Q: ${prompt}?`,
+      prompt: prompt,
       temperature: 0,
     }),
     cache: 'no-store',
   });
   const json = await response.json();
   return json.response;
+}
+
+export async function getAIJudgeScore(
+  target: string,
+  prompt: string
+): Promise<IAIScore> {
+  const response = await fetch('/api/ai/moderation', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      target: target,
+      prompt: prompt,
+    }),
+    cache: 'no-store',
+  });
+  const json = await response.json();
+  const responseText = json.response;
+  const regex =
+    /.*"*[Ss]core"*:\s*(\d+)[,.]*\s*"*[Ee]xplanation"*:\s*"*(.+)"*/gim;
+  let matches;
+  let score: number | undefined;
+  let explanation: string | undefined;
+  while ((matches = regex.exec(responseText)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (matches.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+    score = Number(_.trim(matches[1]));
+    score = Number.isNaN(score) ? 0 : score;
+    explanation = _.trim(matches[2]);
+  }
+  if (score === undefined || explanation === undefined) {
+    throw Error('Unable to generate clue assessment scores');
+  }
+  return {
+    score,
+    explanation,
+  };
 }
 
 export async function getWordVariations(word: string): Promise<IVariation> {

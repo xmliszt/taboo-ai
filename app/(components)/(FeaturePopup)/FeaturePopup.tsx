@@ -64,7 +64,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
           >
             <article
               data-testid='content-article'
-              className='leading-normal h-full'
+              className='leading-snug h-full'
             >
               <ReactMarkdown className={`${style.markdown} pb-16`}>
                 {content}

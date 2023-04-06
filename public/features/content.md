@@ -1,50 +1,39 @@
-# **Brand New Features!**
+# **Taboo.AI Updates V2.1!**
 
-Exciting news! Taboo.AI now has a **Wall of Fame (Leaderboard)** for players to compete globally in **daily challenges** with the same word set. **Create a unique nickname** to join and get a **Recovery Key** to restore scores on other devices. You can also **search for topics** with the new search feature. **No login needed**, just fun!
+## More comprehensive scoring system
 
-## Daily Challenge & Wall of Fame (Leaderboard)!
+We are excited to announce that we have made significant changes to the **scoring system**, making the game even more **challenging** and **rewarding** than before.
 
-![Wall of Fame](/features/feature-img-1.png)
-
-Compete globally with the new **Wall of Fame Leaderboard** in Taboo.AI! Take on a **fresh daily challenge set**, with the same word set for all players to ensure fairness. Top players are ranked based on final scores.
-
-![How to access](/features/feature-img-2.png)
-
-To access the daily challenge, simply go to the [home page](https://taboo-ai.vercel.app) and click on **"Daily Challenge"** button. To access the Wall of Fame (Leaderboard), simply click on **"Daily Wall of Fame"** button.
-
-## Nickname Creation / Recovery Key
-
-![Join the leaderboard](/features/feature-img-3.png)
-
-You can now submit your game scores to join the **Wall of Fame (Leaderboard)** and compete with other players! To get started, you'll need to create a **unique nickname** so we can identify you. Don't worry if you don't have one yet - just play one round of the **Daily Challenge** and we'll prompt you to create a nickname to save your scores.
-
-![Nickname Creation](/features/feature-img-4.png)
-
-Once you **complete the Daily Challenge** and if you haven't registered with us yet, we will ask if you want to **create a nickname and join the leaderboard**. Just click **"YES"** and we'll take you straight to the nickname creation page.
+In the past, players were scored **solely on their speed** in passing each stage. However, we realised that this did not take into account the **quality of the clues** provided by the player. That's why we have updated our scoring system to give players credit for **both speed and creativity**.
 
 
-![Recovery Key](/features/feature-img-5.png)
+Now, when playing Taboo.AI, players will be assessed based on the **informativeness**, **creativity**, and **knowledge scope** of the clues they provide. Additionally, the AI will penalise players if they **attempt to cheat** by giving inadequate clues. This new scoring system ensures that players will be rewarded for their **overall performance**, rather than just their speed.
 
-Once you create your nickname, we'll give you an exclusive **Recovery Key**. This key is crucial for restoring your games on different devices or after clearing your browser history. We use it to **uniquely identify you and retrieve your scores**. So be sure to **keep your Recovery Key confidential and safe**!
 
-![Submit Scores to Leaderboard](/features/feature-img-6.png)
+Moreover, we have added a new **weighting system** based on the **difficulty level**. The harder the difficulty, the more weight the clue quality will carry in the final score. This means that players will need to think harder about the clues they provide and improve their knowledge to achieve a high score.
 
-Once you've completed the Daily Challenge and created your unique nickname with the Recovery Key, you'll have the option to **submit your scores to the Wall of Fame (Leaderboard)**. If you choose to do so, your scores will be ranked against other players who have submitted their scores as well. However, it's totally up to you whether you want to participate in the leaderboard or not - there's no pressure!
+*The detailed formula of score calculation is shown below:*
 
-## Recover Your Scores / Playing on a new device?
+![Scoring Criteria](/images/Artboard%20Rule.png)
 
-We decided **not to include a login mechanism** in the game to make things simple and enjoyable for you. So, the Recovery Key you received when creating your nickname with us will be the **sole way** for you to recover your scores.
+It can also be found in the **Result** page:
 
-![How To Recover?](/features/feature-img-7.png)
+![Scoring Criteria in result page](/features/ruleButton.png)
 
-To access the recovery, simply click on the **"Recover your scores?** link on the top section of the home page.
+So why not give the new and improved Taboo.AI a try today and experience the excitement and challenge of our updated scoring system? With these changes, we are confident that our players will find the game more fun and fair than ever before.
 
-![Enter recovery key to recover](/features/feature-img-8.png)
+## Better view for result on mobile
 
-You will be prompted with the **Recovery Key**. Simply input the correct **Recovery Key** and click "Submit" and your session will be restored!
+![fold state](/features/fold.png)
 
-## Search Categories
+![unfold state](/features/unfold.png)
 
-![Search Topics](/features/feature-img-9.png)
+On mobile device, the result page now **folds** all the sub-result for each stage by default. You can **unfold** it simply by tapping on the sub-result section. You can also **fold it back** so that your entire result does not get too long. With each combination, you can use the **share** button to take a screenshot of the result page and show off to your friends and family!
 
-We've made it easier to find the topic you're looking for with our new search feature on the topic selection page. Simply enter your search query in the text field and we'll display the relevant topics for you. With our growing selection of topics, we want to make sure you can easily find what you're looking for.
+## Timer alert
+
+![timer warning](/features/timer-warning.png)
+![timer alert](/features/timer.png)
+
+Based on the new **scoring system** implemented, your time score portion is **inversely linearly related** to the time take for you to complete the stage. As seen from the explanation diagram above, your time score is (100) minus the time taken in seconds. Therefore, if you spend more than 100 seconds, you will not get any point from the time portion. The timer will warn you when it is past 50 seconds, and will become red when it is past 100 seconds.
+

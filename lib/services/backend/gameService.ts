@@ -13,23 +13,20 @@ import {
 } from '../../database/gameRepository';
 import { insertHighlight } from '../../database/highlightRepository';
 import { insertNewScore } from '../../database/scoreRepository';
-import { calculateScore } from '../../utilities';
 import IGame from '../../../types/game.interface';
 
 const saveGame = async (
   level: ILevel,
   scores: IDisplayScore[],
+  final_score: number,
   playerNickname: string,
   playerId: string,
   isPromptVisible: boolean
 ): Promise<IGame> => {
   // Insert the new game into the database
-  const totalScore = scores
-    .map(calculateScore)
-    .reduce((prev, crrt) => prev + crrt);
   const data = await insertNewGame(
     level.name,
-    totalScore,
+    final_score,
     playerId,
     playerNickname,
     isPromptVisible
@@ -46,13 +43,17 @@ const saveGame = async (
       score.target,
       score.question,
       score.response,
-      score.completion
+      score.completion,
+      score.ai_score,
+      score.ai_explanation
     );
     const savedScoreID: number = data[0].score_id;
-    for (const highlight of score.responseHighlights) {
+    for (let i = 0; i < score.responseHighlights.length; i++) {
+      const highlight = score.responseHighlights[i];
       await insertHighlight(
         savedGameID,
         savedScoreID,
+        i,
         highlight.start,
         highlight.end
       );

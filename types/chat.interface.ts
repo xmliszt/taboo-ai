@@ -7,6 +7,7 @@ export interface Highlight {
 export interface IHighlight {
   game_id: string;
   score_id: number;
+  highlight_id: number;
   start: number;
   end: number;
 }

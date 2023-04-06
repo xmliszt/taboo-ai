@@ -3,7 +3,7 @@
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef } from 'react';
 import ILevel from '../../types/level.interface';
-import { IDisplayScore } from '../../types/score.interface';
+import { IAIScore, IDisplayScore } from '../../types/score.interface';
 import {
   getScoresCache,
   getLevelCache,
@@ -41,6 +41,10 @@ import IUser from '../../types/user.interface';
 import moment from 'moment';
 import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
 import useToast from '../../lib/hook/useToast';
+import { getAIJudgeScore } from '../../lib/services/frontend/aiService';
+import { BsQuestionCircle } from 'react-icons/bs';
+import Image from 'next/image';
+import { RiCloseCircleLine } from 'react-icons/ri';
 
 interface StatItem {
   title: string;
@@ -67,6 +71,7 @@ interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const [showScoreExplained, setShowScoreExplained] = useState(false);
   const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
   const [displayedLevelName, setDisplayedLevelName] = useState<string | null>();
@@ -85,6 +90,8 @@ export default function ResultPage(props: ResultPageProps) {
   const [noButtonText, setNoButtonText] = useState('No');
   const [promptStep, setPromptStep] = useState<number>(0);
   const [user, setUser] = useState<IUser | undefined>();
+  const [mobileAccordianVisibilityMap, setMobileAccordianVisibilityMap] =
+    useState<{ [key: number]: boolean }>({});
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -121,10 +128,64 @@ export default function ResultPage(props: ResultPageProps) {
     }
   }, [promptStep]);
 
+  const performAIJudging = async (
+    retries: number,
+    target: string,
+    userInput: string,
+    completion: (aiScore: IAIScore) => void
+  ) => {
+    try {
+      const score = await getAIJudgeScore(target, userInput);
+      completion(score);
+    } catch (error) {
+      console.error(error);
+      if (retries > 0) {
+        performAIJudging(retries - 1, target, userInput, completion);
+      } else {
+        completion({ score: undefined, explanation: undefined });
+      }
+    }
+  };
+
   const checkUserStatus = async () => {
     const user = getUser();
     const level = getLevelCache();
     const scores = getScoresCache();
+    if (scores && scores.length === CONSTANTS.numberOfQuestionsPerGame) {
+      // AI judging
+      setLoadingMessage(
+        `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
+      );
+      setIsLoading(true);
+      for (let i = 0; i < scores.length; i++) {
+        const score = scores[i];
+        const userInput = score.question;
+        const target = score.target;
+        const aiScore = score.ai_score;
+        const aiExplanation = score.ai_explanation;
+        if (aiScore !== undefined && aiExplanation !== undefined) {
+          setLoadingMessage(
+            `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
+              scores.length
+            }]`
+          );
+        } else {
+          await performAIJudging(5, target, userInput, (aiJudgeScore) => {
+            scores[i].ai_score = aiJudgeScore.score;
+            scores[i].ai_explanation = aiJudgeScore.explanation;
+            setLoadingMessage(
+              `Stay tuned! Taboo AI is evaluating your performance... [${
+                i + 1
+              }/${scores.length}]`
+            );
+          });
+        }
+      }
+      setIsLoading(false);
+      setLoadingMessage('Loading...');
+      clearScores();
+      scores.forEach((score) => cacheScore(score));
+    }
     level?.isDaily && setDisplayedLevelName(level?.dailyLevelName);
     level?.isDaily && setDisplayedLevelTopic(level?.dailyLevelTopic);
     if (user) {
@@ -138,11 +199,7 @@ export default function ResultPage(props: ResultPageProps) {
           return;
         } catch {
           setIsLoading(false);
-          if (
-            !scores ||
-            !level ||
-            (scores && scores.length < CONSTANTS.numberOfQuestionsPerGame)
-          ) {
+          if (!scores || !level) {
             toast({
               title:
                 'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
@@ -154,19 +211,27 @@ export default function ResultPage(props: ResultPageProps) {
           } else {
             setLevel(level);
             updateDisplayedScores(scores);
-            if (level.isDaily) {
+            if (
+              level.isDaily &&
+              scores.length === CONSTANTS.numberOfQuestionsPerGame
+            ) {
               showResultSubmissionPrompt();
+            } else {
+              toast({
+                title:
+                  'Sorry! You do not have a complete set of game records. Try play some games before accessing the scores!',
+                status: 'warning',
+                duration: 3000,
+              });
+              delayRouterPush(router, '/');
+              return;
             }
             return;
           }
         }
       }
     }
-    if (
-      !scores ||
-      !level ||
-      (scores && scores.length < CONSTANTS.numberOfQuestionsPerGame)
-    ) {
+    if (!scores || !level) {
       toast({
         title:
           'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
@@ -194,6 +259,7 @@ export default function ResultPage(props: ResultPageProps) {
         const savedGame = await saveGame(
           level,
           scores,
+          totalScore,
           user.nickname,
           user.recovery_key,
           promptVisible
@@ -557,6 +623,7 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const generateMobileStatsRow = (
+    rowID: number,
     title: string,
     content: string,
     isResponse = false,
@@ -589,7 +656,11 @@ export default function ResultPage(props: ResultPageProps) {
       contentElement = <p>{content}</p>;
     }
     return (
-      <div key={title} className='p-3'>
+      <div
+        hidden={!mobileAccordianVisibilityMap[rowID]}
+        key={rowID}
+        className='px-3 py-1'
+      >
         <span
           key={uniqueId()}
           className='font-extrabold text-black border-b-2 border-black dark:text-neon-blue dark:border-neon-blue'
@@ -601,11 +672,32 @@ export default function ResultPage(props: ResultPageProps) {
     );
   };
 
+  const getDifficultyMultipliers = (
+    difficulty: number
+  ): { timeMultipler: number; promptMultiplier: number } => {
+    switch (difficulty) {
+      case 1:
+        return { timeMultipler: 0.4, promptMultiplier: 0.6 };
+      case 2:
+        return { timeMultipler: 0.3, promptMultiplier: 0.7 };
+      case 3:
+        return { timeMultipler: 0.2, promptMultiplier: 0.8 };
+      default:
+        return { timeMultipler: 0.5, promptMultiplier: 0.5 };
+    }
+  };
+
   const calculateScore = (score: IDisplayScore): number => {
-    return _.round(
-      score.difficulty * (1000 / getCompletionSeconds(score.completion)),
-      2
-    );
+    const difficulty = score.difficulty;
+    const multipliers = getDifficultyMultipliers(difficulty);
+    const timeScore = calculateTimeScore(score) * multipliers.timeMultipler;
+    const aiScore = (score.ai_score ?? 50) * multipliers.promptMultiplier;
+    return _.round(timeScore + aiScore, 1);
+  };
+
+  const calculateTimeScore = (score: IDisplayScore): number => {
+    const scoreCompletionSeconds = getCompletionSeconds(score.completion);
+    return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
   };
 
   const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
@@ -613,12 +705,9 @@ export default function ResultPage(props: ResultPageProps) {
     let totalScore = 0;
     for (const score of displayScores) {
       total += getCompletionSeconds(score.completion);
-      totalScore += _.round(
-        score.difficulty * (1 / getCompletionSeconds(score.completion)) * 1000,
-        2
-      );
+      totalScore += calculateScore(score);
     }
-    totalScore = _.round(totalScore, 2);
+    totalScore = _.round(totalScore, 1);
     setScores(displayScores);
     setTotal(total);
     setTotalScore(totalScore);
@@ -644,6 +733,12 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const generateStatsItems = (score: IDisplayScore): StatItem[] => {
+    const timeMultipler = level
+      ? getDifficultyMultipliers(level.difficulty).timeMultipler
+      : null;
+    const promptMultiplier = level
+      ? getDifficultyMultipliers(level.difficulty).promptMultiplier
+      : null;
     return [
       {
         title: 'Player Inputs',
@@ -660,28 +755,64 @@ export default function ResultPage(props: ResultPageProps) {
         content: `${getCompletionSeconds(score.completion)} seconds`,
       },
       {
-        title: 'Score Calculation',
-        content: `${score.difficulty} * (1 / ${getCompletionSeconds(
-          score.completion
-        )}) x 1000 = ${calculateScore(score)}`,
+        title: 'Total Score',
+        content: calculateScore(score).toString(),
+      },
+      {
+        title: `Time Score (${(timeMultipler ?? 0) * 100}%)`,
+        content: `${calculateTimeScore(
+          score
+        ).toString()} x ${timeMultipler} = ${_.round(
+          calculateTimeScore(score) * (timeMultipler ?? 0),
+          1
+        )}`,
+      },
+      {
+        title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
+        content: `${(
+          score.ai_score ?? 50
+        ).toString()} x ${promptMultiplier} = ${_.round(
+          (score.ai_score ?? 50) * (promptMultiplier ?? 0),
+          1
+        )}`,
+      },
+      {
+        title: 'AI Explanation',
+        content: score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail,
       },
     ];
+  };
+
+  const toggleMobileScoreStack = (scoreID: number) => {
+    const copyMap = { ...mobileAccordianVisibilityMap };
+    const currentValue = scoreID in copyMap ? copyMap[scoreID] : false;
+    copyMap[scoreID] = currentValue === true ? false : true;
+    setMobileAccordianVisibilityMap(copyMap);
   };
 
   const generateMobileScoreStack = (score: IDisplayScore) => {
     return (
       <div
         key={score.id}
-        className='border-2 border-white bg-white text-black flex flex-col gap-2 rounded-2xl dark:border-neon-red dark:bg-neon-gray dark:text-neon-white'
+        className='border-2 border-white bg-white text-black flex flex-col gap-1 rounded-2xl dark:border-neon-red dark:bg-neon-gray dark:text-neon-white'
       >
-        <div className='bg-black dark:bg-neon-black dark:drop-shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'>
+        <div
+          className='bg-black dark:bg-neon-black dark:drop-shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'
+          onClick={() => {
+            toggleMobileScoreStack(score.id);
+          }}
+        >
           <span key={uniqueId()}>{score.target}</span>
+          <span className='text-gray text-center flex-grow'>
+            Tap To {mobileAccordianVisibilityMap[score.id] ? 'Fold' : 'Expand'}
+          </span>
           <span className='font-extrabold' key={uniqueId()}>
             Score: {calculateScore(score)}
           </span>
         </div>
         {generateStatsItems(score).map((item) => {
           return generateMobileStatsRow(
+            score.id,
             item.title,
             item.content,
             item.isResponse ?? false,
@@ -707,7 +838,7 @@ export default function ResultPage(props: ResultPageProps) {
           </div>
           <div className='flex flex-row justify-between'>
             <span>Total Score:</span>
-            <span className='font-extrabold'>{_.round(totalScore, 2)}</span>
+            <span className='font-extrabold'>{_.round(totalScore, 1)}</span>
           </div>
           <div className='flex flex-row justify-between'>
             <span>Difficulty:</span>
@@ -724,14 +855,44 @@ export default function ResultPage(props: ResultPageProps) {
     );
   };
 
+  const getColumnWidthClass = (colIdx: number) => {
+    switch (colIdx) {
+      case 0:
+        return 'w-[5%]';
+      case 1:
+        return 'w-[8%]';
+      case 2:
+        return 'w-[20%]';
+      case 3:
+        return 'w-[20%]';
+      case 4:
+        return 'w-[7%]';
+      case 5:
+      case 6:
+      case 7:
+        return 'w-[7%]';
+      case 8:
+        return 'w-[29%]';
+    }
+  };
+
   const renderDesktop = () => {
+    const timeMultipler = level
+      ? getDifficultyMultipliers(level.difficulty).timeMultipler
+      : null;
+    const promptMultiplier = level
+      ? getDifficultyMultipliers(level.difficulty).promptMultiplier
+      : null;
     const headers = [
-      'Index',
+      'S/N',
       'Taboo Word',
       'Player Inputs',
       "AI's Response",
       'Time Taken',
-      'Score (Difficulty x (1/Time Taken) x 1000)',
+      'Total Score',
+      `Time Score (${(timeMultipler ?? 0) * 100}%)`,
+      `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
+      'AI Explanation',
     ];
     return (
       <div className='mt-12 lg:mt-16 px-4 w-full h-full text-center'>
@@ -741,15 +902,9 @@ export default function ResultPage(props: ResultPageProps) {
               <tr>
                 {headers.map((header, idx) => (
                   <th
-                    className={`px-4 pb-2 pt-4 font-semibold text-left text-xs lg:text-xl ${
-                      idx == 2
-                        ? 'w-3/12'
-                        : idx == 3
-                        ? 'w-3/12'
-                        : idx == 5
-                        ? 'w-3/12'
-                        : 'w-1/12'
-                    }`}
+                    className={`px-4 pb-2 pt-4 font-semibold text-left text-xs lg:text-xl ${getColumnWidthClass(
+                      idx
+                    )}`}
                     key={header}
                   >
                     {header}
@@ -760,7 +915,7 @@ export default function ResultPage(props: ResultPageProps) {
             <tbody className='divide-y text-left text-xs lg:text-xl text-gray bg-white dark:text-neon-white dark:bg-neon-black'>
               <tr>
                 <td
-                  colSpan={3}
+                  colSpan={4}
                   className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
                 >
                   {' '}
@@ -770,7 +925,7 @@ export default function ResultPage(props: ResultPageProps) {
                   </span>
                 </td>
                 <td
-                  colSpan={3}
+                  colSpan={4}
                   className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
                 >
                   {' '}
@@ -793,17 +948,25 @@ export default function ResultPage(props: ResultPageProps) {
                     )}
                   </td>
                   <td className='p-3 font-medium'>
-                    {getCompletionSeconds(score.completion)} seconds
+                    {getCompletionSeconds(score.completion)} sec
                   </td>
+                  <td className='p-3 font-medium'>{calculateScore(score)}</td>
                   <td className='p-3 font-medium'>
-                    {score.difficulty} x 1/
-                    {getCompletionSeconds(score.completion)} (seconds) x 1000 ={' '}
-                    {_.round(
-                      score.difficulty *
-                        (1 / getCompletionSeconds(score.completion)) *
-                        1000,
-                      2
-                    )}
+                    {`${calculateTimeScore(
+                      score
+                    ).toString()} x ${timeMultipler} = ${_.round(
+                      calculateTimeScore(score) * (timeMultipler ?? 0),
+                      1
+                    )}`}
+                  </td>
+                  <td className='p-3 font-medium'>{`${(
+                    score.ai_score ?? 50
+                  ).toString()} x ${promptMultiplier} = ${_.round(
+                    (score.ai_score ?? 50) * (promptMultiplier ?? 0),
+                    1
+                  )}`}</td>
+                  <td className='p-3 font-medium'>
+                    {score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail}
                   </td>
                 </tr>
               ))}
@@ -815,7 +978,7 @@ export default function ResultPage(props: ResultPageProps) {
                   Total Time Taken
                 </td>
                 <td colSpan={2} className='px-3 pt-4 pb-8 font-extrabold'>
-                  {total} seconds
+                  {total} sec
                 </td>
               </tr>
               <tr>
@@ -826,7 +989,7 @@ export default function ResultPage(props: ResultPageProps) {
                   Total Score
                 </td>
                 <td className='px-3 pt-4 pb-8 font-extrabold'>
-                  {_.round(totalScore, 2)}
+                  {_.round(totalScore, 1)}
                 </td>
               </tr>
             </tbody>
@@ -903,11 +1066,42 @@ export default function ResultPage(props: ResultPageProps) {
         id='share'
         data-style='none'
         aria-label='result button'
-        className='text-2xl lg:text-5xl fixed top-4 right-14 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
+        className='text-2xl lg:text-5xl fixed top-4 right-4 lg:right-8 hover:opacity-50 transition-all ease-in-out z-40'
         onClick={openShare}
       >
         <MdShare />
       </button>
+      <button
+        data-style='none'
+        aria-label='score system explained button'
+        className='text-2xl lg:text-5xl fixed top-4 right-12 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
+        onClick={() => {
+          setShowScoreExplained(true);
+        }}
+      >
+        <BsQuestionCircle />
+      </button>
+      <div
+        hidden={!showScoreExplained}
+        id='modal-rule-page'
+        className='fixed top-0 left-0 w-full h-full bg-black flex justify-center items-center z-50 animate-fade-in'
+      >
+        <button
+          data-style='none'
+          className='absolute top-4 right-4 text-2xl lg:text-5xl hover:opacity-50 transition-all ease-in-out'
+          onClick={() => {
+            setShowScoreExplained(false);
+          }}
+        >
+          <RiCloseCircleLine />
+        </button>
+        <Image
+          alt='scoring system explained'
+          src='/images/Artboard%20Rule.png'
+          width={1024}
+          height={720}
+        />
+      </div>
     </section>
   );
 }
