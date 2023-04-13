@@ -16,28 +16,14 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { BiHomeAlt, BiLeftArrowAlt } from 'react-icons/bi';
 import { BsFillQuestionSquareFill } from 'react-icons/bs';
 
 interface BackButtonProps {}
 
 export default function BackButton(props: BackButtonProps = {}) {
-  const [buttonStyle, setButtonStyle] = useState<'HOME' | 'BACK'>('HOME');
   const router = useRouter();
   const pathname = usePathname();
-
-  useEffect(() => {
-    switch (pathname) {
-      case '/ai':
-      case '/level':
-        setButtonStyle('BACK');
-        break;
-      default:
-        setButtonStyle('HOME');
-        break;
-    }
-  }, [pathname]);
 
   const back = () => {
     switch (pathname) {
@@ -52,10 +38,11 @@ export default function BackButton(props: BackButtonProps = {}) {
   };
 
   const renderIcon = () => {
-    switch (buttonStyle) {
-      case 'BACK':
+    switch (pathname) {
+      case '/ai':
+      case '/level':
         return <BiLeftArrowAlt />;
-      case 'HOME':
+      default:
         return <BiHomeAlt />;
     }
   };

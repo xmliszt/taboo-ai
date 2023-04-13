@@ -32,9 +32,7 @@ export default function RulePage(props: RulePageProps) {
             data-testid='link-start'
             data-style='none'
           >
-            <div className='text-2xl px-8 py-2 transition-all bg-white text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:border-2 hover:border-white'>
-              Choose Topics
-            </div>
+            <div className='btn-menu'>Choose Topics</div>
           </Link>
         </div>
         <br />
@@ -51,18 +49,14 @@ export default function RulePage(props: RulePageProps) {
             href='/daily-challenge/loading'
             data-testid='link-daily-challenge'
           >
-            <div className='px-4 lg:py-2 py-4 color-gradient-animated-background'>
-              Daily Challenge
-            </div>
+            <div className='btn-menu'>Daily Challenge</div>
           </Link>
           <Link
             id='daily-wall-of-fame'
             href='/leaderboard'
             data-testid='link-daily-wall-of-fame'
           >
-            <div className='px-4 lg:py-2 py-4 color-gradient-animated-background-golden'>
-              Daily Wall of Fame
-            </div>
+            <div className='btn-menu'>Daily Wall of Fame</div>
           </Link>
           <SocialLinkButton
             content='Join our Discord Community!'

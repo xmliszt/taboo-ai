@@ -40,27 +40,21 @@ export default function HomePage(props: HomePageProps) {
             data-testid='link-start'
             data-style='none'
           >
-            <div className='text-2xl px-8 py-2 transition-all bg-white text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:border-2 hover:border-white'>
-              Choose Topics
-            </div>
+            <div className='btn-menu'>Choose Topics</div>
           </Link>
           <Link
             id='daily-challenge'
             href='/daily-challenge/loading'
             data-testid='link-daily-challenge'
           >
-            <div className='text-2xl px-8 py-2 color-gradient-animated-background'>
-              Daily Challenge
-            </div>
+            <div className='btn-menu'>Daily Challenge</div>
           </Link>
           <Link
             id='daily-wall-of-fame'
             href='/leaderboard'
             data-testid='link-daily-wall-of-fame'
           >
-            <div className='text-2xl px-8 py-2 color-gradient-animated-background-golden'>
-              Daily Wall of Fame
-            </div>
+            <div className='btn-menu'>Daily Wall of Fame</div>
           </Link>
         </section>
         <CustomWordListLink />

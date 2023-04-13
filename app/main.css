@@ -154,6 +154,10 @@
   }
 }
 
+.btn-menu {
+  @apply text-2xl px-8 py-2 transition-all bg-white text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] hover:border-2 hover:border-white;
+}
+
 .unicorn-color {
   @apply animate-unicorn-flow;
 }
