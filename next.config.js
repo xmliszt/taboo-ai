@@ -41,6 +41,25 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/daily-challenge/loading',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/daily-challenge',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/leaderboard',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

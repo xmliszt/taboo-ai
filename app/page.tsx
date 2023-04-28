@@ -9,6 +9,7 @@ import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
 import FeedbackLink from './(components)/FeedbackLink';
 import Footer from './(components)/Footer';
 import SocialLinkButton from './(components)/SocialLinkButton';
+import MenuButton from './(components)/MenuButton';
 
 interface HomePageProps {}
 
@@ -42,20 +43,22 @@ export default function HomePage(props: HomePageProps) {
           >
             <div className='btn-menu'>Choose Topics</div>
           </Link>
-          <Link
+          {/* <MenuButton
             id='daily-challenge'
-            href='/daily-challenge/loading'
+            disabled={true}
             data-testid='link-daily-challenge'
+            href='/daily-challenge/loading'
+            tooltipLabel='Daily Challenge is currently under maintenance. More updates are coming!'
           >
-            <div className='btn-menu'>Daily Challenge</div>
-          </Link>
-          <Link
+            Daily Challenge
+          </MenuButton>
+          <MenuButton
             id='daily-wall-of-fame'
-            href='/leaderboard'
             data-testid='link-daily-wall-of-fame'
+            href='/leaderboard'
           >
-            <div className='btn-menu'>Daily Wall of Fame</div>
-          </Link>
+            Daily Wall of Fame
+          </MenuButton> */}
         </section>
         <CustomWordListLink />
         {environment !== 'production' && <DevToggle />}
