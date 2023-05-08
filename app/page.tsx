@@ -47,7 +47,9 @@ export default function HomePage(props: HomePageProps) {
             href='/daily-challenge/loading'
             data-testid='link-daily-challenge'
           >
-            <div className='btn-menu'>Daily Challenge</div>
+            <div className='btn-menu color-gradient-animated-background-golden'>
+              Daily Challenge
+            </div>
           </Link>
           <Link
             id='daily-wall-of-fame'
