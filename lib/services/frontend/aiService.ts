@@ -34,7 +34,7 @@ export async function generateDailyLevel(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate a list of 5 words related to ${topic} that are ${difficultyString}, in the format of an array of string.`,
+      prompt: `Generate a list of 5 words related to ${topic} that are ${difficultyString}, in the format of an array of string. In American English.`,
     }),
     cache: 'no-store',
   });
@@ -64,6 +64,7 @@ export async function getQueryResponse(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      system: 'Answer in American English.',
       prompt: prompt,
       temperature: 0,
     }),
@@ -123,7 +124,7 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate 10 most obvious related single-words for '${word}', and forms of '${word}'. No plural form, no duplication. Insert the words in an comma separated array: [word1, word2, ...]`,
+      prompt: `Generate 10 most obvious related single-words for '${word}', and forms of '${word}'. No plural form, no duplication. In American English. Insert the words in an comma separated array: [word1, word2, ...]`,
       temperature: 0.8,
       maxToken: 100,
     }),
@@ -164,7 +165,7 @@ export async function getCreativeLevel(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in the topic of ${topic} that are ${difficultyString}. Insert the words generated in an array: [word1, word2, ...]`,
+      prompt: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in the topic of ${topic} that are ${difficultyString}. In American English. Insert the words generated in an array: [word1, word2, ...]`,
       temperature: 0.8,
       maxToken: 50,
     }),

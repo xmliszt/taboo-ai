@@ -36,4 +36,3 @@ On mobile device, the result page now **folds** all the sub-result for each stag
 ![timer alert](/features/timer.png)
 
 Based on the new **scoring system** implemented, your time score portion is **inversely linearly related** to the time take for you to complete the stage. As seen from the explanation diagram above, your time score is (100) minus the time taken in seconds. Therefore, if you spend more than 100 seconds, you will not get any point from the time portion. The timer will warn you when it is past 50 seconds, and will become red when it is past 100 seconds.
-
