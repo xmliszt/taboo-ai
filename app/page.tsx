@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
-import HotBadge from './(components)/(Badges)/HotBadge';
-import NewBadge from './(components)/(Badges)/NewBadge';
 import CustomWordListLink from './(components)/CustomWordListLink';
 import DevToggle from './(components)/DevToggle';
 import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';

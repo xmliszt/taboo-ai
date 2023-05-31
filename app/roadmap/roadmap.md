@@ -1,5 +1,10 @@
 # Taboo.AI Releases Roadmap
 
+## 31 May - Release Notes (V2.2)
+
+- **Improved AI scoring system**.
+- Minor bug fixes.
+
 ## 06 Apr - Release Notes (V2.1)
 
 - **New scoring system** ensures that players will be rewarded for their **overall performance**, rather than just their speed.
