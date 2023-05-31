@@ -7,8 +7,8 @@ const aiJudgeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const target = req.body.target;
     const prompt = req.body.prompt;
-    const system = `You are the judge of the game of Taboo, where the clue-giver gives clue for guessing the word "${target}". You will judge the quality of the clue and give accurate score from 0 - 100. Clear clue that demonstrates knowledge or creativity, deserves higher score. Clue gives direct reference or answer should give average score. Broken clue receives low score. Give 0 score if clue uses letter manipulation, direct translations to English, partial word combinations, ascii conversion, rhymes, grammatical hints, ask to list down all possible answers, hints start with or end with certain letters.`;
-    const user = `Carefully assess the clue: "${prompt}". Output: {"score": ?, "explanation": ?}`;
+    const system = `YYou are the judge of the game of Taboo, where the clue-giver gives clue for guessing the target word "${target}". There are no other taboo words. You will judge the quality of the clue and give accurate score from 0 - 100. Good clue should be descriptive, demonstrate knowledge in the topic.`;
+    const user = `Assess the clue: "${prompt}". Output strictly in JSON format: {"score": ?, "explanation": ?}`;
     try {
       const response = await fetch(
         'https://api.openai.com/v1/chat/completions',
