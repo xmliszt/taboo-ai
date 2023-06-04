@@ -124,8 +124,8 @@ export async function getWordVariations(word: string): Promise<IVariation> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate 10 most obvious related single-words for '${word}', and forms of '${word}'. No plural form, no duplication. In American English. Insert the words in an comma separated array: [word1, word2, ...]`,
-      temperature: 0.8,
+      prompt: `Generate 5-8 words related to '${word}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
+      temperature: 1,
       maxToken: 100,
     }),
     cache: 'no-store',
