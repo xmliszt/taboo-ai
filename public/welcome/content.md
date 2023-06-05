@@ -1,4 +1,4 @@
-# **Welcome to Taboo.AI**
+## **Welcome to Taboo.AI**
 
 ![Taboo AI POster](/images/Poster%202.0.png)
 
