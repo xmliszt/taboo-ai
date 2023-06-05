@@ -95,16 +95,21 @@ export default function Head() {
   return (
     <>
       <title>{title}</title>
+      <link
+        rel='canonical'
+        href='https://taboo-ai.vercel.app/'
+        key='canonical'
+      />
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />
       <meta
         name='description'
-        content='Play Taboo.AI, the daily challenge game that tests your knowledge and vocabulary in various topics! Join the fun, compete with friends on the leaderboard, and improve your English language skills along the way.'
+        content='Unleash your wordplay skills and master English with Taboo.AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!'
       />
       <meta property='og:title' content={title} />
       <meta
         property='og:description'
-        content='Play Taboo.AI, the daily challenge game that tests your knowledge and vocabulary in various topics! Join the fun, compete with friends on the leaderboard, and improve your English language skills along the way.'
+        content='Unleash your wordplay skills and master English with Taboo.AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!'
       />
       <meta property='og:image' content='https://i.ibb.co/44Gz4P1/Poster.png' />
       <meta property='og:image:alt' content={title} />
@@ -114,7 +119,7 @@ export default function Head() {
       <meta property='og:type' content='website' />
       <meta
         name='keywords'
-        content='taboo,online,free,game,ai,taboo ai,chatgpt,openai,word game,nextjs,vercel,web app,web game,charades,online game,topics,knowledge,guess,conversation,score,rank,leaderboard,daily challenge'
+        content='AI,Wordplay game,Taboo challenge,English learning,Vocabulary builder,Language skills,Educational game,Word guessing,Trivia game,Brain teaser,Linguistic skills'
       />
       <meta name='author' content='Li Yuxuan' />
       <meta
@@ -125,7 +130,7 @@ export default function Head() {
       <meta name='twitter:title' content={title} />
       <meta
         name='twitter:description'
-        content='Play Taboo.AI, the daily challenge game that tests your knowledge and vocabulary in various topics! Join the fun, compete with friends on the leaderboard, and improve your English language skills along the way.'
+        content='Unleash your wordplay skills and master English with Taboo.AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!'
       />
       <meta
         name='twitter:image'
