@@ -95,6 +95,11 @@ export default function Head() {
   return (
     <>
       <title>{title}</title>
+      <link
+        rel='canonical'
+        href='https://taboo-ai.vercel.app/'
+        key='canonical'
+      />
       <meta content='width=device-width, initial-scale=1' name='viewport' />
       <meta charSet='UTF-8' />
       <meta
