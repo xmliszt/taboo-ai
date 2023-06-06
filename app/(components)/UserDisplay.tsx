@@ -17,10 +17,12 @@ import { useRouter } from 'next/navigation';
 import IUser from '../../types/user.interface';
 import { useEffect, useState } from 'react';
 import { getUserInfo } from '../../lib/services/frontend/userService';
+import { Spinner } from '@chakra-ui/react';
 
 const UserDisplay = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [user, setUser] = useState<IUser | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
   const pathName = usePathname();
   const router = useRouter();
   const { toast } = useToast();
@@ -30,10 +32,15 @@ const UserDisplay = () => {
     if (isMounted) {
       const _user = getUser();
       if (_user) {
-        checkUserExists(_user.nickname).then((exists) => {
-          exists && setUser(_user);
-          !exists && clearUser();
-        });
+        setIsLoading(true);
+        checkUserExists(_user.nickname)
+          .then((exists) => {
+            exists && setUser(_user);
+            !exists && clearUser();
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
       }
     }
   }, [isMounted]);
@@ -81,6 +88,10 @@ const UserDisplay = () => {
       ],
     });
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   if (pathName === '/') {
     return user ? (
