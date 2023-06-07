@@ -38,6 +38,7 @@ const UserDisplay = () => {
 
   const checkUserExists = async (nickname: string) => {
     try {
+      setIsLoading(true);
       await getUserInfo(nickname);
       return true;
     } catch (error) {
@@ -48,6 +49,8 @@ const UserDisplay = () => {
         status: 'error',
       });
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,11 +83,10 @@ const UserDisplay = () => {
     });
   };
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
   if (pathName === '/') {
+    if (isLoading) {
+      return <Spinner />;
+    }
     return user ? (
       <div className='text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
         <span>{user.nickname}</span>
