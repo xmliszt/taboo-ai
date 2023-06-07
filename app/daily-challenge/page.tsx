@@ -44,7 +44,6 @@ interface DailyLevelProps {}
 
 export default function DailyLevelPage(props: DailyLevelProps) {
   //SECTION - States
-  const [isMounted, setIsMounted] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -450,13 +449,10 @@ export default function DailyLevelPage(props: DailyLevelProps) {
 
   //SECTION - At the start of the game
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-    if (isMounted) {
-      checkIfLevelAttempted().then((attempted) => {
-        !attempted && generateLevel();
-      });
-    }
-  }, [isMounted]);
+    checkIfLevelAttempted().then((attempted) => {
+      !attempted && generateLevel();
+    });
+  }, []);
   //!SECTION
 
   const showTipsAlert = (completion: () => void) => {

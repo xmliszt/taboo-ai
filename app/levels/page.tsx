@@ -15,7 +15,6 @@ interface LevelsPageProps {}
 
 export default function LevelsPage(props: LevelsPageProps) {
   const title = 'Choose A Topic';
-  const [isMounted, setIsMounted] = useState(false);
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string | undefined>();
@@ -49,12 +48,8 @@ export default function LevelsPage(props: LevelsPageProps) {
   };
 
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
     fetchLevels();
-  }, [isMounted]);
+  }, []);
 
   return (
     <section className='w-full h-full flex justify-around px-10 overflow-y-scroll scrollbar-hide'>

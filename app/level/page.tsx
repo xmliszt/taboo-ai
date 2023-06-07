@@ -30,7 +30,6 @@ interface LevelPageProps {}
 
 export default function LevelPage(props: LevelPageProps) {
   //SECTION - States
-  const [isMounted, setIsMounted] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -319,10 +318,6 @@ export default function LevelPage(props: LevelPageProps) {
     setIsCountdown(true);
   };
 
-  useEffect(() => {
-    !isMounted && setIsMounted(true);
-  }, []);
-
   //SECTION - When target changed
   useEffect(() => {
     if (target) {
@@ -354,27 +349,25 @@ export default function LevelPage(props: LevelPageProps) {
 
   //SECTION - At the start of the game
   useEffect(() => {
-    if (isMounted) {
-      clearScores();
-      const level = getLevelCache();
-      if (level !== null) {
-        reset();
-        setDifficulty(level.difficulty);
-        const words = level.words.map((word) => formatStringForDisplay(word));
-        setWords(words);
-        const _target = generateNewTarget(words);
-        setTarget(_target);
-        setCurrentProgress(1);
-        setIsSuccess(false);
-        setResponseShouldFadeOut(false); // Let new response fade in
-        setResponseText(
-          'Think about your prompt while we generate the Taboo words.'
-        );
-      } else {
-        throw Error('No level is chosen');
-      }
+    clearScores();
+    const level = getLevelCache();
+    if (level !== null) {
+      reset();
+      setDifficulty(level.difficulty);
+      const words = level.words.map((word) => formatStringForDisplay(word));
+      setWords(words);
+      const _target = generateNewTarget(words);
+      setTarget(_target);
+      setCurrentProgress(1);
+      setIsSuccess(false);
+      setResponseShouldFadeOut(false); // Let new response fade in
+      setResponseText(
+        'Think about your prompt while we generate the Taboo words.'
+      );
+    } else {
+      throw Error('No level is chosen');
     }
-  }, [isMounted]);
+  }, []);
   //!SECTION
 
   //SECTION - When progress changed
