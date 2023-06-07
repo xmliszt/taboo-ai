@@ -706,6 +706,7 @@ export default function ResultPage(props: ResultPageProps) {
       totalScore += calculateScore(score);
     }
     totalScore = _.round(totalScore, 1);
+    displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
     setScores(displayScores);
     setTotal(total);
     setTotalScore(totalScore);
