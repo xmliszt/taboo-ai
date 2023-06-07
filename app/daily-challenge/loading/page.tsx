@@ -14,15 +14,13 @@ import useToast from '../../../lib/hook/useToast';
  * Cache level needs to be transform from IDailyLevel -> ILevel
  */
 const DailyLevelLoadingPage = () => {
-  const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-    isMounted && fetchDailyLevel();
-  }, [isMounted]);
+    fetchDailyLevel();
+  }, []);
 
   const fetchDailyLevel = async () => {
     try {
