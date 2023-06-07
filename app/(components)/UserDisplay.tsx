@@ -17,9 +17,11 @@ import { useRouter } from 'next/navigation';
 import IUser from '../../types/user.interface';
 import { useEffect, useState } from 'react';
 import { getUserInfo } from '../../lib/services/frontend/userService';
+import { Spinner } from '@chakra-ui/react';
 
 const UserDisplay = () => {
   const [user, setUser] = useState<IUser | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
   const pathName = usePathname();
   const router = useRouter();
   const { toast } = useToast();
@@ -77,6 +79,10 @@ const UserDisplay = () => {
       ],
     });
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   if (pathName === '/') {
     return user ? (
