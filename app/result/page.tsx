@@ -70,7 +70,6 @@ enum PromptStep {
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
-  const [isMounted, setIsMounted] = useState(false);
   const [showScoreExplained, setShowScoreExplained] = useState(false);
   const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
@@ -101,9 +100,8 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-    isMounted && checkUserStatus();
-  }, [isMounted]);
+    checkUserStatus();
+  }, []);
 
   useEffect(() => {
     switch (promptStep) {

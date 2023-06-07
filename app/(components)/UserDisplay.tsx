@@ -20,7 +20,6 @@ import { getUserInfo } from '../../lib/services/frontend/userService';
 import { Spinner } from '@chakra-ui/react';
 
 const UserDisplay = () => {
-  const [isMounted, setIsMounted] = useState(false);
   const [user, setUser] = useState<IUser | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const pathName = usePathname();
@@ -28,25 +27,18 @@ const UserDisplay = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-    if (isMounted) {
-      const _user = getUser();
-      if (_user) {
-        setIsLoading(true);
-        checkUserExists(_user.nickname)
-          .then((exists) => {
-            exists && setUser(_user);
-            !exists && clearUser();
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      }
+    const _user = getUser();
+    if (_user) {
+      checkUserExists(_user.nickname).then((exists) => {
+        exists && setUser(_user);
+        !exists && clearUser();
+      });
     }
-  }, [isMounted]);
+  }, []);
 
   const checkUserExists = async (nickname: string) => {
     try {
+      setIsLoading(true);
       await getUserInfo(nickname);
       return true;
     } catch (error) {
@@ -57,6 +49,8 @@ const UserDisplay = () => {
         status: 'error',
       });
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -89,11 +83,10 @@ const UserDisplay = () => {
     });
   };
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
   if (pathName === '/') {
+    if (isLoading) {
+      return <Spinner />;
+    }
     return user ? (
       <div className='text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
         <span>{user.nickname}</span>

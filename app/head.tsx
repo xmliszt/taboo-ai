@@ -6,7 +6,6 @@ import { CONSTANTS } from '../lib/constants';
 
 export default function Head() {
   const [title, setTitle] = useState<string>('Taboo.AI: Play Taboo with AI');
-  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
 
   const onTargetChanged = (event: CustomEvent<{ target: string }>) => {
@@ -32,26 +31,21 @@ export default function Head() {
   };
 
   useEffect(() => {
-    !isMounted && setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
     const isCustom = isPathTitleCustom(pathname ?? '');
     const title = getTitle(isCustom);
     setTitle(title);
   }, [pathname]);
 
   useEffect(() => {
-    if (isMounted) {
-      window.addEventListener(
-        CONSTANTS.eventKeys.targetChanged,
-        onTargetChanged as EventListener
-      );
-      window.addEventListener(
-        CONSTANTS.eventKeys.scoreComputed,
-        onScoreComputed as EventListener
-      );
-    }
+    window.addEventListener(
+      CONSTANTS.eventKeys.targetChanged,
+      onTargetChanged as EventListener
+    );
+    window.addEventListener(
+      CONSTANTS.eventKeys.scoreComputed,
+      onScoreComputed as EventListener
+    );
+
     return () => {
       window.removeEventListener(
         CONSTANTS.eventKeys.targetChanged,
@@ -62,7 +56,7 @@ export default function Head() {
         onScoreComputed as EventListener
       );
     };
-  }, [isMounted]);
+  }, []);
 
   const getTitle = (isCustomPath: boolean): string => {
     switch (pathname) {
