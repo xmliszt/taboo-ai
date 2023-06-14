@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { BiPaste } from 'react-icons/bi';
-import LoadingMask from '../(components)/LoadingMask';
+import LoadingMask from '../../components/LoadingMask';
 import { getScoresCache, setUser } from '../../lib/cache';
 import {
   addDeviceToUser,

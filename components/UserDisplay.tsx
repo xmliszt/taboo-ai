@@ -9,14 +9,14 @@ import {
   clearUser,
   getUser,
   setTipsAck,
-} from '../../lib/cache';
+} from '../lib/cache';
 import { usePathname } from 'next/navigation';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../lib/hook/useToast';
 import { useRouter } from 'next/navigation';
-import IUser from '../../types/user.interface';
+import IUser from '../types/user.interface';
 import { useEffect, useState } from 'react';
-import { getUserInfo } from '../../lib/services/frontend/userService';
+import { getUserInfo } from '../lib/services/frontend/userService';
 import { Spinner } from '@chakra-ui/react';
 
 const UserDisplay = () => {

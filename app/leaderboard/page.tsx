@@ -1,7 +1,7 @@
 'use client';
 
 import { isMobile } from 'react-device-detect';
-import LoadingMask from '../(components)/LoadingMask';
+import LoadingMask from '../../components/LoadingMask';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';

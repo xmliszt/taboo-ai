@@ -1,11 +1,11 @@
 'use client';
 
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getDailyLevel } from '../../../lib/services/frontend/levelService';
-import moment from 'moment';
 import { cacheLevel } from '../../../lib/cache';
-import LoadingMask from '../../(components)/LoadingMask';
+import LoadingMask from '../../../components/LoadingMask';
 import { buildLevelForDisplay, delayRouterPush } from '../../../lib/utilities';
 import useToast from '../../../lib/hook/useToast';
 

@@ -1,15 +1,15 @@
 'use client';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import LoadingMask from '../(components)/LoadingMask';
 import { getLevels } from '../../lib/services/frontend/levelService';
 import ILevel from '../../types/level.interface';
-import Badge from '../(components)/(Badges)/Badge';
-import HotBadge from '../(components)/(Badges)/HotBadge';
-import NewBadge from '../(components)/(Badges)/NewBadge';
-import AuthorBadge from '../(components)/(Badges)/AuthorBadge';
-import LevelButton from '../(components)/LevelButton';
+import Badge from '../../components/Badges/Badge';
+import HotBadge from '../../components/Badges/HotBadge';
+import NewBadge from '../../components/Badges/NewBadge';
+import AuthorBadge from '../../components/Badges/AuthorBadge';
+import LevelButton from '../../components/LevelButton';
 import { getDifficulty } from '../../lib/utilities';
+import LoadingMask from '../../components/LoadingMask';
 
 interface LevelsPageProps {}
 

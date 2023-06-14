@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import ILevel from '../../types/level.interface';
-import { cacheLevel } from '../../lib/cache';
+import ILevel from '../types/level.interface';
+import { cacheLevel } from '../lib/cache';
 
 export default function LevelButton({
   level = undefined,

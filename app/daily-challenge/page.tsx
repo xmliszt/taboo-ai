@@ -1,16 +1,16 @@
 'use client';
 
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
-import Timer from '../(components)/Timer';
+import Timer from '../../components/Timer';
 import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
 } from '../../lib/services/frontend/aiService';
-import InputDisplay from '../(components)/InputDisplay';
+import InputDisplay from '../../components/InputDisplay';
 import _ from 'lodash';
 import { Author } from '../../lib/enums/Author';
-import ProgressBar from '../(components)/ProgressBar';
+import ProgressBar from '../../components/ProgressBar';
 import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';

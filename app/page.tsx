@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
-import CustomWordListLink from './(components)/CustomWordListLink';
-import DevToggle from './(components)/DevToggle';
-import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
-import FeedbackLink from './(components)/FeedbackLink';
-import Footer from './(components)/Footer';
-import SocialLinkButton from './(components)/SocialLinkButton';
+import CustomWordListLink from './../components/CustomWordListLink';
+import DevToggle from './../components/DevToggle';
+import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
+import FeedbackLink from './../components/FeedbackLink';
+import Footer from './../components/Footer';
+import SocialLinkButton from './../components/SocialLinkButton';
 
 interface HomePageProps {}
 

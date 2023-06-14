@@ -30,8 +30,8 @@ import {
   getGameByPlayerNicknameFilterByDate,
   saveGame,
 } from '../../lib/services/frontend/gameService';
-import LoadingMask from '../(components)/LoadingMask';
-import ConfirmPopUp from '../(components)/ConfirmPopUp';
+import LoadingMask from '../../components/LoadingMask';
+import ConfirmPopUp from '../../components/ConfirmPopUp';
 import { CONSTANTS } from '../../lib/constants';
 import { CgSmile } from 'react-icons/cg';
 import { getScoresByGameID } from '../../lib/services/frontend/scoreService';

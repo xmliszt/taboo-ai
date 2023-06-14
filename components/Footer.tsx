@@ -1,5 +1,3 @@
-'use client';
-
 import { TbBrandNextjs } from 'react-icons/tb';
 import { SiOpenai } from 'react-icons/si';
 import { FiGithub } from 'react-icons/fi';

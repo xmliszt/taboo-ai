@@ -15,9 +15,10 @@
     "test:e2e:trace": "playwright test --trace on"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.5.5",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@chakra-ui/next-js": "^2.1.4",
+    "@chakra-ui/react": "^2.7.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@next-auth/supabase-adapter": "^0.2.1",
     "@next/font": "^13.1.1",
     "@supabase/supabase-js": "^2.8.0",
@@ -30,7 +31,7 @@
     "dateformat": "^5.0.3",
     "eslint-config-next": "13.1.1",
     "file-loader": "^1.1.6",
-    "framer-motion": "^10.10.0",
+    "framer-motion": "^10.12.16",
     "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "lru-cache": "^7.12.0",
