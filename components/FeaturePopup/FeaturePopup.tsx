@@ -1,7 +1,7 @@
 'use client';
 
 import ReactMarkdown from 'react-markdown';
-import content from '../../public/welcome/content.md';
+import content from '../../public/features/content.md';
 import style from './style.module.css';
 import { KeyboardEvent, useEffect, useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
