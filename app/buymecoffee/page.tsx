@@ -1,11 +1,11 @@
 import Image from 'next/image';
-const BuyMeCoffeeQR = '/images/bmc_qr.png';
 import { GiCoffeeCup } from 'react-icons/gi';
-import SocialLinkButton from '../(components)/SocialLinkButton';
+import SocialLinkButton from '../../components/SocialLinkButton';
 import ReactMarkdown from 'react-markdown';
 import content from './content.md';
 import style from './style.module.css';
 
+const BuyMeCoffeeQR = '/images/bmc_qr.png';
 const BuyMeCoffeePage = () => {
   return (
     <>

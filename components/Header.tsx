@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import BackButton from './BackButton';
-import LightDarkToggle from './LightDarkToggle';
 import UserDisplay from './UserDisplay';
 
 interface HeaderProps {

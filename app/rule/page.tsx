@@ -5,7 +5,7 @@ import ruleContent from './rule.md';
 import challengeContent from './challenge.md';
 import style from './style.module.css';
 import Link from 'next/link';
-import SocialLinkButton from '../(components)/SocialLinkButton';
+import SocialLinkButton from '../../components/SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
 
 interface RulePageProps {}
@@ -46,7 +46,7 @@ export default function RulePage(props: RulePageProps) {
         <div className='w-full flex flex-col lg:flex-row justify-start gap-8 items-center'>
           <Link
             id='daily-challenge'
-            href='/daily-challenge/loading'
+            href='/daily-challenge'
             data-testid='link-daily-challenge'
           >
             <div className='btn-menu color-gradient-animated-background-golden'>

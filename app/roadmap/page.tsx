@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import content from './roadmap.md';
 import style from './style.module.css';
-import Footer from '../(components)/Footer';
+import Footer from '../../components/Footer';
 import Link from 'next/link';
 
 interface RoadmapPageProps {}

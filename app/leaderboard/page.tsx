@@ -1,7 +1,7 @@
 'use client';
 
 import { isMobile } from 'react-device-detect';
-import LoadingMask from '../(components)/LoadingMask';
+import LoadingMask from '../../components/LoadingMask';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';
@@ -298,7 +298,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
             <span>You have no rank in the leaderboard.</span>
             {currentDate.isSame(moment(), 'day') && (
               <Link
-                href='/daily-challenge/loading'
+                href='/daily-challenge'
                 data-style='none'
                 className='h-12 font-bold rounded-full bg-yellow dark:bg-neon-yellow text-black dark:text-neon-black text-2xl px-4 py-2 drop-shadow-lg'
               >

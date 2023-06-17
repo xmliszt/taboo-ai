@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { BiPaste } from 'react-icons/bi';
-import LoadingMask from '../(components)/LoadingMask';
+import LoadingMask from '../../components/LoadingMask';
 import { getScoresCache, setUser } from '../../lib/cache';
 import {
   addDeviceToUser,
@@ -147,7 +147,7 @@ const RecoveryPage = () => {
           </p>
           <Link
             className='underline text-yellow dark:text-neon-green'
-            href='/daily-challenge/loading'
+            href='/daily-challenge'
           >
             👉🏻 Attempt the daily challenge!
           </Link>

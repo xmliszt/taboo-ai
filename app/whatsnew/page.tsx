@@ -1,8 +1,8 @@
 import ReactMarkdown from 'react-markdown';
 import content from '../../public/features/content.md';
 import style from './style.module.css';
-import Footer from '../(components)/Footer';
-import SocialLinkButton from '../(components)/SocialLinkButton';
+import Footer from '../../components/Footer';
+import SocialLinkButton from '../../components/SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
 import Link from 'next/link';
 

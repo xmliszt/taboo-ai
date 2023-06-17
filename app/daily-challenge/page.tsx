@@ -1,20 +1,21 @@
 'use client';
 
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
-import Timer from '../(components)/Timer';
+import Timer from '../../components/Timer';
 import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
 } from '../../lib/services/frontend/aiService';
-import InputDisplay from '../(components)/InputDisplay';
+import InputDisplay from '../../components/InputDisplay';
 import _ from 'lodash';
 import { Author } from '../../lib/enums/Author';
-import ProgressBar from '../(components)/ProgressBar';
+import ProgressBar from '../../components/ProgressBar';
 import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
 import {
+  cacheLevel,
   cacheScore,
   clearScores,
   getLevelCache,
@@ -25,6 +26,7 @@ import {
 import { Highlight } from '../../types/chat.interface';
 import IVariation from '../../types/variation.interface';
 import {
+  buildLevelForDisplay,
   delayRouterPush,
   formatStringForDisplay,
   getDifficulty,
@@ -39,11 +41,14 @@ import useToast from '../../lib/hook/useToast';
 import { getGameByPlayerNicknameFilterByDate } from '../../lib/services/frontend/gameService';
 import moment from 'moment';
 import ILevel from '../../types/level.interface';
+import { getDailyLevel } from '../../lib/services/frontend/levelService';
+import LoadingMask from '../../components/LoadingMask';
 
 interface DailyLevelProps {}
 
 export default function DailyLevelPage(props: DailyLevelProps) {
   //SECTION - States
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -88,6 +93,23 @@ export default function DailyLevelPage(props: DailyLevelProps) {
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
+
+  const fetchDailyLevel = async () => {
+    setIsPageLoading(true);
+    try {
+      const level = await getDailyLevel(moment());
+      if (!level) {
+        throw Error('Sorry! There is no daily level available for today.');
+      }
+      const convertedLevel = buildLevelForDisplay(level);
+      cacheLevel(convertedLevel);
+      setIsPageLoading(false);
+    } catch {
+      throw Error(
+        'Sorry, we are unable to fetch the daily level at this moment. Please try again later!'
+      );
+    }
+  };
 
   //!SECTION
   const generateNewTarget = (words: string[]): string => {
@@ -449,9 +471,19 @@ export default function DailyLevelPage(props: DailyLevelProps) {
 
   //SECTION - At the start of the game
   useEffect(() => {
-    checkIfLevelAttempted().then((attempted) => {
-      !attempted && generateLevel();
-    });
+    fetchDailyLevel()
+      .then(() => {
+        checkIfLevelAttempted().then((attempted) => {
+          !attempted && generateLevel();
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: error.message,
+          status: 'error',
+        });
+        delayRouterPush(router, '/', { delay: 1000 });
+      });
   }, []);
   //!SECTION
 
@@ -556,7 +588,9 @@ export default function DailyLevelPage(props: DailyLevelProps) {
   }, [userInputHighlights]);
   //!SECTION
 
-  return (
+  return isPageLoading ? (
+    <LoadingMask isLoading={true} message="What will today's challenge be?" />
+  ) : (
     <section className='flex justify-center h-full bg-black dark:bg-neon-black'>
       {isCountingdown && (
         <div

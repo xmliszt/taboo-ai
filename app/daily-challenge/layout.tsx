@@ -1,4 +1,4 @@
-import DevToggle from '../(components)/DevToggle';
+import DevToggle from '../../components/DevToggle';
 
 export default function LevelLayout({
   children,
