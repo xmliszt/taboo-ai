@@ -147,7 +147,7 @@ const RecoveryPage = () => {
           </p>
           <Link
             className='underline text-yellow dark:text-neon-green'
-            href='/daily-challenge/loading'
+            href='/daily-challenge'
           >
             👉🏻 Attempt the daily challenge!
           </Link>

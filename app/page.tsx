@@ -42,7 +42,7 @@ export default function HomePage(props: HomePageProps) {
           </Link>
           <Link
             id='daily-challenge'
-            href='/daily-challenge/loading'
+            href='/daily-challenge'
             data-testid='link-daily-challenge'
           >
             <div className='btn-menu color-gradient-animated-background-golden'>

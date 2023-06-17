@@ -46,7 +46,7 @@ export default function RulePage(props: RulePageProps) {
         <div className='w-full flex flex-col lg:flex-row justify-start gap-8 items-center'>
           <Link
             id='daily-challenge'
-            href='/daily-challenge/loading'
+            href='/daily-challenge'
             data-testid='link-daily-challenge'
           >
             <div className='btn-menu color-gradient-animated-background-golden'>
