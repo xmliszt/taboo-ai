@@ -35,7 +35,7 @@ const UserDisplay = () => {
         !exists && clearUser();
       });
     }
-  }, []);
+  }, [pathName]);
 
   const checkUserExists = async (nickname: string) => {
     try {
@@ -68,6 +68,7 @@ const UserDisplay = () => {
             clearScores();
             clearLevel();
             clearUser();
+            setUser(undefined);
             setTipsAck(false);
             toast({
               title: 'You have been logged out!',
