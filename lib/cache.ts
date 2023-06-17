@@ -21,7 +21,7 @@ export function clearLevel() {
 //ANCHOR - Scores
 export function cacheScore(score: IDisplayScore) {
   const scores = getScoresCache();
-  if (scores !== null) {
+  if (scores !== null && !scores.includes(score)) {
     scores.push(score);
     scores.sort((a, b) => a.id - b.id);
     localStorage.setItem(HASH.scores, JSON.stringify(scores));
