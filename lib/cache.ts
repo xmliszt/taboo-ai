@@ -58,8 +58,8 @@ export function getFeaturePopupString(): string | null {
   return localStorage.getItem(HASH.hasReadFeaturePopup);
 }
 
-export function setFeaturePopupString(s: string) {
-  localStorage.setItem(HASH.hasReadFeaturePopup, s);
+export function setFeaturePopupString(s?: string) {
+  if (s) localStorage.setItem(HASH.hasReadFeaturePopup, s);
 }
 
 //ANCHOR - Acknowledgement
