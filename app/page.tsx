@@ -30,7 +30,6 @@ export default function HomePage(props: HomePageProps) {
           </h1>
           <FeatureUpdatesLink />
         </div>
-        <FeedbackLink />
         <section className='mt-4 mb-2 flex-col flex gap-8 text-center'>
           <Link
             id='start'
