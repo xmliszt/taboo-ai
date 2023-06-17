@@ -12,6 +12,7 @@ import {
   cacheScore,
   setCachedGame,
   cacheLevel,
+  getCachedGame,
 } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
@@ -30,8 +31,8 @@ import {
   getGameByPlayerNicknameFilterByDate,
   saveGame,
 } from '../../lib/services/frontend/gameService';
-import LoadingMask from '../(components)/LoadingMask';
-import ConfirmPopUp from '../(components)/ConfirmPopUp';
+import LoadingMask from '../../components/LoadingMask';
+import ConfirmPopUp from '../../components/ConfirmPopUp';
 import { CONSTANTS } from '../../lib/constants';
 import { CgSmile } from 'react-icons/cg';
 import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
@@ -242,7 +243,19 @@ export default function ResultPage(props: ResultPageProps) {
       setLevel(level);
       updateDisplayedScores(scores);
       if (level.isDaily) {
-        showJoinLeaderboardPrompt();
+        const savedGame = getCachedGame();
+        if (user && savedGame && user.nickname === savedGame.player_nickname) {
+          showJoinLeaderboardPrompt();
+        } else {
+          toast({
+            title:
+              'Sorry! The ownership of the saved result does not match you. Please login with the correct recovery key to view it!',
+            status: 'error',
+            duration: 4000,
+          });
+          delayRouterPush(router, '/', { delay: 3000 });
+          return;
+        }
       }
       return;
     }

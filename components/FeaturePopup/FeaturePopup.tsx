@@ -1,17 +1,14 @@
 'use client';
 
 import ReactMarkdown from 'react-markdown';
-import content from '../../../public/welcome/content.md';
+import content from '../../public/features/content.md';
 import style from './style.module.css';
 import { KeyboardEvent, useEffect, useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
-import {
-  getFeaturePopupString,
-  setFeaturePopupString,
-} from '../../../lib/cache';
+import { getFeaturePopupString, setFeaturePopupString } from '../../lib/cache';
 import SocialLinkButton from '../SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
-import { CONSTANTS } from '../../../lib/constants';
+import { CONSTANTS } from '../../lib/constants';
 
 interface FeaturePopupProps {}
 

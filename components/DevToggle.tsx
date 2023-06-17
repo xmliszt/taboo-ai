@@ -2,9 +2,9 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { cacheScore, getLevelCache } from '../../lib/cache';
-import { HASH } from '../../lib/hash';
-import { getRandomInt } from '../../lib/utilities';
+import { cacheScore, getLevelCache } from '../lib/cache';
+import { getRandomInt } from '../lib/utilities';
+import { HASH } from '../lib/hash';
 
 interface DevToggleProps {}
 

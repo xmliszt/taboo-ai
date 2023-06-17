@@ -5,7 +5,7 @@ import { getCreativeLevel } from '../../lib/services/frontend/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';
-import LoadingMask from '../(components)/LoadingMask';
+import LoadingMask from '../../components/LoadingMask';
 
 interface AiPageProps {}
 

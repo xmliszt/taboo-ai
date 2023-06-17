@@ -1,5 +1,10 @@
 # Taboo.AI Releases Roadmap
 
+## 17 Jun - Release Notes (V2.3)
+
+- **Recovery Key** now can be copied directly by clicking on your **nickname** once signed in, on Home Page.
+- Remove `/daily-challenge/loading`
+
 ## 31 May - Release Notes (V2.2)
 
 - **Improved AI scoring system**.

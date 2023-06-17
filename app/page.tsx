@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
-import CustomWordListLink from './(components)/CustomWordListLink';
-import DevToggle from './(components)/DevToggle';
-import FeatureUpdatesLink from './(components)/FeatureUpdatesLink';
-import FeedbackLink from './(components)/FeedbackLink';
-import Footer from './(components)/Footer';
-import SocialLinkButton from './(components)/SocialLinkButton';
+import CustomWordListLink from './../components/CustomWordListLink';
+import DevToggle from './../components/DevToggle';
+import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
+import FeedbackLink from './../components/FeedbackLink';
+import Footer from './../components/Footer';
+import SocialLinkButton from './../components/SocialLinkButton';
 
 interface HomePageProps {}
 
@@ -30,7 +30,6 @@ export default function HomePage(props: HomePageProps) {
           </h1>
           <FeatureUpdatesLink />
         </div>
-        <FeedbackLink />
         <section className='mt-4 mb-2 flex-col flex gap-8 text-center'>
           <Link
             id='start'
@@ -42,7 +41,7 @@ export default function HomePage(props: HomePageProps) {
           </Link>
           <Link
             id='daily-challenge'
-            href='/daily-challenge/loading'
+            href='/daily-challenge'
             data-testid='link-daily-challenge'
           >
             <div className='btn-menu color-gradient-animated-background-golden'>

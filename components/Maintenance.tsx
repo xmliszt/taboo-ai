@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import maintenanceRobot from '../../public/images/maintenance.png';
+import maintenanceRobot from '../public/images/maintenance.png';
 
 const Maintenance = () => {
   return (

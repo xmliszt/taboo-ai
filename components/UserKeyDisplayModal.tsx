@@ -4,7 +4,7 @@ import { TiTick } from 'react-icons/ti';
 import { BiCopy } from 'react-icons/bi';
 import { useState } from 'react';
 import copy from 'clipboard-copy';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../lib/hook/useToast';
 
 interface UserKeyDisplayModalProps {
   userKey: string;
