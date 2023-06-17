@@ -482,7 +482,7 @@ export default function DailyLevelPage(props: DailyLevelProps) {
           title: error.message,
           status: 'error',
         });
-        router.push('/');
+        delayRouterPush(router, '/', { delay: 1000 });
       });
   }, []);
   //!SECTION

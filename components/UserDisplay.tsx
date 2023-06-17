@@ -18,6 +18,7 @@ import IUser from '../types/user.interface';
 import { useEffect, useState } from 'react';
 import { getUserInfo } from '../lib/services/frontend/userService';
 import { Spinner } from '@chakra-ui/react';
+import copy from 'clipboard-copy';
 
 const UserDisplay = () => {
   const [user, setUser] = useState<IUser | undefined>();
@@ -83,13 +84,35 @@ const UserDisplay = () => {
     });
   };
 
+  const copyRecoveryKeyToClipboard = async () => {
+    if (user) {
+      await copy(user.recovery_key);
+      toast({
+        title: 'Recovery Key is copied to clipboard!',
+        status: 'success',
+        duration: 2000,
+      });
+    } else {
+      toast({
+        title: 'Sorry, something went wrong!',
+        status: 'error',
+        duration: 1000,
+      });
+    }
+  };
+
   if (pathName === '/') {
     if (isLoading) {
       return <Spinner />;
     }
     return user ? (
       <div className='text-center text-gray flex flex-row gap-2 justify-around items-center dark:text-xs lg:text-xl lg:dark:text-lg h-4'>
-        <span>{user.nickname}</span>
+        <span
+          className='underline cursor-pointer'
+          onClick={copyRecoveryKeyToClipboard}
+        >
+          {user.nickname}
+        </span>
         <button
           id='submit'
           data-style='none'
