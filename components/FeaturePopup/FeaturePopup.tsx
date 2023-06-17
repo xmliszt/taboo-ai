@@ -18,24 +18,21 @@ export default function FeaturePopup(props: FeaturePopupProps) {
 
   useEffect(() => {
     const featurePopupString = getFeaturePopupString();
-    if (!featurePopupString) {
-      setShowFeaturePopup(true);
-    } else if (featurePopupString !== CONSTANTS.featurePopupString) {
-      setShowFeaturePopup(true);
-    } else {
-      setShowFeaturePopup(false);
-    }
+    setShowFeaturePopup(
+      !featurePopupString ||
+        featurePopupString !== process.env.NEXT_PUBLIC_TABOO_AI_VERSION
+    );
   }, []);
 
   const close = () => {
     setIsClosed(true);
-    setFeaturePopupString(CONSTANTS.featurePopupString);
+    setFeaturePopupString(process.env.NEXT_PUBLIC_TABOO_AI_VERSION);
   };
 
   const escClose = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       setIsClosed(true);
-      setFeaturePopupString(CONSTANTS.featurePopupString);
+      setFeaturePopupString(process.env.NEXT_PUBLIC_TABOO_AI_VERSION);
     }
   };
   return (
