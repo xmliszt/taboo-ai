@@ -1,5 +1,9 @@
 # Taboo AI Releases Roadmap
 
+## 18 Jun - Release Notes (V2.4)
+
+- **Progressive Web App (PWA)**.
+
 ## 17 Jun - Release Notes (V2.3)
 
 - **Recovery Key** now can be copied directly by clicking on your **nickname** once signed in, on Home Page.
