@@ -45,6 +45,15 @@
   font-weight: 900;
 }
 
+.markdown ol {
+  list-style: decimal !important;
+  padding-left: 1rem !important;
+}
+
+.markdown ol > li::before {
+  content: '' !important;
+}
+
 .markdown p {
   font-weight: 100 !important;
   margin-bottom: 1.5rem;
