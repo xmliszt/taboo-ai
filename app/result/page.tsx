@@ -229,6 +229,9 @@ export default function ResultPage(props: ResultPageProps) {
           }
         }
       }
+    } else {
+      showJoinLeaderboardPrompt();
+      return;
     }
     if (!scores || !level) {
       toast({
@@ -244,9 +247,7 @@ export default function ResultPage(props: ResultPageProps) {
       updateDisplayedScores(scores);
       if (level.isDaily) {
         const savedGame = getCachedGame();
-        if (user && savedGame && user.nickname === savedGame.player_nickname) {
-          showJoinLeaderboardPrompt();
-        } else {
+        if (user && savedGame && user.nickname !== savedGame.player_nickname) {
           toast({
             title:
               'Sorry! The ownership of the saved result does not match you. Please login with the correct recovery key to view it!',

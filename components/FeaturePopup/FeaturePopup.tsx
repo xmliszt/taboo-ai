@@ -8,7 +8,6 @@ import { MdOutlineClose } from 'react-icons/md';
 import { getFeaturePopupString, setFeaturePopupString } from '../../lib/cache';
 import SocialLinkButton from '../SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
-import { CONSTANTS } from '../../lib/constants';
 
 interface FeaturePopupProps {}
 
