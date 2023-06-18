@@ -1,12 +1,13 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import CustomWordListLink from './../components/CustomWordListLink';
 import DevToggle from './../components/DevToggle';
 import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
-import FeedbackLink from './../components/FeedbackLink';
 import Footer from './../components/Footer';
 import SocialLinkButton from './../components/SocialLinkButton';
+import ProductHuntBadge from './../public/images/producthunt.svg';
 
 interface HomePageProps {}
 
@@ -30,6 +31,7 @@ export default function HomePage(props: HomePageProps) {
           </h1>
           <FeatureUpdatesLink />
         </div>
+
         <section className='mt-4 mb-2 flex-col flex gap-8 text-center'>
           <Link
             id='start'
@@ -58,7 +60,37 @@ export default function HomePage(props: HomePageProps) {
         </section>
         <CustomWordListLink />
         {environment !== 'production' && <DevToggle />}
+        <hr className='bg-gray opacity-50 w-[240px] h-[0.2px] rounded-full' />
+        <a
+          className='hover: opacity-70 hover:scale-105 hover:drop-shadow-2xl hover:mix-blend-plus-lighter transition-all'
+          href='https://theresanaiforthat.com/ai/taboo-ai/?ref=embed'
+          target='_blank'
+          rel='noreferrer'
+        >
+          <Image
+            className='drop-shadow-xl bg-blend-overlay'
+            alt="TabooAI is featured on THERE'S AN AI FOR THAT"
+            width='240'
+            height='65'
+            src='https://media.theresanaiforthat.com/featured4.png'
+          />
+        </a>
+        <a
+          className='hover: opacity-70 hover:scale-105 hover:drop-shadow-2xl hover:mix-blend-plus-lighter transition-all'
+          href='https://www.producthunt.com/products/taboo-ai?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
+          target='_blank'
+          rel='noreferrer'
+        >
+          <Image
+            className='drop-shadow-xl bg-blend-overlay'
+            alt='Taboo&#0046;AI - Taboo&#0046;AI&#0032;&#0045;&#0032;The&#0032;Ultimate&#0032;Wordplay&#0032;Challenge&#0032;against&#0032;AI | Product Hunt'
+            width='240'
+            height='50'
+            src={ProductHuntBadge}
+          />
+        </a>
       </section>
+
       <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-10'>
         <SocialLinkButton
           content='Buy Me Coffee'
