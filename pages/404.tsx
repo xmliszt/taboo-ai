@@ -1,4 +1,4 @@
-import { Special_Elite } from '@next/font/google';
+import { Special_Elite } from 'next/font/google';
 import router from 'next/router';
 import './global.css';
 
