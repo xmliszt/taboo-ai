@@ -31,10 +31,10 @@ export default function UserKeyDisplayModal(props: UserKeyDisplayModalProps) {
         <article className='text-white-faded flex flex-col gap-2'>
           <i>What is it used for?</i>
           <p className='text-sm lg:text-base max-h-56 overflow-y-scroll lg:scrollbar-hide'>
-            Taboo.AI does not require <b>username and password</b> to save your
+            Taboo AI does not require <b>username and password</b> to save your
             progress. However, for you to join the leaderboard, we need to
             identify each individual unqiue user. You do not need to do anything
-            if you use the same browser to play Taboo.AI, we will{' '}
+            if you use the same browser to play Taboo AI, we will{' '}
             <b>remember you</b> every time you play! However, if you decide to{' '}
             <b>change a device or browser</b>, the new device or browser will
             not remember who you are, hence you will be prompted to use{' '}

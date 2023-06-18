@@ -1,4 +1,10 @@
-# **Taboo.AI Updates V2.3!**
+# **Taboo AI Updates V2.4!**
+
+## Install Taboo AI as Web App on your chrome!
+
+![pwa](/features/pwa.png)
+
+Good news! Now Taboo AI is available to be installed as web app if you are using **Chrome** broswer. When you open the website, you will see an 'install' button on the top navigation bar as shown in the screenshot above. Simply click and install. Next time, you can directly access Taboo AI on your mobile or PC devices, just like using any other app!
 
 ## Forget About Your Recovery Key?
 

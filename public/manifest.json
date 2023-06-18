@@ -1,0 +1,32 @@
+{
+  "theme_color": "#ede8d9",
+  "background_color": "#4c453e",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Taboo AI",
+  "short_name": "tabooai",
+  "description": "Unleash your wordplay skills and master English with Taboo AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!",
+  "icons": [
+    {
+      "src": "/16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -17,7 +17,7 @@ export default function RulePage(props: RulePageProps) {
         data-testid='heading-rule-title'
         className='h-32 fixed top-0 z-50 leading-normal text-white pt-4 text-xl'
       >
-        How To Play Taboo.AI?
+        How To Play Taboo AI?
       </h1>
       <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 lg:text-2xl'>
         <article className='leading-normal'>
@@ -71,7 +71,7 @@ export default function RulePage(props: RulePageProps) {
         </div>
         <br />
         <p className='text-justify text-gray text-base'>
-          Disclaimer: Please note that Taboo.AI relies solely on{' '}
+          Disclaimer: Please note that Taboo AI relies solely on{' '}
           <a className='underline' href='https://openai.com/api/pricing/'>
             OpenAI AI Model
           </a>{' '}

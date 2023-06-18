@@ -1,10 +1,11 @@
+import { Metadata } from 'next';
 import DevToggle from '../../components/DevToggle';
 
-export default function LevelLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const metadata: Metadata = {
+  title: 'Daily Challenge',
+};
+
+export default function Layout({ children }: { children: React.ReactNode }) {
   const environment = process.env.VERCEL_ENV;
   return (
     <>
