@@ -233,7 +233,7 @@ export const buildLevelForDisplay = (level: IDailyLevel): ILevel => {
   return {
     name: level.name,
     difficulty: level.difficulty,
-    author: 'Taboo.AI',
+    author: 'TabooAI',
     isDaily: true,
     words: level.words,
     createdAt: dateObject.valueOf(),
