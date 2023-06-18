@@ -28,5 +28,42 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/Artboard 1.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Taboo AI: Play Fun Taboo Game with AI"
+    },
+    {
+      "src": "/images/Artboard 2.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Trick AI into saying the taboo word, without you saying it!"
+    },
+    {
+      "src": "/images/Artboard 3.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Create and submit your own topics to be featured by Taboo AI, and played by others!"
+    },
+    {
+      "src": "/images/Artboard 4.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Join the exciting Daily Challenge and complete in the Global Leaderboard!"
+    },
+    {
+      "src": "/images/Artboard 5.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Continue the fun across platforms via our Recovery Key system!"
+    }
   ]
 }
