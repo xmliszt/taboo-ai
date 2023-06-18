@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
+import InstallButton from '../components/InstallButton';
 import CustomWordListLink from './../components/CustomWordListLink';
 import DevToggle from './../components/DevToggle';
 import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
@@ -31,7 +32,7 @@ export default function HomePage(props: HomePageProps) {
           </h1>
           <FeatureUpdatesLink />
         </div>
-
+        <InstallButton />
         <section className='mt-4 mb-2 flex-col flex gap-8 text-center'>
           <Link
             id='start'
@@ -91,7 +92,7 @@ export default function HomePage(props: HomePageProps) {
         </a>
       </section>
 
-      <div className='fixed bottom-16 w-full flex flex-row gap-2 justify-center z-10'>
+      <div className='fixed bottom-20 lg:bottom-24 w-full flex flex-row gap-2 justify-center z-10'>
         <SocialLinkButton
           content='Buy Me Coffee'
           icon={<GiCoffeeCup />}
