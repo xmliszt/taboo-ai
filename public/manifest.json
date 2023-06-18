@@ -1,12 +1,13 @@
 {
-  "theme_color": "#ede8d9",
+  "theme_color": "#4c453e",
   "background_color": "#4c453e",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Taboo AI",
-  "short_name": "tabooai",
+  "name": "Taboo AI: Play Taboo Game with AI",
+  "short_name": "Taboo AI",
   "description": "Unleash your wordplay skills and master English with Taboo AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!",
+  "categories": ["technology", "education", "game", "trivia", "AI", "ChatGPT"],
   "icons": [
     {
       "src": "/16x16.png",
