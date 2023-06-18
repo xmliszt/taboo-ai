@@ -12,7 +12,7 @@ import ProductHuntBadge from './../public/images/producthunt.svg';
 interface HomePageProps {}
 
 export default function HomePage(props: HomePageProps) {
-  const title = 'Taboo.AI';
+  const title = 'Taboo AI';
   const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
   const environment = process.env.VERCEL_ENV;
 

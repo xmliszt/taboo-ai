@@ -525,8 +525,8 @@ export default function ResultPage(props: ResultPageProps) {
           .share({
             title:
               totalScore > 0
-                ? `I scored ${totalScore} in Taboo.AI!`
-                : 'Look at my results at Taboo.AI!',
+                ? `I scored ${totalScore} in Taboo AI!`
+                : 'Look at my results at Taboo AI!',
             text: title,
           })
           .then(() => {

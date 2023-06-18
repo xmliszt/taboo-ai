@@ -10,7 +10,7 @@ const Maintenance = () => {
         width={400}
       />
       <p className='text-base lg:text-2xl'>
-        Taboo.AI is working hard to resolve the unexpected issue {'>_<!'} It
+        Taboo AI is working hard to resolve the unexpected issue {'>_<!'} It
         might be because OpenAI API is currently experiencing an unexpected
         outage. We will be back once the issue has been resolved. Thank you for
         your patience!

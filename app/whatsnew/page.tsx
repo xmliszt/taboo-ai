@@ -17,7 +17,7 @@ export default async function WhatsNewPage(props: WhatsNewPageProps) {
         className='fixed top-4 z-40 underline text-lg'
         aria-label='Go to the Taboo AI releases roadmap page'
       >
-        Taboo.AI Releases Roadmap
+        Taboo AI Releases Roadmap
       </Link>
       <article
         data-testid='content-article'

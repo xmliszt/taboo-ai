@@ -1,4 +1,8 @@
-# Taboo.AI Releases Roadmap
+# Taboo AI Releases Roadmap
+
+## 18 Jun - Release Notes (V2.4)
+
+- **Progressive Web App (PWA)**.
 
 ## 17 Jun - Release Notes (V2.3)
 
@@ -71,7 +75,7 @@
 
 ## 16 Jan - First Release Notes (V1.0)
 
-- Taboo.AI **first release**!
+- Taboo AI **first release**!
 - **Pre-defined topics** of taboo words.
 - **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more **customization** to the game.
 - **Timer** scoring system.

@@ -4,6 +4,8 @@ import FeaturePopup from '../components/FeaturePopup/FeaturePopup';
 import { ThemeProvider } from './ThemeProvider';
 import Header from '../components/Header';
 import Maintenance from '../components/Maintenance';
+import { Metadata } from 'next';
+import { _meta } from '../lib/metadata';
 
 import './global.css';
 import './main.css';
@@ -20,6 +22,8 @@ const font = Grenze({
     'serif',
   ],
 });
+
+export const metadata: Metadata = _meta;
 
 export default function RootLayout({
   children,
