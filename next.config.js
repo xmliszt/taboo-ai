@@ -13,6 +13,10 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  images: {
+    domains: ['media.theresanaiforthat.com', 'api.producthunt.com'],
+    formats: ['image/webp'],
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.md$/,
