@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Maintenance from '../components/Maintenance';
 import { Metadata } from 'next';
 import { _meta } from '../lib/metadata';
+import PWAInstaller from './PWAInstaller';
 
 import './global.css';
 import './main.css';
@@ -41,7 +42,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Header maintenanceOn={maintenanceMode} />
           {maintenanceMode && <Maintenance />}
-          {!maintenanceMode && children}
+          <PWAInstaller>{!maintenanceMode && children}</PWAInstaller>
           {!maintenanceMode && <FeaturePopup />}
           <AnalyticsWrapper />
         </ThemeProvider>
