@@ -1,8 +1,8 @@
 # **Taboo AI Updates V2.5!**
 
-## Sincere Apology! Normal level has been fixed!
+## Sincere Apologies! Normal level has been fixed!
 
-We sincerely apologize for the inconvenience caused by the recent fatal bug in the TabooAI normal level, which resulted in an empty game page and the inability to view results. Our dedicated developer team has promptly released an urgent fix, ensuring an enhanced and seamless TabooAI experience. We deeply appreciate your patience and understanding during this time, and we remain committed to delivering top-quality gaming. Please accept our apologies, and feel free to reach out to our customer support team for any further assistance. Thank you for your continued support. ❤️
+I sincerely apologize for the inconvenience caused by the recent fatal bug in the TabooAI normal level, which resulted in an empty game page and the inability to view results. I have released an urgent fix, ensuring an enhanced and seamless TabooAI experience. I deeply appreciate your patience and understanding during this time, and I will remain committed to delivering top-quality gaming. Please accept my apologies, and feel free to reach out to me for any further assistance. Thank you for your continued support. ❤️
 
 ## Install Taboo AI as Web App!
 
@@ -56,7 +56,7 @@ With web app installed, you can directly access Taboo AI on your mobile or PC de
 
 ![Copy recovery key to clipboard](/features/Copy%20RKey%20to%20Clipboard.png)
 
-Forget about your "Recovery Key"? Now we have a new simple way to get you more covered! If you are logged in at one of your devices, simply **click your nickname in the home screen** to copy your recovery key to the clipboard. Now you can paste the recovery key into another device that you wish to login to restore your progress! It is that simple!
+Forget about your "Recovery Key"? Now there is a new simple way to get you more covered! If you are logged in at one of your devices, simply **click your nickname in the home screen** to copy your recovery key to the clipboard. Now you can paste the recovery key into another device that you wish to login to restore your progress! It is that simple!
 
 ## Daily Challenge URL has been updated!
 
