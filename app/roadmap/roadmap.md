@@ -3,6 +3,9 @@
 ## 18 Jun - Release Notes (V2.4)
 
 - **Progressive Web App (PWA)**.
+- Improved AI scoring.
+- Fixed normal level not loading.
+- Fixed normal result page not showing.
 
 ## 17 Jun - Release Notes (V2.3)
 
