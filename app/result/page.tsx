@@ -157,6 +157,7 @@ export default function ResultPage(props: ResultPageProps) {
       );
       setIsLoading(true);
       for (let i = 0; i < scores.length; i++) {
+        const tempScores: IAIScore[] = [];
         const score = scores[i];
         const userInput = score.question;
         const target = score.target;
@@ -169,15 +170,28 @@ export default function ResultPage(props: ResultPageProps) {
             }]`
           );
         } else {
-          await performAIJudging(5, target, userInput, (aiJudgeScore) => {
-            scores[i].ai_score = aiJudgeScore.score;
-            scores[i].ai_explanation = aiJudgeScore.explanation;
-            setLoadingMessage(
-              `Stay tuned! Taboo AI is evaluating your performance... [${
-                i + 1
-              }/${scores.length}]`
-            );
-          });
+          for (let t = 0; t < 3; t++) {
+            await performAIJudging(5, target, userInput, (aiJudgeScore) => {
+              aiJudgeScore.explanation !== undefined &&
+                aiJudgeScore.score !== undefined &&
+                tempScores.push(aiJudgeScore);
+            });
+          }
+          if (tempScores.length === 0) {
+            scores[i].ai_score = 50;
+            scores[i].ai_explanation =
+              'Our sincere apologies for a server hiccup that causes AI unable to generate the scores at the moment. We fully recognize that the average score of 50 you received does not appropriately represent your skills and efforts. We deeply regret any inconvenience or frustration this may have caused you. We are actively working to rectify the issue and prevent such occurrences in the future. Thank you for your understanding and patience as we resolve this matter.';
+          } else {
+            tempScores.sort((s1, s2) => (s2.score ?? 0) - (s1.score ?? 0));
+            const bestScore = tempScores[0];
+            scores[i].ai_score = bestScore.score;
+            scores[i].ai_explanation = bestScore.explanation;
+          }
+          setLoadingMessage(
+            `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
+              scores.length
+            }]`
+          );
         }
       }
       setIsLoading(false);
@@ -229,7 +243,7 @@ export default function ResultPage(props: ResultPageProps) {
           }
         }
       }
-    } else {
+    } else if (level?.isDaily) {
       showJoinLeaderboardPrompt();
       return;
     }
