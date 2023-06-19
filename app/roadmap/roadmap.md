@@ -1,11 +1,14 @@
 # Taboo AI Releases Roadmap
 
-## 18 Jun - Release Notes (V2.4)
+## 20 Jun - Release Notes (V2.5)
 
-- **Progressive Web App (PWA)**.
 - Improved AI scoring.
 - Fixed normal level not loading.
 - Fixed normal result page not showing.
+
+## 18 Jun - Release Notes (V2.4)
+
+- **Progressive Web App (PWA)**.
 
 ## 17 Jun - Release Notes (V2.3)
 

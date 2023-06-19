@@ -1,4 +1,8 @@
-# **Taboo AI Updates V2.4!**
+# **Taboo AI Updates V2.5!**
+
+## Sincere Apology! Normal level has been fixed!
+
+We sincerely apologize for the inconvenience caused by the recent fatal bug in the TabooAI normal level, which resulted in an empty game page and the inability to view results. Our dedicated developer team has promptly released an urgent fix, ensuring an enhanced and seamless TabooAI experience. We deeply appreciate your patience and understanding during this time, and we remain committed to delivering top-quality gaming. Please accept our apologies, and feel free to reach out to our customer support team for any further assistance. Thank you for your continued support. ❤️
 
 ## Install Taboo AI as Web App!
 
