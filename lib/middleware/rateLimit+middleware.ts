@@ -24,7 +24,7 @@ const checkRateLimit = (
   }
   if (req.url) {
     switch (true) {
-      case /api\/ai/.test(req.url):
+      case /api\/ai$/.test(req.url):
         aiRateLimiter
           .check(res, 20, ipAddress)
           .then(() => {

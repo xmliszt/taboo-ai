@@ -68,7 +68,7 @@ export default function LevelsPage(props: LevelsPageProps) {
           onChange={onSearchChange}
         />
       </div>
-      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 py-10 mt-20 lg:mt-36 text-center'>
+      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 pt-32 lg:pt-40 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
@@ -117,6 +117,7 @@ export default function LevelsPage(props: LevelsPageProps) {
               </Badge>
             )
           )}
+        <div className='h-4 w-full'></div>
       </section>
     </section>
   );
