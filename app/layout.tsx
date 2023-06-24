@@ -10,6 +10,7 @@ import PWAInstaller from './PWAInstaller';
 
 import './global.css';
 import './main.css';
+import Script from 'next/script';
 
 const font = Grenze({
   weight: '400',
@@ -37,6 +38,7 @@ export default function RootLayout({
 
   return (
     <html lang='en'>
+      <Script id='pwa-script' src='/js/pwa.js' />
       <head />
       <body className={`${font.className} bg-black text-white`}>
         <ThemeProvider>
