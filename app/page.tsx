@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import InstallButton from '../components/InstallButton';
@@ -19,6 +20,7 @@ export default function HomePage(props: HomePageProps) {
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
+      <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 py-32'>
         <div className='w-full relative'>
           <h1

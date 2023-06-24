@@ -7,11 +7,10 @@ export default function InstallButton() {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
+    const prompt = window.deferredprompt;
+    setShowButton(prompt !== undefined && prompt !== null);
     window.addEventListener('showInstallButton', () => {
       setShowButton(true);
-    });
-    window.addEventListener('hideInstallButton', () => {
-      setShowButton(false);
     });
   }, []);
 
