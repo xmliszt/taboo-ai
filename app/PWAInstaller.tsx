@@ -32,7 +32,6 @@ export default function PWAInstaller({
       const { outcome } = await window.deferredprompt.userChoice;
       if (outcome === 'accepted') {
         localStorage.setItem('pwa-user-choice', 'accepted');
-        dispatchEvent(new CustomEvent('hideInstallButton'));
       } else {
         localStorage.setItem('pwa-user-choice', 'cancelled');
       }
