@@ -71,15 +71,6 @@ export function setTipsAck(ack: boolean) {
   localStorage.setItem(HASH.hasReadTips, JSON.stringify(ack));
 }
 
-//ANCHOR - PWA User Choice
-export function getPWAUserChoice(): string {
-  return localStorage.getItem(HASH.pwaUserChoice) ?? '';
-}
-
-export function changePWAUserChoice(choice: string) {
-  localStorage.setItem(HASH.pwaUserChoice, choice);
-}
-
 //ANCHOR - Submitted Game
 export function getCachedGame(): IGame | null {
   const gameString = localStorage.getItem(HASH.game);

@@ -9,7 +9,6 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { FiDownload } from 'react-icons/fi';
-import { changePWAUserChoice, getPWAUserChoice } from '../lib/cache';
 
 export default function PWAInstaller({
   children,
@@ -17,51 +16,32 @@ export default function PWAInstaller({
   children: React.ReactNode;
 }) {
   const [isDrawOpen, setIsDrawOpen] = useState(false);
-  const [promptEvent, setPromptEvent] = useState<
-    BeforeInstallPromptEvent | undefined
-  >();
 
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      const userChoice = getPWAUserChoice();
-      userChoice !== 'accepted' &&
-        userChoice !== 'cancelled' &&
-        setIsDrawOpen(true);
-      const _promptEvent = e as BeforeInstallPromptEvent;
-      setPromptEvent(_promptEvent);
-      _promptEvent === undefined
-        ? dispatchEvent(new CustomEvent('hideInstallButton'))
-        : dispatchEvent(new CustomEvent('showInstallButton'));
-    });
-    window.addEventListener('appinstalled', () => {
-      setIsDrawOpen(false);
-      setPromptEvent(undefined);
-      changePWAUserChoice('accepted');
-      dispatchEvent(new CustomEvent('hideInstallButton'));
-      console.log('PWA INSTALLED');
-    });
-    window.addEventListener('InitPWAInstallation', () => {
-      changePWAUserChoice('cancelled');
+    window.addEventListener('openPWADrawer', () => {
       setIsDrawOpen(true);
+    });
+    window.addEventListener('closePWADrawer', () => {
+      setIsDrawOpen(false);
     });
   }, []);
 
   const onInstall = async () => {
-    if (promptEvent) {
-      promptEvent.prompt();
-      const { outcome } = await promptEvent.userChoice;
+    if (window.deferredprompt) {
+      window.deferredprompt.prompt();
+      const { outcome } = await window.deferredprompt.userChoice;
       if (outcome === 'accepted') {
-        changePWAUserChoice('accepted');
+        localStorage.setItem('pwa-user-choice', 'accepted');
+        dispatchEvent(new CustomEvent('hideInstallButton'));
       } else {
-        changePWAUserChoice('cancelled');
+        localStorage.setItem('pwa-user-choice', 'cancelled');
       }
     }
     setIsDrawOpen(false);
   };
 
   const onCancel = () => {
-    changePWAUserChoice('cancelled');
+    localStorage.setItem('pwa-user-choice', 'cancelled');
     setIsDrawOpen(false);
   };
 

@@ -12,5 +12,4 @@ export const HASH = {
   game: getHash('game'),
   hasReadFeaturePopup: getHash('has-read-feature-popup'),
   hasReadTips: getHash('has-read-tips'),
-  pwaUserChoice: getHash('pwa-user-choice'),
 };
