@@ -4,13 +4,16 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
   dispatchEvent(new CustomEvent('closePWADrawer'));
   localStorage.setItem('pwa-user-choice', 'accepted');
 } else {
-  console.log("Using Browser")
+  console.log("Using Browser");
+  const userChoice = localStorage.getItem('pwa-user-choice');
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     window.deferredprompt = e;
-    localStorage.removeItem('pwa-user-choice');
-    dispatchEvent(new CustomEvent('openPWADrawer'));
     dispatchEvent(new CustomEvent('showInstallButton'));
+    if (!userChoice || userChoice !== "cancelled") {
+      localStorage.removeItem('pwa-user-choice');
+      dispatchEvent(new CustomEvent('openPWADrawer'));
+    }
   });
   window.addEventListener('appinstalled', () => {
     dispatchEvent(new CustomEvent('closePWADrawer'));
