@@ -17,10 +17,15 @@ export default function FeaturePopup(props: FeaturePopupProps) {
 
   useEffect(() => {
     const featurePopupString = getFeaturePopupString();
-    setShowFeaturePopup(
+    if (
       !featurePopupString ||
-        featurePopupString !== process.env.NEXT_PUBLIC_TABOO_AI_VERSION
-    );
+      featurePopupString !== process.env.NEXT_PUBLIC_TABOO_AI_VERSION
+    ) {
+      setShowFeaturePopup(true);
+      localStorage.removeItem('pwa-user-choice');
+    } else {
+      setShowFeaturePopup(false);
+    }
   }, []);
 
   const close = () => {
