@@ -22,13 +22,6 @@
     "types": ["jest"],
     "useUnknownInCatchVariables": false
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "node_modules/level.interface.tsx",
-    "node_modules/level.interface.tsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
