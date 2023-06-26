@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { Grenze } from 'next/font/google';
 import { AnalyticsWrapper } from '../components/AnalayticsWrapper';
 import FeaturePopup from '../components/FeaturePopup/FeaturePopup';
@@ -42,6 +43,7 @@ export default function RootLayout({
         async
         src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6537113723731394'
         crossOrigin='anonymous'
+        strategy='beforeInteractive'
       />
       <Script id='pwa-script' src='/js/pwa.js' />
       <head />
