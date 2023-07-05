@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { cacheScore, getLevelCache } from '../lib/cache';
 import { getRandomInt } from '../lib/utilities';
 import { HASH } from '../lib/hash';
+import { CONSTANTS } from '../lib/constants';
 
 interface DevToggleProps {}
 
@@ -44,7 +45,7 @@ const DevToggle = (props: DevToggleProps) => {
   const autoCompleteLevel = () => {
     const level = getLevelCache();
     if (level) {
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= CONSTANTS.numberOfQuestionsPerGame; i++) {
         const target = level.words[i - 1];
         cacheScore({
           id: i,

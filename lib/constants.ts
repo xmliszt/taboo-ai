@@ -1,7 +1,7 @@
 'use client';
 
 export const CONSTANTS = {
-  numberOfQuestionsPerGame: 5,
+  numberOfQuestionsPerGame: 3,
   eventKeys: {
     signUpSuccess: 'onSignUpSuccess',
     recoverySuccess: 'onRecoverySuccess',
