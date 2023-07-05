@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { Grenze } from 'next/font/google';
 import { AnalyticsWrapper } from '../components/AnalayticsWrapper';
 import FeaturePopup from '../components/FeaturePopup/FeaturePopup';

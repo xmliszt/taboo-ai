@@ -1,12 +1,12 @@
-# **Taboo AI Updates V2.5!**
+# **Taboo AI Updates V2.6**
 
-## Sincere Apologies! Normal level has been fixed!
+## Easy Game!
 
-I sincerely apologize for the inconvenience caused by the recent fatal bug in the TabooAI normal level, which resulted in an empty game page and the inability to view results. I have released an urgent fix, ensuring an enhanced and seamless TabooAI experience. I deeply appreciate your patience and understanding during this time, and I will remain committed to delivering top-quality gaming. Please accept my apologies, and feel free to reach out to me for any further assistance. Thank you for your continued support. ❤️
+Exciting news! Based on player feedback and to encourage more players to reach the end, I've made an update to Taboo AI. Now, each level will have **only 3 target guess words** instead of 5. This adjustment aims to make the game **more accessible and enjoyable for everyone**. So, challenge yourself in the **daily challenge**, climb up the **leaderboard**, and showcase your word-guessing skills. Let's embark on this thrilling journey together and conquer the Taboo AI challenges!
 
 ## Install Taboo AI as Web App!
 
-Good news! Now Taboo AI is available to be installed as web app if you are an Android user using **Chrome** or **Edge** broswer, or if you are an **iOS** user using **Safari**. 
+Taboo AI is available to be installed as web app if you are an Android user using **Chrome** or **Edge** broswer, or if you are an **iOS** user using **Safari**. 
 
 ### For Chrome User
 
@@ -57,7 +57,3 @@ With web app installed, you can directly access Taboo AI on your mobile or PC de
 ![Copy recovery key to clipboard](/features/Copy%20RKey%20to%20Clipboard.png)
 
 Forget about your "Recovery Key"? Now there is a new simple way to get you more covered! If you are logged in at one of your devices, simply **click your nickname in the home screen** to copy your recovery key to the clipboard. Now you can paste the recovery key into another device that you wish to login to restore your progress! It is that simple!
-
-## Daily Challenge URL has been updated!
-
-Maybe some of you didn't notice, but previously you will be directed to "`/daily-challenge/loading`" before getting re-directed to "`/daily-challenge`" screen to play. Now we just simplify this into only "`/daily-challenge`" URL!
