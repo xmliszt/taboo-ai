@@ -12,6 +12,7 @@ import PWAInstaller from './PWAInstaller';
 import './global.css';
 import './main.css';
 import Script from 'next/script';
+import LogRocketInitializer from './LogRocketInitializer';
 
 const font = Grenze({
   weight: '400',
@@ -36,15 +37,8 @@ export default function RootLayout({
   const maintenanceMode = JSON.parse(
     process.env.NEXT_PUBLIC_MAINTENANCE || 'false'
   );
-
   return (
     <html lang='en'>
-      <Script
-        async
-        src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6537113723731394'
-        crossOrigin='anonymous'
-        strategy='beforeInteractive'
-      />
       <Script id='pwa-script' src='/js/pwa.js' />
       <head />
       <body className={`${font.className} bg-black text-white`}>
@@ -55,6 +49,7 @@ export default function RootLayout({
           {!maintenanceMode && <FeaturePopup />}
           <AnalyticsWrapper />
         </ThemeProvider>
+        <LogRocketInitializer />
       </body>
     </html>
   );

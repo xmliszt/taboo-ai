@@ -16,9 +16,15 @@ import useToast from '../lib/hook/useToast';
 import { useRouter } from 'next/navigation';
 import IUser from '../types/user.interface';
 import { useEffect, useState } from 'react';
-import { getUserInfo } from '../lib/services/frontend/userService';
+import {
+  addDeviceToUser,
+  getUserInfo,
+  updateUserLastLoginTime,
+} from '../lib/services/frontend/userService';
 import { Spinner } from '@chakra-ui/react';
 import copy from 'clipboard-copy';
+import LogRocket from 'logrocket';
+import moment from 'moment';
 
 const UserDisplay = () => {
   const [user, setUser] = useState<IUser | undefined>();
@@ -30,9 +36,33 @@ const UserDisplay = () => {
   useEffect(() => {
     const _user = getUser();
     if (_user) {
-      checkUserExists(_user.nickname).then((exists) => {
+      checkUserExists(_user.nickname).then(async (exists) => {
         exists && setUser(_user);
         !exists && clearUser();
+        if (exists) {
+          LogRocket.identify(_user.recovery_key, {
+            name: _user.nickname,
+            recoveryKey: _user.recovery_key,
+            createdAt: moment(_user.created_at).format(
+              'MMMM Do YYYY, h:mm:ss a'
+            ),
+            lastLoginAt: moment().format('MMMM Do YYYY, h:mm:ss a'),
+          });
+          try {
+            await updateUserLastLoginTime(
+              _user.nickname,
+              _user.recovery_key,
+              moment().valueOf()
+            );
+            await addDeviceToUser(
+              _user.nickname,
+              _user.recovery_key,
+              navigator.userAgent
+            );
+          } catch (error) {
+            console.error(error);
+          }
+        }
       });
     }
   }, [pathName]);
