@@ -38,11 +38,6 @@ export default function RootLayout({
   );
   return (
     <html lang='en'>
-      <Script
-        async
-        src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6537113723731394'
-        crossOrigin='anonymous'
-      />
       <Script id='pwa-script' src='/js/pwa.js' />
       <head />
       <body className={`${font.className} bg-black text-white`}>
