@@ -244,7 +244,19 @@ export default function ResultPage(props: ResultPageProps) {
         }
       }
     } else if (level?.isDaily) {
-      showJoinLeaderboardPrompt();
+      if (!scores || !level) {
+        toast({
+          title:
+            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
+          status: 'warning',
+          duration: 3000,
+        });
+        delayRouterPush(router, '/');
+      } else {
+        setLevel(level);
+        updateDisplayedScores(scores);
+        showJoinLeaderboardPrompt();
+      }
       return;
     }
     if (!scores || !level) {

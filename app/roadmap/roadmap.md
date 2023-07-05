@@ -3,6 +3,7 @@
 ## 06 Jul - Release Notes (V2.6)
 
 - Taboo AI made simpler with 3 instead of 5 stages per game.
+- Fixed daily challenge result not shown if not logged in.
 
 ## 20 Jun - Release Notes (V2.5)
 

@@ -1,6 +1,6 @@
 # **Taboo AI Updates V2.6**
 
-## We Make The Game Easier!
+## Easy Game!
 
 Exciting news! Based on player feedback and to encourage more players to reach the end, I've made an update to Taboo AI. Now, each level will have **only 3 target guess words** instead of 5. This adjustment aims to make the game **more accessible and enjoyable for everyone**. So, challenge yourself in the **daily challenge**, climb up the **leaderboard**, and showcase your word-guessing skills. Let's embark on this thrilling journey together and conquer the Taboo AI challenges!
 
