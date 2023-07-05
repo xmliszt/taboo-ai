@@ -1,5 +1,9 @@
 # Taboo AI Releases Roadmap
 
+## 06 Jul - Release Notes (V2.6)
+
+- Taboo AI made simpler with 3 instead of 5 stages per game.
+
 ## 20 Jun - Release Notes (V2.5)
 
 - Improved AI scoring.

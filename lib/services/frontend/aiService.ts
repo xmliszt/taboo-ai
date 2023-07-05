@@ -34,13 +34,13 @@ export async function generateDailyLevel(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate a list of 5 words related to ${topic} that are ${difficultyString}, in the format of an array of string. In American English.`,
+      prompt: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words related to ${topic} that are ${difficultyString}, in the format of an array of string. In American English.`,
     }),
     cache: 'no-store',
   });
   const json = await response.json();
   const words = JSON.parse(json.response) as string[];
-  if (!words || words.length < 5) {
+  if (!words || words.length < CONSTANTS.numberOfQuestionsPerGame) {
     throw Error('Wrong response format!');
   }
   const todayDate = date.format('DD-MM-YYYY');
