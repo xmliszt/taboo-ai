@@ -79,5 +79,6 @@ export const _meta: Metadata = {
     'google-site-verification': 'ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk',
     'ahrefs-site-verification':
       'f832d06e3893f0e38cd251704fa298ec65dfd86ce5b54eebb349c755229b0dd9',
+    monetag: '16d05c6c532f3391519b3ef92ac04b5d',
   },
 };
