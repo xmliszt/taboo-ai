@@ -20,7 +20,7 @@ export default function InstallButton() {
 
   return showButton ? (
     <Tag
-      className='cursor-pointer hover:scale-105 transition-transform bg-gray text-black'
+      className='cursor-pointer hover:scale-105 transition-transform bg-gray text-black mt-5'
       onClick={onInstallClick}
     >
       INSTALL APP
