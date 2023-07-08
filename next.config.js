@@ -13,6 +13,7 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
+  sw: '/next-sw.js',
 });
 
 const nextConfig = {
