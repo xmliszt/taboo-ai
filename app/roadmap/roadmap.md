@@ -1,5 +1,12 @@
 # Taboo AI Releases Roadmap
 
+## 23 Jul - Release Notes (V2.7)
+
+- Removed "Daily Challenge" and "Leaderboard".
+- Added non-intrusive, closeable ads.
+- Added instructions on how to install Taboo AI as Progressive Web App (PWA) on Home Screen.
+- Added "Contact Me" section, for players to submit custom word list, or any feedbacks.
+
 ## 06 Jul - Release Notes (V2.6)
 
 - Taboo AI made simpler with 3 instead of 5 stages per game.

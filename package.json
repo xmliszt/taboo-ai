@@ -21,6 +21,7 @@
     "@emotion/styled": "^11.11.0",
     "@next-auth/supabase-adapter": "^0.2.1",
     "@next/font": "^13.1.1",
+    "@sendgrid/mail": "^7.7.0",
     "@supabase/supabase-js": "^2.8.0",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",

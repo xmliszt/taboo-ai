@@ -7,9 +7,7 @@ https://taboo-ai.vercel.app/result
 https://taboo-ai.vercel.app/roadmap
 https://taboo-ai.vercel.app/whatsnew
 https://taboo-ai.vercel.app/buymecoffee
-https://taboo-ai.vercel.app/leaderboard
 https://taboo-ai.vercel.app/signup
 https://taboo-ai.vercel.app/recovery
-https://taboo-ai.vercel.app/daily-challenge
 https://taboo-ai.vercel.app/privacy
 https://taboo-ai.vercel.app/cookie-policy

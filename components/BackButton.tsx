@@ -14,10 +14,14 @@
  */
 'use client';
 
+import { Stack, Tooltip } from '@chakra-ui/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BiHomeAlt, BiLeftArrowAlt } from 'react-icons/bi';
-import { BsFillQuestionSquareFill } from 'react-icons/bs';
+import {
+  BsFillArrowDownSquareFill,
+  BsFillQuestionSquareFill,
+} from 'react-icons/bs';
 
 interface BackButtonProps {}
 
@@ -48,16 +52,40 @@ export default function BackButton(props: BackButtonProps = {}) {
   };
 
   return pathname === '/' ? (
-    <Link
-      href='/rule'
-      aria-label='Link to rule page'
-      className='text-white dark:text-neon-red-light text-xl dark:text-sm lg:dark:text-2xl lg:text-3xl'
-    >
-      <div className='flex flex-row gap-2 items-center'>
-        <BsFillQuestionSquareFill data-testid='rule-icon' />
-        <span>Help</span>
-      </div>
-    </Link>
+    <Stack direction='row' gap={2}>
+      <Tooltip
+        label='How to play Taboo AI?'
+        aria-label='How to play Taboo AI?'
+        className='p-2'
+        hasArrow
+      >
+        <Link
+          href='/rule'
+          aria-label='Link to rule page'
+          className='text-white text-xl lg:text-3xl'
+        >
+          <div className='flex flex-row gap-2 items-center'>
+            <BsFillQuestionSquareFill data-testid='rule-icon' />
+          </div>
+        </Link>
+      </Tooltip>
+      <Tooltip
+        label='Install Taboo AI as App'
+        aria-label='How to play Taboo AI?'
+        className='p-2'
+        hasArrow
+      >
+        <Link
+          href='/pwa'
+          aria-label='Link to how to install Taboo AI as PWA'
+          className='text-white text-xl lg:text-3xl'
+        >
+          <div className='flex flex-row gap-2 items-center'>
+            <BsFillArrowDownSquareFill data-testid='rule-icon' />
+          </div>
+        </Link>
+      </Tooltip>
+    </Stack>
   ) : (
     <button
       id='back'
