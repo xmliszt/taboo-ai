@@ -24,11 +24,16 @@ export default function FeaturePopup(props: FeaturePopupProps) {
       return;
     }
     if (incomingVersion) {
-      const isIncomingVersionNewer = semver.gt(
-        incomingVersion,
-        featurePopupString
-      );
-      if (isIncomingVersionNewer) {
+      try {
+        const isIncomingVersionNewer = semver.gt(
+          incomingVersion,
+          featurePopupString
+        );
+        if (isIncomingVersionNewer) {
+          displayFeaturePopup();
+          return;
+        }
+      } catch {
         displayFeaturePopup();
         return;
       }
