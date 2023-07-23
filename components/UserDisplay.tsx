@@ -21,10 +21,12 @@ import {
   getUserInfo,
   updateUserLastLoginTime,
 } from '../lib/services/frontend/userService';
-import { Spinner } from '@chakra-ui/react';
+import { Spinner, Tooltip } from '@chakra-ui/react';
 import copy from 'clipboard-copy';
 import LogRocket from 'logrocket';
 import moment from 'moment';
+import { FaUserPlus } from 'react-icons/fa';
+import { IoMdExit } from 'react-icons/io';
 
 const UserDisplay = () => {
   const [user, setUser] = useState<IUser | undefined>();
@@ -144,21 +146,37 @@ const UserDisplay = () => {
         >
           {user.nickname}
         </span>
-        <button
-          id='submit'
-          data-style='none'
-          className='underline text-base dark:text-xs lg:text-xl lg:dark:text-lg text-red-light dark:text-neon-red-light'
-          aria-label='Click to quit and logout from current account'
-          onClick={quit}
+        <Tooltip
+          label='Sign out'
+          aria-label='Sign out'
+          hasArrow
+          className='p-2'
         >
-          Quit
-        </button>
+          <button
+            id='submit'
+            data-style='none'
+            className='underline text-base dark:text-xs lg:text-xl lg:dark:text-lg text-red-light dark:text-neon-red-light'
+            aria-label='Click to quit and logout from current account'
+            onClick={quit}
+          >
+            <IoMdExit />
+          </button>
+        </Tooltip>
       </div>
     ) : (
       <div className='text-center text-gray dark:text-sm'>
-        <Link href='/recovery' className='underline'>
-          Recover Your Scores?
-        </Link>
+        <Tooltip
+          label='Recover your account'
+          aria-label='Recover your account'
+          hasArrow
+          className='p-2'
+        >
+          <Link href='/recovery' className='underline'>
+            <div className='flex flex-row gap-2 items-center'>
+              <FaUserPlus data-testid='recovery-icon' />
+            </div>
+          </Link>
+        </Tooltip>
       </div>
     );
   } else {

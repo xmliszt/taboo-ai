@@ -10,7 +10,7 @@ const FeatureUpdatesLink = () => {
         href='/whatsnew'
         aria-label='link to latest new updates'
       >
-        What&apos;s New?
+        Thank you!
       </Link>
     </>
   );
