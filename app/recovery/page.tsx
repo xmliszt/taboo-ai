@@ -145,12 +145,6 @@ const RecoveryPage = () => {
             have caused, but we hope this alternative method helps you get back
             on track.{' '}
           </p>
-          <Link
-            className='underline text-yellow dark:text-neon-green'
-            href='/daily-challenge'
-          >
-            👉🏻 Attempt the daily challenge!
-          </Link>
         </article>
       </section>
     </>
