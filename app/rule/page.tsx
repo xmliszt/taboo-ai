@@ -38,38 +38,6 @@ export default function RulePage(props: RulePageProps) {
         <br />
         <hr />
         <br />
-        <article>
-          <ReactMarkdown className={`${style.markdown}`}>
-            {challengeContent}
-          </ReactMarkdown>
-        </article>
-        <div className='w-full flex flex-col lg:flex-row justify-start gap-8 items-center'>
-          <Link
-            id='daily-challenge'
-            href='/daily-challenge'
-            data-testid='link-daily-challenge'
-          >
-            <div className='btn-menu color-gradient-animated-background-golden'>
-              Daily Challenge
-            </div>
-          </Link>
-          <Link
-            id='daily-wall-of-fame'
-            href='/leaderboard'
-            data-testid='link-daily-wall-of-fame'
-          >
-            <div className='btn-menu'>Daily Wall of Fame</div>
-          </Link>
-          <SocialLinkButton
-            content='Join our Discord Community!'
-            icon={<SiDiscord />}
-            href='https://discord.gg/dgqs29CHC2'
-            newTab={true}
-            accentColorClass='bg-purple dark:bg-neon-purple'
-            dropShadowClass='hover:drop-shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
-          />
-        </div>
-        <br />
         <p className='text-justify text-gray text-base'>
           Disclaimer: Please note that Taboo AI relies solely on{' '}
           <a className='underline' href='https://openai.com/api/pricing/'>
