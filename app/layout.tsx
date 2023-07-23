@@ -12,7 +12,6 @@ import PWAInstaller from './PWAInstaller';
 import './global.css';
 import './main.css';
 import Script from 'next/script';
-import LogRocketInitializer from './LogRocketInitializer';
 
 const font = Grenze({
   weight: '400',
@@ -61,7 +60,6 @@ export default function RootLayout({
           {!maintenanceMode && <FeaturePopup />}
           <AnalyticsWrapper />
         </ThemeProvider>
-        <LogRocketInitializer />
       </body>
     </html>
   );
