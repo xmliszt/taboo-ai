@@ -1,59 +1,29 @@
-# **Taboo AI Updates V2.6**
+# **Thank You for Using Taboo AI!**
 
-## Easy Game!
+Dear Fantastic Taboo AI Players 🧡,
 
-Exciting news! Based on player feedback and to encourage more players to reach the end, I've made an update to Taboo AI. Now, each level will have **only 3 target guess words** instead of 5. This adjustment aims to make the game **more accessible and enjoyable for everyone**. So, challenge yourself in the **daily challenge**, climb up the **leaderboard**, and showcase your word-guessing skills. Let's embark on this thrilling journey together and conquer the Taboo AI challenges!
+I hope this message finds you in high spirits and enjoying countless memorable moments with Taboo AI! Your enthusiasm and support have been the heart and soul of our web application, and we cannot thank you enough for being part of this incredible journey.
 
-## Install Taboo AI as Web App!
+We have some important news to share with you. As a solo developer, I continuously strive to offer the best possible experience for the users. To ensure that I can maintain the highest level of service and continue delivering a top-notch gaming experience, I decided to make a slight adjustment to the features available in Taboo AI.
 
-Taboo AI is available to be installed as web app if you are an Android user using **Chrome** or **Edge** broswer, or if you are an **iOS** user using **Safari**. 
+We will be bidding farewell to the **Daily Challenge** and **Leaderboard** features. I understand that these aspects have been cherished by many, but I believe that this change will allow me to channel more resources to focus on refining and enhancing other beloved aspects of Taboo AI.
 
-### For Chrome User
+But not to worry about playing Taboo AI – The original "**Choose Topics**" remains at the heart of our game! You can still immerse yourself in the joy of wordplay by selecting from a wide range of captivating topics. And you can still submit your own unique topics via "**Contact Me**" section on the home page, and see them featured in the list of topics, and used by many around the world!
 
-1. On your **Android** device, open Chrome.
-2. Go to Taboo AI website.
-3. Once opened, tap the **More settings(...) button**.
-4. Tap on **'Install app'**.
-5. Follow the on-screen instructions.
-6. For **PC user**, simplify follow the screenshot below:
+I also want to be transparent with you about the reason behind **the addition of ads to the game**. As a solo developer, providing the Taboo AI experience incurs costs, especially regarding the usage of ChatGPT services, which I deeply value for powering the AI-driven gameplay. Ads will serve as the sole source of revenue that enables me to sustain and continuously improve the game for you and all our players worldwide.
 
-![chrome-pwa](/features/pwa-chrome.png)
+Rest assured, I have taken great care in implementing ads that are user-friendly and non-intrusive. You will find that they can be easily closed and will not block the main content, ensuring that your gaming experience remains as smooth and enjoyable as ever.
 
-### For iOS Safari User
+My commitment to providing a fun and educational platform for English language learners, word enthusiasts, and players from all walks of life remains strong. And I truly appreciate your understanding and support as I take this step towards creating an even more delightful gaming environment for you.
 
-1. On your **iOS** device, open Safari.
-2. Go to Taboo AI website.
-3. Once opened, tap the **"share" button** as seen in below screen snapshot.
-4. Tap **'Add to home screen.'**
-5. Follow the on-screen instructions.
+If you have any questions, suggestions, or simply want to share your thoughts, the "**Contact Me**" section is always open on the home page, waiting for your messages.
 
-![ios-pwa](/features/pwa-ios.gif)
+Thank you again for being part of the Taboo AI family. Together, let's keep the spirit of language exploration and friendly competition alive!
 
-### For Firefox Android User
+```
+With immense gratitude,
 
-1. On your **Android** device, open Firefox.
-2. Go to Taboo AI website.
-3. Once opened, tap the **More settings(...) button**.
-4. Tap on **'Install'**.
-5. Follow the on-screen instructions.
-
-![firefox-pwa](/features/pwa-firefox.png)
-[Learn How to Install PWA with Firefox on Android](https://mzl.la/3p7ltJx)
-
-### For Edge User
-
-1. On your **Android** device, open Edge.
-2. Go to Taboo AI website.
-3. Once opened, tap the **overflow (...) button**.
-4. Tap **'Add to home screen.'**
-5. For **PC user**, simplify follow the screenshot below:
-
-![edge-pwa](/features/pwa-edge.png)
-
-With web app installed, you can directly access Taboo AI on your mobile or PC devices, just like using any other app!
-
-## Forget About Your Recovery Key?
-
-![Copy recovery key to clipboard](/features/Copy%20RKey%20to%20Clipboard.png)
-
-Forget about your "Recovery Key"? Now there is a new simple way to get you more covered! If you are logged in at one of your devices, simply **click your nickname in the home screen** to copy your recovery key to the clipboard. Now you can paste the recovery key into another device that you wish to login to restore your progress! It is that simple!
+Li Yuxuan
+Solo Developer
+Taboo AI
+```

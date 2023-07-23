@@ -245,3 +245,7 @@ export const buildLevelForDisplay = (level: IDailyLevel): ILevel => {
 export const maskPlayerID = (game: IGame) => {
   game.player_id = CONSTANTS.mask;
 };
+
+export const emailIsValid = (email: string): boolean => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};

@@ -13,6 +13,7 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
+  sw: '/next-sw.js',
 });
 
 const nextConfig = {
@@ -49,6 +50,20 @@ const nextConfig = {
       {
         source: '/cookie-policy',
         destination: '/html/cookie-policy.html',
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/daily-challenge',
+        destination: '/404',
+        permanent: true,
+      },
+      {
+        source: '/leaderboard',
+        destination: '/404',
+        permanent: true,
       },
     ];
   },
