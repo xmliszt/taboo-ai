@@ -40,11 +40,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <Script id='pwa-script' src='/js/pwa.js' />
-      <Script
-        id='clarity-script'
-        src='/js/clarity.js'
-        strategy='beforeInteractive'
-      />
+      <Script id='clarity-script' src='/js/clarity.js' />
       <head />
       <body className={`${font.className} bg-black text-white`}>
         <Script
