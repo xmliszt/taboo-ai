@@ -19,7 +19,7 @@ export default function HomePage(props: HomePageProps) {
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
       <Script id='pwa-script' src='/js/pwa.js' />
-      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 py-32'>
+      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 py-32 pb-48'>
         <div className='w-full relative'>
           <h1
             data-testid='heading-title'
@@ -49,7 +49,7 @@ export default function HomePage(props: HomePageProps) {
         </section>
       </section>
 
-      <div className='fixed bottom-20 lg:bottom-24 w-full flex flex-row gap-2 justify-center z-10'>
+      <div className='fixed bottom-24 lg:bottom-28 w-full flex flex-row gap-2 justify-center z-10'>
         <SocialLinkButton
           content='Buy Me Coffee'
           icon={<GiCoffeeCup />}
