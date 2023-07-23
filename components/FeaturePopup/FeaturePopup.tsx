@@ -8,25 +8,38 @@ import { MdOutlineClose } from 'react-icons/md';
 import { getFeaturePopupString, setFeaturePopupString } from '../../lib/cache';
 import SocialLinkButton from '../SocialLinkButton';
 import { SiDiscord } from 'react-icons/si';
+import semver from 'semver';
 
 interface FeaturePopupProps {}
 
 export default function FeaturePopup(props: FeaturePopupProps) {
   const [isClosed, setIsClosed] = useState<boolean>(false);
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);
+  const incomingVersion = process.env.NEXT_PUBLIC_TABOO_AI_VERSION;
 
   useEffect(() => {
     const featurePopupString = getFeaturePopupString();
-    if (
-      !featurePopupString ||
-      featurePopupString !== process.env.NEXT_PUBLIC_TABOO_AI_VERSION
-    ) {
-      setShowFeaturePopup(true);
-      localStorage.removeItem('pwa-user-choice');
-    } else {
-      setShowFeaturePopup(false);
+    if (!featurePopupString) {
+      displayFeaturePopup();
+      return;
     }
+    if (incomingVersion) {
+      const isIncomingVersionNewer = semver.gt(
+        incomingVersion,
+        featurePopupString
+      );
+      if (isIncomingVersionNewer) {
+        displayFeaturePopup();
+        return;
+      }
+    }
+    setShowFeaturePopup(false);
   }, []);
+
+  const displayFeaturePopup = () => {
+    setShowFeaturePopup(true);
+    localStorage.removeItem('pwa-user-choice');
+  };
 
   const close = () => {
     setIsClosed(true);
