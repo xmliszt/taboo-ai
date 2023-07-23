@@ -65,6 +65,16 @@ const nextConfig = {
         destination: '/404',
         permanent: true,
       },
+      {
+        source: '/recovery',
+        destination: '/404',
+        permanent: true,
+      },
+      {
+        source: '/signup',
+        destination: '/404',
+        permanent: true,
+      },
     ];
   },
 };

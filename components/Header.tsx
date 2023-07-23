@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import BackButton from './BackButton';
-import UserDisplay from './UserDisplay';
 
 interface HeaderProps {
   maintenanceOn: boolean;
@@ -31,7 +30,7 @@ const Header = ({ maintenanceOn }: HeaderProps) => {
       } `}
     >
       <BackButton />
-      <UserDisplay />
+      {/* <UserDisplay /> */}
       {/* <LightDarkToggle /> */}
     </header>
   );

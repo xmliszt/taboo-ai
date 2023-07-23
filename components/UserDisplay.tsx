@@ -23,7 +23,6 @@ import {
 } from '../lib/services/frontend/userService';
 import { Spinner, Tooltip } from '@chakra-ui/react';
 import copy from 'clipboard-copy';
-import LogRocket from 'logrocket';
 import moment from 'moment';
 import { FaUserPlus } from 'react-icons/fa';
 import { IoMdExit } from 'react-icons/io';
@@ -42,14 +41,6 @@ const UserDisplay = () => {
         exists && setUser(_user);
         !exists && clearUser();
         if (exists) {
-          LogRocket.identify(_user.recovery_key, {
-            name: _user.nickname,
-            recoveryKey: _user.recovery_key,
-            createdAt: moment(_user.created_at).format(
-              'MMMM Do YYYY, h:mm:ss a'
-            ),
-            lastLoginAt: moment().format('MMMM Do YYYY, h:mm:ss a'),
-          });
           try {
             await updateUserLastLoginTime(
               _user.nickname,
