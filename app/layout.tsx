@@ -41,7 +41,7 @@ export default function RootLayout({
       <Script id='pwa-script' src='/js/pwa.js' />
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
-      <body className={`${font.className} bg-black text-white`}>
+      <body className={`${font.className} bg-black text-white scrollbar-hide`}>
         <Script
           data-cfasync='false'
           id='monetag-in-app-notif-script'
@@ -60,6 +60,7 @@ export default function RootLayout({
           {!maintenanceMode && <FeaturePopup />}
           <AnalyticsWrapper />
         </ThemeProvider>
+        <div className='h-4 fixed bottom-0 w-full backdrop-blur-lg gradient-blur-mask-reverse z-50'></div>
       </body>
     </html>
   );

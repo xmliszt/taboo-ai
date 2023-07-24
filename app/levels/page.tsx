@@ -60,15 +60,15 @@ export default function LevelsPage(props: LevelsPageProps) {
       >
         {title}
       </h1>
-      <div className='w-full fixed z-20 h-12 top-12 lg:top-20 px-12 bg-black dark:bg-neon-black'>
+      <div className='w-full fixed z-20 h-12 top-12 lg:top-20 px-12 py-2'>
         <input
-          className='w-full'
+          className='w-full drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)] bg-white text-black border-gray'
           placeholder='Search for levels...'
           type='text'
           onChange={onSearchChange}
         />
       </div>
-      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 pt-32 lg:pt-40 text-center'>
+      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 pt-32 lg:pt-52 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>

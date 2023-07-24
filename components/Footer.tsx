@@ -7,9 +7,9 @@ export default function Footer() {
   return (
     <footer
       data-testid='footer'
-      className='py-3 w-full h-auto rounded-t-2xl dark:drop-shadow-[0_-10px_30px_rgba(0,0,0,1)] flex flex-col gap-0 justify-center items-center bg-gray dark:bg-neon-gray fixed bottom-0 z-50 text-white dark:text-neon-white lg:text-white-faded lg:dark:text-neon-white text-center text-xs dark:text-[0.5rem] lg:text-lg lg:dark:text-base'
+      className='py-3 w-full h-auto rounded-t-2xl drop-shadow-[0_-15px_30px_rgba(0,0,0,0.7)] flex flex-col gap-0 justify-center items-center bg-black-darker fixed bottom-0 z-50 text-white lg:text-white-faded text-center text-xs lg:text-lg'
     >
-      <section className='w-full text-[0.5rem] lg:text-xs leading-tight text-center px-2 text-white-faded absolute bottom-16 lg:bottom-20 left-2'>
+      <section className='px-1 w-full text-[0.5rem] lg:text-xs leading-tight text-center text-white-faded absolute -top-[20px]'>
         We improve our products and advertising by using Microsoft Clarity to
         see how you use our website. By using our site, you agree that we and
         Microsoft can collect and use this data. Our{' '}

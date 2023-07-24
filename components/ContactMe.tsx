@@ -96,7 +96,12 @@ const ContactMe = () => {
 
   return (
     <section>
-      <Card backgroundColor='blackAlpha.500' textColor='whiteAlpha.800'>
+      <Card
+        dropShadow='2xl'
+        boxShadow='2xl'
+        backgroundColor='blackAlpha.500'
+        textColor='whiteAlpha.800'
+      >
         <CardHeader>
           <h1>Contact Me</h1>
         </CardHeader>

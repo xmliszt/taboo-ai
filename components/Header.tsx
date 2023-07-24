@@ -9,29 +9,17 @@ interface HeaderProps {
 
 const Header = ({ maintenanceOn }: HeaderProps) => {
   const pathName = usePathname();
-  return maintenanceOn ? (
+  const noBackdropRoutes = ['/level', '/ai'];
+  return (
     <header
       id='header-section'
-      className={
-        'w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 text-center bg-black dark:bg-neon-black'
-      }
-    >
-      {/* <LightDarkToggle /> */}
-    </header>
-  ) : (
-    <header
-      id='header-section'
-      className={`w-full fixed top-0 h-12 lg:h-20 gap-2 z-40 p-4 flex flex-row justify-between text-center items-center ${
-        pathName === '/daily-challenge' ||
-        pathName === '/level' ||
-        pathName === '/ai'
+      className={`w-full fixed top-0 h-16 lg:h-20 gap-2 z-40 p-4 flex flex-row justify-between text-center items-center ${
+        noBackdropRoutes.includes(pathName ?? '')
           ? ''
-          : 'bg-black dark:bg-neon-black'
+          : 'backdrop-blur-lg gradient-blur-mask'
       } `}
     >
-      <BackButton />
-      {/* <UserDisplay /> */}
-      {/* <LightDarkToggle /> */}
+      {maintenanceOn ? <></> : <BackButton />}
     </header>
   );
 };
