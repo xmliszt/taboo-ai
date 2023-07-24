@@ -19,7 +19,7 @@ export default async function RoadmapPage(props: RoadmapPageProps) {
       </Link>
       <article
         data-testid='content-article'
-        className='leading-normal w-10/12 pt-24 lg:pt-32 pb-20'
+        className='leading-normal w-10/12 pt-16 lg:pt-32 pb-24 lg:pb-32'
       >
         <ReactMarkdown className={`${style.markdown}`}>{content}</ReactMarkdown>
       </article>

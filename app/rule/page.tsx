@@ -19,7 +19,7 @@ export default function RulePage(props: RulePageProps) {
       >
         How To Play Taboo AI?
       </h1>
-      <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 lg:text-2xl'>
+      <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 lg:text-2xl pb-8'>
         <article className='leading-normal'>
           <ReactMarkdown className={`${style.markdown}`}>
             {ruleContent}

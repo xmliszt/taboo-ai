@@ -21,10 +21,10 @@ export default async function WhatsNewPage(props: WhatsNewPageProps) {
       </Link>
       <article
         data-testid='content-article'
-        className='leading-normal w-10/12 pt-24 lg:pt-32 pb-24'
+        className='leading-normal w-10/12 pt-16 lg:pt-32 pb-24'
       >
         <ReactMarkdown className={`${style.markdown}`}>{content}</ReactMarkdown>
-        <div className='sticky z-40 bottom-14 w-full flex gap-2 justify-center px-2 mt-2'>
+        <div className='sticky z-40 bottom-20 lg:bottom-24 w-full flex gap-2 justify-center px-2 mt-2'>
           <SocialLinkButton
             content='Join our Discord for more updates!'
             icon={<SiDiscord />}

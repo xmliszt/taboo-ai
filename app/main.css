@@ -1,3 +1,4 @@
+/* stylelint-disable property-no-vendor-prefix */
 /* stylelint-disable color-hex-length */
 /* stylelint-disable selector-class-pattern */
 @tailwind base;
@@ -198,4 +199,33 @@ h1 {
 
 .react-confirm-alert button {
   border-radius: 2rem !important;
+}
+
+.gradient-blur-mask {
+  mask: linear-gradient(black, black, transparent);
+  -webkit-mask: linear-gradient(black, black, transparent);
+}
+
+.gradient-blur-mask-reverse {
+  mask: linear-gradient(transparent, black, black);
+  -webkit-mask: linear-gradient(transparent, black, black);
+}
+
+.gradient-blur-mask-both {
+  mask: linear-gradient(transparent, black, black, transparent);
+  -webkit-mask: linear-gradient(transparent, black, black, transparent);
+}
+
+.gradient-blur-up {
+  background: linear-gradient(
+    0deg,
+    rgb(76 69 62 / 100%) 60%,
+    rgb(76 69 62 / 80%) 80%,
+    rgb(76 69 62 / 10%) 95%,
+    rgb(76 69 62 / 0%) 100%
+  );
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  mask: linear-gradient(transparent, black, black);
+  -webkit-mask: linear-gradient(transparent, black, black);
 }
