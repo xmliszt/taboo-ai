@@ -6,7 +6,7 @@ export const _meta: Metadata = {
     template: 'Taboo AI | %s',
   },
   description:
-    'Unleash your wordplay skills and master English with Taboo AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!',
+    'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
   applicationName: 'Taboo AI: Play Taboo Game with AI',
   keywords: [
     'AI',
@@ -30,7 +30,7 @@ export const _meta: Metadata = {
   openGraph: {
     title: 'Taboo AI: Play Taboo with AI',
     description:
-      'Unleash your wordplay skills and master English with Taboo AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!',
+      'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
     url: 'https://taboo-ai.vercel.app/',
     siteName: 'Taboo AI',
     images: [
@@ -60,7 +60,7 @@ export const _meta: Metadata = {
     card: 'summary_large_image',
     title: 'Taboo AI: Play Taboo with AI',
     description:
-      'Unleash your wordplay skills and master English with Taboo AI! Challenge yourself daily, compete on the leaderboard, and have fun learning. Join now!',
+      'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
     siteId: '1704579643',
     creator: '@xmliszt',
     creatorId: '1704579643',
@@ -79,6 +79,5 @@ export const _meta: Metadata = {
     'google-site-verification': 'ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk',
     'ahrefs-site-verification':
       'f832d06e3893f0e38cd251704fa298ec65dfd86ce5b54eebb349c755229b0dd9',
-    monetag: '16d05c6c532f3391519b3ef92ac04b5d',
   },
 };

@@ -42,17 +42,6 @@ export default function RootLayout({
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
       <body className={`${font.className} bg-black text-white scrollbar-hide`}>
-        <Script
-          data-cfasync='false'
-          id='monetag-in-app-notif-script'
-          src='/js/monetag.js'
-          strategy='beforeInteractive'
-        />
-        <Script
-          id='monetag-in-app-notif-script'
-          src='/js/monetag2.js'
-          strategy='beforeInteractive'
-        />
         <ThemeProvider>
           <Header maintenanceOn={maintenanceMode} />
           {maintenanceMode && <Maintenance />}

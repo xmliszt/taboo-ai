@@ -30,8 +30,11 @@ export default function FeaturePopup(props: FeaturePopupProps) {
           String(featurePopupString)
         );
         if (versionDiff === null || versionDiff === 'patch') {
-          // If it is a patch release, or no difference, then we do not show
+          // If it is a patch release, or no difference, then we do not show,
+          // We only update the version in the local storage
           setShowFeaturePopup(false);
+          semver.gt(incomingVersion, featurePopupString) &&
+            setFeaturePopupString(incomingVersion);
           return;
         }
         const isIncomingVersionNewer = semver.gt(

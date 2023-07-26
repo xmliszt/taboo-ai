@@ -63,11 +63,11 @@ export default function Footer() {
           Cookie Policy
         </a>
         <a
-          aria-label='Read Taboo AI new features'
+          aria-label='Read Taboo AI features'
           href='/whatsnew'
           className='underline text-white dark:text-neon-green lg:hover:text-white lg:hover:dark:text-neon-white transition-colors'
         >
-          New Features
+          Features
         </a>
         <a
           aria-label='Read Taboo AI releases roadmap'
