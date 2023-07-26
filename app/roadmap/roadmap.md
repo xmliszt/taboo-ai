@@ -1,38 +1,44 @@
 # Taboo AI Releases Roadmap
 
-## 23 Jul - Release Notes (V2.7)
+## 26 Jul - Release Notes (V2.8.0)
+
+- Removed ads.
+- More user-friendly UI.
+- Update "Privacy Policy" by adding "Microsoft Clarity".
+
+## 23 Jul - Release Notes (V2.7.0)
 
 - Removed "Daily Challenge" and "Leaderboard".
 - Added non-intrusive, closeable ads.
 - Added instructions on how to install Taboo AI as Progressive Web App (PWA) on Home Screen.
 - Added "Contact Me" section, for players to submit custom word list, or any feedbacks.
 
-## 06 Jul - Release Notes (V2.6)
+## 06 Jul - Release Notes (V2.6.0)
 
 - Taboo AI made simpler with 3 instead of 5 stages per game.
 - Fixed daily challenge result not shown if not logged in.
 
-## 20 Jun - Release Notes (V2.5)
+## 20 Jun - Release Notes (V2.5.0)
 
 - Improved AI scoring.
 - Fixed normal level not loading.
 - Fixed normal result page not showing.
 
-## 18 Jun - Release Notes (V2.4)
+## 18 Jun - Release Notes (V2.4.0)
 
 - **Progressive Web App (PWA)**.
 
-## 17 Jun - Release Notes (V2.3)
+## 17 Jun - Release Notes (V2.3.0)
 
 - **Recovery Key** now can be copied directly by clicking on your **nickname** once signed in, on Home Page.
 - Remove `/daily-challenge/loading`
 
-## 31 May - Release Notes (V2.2)
+## 31 May - Release Notes (V2.2.0)
 
 - **Improved AI scoring system**.
 - Minor bug fixes.
 
-## 06 Apr - Release Notes (V2.1)
+## 06 Apr - Release Notes (V2.1.0)
 
 - **New scoring system** ensures that players will be rewarded for their **overall performance**, rather than just their speed.
 - Added **topic name** for daily challenge in the Wall of Fame (leaderboard).
@@ -41,7 +47,7 @@
 - Remove **word carousell background** as it is CPU intensive. Will replace with light video in the future.
 - In game **timer** will flash **yellow** and **red** color based on time lapsed.
 
-## 02 Apr - Release Notes (V2.0)
+## 02 Apr - Release Notes (V2.0.0)
 
 - **Brand New Daily Challenge mode** with **Wall of Fame (Leaderboard)** for players to compete.
 - **Nickname creation** for players to create their unique nicknames.
@@ -50,7 +56,7 @@
 - **Anti-Cheat** measures are implemented to ensure fairness of the daily challenge compeition.
 - Improved UI.
 
-## 22 Feb - Release Notes (V1.4)
+## 22 Feb - Release Notes (V1.4.0)
 
 - Improved **AI response** by altering prompts.
 - Improved **AI generated taboo words**.
@@ -58,7 +64,7 @@
 - **Persistent** light/dark theme. Your last theme will be saved and restored when you come back.
 - Fixed timer issue when player re-submit prompt again after unsuccessful attempt.
 
-## 19 Feb - Release Notes (V1.3)
+## 19 Feb - Release Notes (V1.3.0)
 
 - Version number indicator to inform players about version updates.
 - **OpenAI API free trial ended**. Started paid subscription to continue use the Curie model to provide users with smooth gameplay experience.
@@ -67,7 +73,7 @@
 - AI prompts improvements.
 - Overall fonts update.
 
-## 16 Feb - Release Notes (V1.2)
+## 16 Feb - Release Notes (V1.2.0)
 
 - Improve user experience.
 - Use AI to generate a list of **relevant taboo words** associated with the target word, making Taboo more **fun** and more **challenging**!
@@ -82,7 +88,7 @@
 
 ---
 
-## 31 Jan - Release Notes (V1.1)
+## 31 Jan - Release Notes (V1.1.0)
 
 - **More pre-defined topics** to choose from!
 - Open for players to **submit their own taboo word list** to share with others.
@@ -91,7 +97,7 @@
 
 ---
 
-## 16 Jan - First Release Notes (V1.0)
+## 16 Jan - First Release Notes (V1.0.0)
 
 - Taboo AI **first release**!
 - **Pre-defined topics** of taboo words.
