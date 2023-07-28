@@ -42,6 +42,14 @@ export default function HomePage(props: HomePageProps) {
           >
             <div className='btn-menu'>Choose Topics</div>
           </Link>
+          <Link
+            id='edit'
+            href='/add-level'
+            data-testid='link-edit'
+            data-style='none'
+          >
+            <div className='btn-menu'>Add Custom Topics</div>
+          </Link>
         </section>
         {environment !== 'production' && <DevToggle />}
         <section className='w-4/5 mt-10'>
