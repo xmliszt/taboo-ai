@@ -21,7 +21,8 @@ export default function LevelsPage(props: LevelsPageProps) {
   const fetchLevels = async () => {
     setIsLoading(true);
     try {
-      const levels = await getLevels();
+      let levels = await getLevels();
+      levels = levels.filter((l) => l.isVerified);
       setLevels(levels);
     } finally {
       setIsLoading(false);

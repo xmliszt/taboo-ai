@@ -179,7 +179,7 @@ a {
 
 input,
 textarea {
-  @apply !text-white !bg-black dark:!text-neon-white dark:!bg-neon-black dark:!border-neon-green !border-2 !border-white !outline-none focus:!outline-none focus:!border-4 h-8 !ease-in-out !transition-all text-base lg:text-2xl lg:h-16 px-8 lg:px-10 !rounded-tl-2xl !rounded-br-2xl !my-2;
+  @apply !text-white !bg-black !border-2 !border-white !outline-none focus:!outline-none focus:!border-4 h-8 !ease-in-out !transition-all text-base lg:text-2xl lg:h-16 px-8 lg:px-10 !rounded-tl-2xl !rounded-br-2xl;
 }
 
 h1 {
