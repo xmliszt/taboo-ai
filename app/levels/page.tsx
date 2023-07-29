@@ -14,7 +14,6 @@ import LoadingMask from '../../components/LoadingMask';
 interface LevelsPageProps {}
 
 export default function LevelsPage(props: LevelsPageProps) {
-  const title = 'Choose A Topic';
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string | undefined>();
@@ -22,7 +21,8 @@ export default function LevelsPage(props: LevelsPageProps) {
   const fetchLevels = async () => {
     setIsLoading(true);
     try {
-      const levels = await getLevels();
+      let levels = await getLevels();
+      levels = levels.filter((l) => l.isVerified);
       setLevels(levels);
     } finally {
       setIsLoading(false);
@@ -54,12 +54,6 @@ export default function LevelsPage(props: LevelsPageProps) {
   return (
     <section className='w-full h-full flex justify-around px-10 overflow-y-scroll scrollbar-hide'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
-      <h1
-        data-testid='levels-heading-title'
-        className='fixed top-0 z-50 h-20 text-center pt-4 dark:text-neon-blue pointer-events-none'
-      >
-        {title}
-      </h1>
       <div className='w-full fixed z-20 h-12 top-12 lg:top-20 px-12 py-2'>
         <input
           className='w-full drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)] bg-white text-black border-gray'
@@ -68,7 +62,7 @@ export default function LevelsPage(props: LevelsPageProps) {
           onChange={onSearchChange}
         />
       </div>
-      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 pt-32 lg:pt-52 text-center'>
+      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 px-4 gap-10 lg:gap-16 pt-32 lg:pt-52 lg:pb-16 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
@@ -90,13 +84,13 @@ export default function LevelsPage(props: LevelsPageProps) {
                     <AuthorBadge label={level.author}>
                       <LevelButton
                         level={level}
-                        customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                        customClass='!border-4 !border-yellow'
                       />
                     </AuthorBadge>
                   ) : (
                     <LevelButton
                       level={level}
-                      customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                      customClass='!border-4 !border-yellow'
                     />
                   )}
                 </NewBadge>

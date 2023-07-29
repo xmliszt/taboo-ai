@@ -14,13 +14,15 @@ const sendGridEmailApiHandler = async (
     return res.status(500).json({ error: 'Error sending email' });
   }
   if (req.method === 'POST') {
-    const { nickname, email, message } = req.body;
+    const { nickname, email, message, subject, html } = req.body;
     const msg = {
       to: TO_EMAIL,
       from: FROM_EMAIL,
-      subject: 'Mail from ' + email,
+      subject: subject ?? 'Mail from ' + email,
       text: message,
-      html: `<article><h1>Mail from ${nickname}</h1><h3>${email}</h3><p><strong>${message}</strong></p></article>`,
+      html:
+        html ??
+        `<article><h1>Mail from ${nickname}</h1><h3>${email}</h3><p><strong>${message}</strong></p></article>`,
     };
     try {
       await sgMail.send(msg);
