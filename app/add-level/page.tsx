@@ -72,9 +72,10 @@ import { emailIsValid } from '../../lib/utilities';
 import ILevel from '../../types/level.interface';
 import IVariation from '../../types/variation.interface';
 
+const CHARACTER_LIMIT = 50;
+const MAX_TARGET_WORDS_COUNT = 10;
+
 const AddLevelPage = () => {
-  const CHARACTER_LIMIT = 50;
-  const MAX_TARGET_WORDS_COUNT = 10;
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
     useState(false);
   const [topicName, setTopicName] = useState('');

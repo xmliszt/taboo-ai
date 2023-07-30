@@ -20,6 +20,8 @@ import { sendEmail } from '../lib/services/frontend/emailService';
 import ProductHuntBadge from './../public/images/producthunt.svg';
 import { emailIsValid } from '../lib/utilities';
 
+const MAX_CHAR_LIMIT = 50;
+
 const ContactMe = () => {
   const { toast } = useToast();
   const [senderName, setSenderName] = useState('');
@@ -69,6 +71,7 @@ const ContactMe = () => {
   };
 
   const onNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > MAX_CHAR_LIMIT) return;
     setSenderName(e.target.value);
     validateNickname(e.target.value);
   };
@@ -133,7 +136,6 @@ const ContactMe = () => {
                 <FormLabel>Message</FormLabel>
                 <Textarea
                   value={senderMessage}
-                  placeholder='Submit your custom word list and topics, or provide your feedbacks...'
                   focusBorderColor='whiteAlpha.800'
                   onChange={onMessageChange}
                 />
