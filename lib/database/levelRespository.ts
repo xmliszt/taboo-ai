@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import IDailyLevel from '../../types/dailyLevel.interface';
 import ILevel from '../../types/level.interface';
 import { supabase } from '../supabaseClient';
@@ -16,7 +17,7 @@ export const fetchLevelByName = async (name: string) => {
   const { data, error } = await supabase
     .from('level')
     .select()
-    .eq('name', name);
+    .ilike('name', `%${_.trim(name).toLowerCase()}%`);
   if (error) {
     console.error(error);
     throw Error(error.message);

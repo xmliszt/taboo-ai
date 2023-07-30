@@ -100,4 +100,5 @@
   padding: 1rem 0;
   image-rendering: optimizespeed;
   width: 100% !important;
+  max-width: 500px;
 }
