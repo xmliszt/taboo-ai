@@ -74,6 +74,7 @@ import IVariation from '../../types/variation.interface';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
+const MAX_TABOO_WORDS_COUNT = 10;
 
 const AddLevelPage = () => {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
@@ -103,6 +104,7 @@ const AddLevelPage = () => {
   const [isCheckingTopicName, setIsCheckingTopicName] = useState(false);
   const [nickname, setNickname] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
+  const [isAllValid, setIsAllValid] = useState(false);
 
   //ANCHOR - States for appeal
   const [selectedWordForAppeal, setselectedWordForAppeal] = useState('');
@@ -124,6 +126,24 @@ const AddLevelPage = () => {
   useEffect(() => {
     validateTargetWords();
   }, [targetWords]);
+
+  useEffect(() => {
+    if (
+      controlledAccordianExpandedIndex >= 0 &&
+      controlledAccordianExpandedIndex < tabooWords.length
+    ) {
+      validateTabooWords(controlledAccordianExpandedIndex);
+    }
+  }, [tabooWords]);
+
+  useEffect(() => {
+    validateAll();
+  }, [
+    isTopicNameValid,
+    topicName,
+    targetWordsErrorMessage,
+    tabooWordsErrorMessages,
+  ]);
 
   const onReviewTopic = () => {
     let targets = [...targetWords];
@@ -245,8 +265,9 @@ const AddLevelPage = () => {
 
   const changeTargetWordAtIndex = (changeValue: string, index: number) => {
     if (changeValue.length > CHARACTER_LIMIT) return;
+    const formattedChangeValue = _.trim(changeValue);
     const words = [...targetWords];
-    words[index] = changeValue;
+    words[index] = formattedChangeValue;
     setTargetWords(words);
     const tabooWordsExistedStatuses = [...tabooWordsExistedStatus];
     tabooWordsExistedStatuses[index] = null;
@@ -256,7 +277,8 @@ const AddLevelPage = () => {
     setTabooWords(_tabooWords);
     const tabooErrorMessages = [...tabooWordsErrorMessages];
     tabooErrorMessages[index] =
-      'You need to create at least 5 taboo words for ' + `"${changeValue}"`;
+      'You need to create at least 5 taboo words for ' +
+      `"${formattedChangeValue}"`;
     setTabooWordsErrorMessages(tabooErrorMessages);
     if (controlledAccordianExpandedIndex === index) {
       setControlledAccordianExpandedIndex(-1);
@@ -307,8 +329,9 @@ const AddLevelPage = () => {
     forTabooAtIndex: number
   ) => {
     if (changeValue.length > CHARACTER_LIMIT) return;
+    const formattedChangeValue = _.trim(changeValue);
     const words = [...tabooWords];
-    words[forTargetAtIndex][forTabooAtIndex] = changeValue;
+    words[forTargetAtIndex][forTabooAtIndex] = formattedChangeValue;
     setTabooWords(words);
     validateTabooWords(forTargetAtIndex);
   };
@@ -353,21 +376,28 @@ const AddLevelPage = () => {
     setTabooWordsErrorMessages(messages);
   };
 
-  const isAllValid = (): boolean => {
+  const validateAll = () => {
+    let _isAllValid = false;
     if (shouldUseAIForTabooWords) {
-      return (
+      _isAllValid =
         isTopicNameValid === true &&
         topicName.length > 0 &&
-        targetWordsErrorMessage.length <= 0
-      );
+        targetWordsErrorMessage.length <= 0;
     } else {
-      return (
+      _isAllValid =
         isTopicNameValid === true &&
         topicName.length > 0 &&
         targetWordsErrorMessage.length <= 0 &&
-        tabooWordsErrorMessages.filter((w) => w.length > 0).length <= 0
-      );
+        tabooWordsErrorMessages.filter((w) => w.length > 0).length <= 0;
     }
+    console.log(
+      isTopicNameValid,
+      topicName,
+      targetWordsErrorMessage,
+      tabooWordsErrorMessages,
+      _isAllValid
+    );
+    setIsAllValid(_isAllValid);
   };
 
   const scrollToTop = () => {
@@ -525,7 +555,7 @@ const AddLevelPage = () => {
         <Card
           id='add-topic-card'
           className={`relative w-[95%] h-full transition-transform mb-4 overflow-y-scroll scrollbar-hide bg-black-darker text-white leading-4 border-2 ${
-            isAllValid() ? 'border-neon-green' : 'border-white'
+            isAllValid ? 'border-neon-green' : 'border-white'
           }`}
           onScroll={onScrollChange}
         >
@@ -938,7 +968,11 @@ const AddLevelPage = () => {
                                 </div>
 
                                 <IconButton
-                                  hidden={tabooWordsExistedStatus[i] ?? false}
+                                  hidden={
+                                    (tabooWordsExistedStatus[i] ?? false) ||
+                                    tabooWords[i].length >=
+                                      MAX_TABOO_WORDS_COUNT
+                                  }
                                   key='add-button'
                                   data-style='none'
                                   variant='outline'
@@ -964,7 +998,7 @@ const AddLevelPage = () => {
             </Stack>
           </CardBody>
         </Card>
-        <Fade hidden={!isAllValid()} className='mb-4' in={isAllValid()}>
+        <Fade hidden={!isAllValid} className='mb-4' in={isAllValid}>
           <Button
             data-style='none'
             variant='solid'
