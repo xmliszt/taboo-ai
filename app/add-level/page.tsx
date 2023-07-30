@@ -966,9 +966,9 @@ const AddLevelPage = () => {
           </Button>
         </Fade>
       </div>
-      <Drawer placement='bottom' onClose={onClose} isOpen={isOpen}>
+      <Drawer size='full' placement='bottom' onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
-        <DrawerContent className='leading-4 text-white bg-black-darker'>
+        <DrawerContent className='leading-4 text-white bg-black-darker h-full'>
           <DrawerCloseButton data-style='none' className='hover:opacity-70' />
           <DrawerHeader borderBottomWidth='1px'>
             Review Your Topic: <b>{topicName}</b>
