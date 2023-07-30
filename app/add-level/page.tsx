@@ -77,7 +77,7 @@ const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
 const VALID_WORD_REGEX = /^(\w+\s)*\w+$/;
 const INVALID_WORD_ERROR =
-  'Only single space is allowed between words. No extra spaces should be in front or at the back of your entry!';
+  'Only single space is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry.';
 
 const AddLevelPage = () => {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
@@ -144,6 +144,8 @@ const AddLevelPage = () => {
   }, [
     isTopicNameValid,
     topicName,
+    shouldUseAIForTabooWords,
+    difficultyLevel,
     targetWordsErrorMessage,
     tabooWordsErrorMessages,
   ]);
@@ -450,21 +452,17 @@ const AddLevelPage = () => {
       _isAllValid =
         isTopicNameValid === true &&
         topicName.length > 0 &&
-        targetWordsErrorMessage.length <= 0;
+        targetWordsErrorMessage.length <= 0 &&
+        targetWords.length >= 3;
     } else {
       _isAllValid =
         isTopicNameValid === true &&
         topicName.length > 0 &&
         targetWordsErrorMessage.length <= 0 &&
-        tabooWordsErrorMessages.filter((w) => w.length > 0).length <= 0;
+        tabooWordsErrorMessages.filter((w) => w.length > 0).length <= 0 &&
+        targetWords.length >= 3 &&
+        tabooWords.every((words) => words.length >= 5);
     }
-    console.log(
-      isTopicNameValid,
-      topicName,
-      targetWordsErrorMessage,
-      tabooWordsErrorMessages,
-      _isAllValid
-    );
     setIsAllValid(_isAllValid);
   };
 
