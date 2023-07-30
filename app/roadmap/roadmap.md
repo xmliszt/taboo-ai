@@ -1,5 +1,11 @@
 # Taboo AI Releases Roadmap
 
+## 30 Jul - Release Notes (V2.9.0)
+
+- Brand new feature: a place for you to conveniently submit topics for others to play!
+- More user-friendly UI.
+- Update "Privacy Policy". We might collect email addres of you to process your feedbacks and topics submitted.
+
 ## 26 Jul - Release Notes (V2.8.0)
 
 - Removed ads.
