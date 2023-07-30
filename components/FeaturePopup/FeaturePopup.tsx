@@ -79,7 +79,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
         >
           <button
             data-style='none'
-            className='absolute aspect-square p-2 top-10 right-12 lg:top-12 lg:right-16 text-black z-10 text-3xl rounded-full bg-white dark:text-neon-white dark:bg-neon-black'
+            className='absolute aspect-square p-2 top-10 right-12 lg:top-12 lg:right-16 text-black z-10 text-3xl rounded-full'
             onClick={close}
           >
             <MdOutlineClose />
@@ -88,7 +88,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className='relative w-full h-full bg-white rounded-2xl p-4 text-black drop-shadow-2xl flex flex-col gap-4 dark:bg-neon-black dark:text-neon-white overflow-y-scroll'
+            className='relative w-full h-full bg-white rounded-2xl p-4 text-black drop-shadow-2xl flex flex-col gap-4 overflow-y-scroll'
           >
             <article
               data-testid='content-article'

@@ -36,6 +36,20 @@ export async function getLevels(): Promise<ILevel[]> {
   return levels;
 }
 
+export async function getLevel(name: string): Promise<ILevel | null> {
+  const response = await request<{ levels: ILevel[] }>(
+    '/api/levels/get?name=' + name,
+    'GET'
+  );
+  const levels = response.levels;
+  if (levels.length === 0) return null;
+  return levels[0];
+}
+
+export async function createLevel(level: ILevel) {
+  await request('/api/levels/create', 'POST', level);
+}
+
 export async function createDailyLevel(level: IDailyLevel) {
   await request('/api/levels/daily/create', 'POST', level);
 }

@@ -178,6 +178,7 @@ export async function getCreativeLevel(
       name: topic,
       difficulty: difficulty,
       words: words,
+      isVerified: true,
     };
   } else {
     return;

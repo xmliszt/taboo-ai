@@ -5,5 +5,15 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <section className='flex justify-center w-full h-full'>
+      <h1
+        data-testid='levels-heading-title'
+        className='fixed top-0 z-50 h-20 text-center pt-4 pointer-events-none'
+      >
+        Choose A Topic
+      </h1>
+      {children}
+    </section>
+  );
 }

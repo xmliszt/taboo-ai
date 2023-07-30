@@ -25,16 +25,22 @@ async function request<T>(url: string, method: string, body?: any): Promise<T> {
 export const sendEmail = async (
   nickname: string,
   fromEmail: string,
-  content: string
+  content: string,
+  subject?: string,
+  html?: string
 ) => {
   const url = `/api/send-email`;
   return await request<{
     nickname: string;
     fromEmail: string;
     content: string;
+    subject?: string;
+    html?: string;
   }>(url, 'POST', {
     nickname: nickname,
     email: fromEmail,
     message: content,
+    subject: subject,
+    html: html,
   });
 };

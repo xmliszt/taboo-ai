@@ -1,9 +1,22 @@
 import IDailyLevel from '../../../types/dailyLevel.interface';
+import ILevel from '../../../types/level.interface';
 import {
+  fetchLevelByName,
   insertDailyLevel,
+  insertLevel,
   selectDailyLevel,
   selectDailyLevelByName,
 } from '../../database/levelRespository';
+
+const getLevelByName = async (name: string): Promise<ILevel | null> => {
+  const { level } = await fetchLevelByName(name);
+  return level;
+};
+
+const submitNewLevel = async (level: ILevel): Promise<ILevel> => {
+  const newLevel = await insertLevel(level);
+  return newLevel.level;
+};
 
 const submitNewDailyLevel = async (
   level: IDailyLevel
@@ -22,4 +35,10 @@ const getDailyLevelByName = async (name: string): Promise<IDailyLevel> => {
   return level.level;
 };
 
-export { submitNewDailyLevel, getDailyLevel, getDailyLevelByName };
+export {
+  submitNewLevel,
+  submitNewDailyLevel,
+  getLevelByName,
+  getDailyLevel,
+  getDailyLevelByName,
+};

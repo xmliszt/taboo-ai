@@ -5,6 +5,7 @@ export default interface ILevel {
   new?: boolean;
   words: string[];
   createdAt?: number;
+  isVerified: boolean;
   isDaily?: boolean;
   dailyLevelName?: string;
   dailyLevelTopic?: string;

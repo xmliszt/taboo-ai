@@ -10,11 +10,17 @@ import AuthorBadge from '../../components/Badges/AuthorBadge';
 import LevelButton from '../../components/LevelButton';
 import { getDifficulty } from '../../lib/utilities';
 import LoadingMask from '../../components/LoadingMask';
+import {
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
+import { FiX } from 'react-icons/fi';
 
 interface LevelsPageProps {}
 
 export default function LevelsPage(props: LevelsPageProps) {
-  const title = 'Choose A Topic';
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string | undefined>();
@@ -22,7 +28,8 @@ export default function LevelsPage(props: LevelsPageProps) {
   const fetchLevels = async () => {
     setIsLoading(true);
     try {
-      const levels = await getLevels();
+      let levels = await getLevels();
+      levels = levels.filter((l) => l.isVerified);
       setLevels(levels);
     } finally {
       setIsLoading(false);
@@ -47,6 +54,10 @@ export default function LevelsPage(props: LevelsPageProps) {
     setSearchTerm(e.target.value);
   };
 
+  const clearSearch = () => {
+    setSearchTerm('');
+  };
+
   useEffect(() => {
     fetchLevels();
   }, []);
@@ -54,21 +65,29 @@ export default function LevelsPage(props: LevelsPageProps) {
   return (
     <section className='w-full h-full flex justify-around px-10 overflow-y-scroll scrollbar-hide'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
-      <h1
-        data-testid='levels-heading-title'
-        className='fixed top-0 z-50 h-20 text-center pt-4 dark:text-neon-blue pointer-events-none'
-      >
-        {title}
-      </h1>
       <div className='w-full fixed z-20 h-12 top-12 lg:top-20 px-12 py-2'>
-        <input
-          className='w-full drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)] bg-white text-black border-gray'
-          placeholder='Search for levels...'
-          type='text'
-          onChange={onSearchChange}
-        />
+        <InputGroup size='md'>
+          <Input
+            className='w-full drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)] bg-white text-black border-gray'
+            placeholder='Search for levels...'
+            value={searchTerm}
+            type='text'
+            onChange={onSearchChange}
+          />
+          <InputRightElement width='60px' height='40px'>
+            <IconButton
+              data-style='none'
+              variant='unstyled'
+              className='text-white hover:opacity-70 flex justify-center items-center'
+              aria-label='clear text field'
+              size='sm'
+              onClick={clearSearch}
+              icon={<FiX />}
+            />
+          </InputRightElement>
+        </InputGroup>
       </div>
-      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-16 pt-32 lg:pt-52 text-center'>
+      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 px-4 gap-10 lg:gap-16 pt-32 lg:pt-52 lg:pb-16 text-center'>
         <HotBadge location='TOP-LEFT'>
           <LevelButton isAI={true} />
         </HotBadge>
@@ -90,13 +109,13 @@ export default function LevelsPage(props: LevelsPageProps) {
                     <AuthorBadge label={level.author}>
                       <LevelButton
                         level={level}
-                        customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                        customClass='!border-4 !border-yellow'
                       />
                     </AuthorBadge>
                   ) : (
                     <LevelButton
                       level={level}
-                      customClass='!border-4 !border-yellow !dark:border-neon-yellow'
+                      customClass='!border-4 !border-yellow'
                     />
                   )}
                 </NewBadge>
