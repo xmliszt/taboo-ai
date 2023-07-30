@@ -53,7 +53,7 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import _ from 'lodash';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { BsInfoSquareFill } from 'react-icons/bs';
 import { FiArrowUp, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
@@ -224,12 +224,12 @@ const AddLevelPage = () => {
   };
 
   const addNewTargetWord = () => {
+    const currentTabooWordLength = targetWords.length;
     setTargetWords((w) => [...w, '']);
     setTabooWords((w) => [...w, []]);
     setTabooWordsErrorMessages((m) => [...m, '']);
     setTabooWordsCheckingStatus((c) => [...c, false]);
     setTabooWordsExistedStatus((e) => [...e, null]);
-    document.getElementById(`target-${targetWords.length}`)?.focus();
   };
 
   const changeTargetWordAtIndex = (changeValue: string, index: number) => {
@@ -648,6 +648,7 @@ const AddLevelPage = () => {
                     <div key={i} className='w-full lg:w-52 relative'>
                       <InputGroup size='md'>
                         <Input
+                          autoFocus
                           isDisabled={tabooWordsCheckingStatus[i]}
                           id={`target-${i}`}
                           className={`w-full ${
@@ -856,6 +857,7 @@ const AddLevelPage = () => {
                                     >
                                       <InputGroup size='md'>
                                         <Input
+                                          autoFocus
                                           isDisabled={
                                             tabooWordsExistedStatus[i] ?? false
                                           }
@@ -887,6 +889,9 @@ const AddLevelPage = () => {
                                           }
                                         >
                                           <IconButton
+                                            hidden={
+                                              tabooWords[i][ti].length <= 0
+                                            }
                                             data-style='none'
                                             variant='unstyled'
                                             className='text-white hover:opacity-70 flex justify-center items-center'
@@ -969,7 +974,7 @@ const AddLevelPage = () => {
             Review Your Topic: <b>{topicName}</b>
           </DrawerHeader>
           <DrawerBody className='w-full flex flex-col items-stretch'>
-            <SimpleGrid minChildWidth='120px' spacing={10} my={10} mx={6}>
+            <SimpleGrid minChildWidth='240px' spacing={10} my={10} mx={6}>
               {targetWords.map((w, i) => (
                 <Card key={i} className='bg-black text-white'>
                   <CardHeader className='text-center text-2xl font-bold'>
