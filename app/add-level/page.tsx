@@ -53,7 +53,7 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import _ from 'lodash';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { BsInfoSquareFill } from 'react-icons/bs';
 import { FiArrowUp, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
@@ -72,9 +72,10 @@ import { emailIsValid } from '../../lib/utilities';
 import ILevel from '../../types/level.interface';
 import IVariation from '../../types/variation.interface';
 
+const CHARACTER_LIMIT = 50;
+const MAX_TARGET_WORDS_COUNT = 10;
+
 const AddLevelPage = () => {
-  const CHARACTER_LIMIT = 50;
-  const MAX_TARGET_WORDS_COUNT = 10;
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
     useState(false);
   const [topicName, setTopicName] = useState('');
@@ -123,6 +124,13 @@ const AddLevelPage = () => {
   useEffect(() => {
     validateTargetWords();
   }, [targetWords]);
+
+  const onReviewTopic = () => {
+    let targets = [...targetWords];
+    targets = targets.filter((t) => _.trim(t).length > 0);
+    setTargetWords(targets);
+    onOpen();
+  };
 
   const onTopicNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length > CHARACTER_LIMIT) return;
@@ -229,7 +237,10 @@ const AddLevelPage = () => {
     setTabooWordsErrorMessages((m) => [...m, '']);
     setTabooWordsCheckingStatus((c) => [...c, false]);
     setTabooWordsExistedStatus((e) => [...e, null]);
-    document.getElementById(`target-${targetWords.length}`)?.focus();
+    document.getElementById('add-topic-card')?.scrollBy({
+      top: 56,
+      behavior: 'smooth',
+    });
   };
 
   const changeTargetWordAtIndex = (changeValue: string, index: number) => {
@@ -648,6 +659,7 @@ const AddLevelPage = () => {
                     <div key={i} className='w-full lg:w-52 relative'>
                       <InputGroup size='md'>
                         <Input
+                          autoFocus
                           isDisabled={tabooWordsCheckingStatus[i]}
                           id={`target-${i}`}
                           className={`w-full ${
@@ -856,6 +868,7 @@ const AddLevelPage = () => {
                                     >
                                       <InputGroup size='md'>
                                         <Input
+                                          autoFocus
                                           isDisabled={
                                             tabooWordsExistedStatus[i] ?? false
                                           }
@@ -887,6 +900,9 @@ const AddLevelPage = () => {
                                           }
                                         >
                                           <IconButton
+                                            hidden={
+                                              tabooWords[i][ti].length <= 0
+                                            }
                                             data-style='none'
                                             variant='unstyled'
                                             className='text-white hover:opacity-70 flex justify-center items-center'
@@ -955,21 +971,27 @@ const AddLevelPage = () => {
             className=' bg-neon-green text-black hover:text-neon-green hover:bg-black focus:bg-black-darker drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
             fontSize={26}
             aria-label='click to review the topic'
-            onClick={onOpen}
+            onClick={onReviewTopic}
           >
             Review Your Topic
           </Button>
         </Fade>
       </div>
-      <Drawer placement='bottom' onClose={onClose} isOpen={isOpen}>
+      <Drawer
+        size='full'
+        placement='bottom'
+        onClose={onClose}
+        isOpen={isOpen}
+        allowPinchZoom
+      >
         <DrawerOverlay />
-        <DrawerContent className='leading-4 text-white bg-black-darker'>
+        <DrawerContent className='leading-4 text-white bg-black-darker h-full'>
           <DrawerCloseButton data-style='none' className='hover:opacity-70' />
           <DrawerHeader borderBottomWidth='1px'>
             Review Your Topic: <b>{topicName}</b>
           </DrawerHeader>
           <DrawerBody className='w-full flex flex-col items-stretch'>
-            <SimpleGrid minChildWidth='120px' spacing={10} my={10} mx={6}>
+            <SimpleGrid minChildWidth='240px' spacing={10} my={10} mx={6}>
               {targetWords.map((w, i) => (
                 <Card key={i} className='bg-black text-white'>
                   <CardHeader className='text-center text-2xl font-bold'>

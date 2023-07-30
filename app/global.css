@@ -25,3 +25,11 @@ article > h3 {
 article > p {
   margin-bottom: 1.25rem;
 }
+
+@media screen and (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

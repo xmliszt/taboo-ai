@@ -99,4 +99,5 @@
 .markdown img {
   padding: 1rem 0;
   image-rendering: optimizespeed;
+  width: 100% !important;
 }
