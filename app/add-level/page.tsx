@@ -75,6 +75,9 @@ import IVariation from '../../types/variation.interface';
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
+const VALID_WORD_REGEX = /^(\w+\s)*\w+$/;
+const INVALID_WORD_ERROR =
+  'Only single space is allowed between words. No extra spaces should be in front or at the back of your entry!';
 
 const AddLevelPage = () => {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
@@ -145,6 +148,19 @@ const AddLevelPage = () => {
     tabooWordsErrorMessages,
   ]);
 
+  const validateInputEntry = (
+    input: string
+  ): { isValid: boolean; message: string } => {
+    if (input.length === 0) {
+      return { isValid: false, message: 'Cannot be empty!' };
+    }
+    if (VALID_WORD_REGEX.test(input)) {
+      return { isValid: true, message: '' };
+    } else {
+      return { isValid: false, message: INVALID_WORD_ERROR };
+    }
+  };
+
   const onReviewTopic = () => {
     let targets = [...targetWords];
     targets = targets.filter((t) => _.trim(t).length > 0);
@@ -153,13 +169,22 @@ const AddLevelPage = () => {
   };
 
   const onTopicNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length > CHARACTER_LIMIT) return;
+    const changeValue = e.target.value;
+    if (changeValue.length > CHARACTER_LIMIT) return;
     setIsTopicNameValid(undefined);
-    setTopicName(e.target.value);
-    if (e.target.value.length === 0) {
-      setTopicNameErrorMessage('Topic name cannot be empty!');
+    setTopicName(changeValue);
+    const result = validateInputEntry(changeValue);
+    if (!result.isValid) {
+      setTopicNameErrorMessage(result.message);
       setIsTopicNameValid(false);
+    } else {
+      setTopicNameErrorMessage('');
     }
+  };
+
+  const onNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value);
+    validateNickname(e.target.value);
   };
 
   const onEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -193,6 +218,19 @@ const AddLevelPage = () => {
     );
   };
 
+  const validateNickname = (nickname: string) => {
+    if (nickname.length <= 0) {
+      setEmailErrorMessage('Nickname is required');
+      return;
+    }
+    const result = validateInputEntry(nickname);
+    if (!result.isValid) {
+      setEmailErrorMessage(result.message);
+    } else {
+      setEmailErrorMessage('');
+    }
+  };
+
   const validateEmail = (email: string) => {
     if (email.length <= 0) {
       setEmailErrorMessage('Email is required');
@@ -204,7 +242,7 @@ const AddLevelPage = () => {
   };
 
   const onTopicOutofFocus = async () => {
-    if (topicName.length <= 0) return;
+    if (!validateInputEntry(topicName).isValid) return;
     setIsCheckingTopicName(true);
     try {
       const level = await getLevel(topicName);
@@ -265,9 +303,8 @@ const AddLevelPage = () => {
 
   const changeTargetWordAtIndex = (changeValue: string, index: number) => {
     if (changeValue.length > CHARACTER_LIMIT) return;
-    const formattedChangeValue = _.trim(changeValue);
     const words = [...targetWords];
-    words[index] = formattedChangeValue;
+    words[index] = changeValue;
     setTargetWords(words);
     const tabooWordsExistedStatuses = [...tabooWordsExistedStatus];
     tabooWordsExistedStatuses[index] = null;
@@ -277,11 +314,17 @@ const AddLevelPage = () => {
     setTabooWords(_tabooWords);
     const tabooErrorMessages = [...tabooWordsErrorMessages];
     tabooErrorMessages[index] =
-      'You need to create at least 5 taboo words for ' +
-      `"${formattedChangeValue}"`;
+      'You need to create at least 5 taboo words for ' + `"${changeValue}"`;
     setTabooWordsErrorMessages(tabooErrorMessages);
     if (controlledAccordianExpandedIndex === index) {
       setControlledAccordianExpandedIndex(-1);
+    }
+  };
+
+  const onTargetWordInputOutOfFocus = (targetWord: string) => {
+    const result = validateInputEntry(targetWord);
+    if (!result.isValid && targetWordsErrorMessage.length === 0) {
+      setTargetWordsErrorMessage(result.message);
     }
   };
 
@@ -329,11 +372,25 @@ const AddLevelPage = () => {
     forTabooAtIndex: number
   ) => {
     if (changeValue.length > CHARACTER_LIMIT) return;
-    const formattedChangeValue = _.trim(changeValue);
     const words = [...tabooWords];
-    words[forTargetAtIndex][forTabooAtIndex] = formattedChangeValue;
+    words[forTargetAtIndex][forTabooAtIndex] = changeValue;
     setTabooWords(words);
     validateTabooWords(forTargetAtIndex);
+  };
+
+  const onTabooWordInputOutOfFocus = (
+    forTargetAtIndex: number,
+    tabooWord: string
+  ) => {
+    const result = validateInputEntry(tabooWord);
+    if (
+      !result.isValid &&
+      tabooWordsErrorMessages[forTargetAtIndex].length === 0
+    ) {
+      const tabooErrors = [...tabooWordsErrorMessages];
+      tabooErrors[forTargetAtIndex] = result.message;
+      setTabooWordsErrorMessages(tabooErrors);
+    }
   };
 
   const deleteTabooWordAtIndex = (
@@ -359,6 +416,11 @@ const AddLevelPage = () => {
       setTargetWordsErrorMessage(
         'You need to create at least 3 target words for the topic.'
       );
+    } else if (targetWords.some((w) => !validateInputEntry(w).isValid)) {
+      setTargetWordsErrorMessage(
+        'Some target words input are not valid. Please change them! ' +
+          INVALID_WORD_ERROR
+      );
     } else {
       setTargetWordsErrorMessage('');
     }
@@ -370,6 +432,12 @@ const AddLevelPage = () => {
       messages[
         forTargetIndex
       ] = `You need to create at least 5 taboo words for "${targetWords[forTargetIndex]}".`;
+    } else if (
+      tabooWords[forTargetIndex].some((w) => !validateInputEntry(w).isValid)
+    ) {
+      messages[forTargetIndex] =
+        'Some taboo words input are not valid. Please change them! ' +
+        INVALID_WORD_ERROR;
     } else {
       messages[forTargetIndex] = '';
     }
@@ -703,6 +771,9 @@ const AddLevelPage = () => {
                           onChange={(e) => {
                             changeTargetWordAtIndex(e.target.value, i);
                           }}
+                          onBlur={() => {
+                            onTargetWordInputOutOfFocus(w);
+                          }}
                         />
                         <InputRightElement
                           width='60px'
@@ -919,6 +990,9 @@ const AddLevelPage = () => {
                                               ti
                                             );
                                           }}
+                                          onBlur={() => {
+                                            onTabooWordInputOutOfFocus(i, tw);
+                                          }}
                                         />
                                         <InputRightElement
                                           width='60px'
@@ -1066,9 +1140,7 @@ const AddLevelPage = () => {
               <Input
                 value={nickname}
                 placeholder='Creator nickname...'
-                onChange={(e) => {
-                  setNickname(e.target.value);
-                }}
+                onChange={onNicknameChange}
               />
             </FormControl>
             <FormControl mb={4} isInvalid={emailErrorMessage.length > 0}>
