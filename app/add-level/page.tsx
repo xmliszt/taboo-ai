@@ -124,6 +124,13 @@ const AddLevelPage = () => {
     validateTargetWords();
   }, [targetWords]);
 
+  const onReviewTopic = () => {
+    let targets = [...targetWords];
+    targets = targets.filter((t) => _.trim(t).length > 0);
+    setTargetWords(targets);
+    onOpen();
+  };
+
   const onTopicNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length > CHARACTER_LIMIT) return;
     setIsTopicNameValid(undefined);
@@ -224,12 +231,15 @@ const AddLevelPage = () => {
   };
 
   const addNewTargetWord = () => {
-    const currentTabooWordLength = targetWords.length;
     setTargetWords((w) => [...w, '']);
     setTabooWords((w) => [...w, []]);
     setTabooWordsErrorMessages((m) => [...m, '']);
     setTabooWordsCheckingStatus((c) => [...c, false]);
     setTabooWordsExistedStatus((e) => [...e, null]);
+    document.getElementById('add-topic-card')?.scrollBy({
+      top: 56,
+      behavior: 'smooth',
+    });
   };
 
   const changeTargetWordAtIndex = (changeValue: string, index: number) => {
@@ -960,13 +970,19 @@ const AddLevelPage = () => {
             className=' bg-neon-green text-black hover:text-neon-green hover:bg-black focus:bg-black-darker drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
             fontSize={26}
             aria-label='click to review the topic'
-            onClick={onOpen}
+            onClick={onReviewTopic}
           >
             Review Your Topic
           </Button>
         </Fade>
       </div>
-      <Drawer size='full' placement='bottom' onClose={onClose} isOpen={isOpen}>
+      <Drawer
+        size='full'
+        placement='bottom'
+        onClose={onClose}
+        isOpen={isOpen}
+        allowPinchZoom
+      >
         <DrawerOverlay />
         <DrawerContent className='leading-4 text-white bg-black-darker h-full'>
           <DrawerCloseButton data-style='none' className='hover:opacity-70' />
