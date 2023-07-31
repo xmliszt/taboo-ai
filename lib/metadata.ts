@@ -64,12 +64,7 @@ export const _meta: Metadata = {
     siteId: '1704579643',
     creator: '@xmliszt',
     creatorId: '1704579643',
-    images: [
-      'https://i.ibb.co/dmCtsXW/Poster.png',
-      'https://i.ibb.co/wSdsGzM/Artboard-1.png',
-      'https://i.ibb.co/BGJTrVk/Artboard-2.png',
-      'https://i.ibb.co/7tfRNM5/Artboard-3.png',
-    ],
+    images: ['https://i.ibb.co/dmCtsXW/Poster.png'],
   },
   viewport: {
     width: 'device-width',
