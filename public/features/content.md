@@ -2,8 +2,8 @@
 
 #### Update V2.9.0
 
-![add custom topic](/images/add-custom-topic-0.png)
-![add custom topic](/images/add-custom-topic.gif)
+![add custom topic](https://i.ibb.co/VWB4vjG/add-custom-topic-0.png)
+![add custom topic](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWo0bG03d3k3dnB1cGgwcW1kN3Q2MjFmb2R1amV1aGE0end3d3NhbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/arhewKXaunttoKjdBR/giphy.gif)
 
 Dear Valued Players,
 

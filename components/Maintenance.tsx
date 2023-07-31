@@ -1,13 +1,13 @@
 import Image from 'next/image';
-import maintenanceRobot from '../public/images/maintenance.png';
 
 const Maintenance = () => {
   return (
     <article className='flex flex-col gap-4 justify-center items-center leading-normal h-full w-full p-16 text-center overflow-hidden'>
       <Image
-        src={maintenanceRobot}
+        src='https://i.ibb.co/7zJ4yHD/maintenance.png'
         alt='Taboo AI is under maintenance'
         width={400}
+        height={400}
       />
       <p className='text-base lg:text-2xl'>
         Taboo AI is working hard to resolve the unexpected issue {'>_<!'} It

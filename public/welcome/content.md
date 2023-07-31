@@ -1,6 +1,6 @@
 ## **Welcome to Taboo AI**
 
-![Taboo AI Poster](/images/Poster.png)
+![Taboo AI Poster](https://i.ibb.co/dmCtsXW/Poster.png)
 
 Welcome to **Taboo AI**, the ultimate destination for wordplay enthusiasts like you! We're thrilled to have you join our vibrant community of players from around the world. Get ready to embark on an exciting journey that will put your **creativity**, **vocabulary**, and **quick thinking** to the test.
 

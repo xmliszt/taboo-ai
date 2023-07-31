@@ -2,11 +2,8 @@
 
 import ReactMarkdown from 'react-markdown';
 import ruleContent from './rule.md';
-import challengeContent from './challenge.md';
 import style from './style.module.css';
 import Link from 'next/link';
-import SocialLinkButton from '../../components/SocialLinkButton';
-import { SiDiscord } from 'react-icons/si';
 
 interface RulePageProps {}
 

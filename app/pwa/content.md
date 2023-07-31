@@ -11,7 +11,7 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 5. Follow the on-screen instructions.
 6. For **PC user**, simplify follow the screenshot below:
 
-![chrome-pwa](/images/pwa-chrome.png)
+![chrome-pwa](https://i.ibb.co/tbYBZsY/pwa-chrome.png)
 
 ### For iOS Safari User
 
@@ -21,7 +21,7 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 4. Tap **'Add to home screen.'**
 5. Follow the on-screen instructions.
 
-![ios-pwa](/images/pwa-ios.gif)
+![ios-pwa](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWFodXYzZXplZXdmMTdneWtlMDh4b3BieHdueXBzeXNwbXNxcHQwdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qzcg79aLtWtytlVodh/giphy.gif)
 
 ### For Firefox Android User
 
@@ -31,7 +31,7 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 4. Tap on **'Install'**.
 5. Follow the on-screen instructions.
 
-![firefox-pwa](/images/pwa-firefox.png)
+![firefox-pwa](https://i.ibb.co/hfJYzTN/pwa-firefox.png)
 [Learn How to Install PWA with Firefox on Android](https://mzl.la/3p7ltJx)
 
 ### For Edge User
@@ -42,6 +42,6 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 4. Tap **'Add to home screen.'**
 5. For **PC user**, simplify follow the screenshot below:
 
-![edge-pwa](/images/pwa-edge.png)
+![edge-pwa](https://i.ibb.co/m4p0WJT/pwa-edge.png)
 
 With web app installed, you can directly access Taboo AI on your mobile or PC devices, just like using any other app!
