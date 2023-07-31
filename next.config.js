@@ -22,7 +22,12 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['media.theresanaiforthat.com', 'api.producthunt.com'],
+    domains: [
+      'media.theresanaiforthat.com',
+      'api.producthunt.com',
+      'i.ibb.co',
+      'media.giphy.com',
+    ],
     formats: ['image/webp'],
   },
   webpack: (config) => {
