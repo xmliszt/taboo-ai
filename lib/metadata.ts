@@ -28,17 +28,17 @@ export const _meta: Metadata = {
   },
   category: 'technology',
   openGraph: {
-    title: 'Taboo AI: Play Taboo with AI',
+    title: 'Online Game of Taboo, against AI',
     description:
       'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
     url: 'https://taboo-ai.vercel.app/',
     siteName: 'Taboo AI',
     images: [
       {
-        url: 'https://i.ibb.co/44Gz4P1/Poster.png',
+        url: 'https://i.ibb.co/Q9xK7rs/Poster-2-0.png',
         width: 800,
         height: 600,
-        alt: 'Taboo AI: Play Taboo with AI',
+        alt: 'Online Game of Taboo, against AI',
       },
     ],
     locale: 'en_US',
@@ -58,22 +58,27 @@ export const _meta: Metadata = {
   manifest: '/manifest.json',
   twitter: {
     card: 'summary_large_image',
-    title: 'Taboo AI: Play Taboo with AI',
+    title: 'Online Game of Taboo, against AI',
     description:
       'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
     siteId: '1704579643',
     creator: '@xmliszt',
     creatorId: '1704579643',
-    images: ['https://i.ibb.co/44Gz4P1/Poster.png'],
+    images: [
+      'https://i.ibb.co/dmCtsXW/Poster.png',
+      'https://i.ibb.co/wSdsGzM/Artboard-1.png',
+      'https://i.ibb.co/BGJTrVk/Artboard-2.png',
+      'https://i.ibb.co/7tfRNM5/Artboard-3.png',
+    ],
   },
   viewport: {
     width: 'device-width',
     initialScale: 1,
   },
   appleWebApp: {
-    title: 'Taboo AI: Play Taboo Game for Free with AI',
+    title: 'Online Game of Taboo, against AI',
     statusBarStyle: 'black-translucent',
-    startupImage: ['/public/images/Poster 2.0.png'],
+    startupImage: ['https://i.ibb.co/Q9xK7rs/Poster-2-0.png'],
   },
   other: {
     'google-site-verification': 'ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk',
