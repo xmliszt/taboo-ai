@@ -74,7 +74,11 @@ export default function LevelsPage(props: LevelsPageProps) {
             type='text'
             onChange={onSearchChange}
           />
-          <InputRightElement width='60px' height='40px'>
+          <InputRightElement
+            width='60px'
+            height='40px'
+            hidden={(searchTerm?.length ?? 0) <= 0}
+          >
             <IconButton
               data-style='none'
               variant='unstyled'
