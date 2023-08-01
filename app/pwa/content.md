@@ -1,4 +1,4 @@
-## Install Taboo AI as Web App!
+# Install Taboo AI as Web App!
 
 Taboo AI is available to be installed as web app if you are an Android user using **Chrome** or **Edge** broswer, or if you are an **iOS** user using **Safari**.
 

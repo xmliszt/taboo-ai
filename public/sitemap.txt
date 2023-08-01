@@ -3,11 +3,11 @@ https://taboo-ai.vercel.app/rule
 https://taboo-ai.vercel.app/levels
 https://taboo-ai.vercel.app/level
 https://taboo-ai.vercel.app/ai
+https://taboo-ai.vercel.app/pwa
 https://taboo-ai.vercel.app/result
 https://taboo-ai.vercel.app/roadmap
 https://taboo-ai.vercel.app/whatsnew
 https://taboo-ai.vercel.app/buymecoffee
-https://taboo-ai.vercel.app/signup
-https://taboo-ai.vercel.app/recovery
 https://taboo-ai.vercel.app/privacy
 https://taboo-ai.vercel.app/cookie-policy
+https://taboo-ai.vercel.app/add-level

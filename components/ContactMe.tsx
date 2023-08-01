@@ -104,9 +104,7 @@ const ContactMe = () => {
         backgroundColor='blackAlpha.500'
         textColor='whiteAlpha.800'
       >
-        <CardHeader>
-          <h1>Contact Me</h1>
-        </CardHeader>
+        <CardHeader className='text-3xl'>Contact Me</CardHeader>
         <CardBody>
           <Stack gap={8}>
             <Stack gap={4}>

@@ -6,7 +6,7 @@ export const _meta: Metadata = {
     template: 'Taboo AI | %s',
   },
   description:
-    'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
+    'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
   applicationName: 'Taboo AI: Play Taboo Game with AI',
   keywords: [
     'AI',
@@ -30,7 +30,7 @@ export const _meta: Metadata = {
   openGraph: {
     title: 'Online Game of Taboo, against AI',
     description:
-      'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
+      'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
     url: 'https://taboo-ai.vercel.app/',
     siteName: 'Taboo AI',
     images: [
@@ -60,7 +60,7 @@ export const _meta: Metadata = {
     card: 'summary_large_image',
     title: 'Online Game of Taboo, against AI',
     description:
-      'Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!',
+      'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
     siteId: '1704579643',
     creator: '@xmliszt',
     creatorId: '1704579643',
