@@ -1,4 +1,4 @@
-## Shape the Taboo AI Universe with **YOUR** Topics! 
+# Shape the Taboo AI Universe with **YOUR** Topics! 
 
 #### Update V2.9.0
 
