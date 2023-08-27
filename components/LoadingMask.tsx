@@ -6,7 +6,7 @@ interface LoadingProps {
 }
 export default function LoadingMask(props: LoadingProps) {
   return props.isLoading ? (
-    <div className='fixed w-screen h-screen z-50 bg-black dark:text-neon-black bg-opacity-50 backdrop-blur-lg flex flex-col gap-6 justify-center items-center'>
+    <div className='fixed w-screen h-screen left-0 top-0 z-50 bg-black bg-opacity-50 backdrop-blur-lg flex flex-col gap-6 justify-center items-center'>
       <FaRobot className='animate-spin text-white dark:text-neon-blue text-5xl' />
       <span className='text-lg lg:text-3xl text-center dark:text-neon-white'>
         {props.message}

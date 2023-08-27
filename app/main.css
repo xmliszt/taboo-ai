@@ -8,7 +8,7 @@
 @layer components {
   .unicorn-color {
     background-image: linear-gradient(
-      0deg,
+      45deg,
       #cf5c5c,
       #c19b4a,
       #42eca6,
