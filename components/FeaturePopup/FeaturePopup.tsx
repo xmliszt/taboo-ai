@@ -88,7 +88,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className='relative w-full h-full bg-white rounded-2xl p-4 text-black drop-shadow-2xl flex flex-col gap-4 overflow-y-scroll'
+            className='relative w-full h-full bg-white rounded-2xl p-4 text-black shadow-2xl flex flex-col gap-4 overflow-y-scroll'
           >
             <article
               data-testid='content-article'
@@ -105,7 +105,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
                   newTab={true}
                   customClass='flex-grow'
                   accentColorClass='bg-purple dark:bg-neon-purple'
-                  dropShadowClass='hover:drop-shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
+                  dropShadowClass='hover:shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
                 />
               </div>
             </article>

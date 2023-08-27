@@ -195,17 +195,29 @@ export const formatStringForDisplay = (s: string) => {
   return _.startCase(_.trim(_.toLower(s)));
 };
 
-export const getDifficulty = (difficulty: number): string => {
+export const getDifficulty = (
+  difficulty: number,
+  withNumber = true
+): string => {
+  let s = '';
   switch (difficulty) {
     case 1:
-      return 'Easy (1)';
+      s = 'Easy';
+      break;
     case 2:
-      return 'Medium (2)';
+      s = 'Medium';
+      break;
     case 3:
-      return 'Hard (3)';
+      s = 'Hard';
+      break;
     default:
-      return 'Unknown (?)';
+      s = 'Unknown';
+      break;
   }
+  if (withNumber) {
+    s += ` (${difficulty})`;
+  }
+  return s;
 };
 
 export const buildScoresForDisplay = (

@@ -20,7 +20,7 @@ const BuyMeCoffeePage = () => {
             height={200}
             src={BuyMeCoffeeQR}
             alt='Buy Me Coffee QR Code. Scan to buy me a coffee!'
-            className='drop-shadow-2xl transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:drop-shadow-[0_5px_15px_rgba(229,229,4,0.6)]'
+            className='shadow-2xl transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-[0_5px_15px_rgba(229,229,4,0.6)]'
           />
         </a>
         <SocialLinkButton

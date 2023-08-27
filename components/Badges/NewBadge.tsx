@@ -25,7 +25,7 @@ export default function NewBadge(props: BadgeProps) {
   return (
     <div className='relative'>
       <span
-        className={`absolute drop-shadow-lg ${locationClass} h-4 lg:h-8 text-xs lg:text-xl w-auto px-2 lg:px-4 z-10 rounded-full font-mono font-bold flex justify-center items-center ${
+        className={`absolute shadow-lg ${locationClass} h-4 lg:h-8 text-xs lg:text-xl w-auto px-2 lg:px-4 z-10 rounded-full font-mono font-bold flex justify-center items-center ${
           props.customClass ?? 'bg-yellow text-black dark:bg-neon-yellow z-10'
         } whitespace-nowrap`}
       >

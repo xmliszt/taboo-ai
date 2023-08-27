@@ -3,20 +3,18 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { getLevels } from '../../lib/services/frontend/levelService';
 import ILevel from '../../types/level.interface';
-import Badge from '../../components/Badges/Badge';
 import HotBadge from '../../components/Badges/HotBadge';
-import NewBadge from '../../components/Badges/NewBadge';
-import AuthorBadge from '../../components/Badges/AuthorBadge';
-import LevelButton from '../../components/LevelButton';
-import { getDifficulty } from '../../lib/utilities';
 import LoadingMask from '../../components/LoadingMask';
 import {
+  Flex,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
+  Tag,
 } from '@chakra-ui/react';
 import { FiX } from 'react-icons/fi';
+import { LevelCard } from '../../components/LevelCard';
 
 interface LevelsPageProps {}
 
@@ -24,6 +22,16 @@ export default function LevelsPage(props: LevelsPageProps) {
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string | undefined>();
+  const [filteredLevels, setFilteredLevels] = useState<ILevel[]>([]);
+
+  useEffect(() => {
+    const filtered = levels.filter((level) =>
+      level.name
+        .toLowerCase()
+        .includes(searchTerm ? searchTerm.toLowerCase() : '')
+    );
+    setFilteredLevels(filtered);
+  }, [levels, searchTerm]);
 
   const fetchLevels = async () => {
     setIsLoading(true);
@@ -33,19 +41,6 @@ export default function LevelsPage(props: LevelsPageProps) {
       setLevels(levels);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const getDifficultyColor = (difficulty: number): string => {
-    switch (difficulty) {
-      case 1:
-        return 'bg-green dark:bg-neon-green';
-      case 2:
-        return 'bg-yellow dark:bg-neon-yellow !text-black';
-      case 3:
-        return 'bg-red dark:bg-neon-red';
-      default:
-        return 'bg-black dark:bg-neon-black';
     }
   };
 
@@ -63,12 +58,12 @@ export default function LevelsPage(props: LevelsPageProps) {
   }, []);
 
   return (
-    <section className='w-full h-full flex justify-around px-10 overflow-y-scroll scrollbar-hide'>
+    <section className='w-full h-full px-10'>
       <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
-      <div className='w-full fixed z-20 h-12 top-12 lg:top-20 px-12 py-2'>
+      <div className='w-full fixed z-20 h-12 top-12 left-0 lg:top-20 px-12 py-2'>
         <InputGroup size='md'>
           <Input
-            className='w-full drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)] bg-white text-black border-gray'
+            className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
             placeholder='Search for levels...'
             value={searchTerm}
             type='text'
@@ -90,58 +85,24 @@ export default function LevelsPage(props: LevelsPageProps) {
             />
           </InputRightElement>
         </InputGroup>
+        {searchTerm && searchTerm.length > 0 && (
+          <Tag className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
+            Found {filteredLevels.length} topics
+          </Tag>
+        )}
       </div>
-      <section className='flex-grow content-start grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 px-4 gap-10 lg:gap-16 pt-32 lg:pt-52 lg:pb-16 text-center'>
-        <HotBadge location='TOP-LEFT'>
-          <LevelButton isAI={true} />
+      <Flex
+        wrap='wrap'
+        gap={8}
+        className='w-full h-full justify-center content-start text-center pt-36 lg:pt-44 pb-16 overflow-y-scroll scrollbar-hide'
+      >
+        <HotBadge>
+          <LevelCard />
         </HotBadge>
-        {levels
-          .filter((level) =>
-            level.name
-              .toLowerCase()
-              .includes(searchTerm ? searchTerm.toLowerCase() : '')
-          )
-          .map((level) =>
-            level.new ? (
-              <Badge
-                key={level.name}
-                label={getDifficulty(level.difficulty)}
-                customClass={getDifficultyColor(level.difficulty)}
-              >
-                <NewBadge>
-                  {level.author ? (
-                    <AuthorBadge label={level.author}>
-                      <LevelButton
-                        level={level}
-                        customClass='!border-4 !border-yellow'
-                      />
-                    </AuthorBadge>
-                  ) : (
-                    <LevelButton
-                      level={level}
-                      customClass='!border-4 !border-yellow'
-                    />
-                  )}
-                </NewBadge>
-              </Badge>
-            ) : (
-              <Badge
-                key={level.name}
-                label={getDifficulty(level.difficulty)}
-                customClass={getDifficultyColor(level.difficulty)}
-              >
-                {level.author ? (
-                  <AuthorBadge label={level.author}>
-                    <LevelButton level={level} />
-                  </AuthorBadge>
-                ) : (
-                  <LevelButton level={level} />
-                )}
-              </Badge>
-            )
-          )}
-        <div className='h-4 w-full'></div>
-      </section>
+        {filteredLevels.map((level, idx) => (
+          <LevelCard key={idx} level={level} />
+        ))}
+      </Flex>
     </section>
   );
 }

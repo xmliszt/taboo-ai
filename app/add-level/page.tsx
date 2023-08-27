@@ -77,7 +77,7 @@ const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
 const VALID_WORD_REGEX = /^(\w+\s)*\w+$/;
 const INVALID_WORD_ERROR =
-  'Only single space is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry.';
+  'Only single space is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry. Cannot be empty.';
 
 const AddLevelPage = () => {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
@@ -420,7 +420,7 @@ const AddLevelPage = () => {
       );
     } else if (targetWords.some((w) => !validateInputEntry(w).isValid)) {
       setTargetWordsErrorMessage(
-        'Some target words input are not valid. Please change them! ' +
+        'Some target words input are not valid or empty. Please change them! ' +
           INVALID_WORD_ERROR
       );
     } else {
@@ -633,7 +633,7 @@ const AddLevelPage = () => {
             <IconButton
               data-style='none'
               variant='solid'
-              className=' bg-white text-black hover:text-white hover:bg-black focus:bg-black-darker drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
+              className=' bg-white text-black hover:text-white hover:bg-black focus:bg-black-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
               fontSize={26}
               aria-label='click to scroll back to top'
               onClick={scrollToTop}
@@ -1074,7 +1074,7 @@ const AddLevelPage = () => {
           <Button
             data-style='none'
             variant='solid'
-            className=' bg-neon-green text-black hover:text-neon-green hover:bg-black focus:bg-black-darker drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
+            className=' bg-neon-green text-black hover:text-neon-green hover:bg-black focus:bg-black-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
             fontSize={26}
             aria-label='click to review the topic'
             onClick={onReviewTopic}
@@ -1167,7 +1167,7 @@ const AddLevelPage = () => {
                 emailErrorMessage.length > 0
                   ? 'bg-yellow'
                   : 'bg-neon-green'
-              } text-black hover:text-gray hover:bg-black focus:bg-black-darker drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)]`}
+              } text-black hover:text-gray hover:bg-black focus:bg-black-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]`}
               fontSize={32}
               aria-label='click to submit the topic created'
               mb={4}
