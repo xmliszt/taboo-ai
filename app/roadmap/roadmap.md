@@ -1,5 +1,10 @@
 # Taboo AI Releases Roadmap
 
+## 28 Aug - Release Notes (V2.10.0)
+
+- Fresh new look for the topics page - flashcard design, that is easy to understand.
+- Search topics will include results count at the bottom of the search bar.
+
 ## 30 Jul - Release Notes (V2.9.0)
 
 - Brand new feature: a place for you to conveniently submit topics for others to play!
