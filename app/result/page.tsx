@@ -836,7 +836,7 @@ export default function ResultPage(props: ResultPageProps) {
         className='border-2 border-white bg-white text-black flex flex-col gap-1 rounded-2xl dark:border-neon-red dark:bg-neon-gray dark:text-neon-white'
       >
         <div
-          className='bg-black dark:bg-neon-black dark:drop-shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'
+          className='bg-black dark:bg-neon-black dark:shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'
           onClick={() => {
             toggleMobileScoreStack(score.id);
           }}
@@ -866,7 +866,7 @@ export default function ResultPage(props: ResultPageProps) {
     return (
       <div className='w-full flex flex-col gap-6 mb-8 mt-10 px-4'>
         <div className='text-center flex justify-center items-center'>
-          <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 drop-shadow-lg'>
+          <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 shadow-lg'>
             Topic: {generateTopicName()}
           </span>
         </div>
@@ -1081,7 +1081,7 @@ export default function ResultPage(props: ResultPageProps) {
           <button
             id='leaderboard'
             data-style='none'
-            className='h-12 lg:h-24  w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)]'
+            className='h-12 lg:h-24  w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)]'
             onClick={() => {
               router.push('/leaderboard');
             }}
@@ -1092,7 +1092,7 @@ export default function ResultPage(props: ResultPageProps) {
           </button>
         ) : (
           <button
-            className='h-12 lg:h-24 lg:text-2xl w-4/5 !drop-shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
+            className='h-12 lg:h-24 lg:text-2xl w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
             onClick={() => {
               router.push('/level');
             }}

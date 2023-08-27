@@ -512,7 +512,7 @@ export default function LevelPage(props: LevelPageProps) {
           ></div>
           <div></div>
         </section>
-        <section className='absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-gray rounded-t-3xl transition-colors  drop-shadow-[0_-5px_20px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_-15px_50px_rgba(0,0,0,1)] z-30'>
+        <section className='absolute bottom-0 w-full pb-8 flex flex-col bg-gray dark:bg-neon-gray rounded-t-3xl transition-colors shadow-[0_-5px_20px_rgba(0,0,0,0.3)] lg:shadow-[0_-15px_50px_rgba(0,0,0,0.3)] z-30'>
           <section className='relative w-full h-14 lg:h-24 z-10 top-0'>
             <div className='z-10 absolute left-0 w-16 h-full gradient-right dark:gradient-right-dark rounded-tl-3xl transition-colors'></div>
             <h1 className='absolute left-10 right-10 px-5 flex-grow text-center lg:py-6 py-4 text-xl lg:text-3xl text-red dark:text-neon-red whitespace-nowrap overflow-x-scroll scrollbar-hide'>
@@ -537,7 +537,7 @@ export default function LevelPage(props: LevelPageProps) {
                   isGeneratingVariations ||
                   isSuccess
                 }
-                className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out drop-shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
+                className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
                 onClick={() => {
                   setUserInput('');
                   setIsEmptyInput(true);

@@ -63,7 +63,7 @@ export default function LevelsPage(props: LevelsPageProps) {
       <div className='w-full fixed z-20 h-12 top-12 left-0 lg:top-20 px-12 py-2'>
         <InputGroup size='md'>
           <Input
-            className='w-full drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)] bg-white text-black border-gray'
+            className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
             placeholder='Search for levels...'
             value={searchTerm}
             type='text'
@@ -86,7 +86,7 @@ export default function LevelsPage(props: LevelsPageProps) {
           </InputRightElement>
         </InputGroup>
         {searchTerm && searchTerm.length > 0 && (
-          <Tag className='mt-3 drop-shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
+          <Tag className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
             Found {filteredLevels.length} topics
           </Tag>
         )}

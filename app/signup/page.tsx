@@ -122,7 +122,7 @@ const SignupPage = () => {
       />
       <section className='w-full h-full flex justify-center items-center leading-normal'>
         <div
-          className={`h-4/5 aspect-square max-w-[80vw] max-h-[80vh] rounded-3xl drop-shadow-lg bg-white dark:bg-neon-gray p-4 lg:p-16 transition-all ${
+          className={`h-4/5 aspect-square max-w-[80vw] max-h-[80vh] rounded-3xl shadow-lg bg-white dark:bg-neon-gray p-4 lg:p-16 transition-all ${
             errorMessage !== null
               ? 'border-red dark:border-neon-red border-8'
               : 'border-none'

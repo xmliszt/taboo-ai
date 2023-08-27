@@ -153,13 +153,13 @@ const ContactMe = () => {
 
             <Stack direction='row' gap={4}>
               <a
-                className='hover: opacity-70 hover:scale-105 hover:drop-shadow-2xl hover:mix-blend-plus-lighter transition-all'
+                className='hover: opacity-70 hover:scale-105 hover:shadow-2xl hover:mix-blend-plus-lighter transition-all'
                 href='https://theresanaiforthat.com/ai/taboo-ai/?ref=embed'
                 target='_blank'
                 rel='noreferrer'
               >
                 <Image
-                  className='drop-shadow-xl bg-blend-overlay'
+                  className='shadow-xl bg-blend-overlay'
                   alt="TabooAI is featured on THERE'S AN AI FOR THAT"
                   width='240'
                   height='65'
@@ -167,13 +167,13 @@ const ContactMe = () => {
                 />
               </a>
               <a
-                className='hover: opacity-70 hover:scale-105 hover:drop-shadow-2xl hover:mix-blend-plus-lighter transition-all'
+                className='hover: opacity-70 hover:scale-105 hover:shadow-2xl hover:mix-blend-plus-lighter transition-all'
                 href='https://www.producthunt.com/products/taboo-ai?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
                 target='_blank'
                 rel='noreferrer'
               >
                 <Image
-                  className='drop-shadow-xl bg-blend-overlay'
+                  className='shadow-xl bg-blend-overlay'
                   alt='Taboo&#0046;AI - Taboo&#0046;AI&#0032;&#0045;&#0032;The&#0032;Ultimate&#0032;Wordplay&#0032;Challenge&#0032;against&#0032;AI | Product Hunt'
                   width='240'
                   height='50'

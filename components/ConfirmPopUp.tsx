@@ -40,9 +40,9 @@ const ConfirmPopUp = (props: ConfirmPopUpProps) => {
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className='w-4/5 max-w-[400px] !aspect-square bg-white dark:bg-neon-black rounded-2xl p-4 text-black dark:text-neon-white drop-shadow-2xl flex flex-col gap-4'
+            className='w-4/5 max-w-[400px] !aspect-square bg-white dark:bg-neon-black rounded-2xl p-4 text-black dark:text-neon-white shadow-2xl flex flex-col gap-4'
           >
-            <section className='h-12 lg:h-16 w-full rounded-2xl bg-yellow p-2 text-black drop-shadow-lg text-xl text-center'>
+            <section className='h-12 lg:h-16 w-full rounded-2xl bg-yellow p-2 text-black shadow-lg text-xl text-center'>
               {props.title}
             </section>
             <section className='flex-grow w-full overflow-y-scroll p-2 scrollbar-hide text-2xl'>

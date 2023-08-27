@@ -45,13 +45,13 @@ export function LevelCard({ level }: LevelCardProps) {
   return (
     <Card
       onClick={goToLevel}
-      className={`w-[200px] h-[250px] transition-all hover:scale-105 ease-in-out cursor-pointer aspect-square rounded-xl drop-shadow-lg shadow-lg bg-white ${
+      className={`w-[200px] h-[250px] transition-all hover:scale-105 ease-in-out cursor-pointer aspect-square rounded-xl shadow-lg shadow-lg bg-white ${
         level ? '' : 'unicorn-color'
       }`}
     >
       <CardBody p='2' className='relative'>
         <div
-          className={`text-xl leading-tight font-extrabold rounded-lg p-2 drop-shadow-md ${
+          className={`text-xl leading-tight font-extrabold rounded-lg p-2 shadow-md ${
             level ? 'bg-neon-white text-black' : 'bg-black-darker text-white'
           }`}
         >

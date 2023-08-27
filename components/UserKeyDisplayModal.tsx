@@ -47,7 +47,7 @@ export default function UserKeyDisplayModal(props: UserKeyDisplayModalProps) {
             isCopied
               ? 'bg-green dark:bg-neon-green'
               : 'bg-white dark:bg-neon-red '
-          } transition-colors text-black p-2 rounded-lg drop-shadow-lg`}
+          } transition-colors text-black p-2 rounded-lg shadow-lg`}
         >
           <p className='flex-grow p-2 rounded-md shadow-md bg-black text-white dark:bg-neon-black dark:text-neon-white'>
             {props.userKey}

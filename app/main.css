@@ -168,7 +168,7 @@ b {
 }
 
 button:not(.Toastify__close-button, [data-style='none']) {
-  @apply transition-all drop-shadow-lg border-2 border-white bg-white text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem];
+  @apply transition-all shadow-lg border-2 border-white bg-white text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem];
 }
 
 input,

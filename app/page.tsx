@@ -69,7 +69,7 @@ export default function HomePage(props: HomePageProps) {
           href='https://discord.gg/dgqs29CHC2'
           newTab={true}
           accentColorClass='bg-purple dark:bg-neon-purple'
-          dropShadowClass='hover:drop-shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
+          dropShadowClass='hover:shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
         />
       </div>
       <Footer />

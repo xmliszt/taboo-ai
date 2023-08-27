@@ -131,7 +131,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
             data-style='none'
             onClick={onPrevDate}
             aria-label='Go to previous day'
-            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center`}
+            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 shadow-lg flex flex-row gap-1 justify-center items-center`}
           >
             <FaChevronLeft />
           </button>
@@ -143,7 +143,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
             data-style='none'
             onClick={onNextDate}
             aria-label='Go to next day'
-            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center`}
+            className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full aspect-square py-1 px-3 shadow-lg flex flex-row gap-1 justify-center items-center`}
           >
             <FaChevronRight />
           </button>
@@ -174,7 +174,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
           data-style='none'
           onClick={onPrevDate}
           aria-label='Go to previous day'
-          className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center hover:opacity-50 transition-all ease-in-out overflow-x-hidden`}
+          className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full py-1 px-3 shadow-lg flex flex-row gap-1 justify-center items-center hover:opacity-50 transition-all ease-in-out overflow-x-hidden`}
         >
           <FaChevronLeft />
           <span>Prev</span>
@@ -199,7 +199,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
           data-style='none'
           onClick={onNextDate}
           aria-label='Go to next day'
-          className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full py-1 px-3 drop-shadow-lg flex flex-row gap-1 justify-center items-center hover:opacity-50 transition-all ease-in-out overflow-x-hidden`}
+          className={`bg-black dark:bg-neon-white text-white dark:text-neon-black rounded-full py-1 px-3 shadow-lg flex flex-row gap-1 justify-center items-center hover:opacity-50 transition-all ease-in-out overflow-x-hidden`}
         >
           <span>Next</span>
           <FaChevronRight />
@@ -246,13 +246,13 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
                   <div className='self-center relative h-full'>
                     <div className='w-4'></div>
                     {data.rank === 1 ? (
-                      <GiTrophy className='absolute bottom-1 -left-6 text-6xl text-yellow dark:text-neon-yellow drop-shadow-lg' />
+                      <GiTrophy className='absolute bottom-1 -left-6 text-6xl text-yellow dark:text-neon-yellow shadow-lg' />
                     ) : data.rank === 2 ? (
-                      <GiTrophy className='absolute bottom-1 -left-5 text-5xl text-neon-silver drop-shadow-lg' />
+                      <GiTrophy className='absolute bottom-1 -left-5 text-5xl text-neon-silver shadow-lg' />
                     ) : data.rank === 3 ? (
-                      <GiTrophy className='absolute bottom-1 -left-5 text-4xl text-neon-bronze drop-shadow-lg' />
+                      <GiTrophy className='absolute bottom-1 -left-5 text-4xl text-neon-bronze shadow-lg' />
                     ) : (
-                      <GiLaurelCrown className='absolute bottom-2 -left-5 text-4xl text-gray dark:text-neon-white-light drop-shadow-lg' />
+                      <GiLaurelCrown className='absolute bottom-2 -left-5 text-4xl text-gray dark:text-neon-white-light shadow-lg' />
                     )}
                   </div>
                   <div
@@ -279,7 +279,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
                       openDetails(data);
                     }}
                     aria-label={`See the detail score of ${data.nickname}`}
-                    className='h-12 p-4 flex justify-center items-center rounded-full aspect-square bg-white-faded text-black border-2 border-yellow dark:border-neon-yellow drop-shadow-lg dark:bg-neon-gray dark:text-neon-yellow text-xl'
+                    className='h-12 p-4 flex justify-center items-center rounded-full aspect-square bg-white-faded text-black border-2 border-yellow dark:border-neon-yellow shadow-lg dark:bg-neon-gray dark:text-neon-yellow text-xl'
                   >
                     <MdLeaderboard />
                   </button> */}
@@ -300,7 +300,7 @@ const LeaderboardPage = (props: LeaderboardPageProps) => {
               <Link
                 href='/daily-challenge'
                 data-style='none'
-                className='h-12 font-bold rounded-full bg-yellow dark:bg-neon-yellow text-black dark:text-neon-black text-2xl px-4 py-2 drop-shadow-lg'
+                className='h-12 font-bold rounded-full bg-yellow dark:bg-neon-yellow text-black dark:text-neon-black text-2xl px-4 py-2 shadow-lg'
               >
                 Try Today&apos;s Challenge
               </Link>
