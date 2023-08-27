@@ -77,7 +77,7 @@ const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
 const VALID_WORD_REGEX = /^(\w+\s)*\w+$/;
 const INVALID_WORD_ERROR =
-  'Only single space is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry.';
+  'Only single space is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry. Cannot be empty.';
 
 const AddLevelPage = () => {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
@@ -420,7 +420,7 @@ const AddLevelPage = () => {
       );
     } else if (targetWords.some((w) => !validateInputEntry(w).isValid)) {
       setTargetWordsErrorMessage(
-        'Some target words input are not valid. Please change them! ' +
+        'Some target words input are not valid or empty. Please change them! ' +
           INVALID_WORD_ERROR
       );
     } else {
