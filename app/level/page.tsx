@@ -15,8 +15,8 @@ import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
 import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
-import { Highlight } from '../../types/chat.interface';
-import IVariation from '../../types/variation.interface';
+import { Highlight } from '../../lib/types/highlight.interface';
+import IVariation from '../../lib/types/variation.interface';
 import {
   formatStringForDisplay,
   getMockResponse,
@@ -24,7 +24,7 @@ import {
 } from '../../lib/utilities';
 import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../../lib/hooks/useToast';
 
 interface LevelPageProps {}
 

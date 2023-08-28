@@ -1,13 +1,11 @@
 import _ from 'lodash';
 import crypto from 'crypto';
-import IVariation from '../types/variation.interface';
-import { Highlight, IHighlight } from '../types/chat.interface';
-import { IDisplayScore, IScore } from '../types/score.interface';
-import ILevel from '../types/level.interface';
-import IGame from '../types/game.interface';
+import IVariation from './types/variation.interface';
+import { Highlight, IHighlight } from './types/highlight.interface';
+import { IDisplayScore, IScore } from './types/score.interface';
+import ILevel from './types/level.interface';
+import IGame from './types/game.interface';
 import { CONSTANTS } from './constants';
-import IDailyLevel from '../types/dailyLevel.interface';
-import moment from 'moment';
 import { NextApiRequest } from 'next';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 
@@ -237,21 +235,6 @@ export const buildScoresForDisplay = (
     responseHighlights: highlights.map(
       (h): Highlight => ({ start: h.start, end: h.end })
     ),
-  };
-};
-
-export const buildLevelForDisplay = (level: IDailyLevel): ILevel => {
-  const dateObject = moment(level.created_date, 'DD-MM-YYYY');
-  return {
-    name: level.name,
-    difficulty: level.difficulty,
-    author: 'TabooAI',
-    isDaily: true,
-    words: level.words,
-    createdAt: dateObject.valueOf(),
-    dailyLevelName: `Daily Challenge: ${dateObject.format('ddd, MMM Do YYYY')}`,
-    dailyLevelTopic: level.topic,
-    isVerified: true,
   };
 };
 

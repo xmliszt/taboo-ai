@@ -7,13 +7,13 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import moment from 'moment';
 import { getAllGamesByLevel } from '../../lib/services/frontend/gameService';
 import { getDailyLevel } from '../../lib/services/frontend/levelService';
-import IGame from '../../types/game.interface';
+import IGame from '../../lib/types/game.interface';
 import { GiTrophy, GiLaurelCrown } from 'react-icons/gi';
 import { MdLeaderboard } from 'react-icons/md';
 import { getUser } from '../../lib/cache';
 import Link from 'next/link';
-import useToast from '../../lib/hook/useToast';
-import IDailyLevel from '../../types/dailyLevel.interface';
+import useToast from '../../lib/hooks/useToast';
+import IDailyLevel from '../../lib/types/dailyLevel.interface';
 
 interface LeaderboardPageProps {}
 

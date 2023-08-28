@@ -1,4 +1,4 @@
-import { IScore } from '../../../types/score.interface';
+import { IScore } from '../../types/score.interface';
 
 interface ErrorResponse {
   error: string;

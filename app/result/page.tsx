@@ -2,8 +2,8 @@
 
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef } from 'react';
-import ILevel from '../../types/level.interface';
-import { IAIScore, IDisplayScore } from '../../types/score.interface';
+import ILevel from '../../lib/types/level.interface';
+import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
 import {
   getScoresCache,
   getLevelCache,
@@ -18,7 +18,7 @@ import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Highlight } from '../../types/chat.interface';
+import { Highlight } from '../../lib/types/highlight.interface';
 import {
   buildLevelForDisplay,
   buildScoresForDisplay,
@@ -37,11 +37,11 @@ import { CONSTANTS } from '../../lib/constants';
 import { CgSmile } from 'react-icons/cg';
 import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
 import { getHighlights } from '../../lib/services/frontend/highlightService';
-import IGame from '../../types/game.interface';
-import IUser from '../../types/user.interface';
+import IGame from '../../lib/types/game.interface';
+import IUser from '../../lib/types/user.interface';
 import moment from 'moment';
 import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../../lib/hooks/useToast';
 import { getAIJudgeScore } from '../../lib/services/frontend/aiService';
 import { BsQuestionCircle } from 'react-icons/bs';
 import Image from 'next/image';

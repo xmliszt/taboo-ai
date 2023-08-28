@@ -9,7 +9,7 @@ import {
   selectUserByRecoveryKey,
 } from '../../database/userRepository';
 import { generateHashedString } from '../../utilities';
-import type IUser from '../../../types/user.interface';
+import type IUser from '../../types/user.interface';
 
 const createUser = async (
   nickname: string,

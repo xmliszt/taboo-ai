@@ -4,7 +4,7 @@ import {
   createUser,
   getUserByNickname,
 } from '../../../lib/services/backend/userService';
-import type IUser from '../../../types/user.interface';
+import type IUser from '../../../lib/types/user.interface';
 
 const createUserHandler = async (
   req: NextApiRequest,

@@ -1,11 +1,11 @@
-import ILevel from '../../../types/level.interface';
+import ILevel from '../../types/level.interface';
 import _ from 'lodash';
 import { CONSTANTS } from '../../constants';
-import IVariation from '../../../types/variation.interface';
+import IVariation from '../../types/variation.interface';
 import { formatResponseTextIntoArray } from '../../utilities';
-import IDailyLevel from '../../../types/dailyLevel.interface';
+import IDailyLevel from '../../types/dailyLevel.interface';
 import moment from 'moment';
-import { IAIScore } from '../../../types/score.interface';
+import { IAIScore } from '../../types/score.interface';
 
 export async function generateDailyLevel(
   date: moment.Moment,

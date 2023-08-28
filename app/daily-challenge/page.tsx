@@ -23,8 +23,8 @@ import {
   getUser,
   setTipsAck,
 } from '../../lib/cache';
-import { Highlight } from '../../types/chat.interface';
-import IVariation from '../../types/variation.interface';
+import { Highlight } from '../../lib/types/highlight.interface';
+import IVariation from '../../lib/types/variation.interface';
 import {
   buildLevelForDisplay,
   delayRouterPush,
@@ -37,10 +37,10 @@ import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../../lib/hooks/useToast';
 import { getGameByPlayerNicknameFilterByDate } from '../../lib/services/frontend/gameService';
 import moment from 'moment';
-import ILevel from '../../types/level.interface';
+import ILevel from '../../lib/types/level.interface';
 import { getDailyLevel } from '../../lib/services/frontend/levelService';
 import LoadingMask from '../../components/LoadingMask';
 

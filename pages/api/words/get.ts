@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 import { getFullWordList } from '../../../lib/services/backend/wordService';
-import IWord from '../../../types/word.interface';
+import IWord from '../../../lib/types/word.interface';
 
 interface WordListResponse {
   words: IWord[];

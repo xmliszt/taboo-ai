@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import IVariation from '../../../types/variation.interface';
-import Word from '../../../types/word.interface';
+import IVariation from '../../types/variation.interface';
+import Word from '../../types/word.interface';
 
 interface ErrorResponse {
   error: string;

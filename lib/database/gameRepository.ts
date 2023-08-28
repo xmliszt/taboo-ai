@@ -1,4 +1,4 @@
-import IGame from '../../types/game.interface';
+import IGame from '../types/game.interface';
 import { supabase } from '../supabaseClient';
 import { generateHashedString, getFormattedToday } from '../utilities';
 

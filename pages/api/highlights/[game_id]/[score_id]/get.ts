@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../../../../lib/middleware/middlewareWrapper';
 import { getHighlightsByIDs } from '../../../../../lib/services/backend/highlightService';
-import { IHighlight } from '../../../../../types/chat.interface';
+import { IHighlight } from '../../../../../lib/types/highlight.interface';
 
 interface GetHighlightsByIDsResponse {
   highlights: IHighlight[];

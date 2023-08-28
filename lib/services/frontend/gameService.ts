@@ -1,7 +1,7 @@
 import moment from 'moment';
-import IGame from '../../../types/game.interface';
-import ILevel from '../../../types/level.interface';
-import { IDisplayScore } from '../../../types/score.interface';
+import IGame from '../../types/game.interface';
+import ILevel from '../../types/level.interface';
+import { IDisplayScore } from '../../types/score.interface';
 
 interface ErrorResponse {
   error: string;

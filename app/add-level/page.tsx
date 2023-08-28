@@ -57,27 +57,26 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { BsInfoSquareFill } from 'react-icons/bs';
 import { FiArrowUp, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../../lib/hooks/useToast';
 import { sendEmail } from '../../lib/services/frontend/emailService';
-import {
-  createLevel,
-  getLevel,
-} from '../../lib/services/frontend/levelService';
 import {
   getVariations,
   saveVariations,
   wordExists,
 } from '../../lib/services/frontend/wordService';
 import { emailIsValid } from '../../lib/utilities';
-import ILevel from '../../types/level.interface';
-import IVariation from '../../types/variation.interface';
+import ILevel from '../../lib/types/level.interface';
+import IVariation from '../../lib/types/variation.interface';
+import { DateUtils } from '@/lib/utils/dateUtils';
+import moment from 'moment';
+import { addLevel } from '@/lib/services/levelService';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
-const VALID_WORD_REGEX = /^(\w+\s)*\w+$/;
+const VALID_WORD_REGEX = /^(\w+[\s'])*\w+$/;
 const INVALID_WORD_ERROR =
-  'Only single space is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry. Cannot be empty.';
+  'Only single space or a single quotation mark is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry. Cannot be empty.';
 
 const AddLevelPage = () => {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
@@ -104,7 +103,6 @@ const AddLevelPage = () => {
   const [isTopicNameValid, setIsTopicNameValid] = useState<
     boolean | undefined
   >();
-  const [isCheckingTopicName, setIsCheckingTopicName] = useState(false);
   const [nickname, setNickname] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [isAllValid, setIsAllValid] = useState(false);
@@ -176,12 +174,8 @@ const AddLevelPage = () => {
     setIsTopicNameValid(undefined);
     setTopicName(changeValue);
     const result = validateInputEntry(changeValue);
-    if (!result.isValid) {
-      setTopicNameErrorMessage(result.message);
-      setIsTopicNameValid(false);
-    } else {
-      setTopicNameErrorMessage('');
-    }
+    setIsTopicNameValid(result.isValid);
+    setTopicNameErrorMessage(result.isValid ? '' : result.message);
   };
 
   const onNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -240,25 +234,6 @@ const AddLevelPage = () => {
       setEmailErrorMessage('Invalid email address');
     } else {
       setEmailErrorMessage('');
-    }
-  };
-
-  const onTopicOutofFocus = async () => {
-    if (!validateInputEntry(topicName).isValid) return;
-    setIsCheckingTopicName(true);
-    try {
-      const level = await getLevel(topicName);
-      if (level !== null) {
-        setIsTopicNameValid(false);
-        setTopicNameErrorMessage(
-          'This topic name has already existed. Please change to another topic name.'
-        );
-      } else {
-        setIsTopicNameValid(true);
-        setTopicNameErrorMessage('');
-      }
-    } finally {
-      setIsCheckingTopicName(false);
     }
   };
 
@@ -485,17 +460,14 @@ const AddLevelPage = () => {
 
   const submitNewTopic = async () => {
     setisCreatingLevel(true);
-    const level: ILevel = {
-      name: topicName,
-      difficulty: Number(difficultyLevel),
-      author: nickname,
-      new: true,
-      words: targetWords.map((w) => _.lowerCase(w)),
-      createdAt: Date.now(),
-      isVerified: false,
-    };
     try {
-      await createLevel(level);
+      await addLevel({
+        name: topicName,
+        difficulty: Number(difficultyLevel),
+        words: targetWords.map((w) => _.lowerCase(w)),
+        author: nickname,
+        isNew: true,
+      });
       if (!shouldUseAIForTabooWords)
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
@@ -671,12 +643,9 @@ const AddLevelPage = () => {
                     placeholder='Name for your topic...'
                     pr='40px'
                     onChange={onTopicNameChange}
-                    onBlur={onTopicOutofFocus}
                   />
                   <InputRightElement width='60px' height='40px'>
-                    {isCheckingTopicName ? (
-                      <Spinner />
-                    ) : isTopicNameValid === true ? (
+                    {isTopicNameValid === true ? (
                       <FiCheck className='text-neon-green' />
                     ) : (
                       <></>

@@ -7,7 +7,7 @@ import {
   retrieveGamesByNickname,
   retrieveGamesByPlayerID,
 } from '../../../lib/services/backend/gameService';
-import type IGame from '../../../types/game.interface';
+import type IGame from '../../../lib/types/game.interface';
 
 interface GetAllGameResponse {
   games: IGame[];

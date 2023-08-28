@@ -1,4 +1,4 @@
-import IUser from '../../../types/user.interface';
+import IUser from '../../types/user.interface';
 
 interface ErrorResponse {
   error: string;

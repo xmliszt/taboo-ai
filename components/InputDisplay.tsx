@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash';
 import { Author } from '../lib/enums/Author';
-import { Highlight } from '../types/chat.interface';
+import { Highlight } from '../lib/types/highlight.interface';
 import { sanitizeHighlights } from '../lib/utilities';
 
 interface ResponseDisplayProps {

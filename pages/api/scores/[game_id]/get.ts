@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../../../lib/middleware/middlewareWrapper';
 import { getScoresByGameID } from '../../../../lib/services/backend/scoreService';
-import { IScore } from '../../../../types/score.interface';
+import { IScore } from '../../../../lib/types/score.interface';
 
 interface GetScoresByGameIDHandler {
   scores: IScore[];

@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../../lib/middleware/middlewareWrapper';
 import { saveGame } from '../../../lib/services/backend/gameService';
-import IGame from '../../../types/game.interface';
-import type ILevel from '../../../types/level.interface';
-import type { IDisplayScore } from '../../../types/score.interface';
+import IGame from '../../../lib/types/game.interface';
+import type ILevel from '../../../lib/types/level.interface';
+import type { IDisplayScore } from '../../../lib/types/score.interface';
 
 interface SaveGameResponse {
   data: IGame;

@@ -6,7 +6,7 @@ import {
   retrieveBestGamesByNickname,
   retrieveBestGamesByNicknameAndLevel,
 } from '../../../../lib/services/backend/gameService';
-import type IGame from '../../../../types/game.interface';
+import type IGame from '../../../../lib/types/game.interface';
 
 interface GetAllBestGameResponse {
   games: IGame[];

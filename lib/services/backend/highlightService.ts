@@ -1,4 +1,4 @@
-import type { IHighlight } from '../../../types/chat.interface';
+import type { IHighlight } from '../../types/highlight.interface';
 import { selectHighlightsByIDs } from '../../database/highlightRepository';
 
 const getHighlightsByIDs = async (

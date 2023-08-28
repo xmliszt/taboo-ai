@@ -1,5 +1,5 @@
-import { IDisplayScore } from '../../../types/score.interface';
-import ILevel from '../../../types/level.interface';
+import { IDisplayScore } from '../../types/score.interface';
+import ILevel from '../../types/level.interface';
 import {
   getBestGamesByNickname,
   insertNewGame,
@@ -13,7 +13,7 @@ import {
 } from '../../database/gameRepository';
 import { insertHighlight } from '../../database/highlightRepository';
 import { insertNewScore } from '../../database/scoreRepository';
-import IGame from '../../../types/game.interface';
+import IGame from '../../types/game.interface';
 
 const saveGame = async (
   level: ILevel,

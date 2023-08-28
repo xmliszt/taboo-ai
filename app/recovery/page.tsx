@@ -13,7 +13,7 @@ import {
   updateUserLastLoginTime,
 } from '../../lib/services/frontend/userService';
 import { delayRouterPush } from '../../lib/utilities';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../../lib/hooks/useToast';
 
 const RecoveryPage = () => {
   const [hasScores, setHasScores] = useState<boolean | null>(null);

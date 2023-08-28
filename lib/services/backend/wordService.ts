@@ -1,5 +1,5 @@
-import IVariation from '../../../types/variation.interface';
-import IWord from '../../../types/word.interface';
+import IVariation from '../../types/variation.interface';
+import IWord from '../../types/word.interface';
 import {
   getAllWords,
   getWords,

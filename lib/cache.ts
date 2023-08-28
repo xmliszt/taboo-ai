@@ -1,8 +1,8 @@
-import { IDisplayScore } from '../types/score.interface';
-import ILevel from '../types/level.interface';
-import IUser from '../types/user.interface';
+import { IDisplayScore } from './types/score.interface';
+import ILevel from './types/level.interface';
+import IUser from './types/user.interface';
 import { HASH } from './hash';
-import IGame from '../types/game.interface';
+import IGame from './types/game.interface';
 
 //ANCHOR - Level
 export function cacheLevel(level: ILevel) {

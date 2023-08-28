@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { maskPlayerID } from '../../../../lib/utilities';
 import withMiddleware from '../../../../lib/middleware/middlewareWrapper';
 import { retrieveGameById } from '../../../../lib/services/backend/gameService';
-import IGame from '../../../../types/game.interface';
+import IGame from '../../../../lib/types/game.interface';
 
 interface GetGameByIDResponse {
   game: IGame | null;

@@ -12,9 +12,9 @@ import {
 } from '../lib/cache';
 import { usePathname } from 'next/navigation';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import useToast from '../lib/hook/useToast';
+import useToast from '../lib/hooks/useToast';
 import { useRouter } from 'next/navigation';
-import IUser from '../types/user.interface';
+import IUser from '../lib/types/user.interface';
 import { useEffect, useState } from 'react';
 import {
   addDeviceToUser,

@@ -1,13 +1,6 @@
 'use client';
 
-import React, {
-  ChangeEvent,
-  useDeferredValue,
-  useEffect,
-  useState,
-} from 'react';
-import { getLevels } from '../../lib/services/frontend/levelService';
-import ILevel from '../../types/level.interface';
+import React, { useState } from 'react';
 import HotBadge from '../../components/Badges/HotBadge';
 import LoadingMask from '../../components/LoadingMask';
 import {
@@ -20,46 +13,16 @@ import {
 } from '@chakra-ui/react';
 import { FiX } from 'react-icons/fi';
 import { LevelCard } from '../../components/LevelCard';
-import _ from 'lodash';
+import { useLevels } from '@/lib/hooks/useLevels';
 
-interface LevelsPageProps {}
-
-export default function LevelsPage(props: LevelsPageProps) {
-  const [levels, setLevels] = useState<ILevel[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export default function LevelsPage() {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const deferredSearchTerm = useDeferredValue(searchTerm);
-  const [filteredLevels, setFilteredLevels] = useState<ILevel[]>([]);
-
-  useEffect(() => {
-    const filtered = levels
-      .filter(
-        (level) =>
-          _.lowerCase(level.name).includes(_.lowerCase(deferredSearchTerm)) ||
-          _.lowerCase(level.author).includes(_.lowerCase(deferredSearchTerm))
-      )
-      .filter((level) => level.isVerified);
-    setFilteredLevels(filtered);
-  }, [levels, deferredSearchTerm]);
-
-  const fetchLevels = async () => {
-    setIsLoading(true);
-    try {
-      let levels = await getLevels();
-      levels = levels.filter((l) => l.isVerified);
-      setLevels(levels);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { filteredLevels, setFilterKeyword, isLoading } = useLevels();
 
   const clearSearch = () => {
     setSearchTerm('');
+    setFilterKeyword('');
   };
-
-  useEffect(() => {
-    fetchLevels();
-  }, []);
 
   return (
     <section className='w-full h-full px-10'>
@@ -73,6 +36,7 @@ export default function LevelsPage(props: LevelsPageProps) {
             type='text'
             onChange={(e) => {
               setSearchTerm(e.target.value);
+              setFilterKeyword(e.target.value);
             }}
           />
           <InputRightElement

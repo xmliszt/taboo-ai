@@ -9,7 +9,7 @@ import { createUser } from '../../lib/services/frontend/userService';
 import { useRouter } from 'next/navigation';
 import UserKeyDisplayModal from '../../components/UserKeyDisplayModal';
 import { delayRouterPush } from '../../lib/utilities';
-import useToast from '../../lib/hook/useToast';
+import useToast from '../../lib/hooks/useToast';
 
 const SignupPage = () => {
   const [nickname, setNickname] = useState<string>('');

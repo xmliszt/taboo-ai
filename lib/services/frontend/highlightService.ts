@@ -1,4 +1,4 @@
-import { IHighlight } from '../../../types/chat.interface';
+import { IHighlight } from '../../types/highlight.interface';
 
 interface ErrorResponse {
   error: string;

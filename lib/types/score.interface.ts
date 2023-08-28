@@ -1,4 +1,4 @@
-import { Highlight } from './chat.interface';
+import { Highlight } from './highlight.interface';
 
 // {id} {word} {your question} {ai response} {completion time in seconds} {the higlights for word matches}
 export interface IDisplayScore {
