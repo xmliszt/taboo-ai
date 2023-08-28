@@ -1,6 +1,11 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useDeferredValue,
+  useEffect,
+  useState,
+} from 'react';
 import { getLevels } from '../../lib/services/frontend/levelService';
 import ILevel from '../../types/level.interface';
 import HotBadge from '../../components/Badges/HotBadge';
@@ -22,19 +27,20 @@ interface LevelsPageProps {}
 export default function LevelsPage(props: LevelsPageProps) {
   const [levels, setLevels] = useState<ILevel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string | undefined>();
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [filteredLevels, setFilteredLevels] = useState<ILevel[]>([]);
 
   useEffect(() => {
     const filtered = levels
       .filter(
         (level) =>
-          _.lowerCase(level.name).includes(_.lowerCase(searchTerm)) ||
-          _.lowerCase(level.author).includes(_.lowerCase(searchTerm))
+          _.lowerCase(level.name).includes(_.lowerCase(deferredSearchTerm)) ||
+          _.lowerCase(level.author).includes(_.lowerCase(deferredSearchTerm))
       )
       .filter((level) => level.isVerified);
     setFilteredLevels(filtered);
-  }, [levels, searchTerm]);
+  }, [levels, deferredSearchTerm]);
 
   const fetchLevels = async () => {
     setIsLoading(true);
@@ -45,11 +51,6 @@ export default function LevelsPage(props: LevelsPageProps) {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setSearchTerm(e.target.value);
   };
 
   const clearSearch = () => {
@@ -68,8 +69,11 @@ export default function LevelsPage(props: LevelsPageProps) {
           <Input
             className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
             placeholder='Search by topic name or author...'
+            value={searchTerm}
             type='text'
-            onChange={onSearchChange}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
           />
           <InputRightElement
             width='60px'
