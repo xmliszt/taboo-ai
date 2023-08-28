@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FiX } from 'react-icons/fi';
 import { LevelCard } from '../../components/LevelCard';
+import _ from 'lodash';
 
 interface LevelsPageProps {}
 
@@ -25,11 +26,13 @@ export default function LevelsPage(props: LevelsPageProps) {
   const [filteredLevels, setFilteredLevels] = useState<ILevel[]>([]);
 
   useEffect(() => {
-    const filtered = levels.filter((level) =>
-      level.name
-        .toLowerCase()
-        .includes(searchTerm ? searchTerm.toLowerCase() : '')
-    );
+    const filtered = levels
+      .filter(
+        (level) =>
+          _.lowerCase(level.name).includes(_.lowerCase(searchTerm)) ||
+          _.lowerCase(level.author).includes(_.lowerCase(searchTerm))
+      )
+      .filter((level) => level.isVerified);
     setFilteredLevels(filtered);
   }, [levels, searchTerm]);
 
@@ -64,8 +67,7 @@ export default function LevelsPage(props: LevelsPageProps) {
         <InputGroup size='md'>
           <Input
             className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
-            placeholder='Search for levels...'
-            value={searchTerm}
+            placeholder='Search by topic name or author...'
             type='text'
             onChange={onSearchChange}
           />
