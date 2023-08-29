@@ -17,7 +17,7 @@ export const fetchLevelByName = async (name: string) => {
   const { data, error } = await supabase
     .from('level')
     .select()
-    .ilike('name', `%${_.trim(name).toLowerCase()}%`);
+    .ilike('name', `${_.trim(name).toLowerCase()}`);
   if (error) {
     console.error(error);
     throw Error(error.message);
