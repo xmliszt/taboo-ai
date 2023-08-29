@@ -39,6 +39,7 @@ export default function HomePage(props: HomePageProps) {
             href='/levels'
             data-testid='link-start'
             data-style='none'
+            aria-label='Click to choose a topic to play'
           >
             <div className='btn-menu'>Choose Topics</div>
           </Link>
@@ -47,8 +48,9 @@ export default function HomePage(props: HomePageProps) {
             href='/add-level'
             data-testid='link-edit'
             data-style='none'
+            aria-label='Click to contribute new topic'
           >
-            <div className='btn-menu'>Add Custom Topics</div>
+            <div className='btn-menu'>Contribute New Topics</div>
           </Link>
         </section>
         {environment !== 'production' && <DevToggle />}

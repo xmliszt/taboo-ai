@@ -53,7 +53,7 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import _ from 'lodash';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { BsInfoSquareFill } from 'react-icons/bs';
 import { FiArrowUp, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';

@@ -2,14 +2,14 @@ import { Metadata } from 'next';
 import InfoButton from '../../components/InfoButton';
 
 export const metadata: Metadata = {
-  title: 'Add Custom Topics',
+  title: 'Contribute New Topics',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className='flex justify-center w-full h-full'>
       <h1 className='fixed top-0 h-20 py-4 text-center z-50'>
-        Add Custom Topics
+        Contribute New Topics
       </h1>
       <div className='w-full px-2 flex flex-row justify-center items-center gap-2 fixed top-14 lg:top-20 h-20 text-center z-50 text-sm lg:text-lg bg-black gradient-blur-mask-down'>
         <div className='leading-4 backdrop-blur-lg'>
