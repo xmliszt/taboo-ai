@@ -4,9 +4,10 @@
 
 ## How to play?
 
-![Taboo AI](/public/images/Artboard%201.png)
-![Taboo AI](/public/images/Artboard%202.png)
-![Taboo AI](/public/images/Artboard%203.png)
+![Taboo AI](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Artboard-1.png?raw=true)
+![Taboo AI](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Artboard-2.png?raw=true)
+![Taboo AI](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Artboard-3.png?raw=true)
+![Taboo AI](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Artboard-4.png?raw=true)
 
 ## Pre-requisites
 
