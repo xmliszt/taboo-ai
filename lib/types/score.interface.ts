@@ -1,4 +1,4 @@
-import { Highlight } from './highlight.interface';
+import { IHighlight } from './highlight.interface';
 
 // {id} {word} {your question} {ai response} {completion time in seconds} {the higlights for word matches}
 export interface IDisplayScore {
@@ -10,18 +10,7 @@ export interface IDisplayScore {
   completion: number;
   ai_score?: number;
   ai_explanation?: string;
-  responseHighlights: Highlight[];
-}
-
-export interface IScore {
-  game_id: string;
-  score_id: number;
-  target: string;
-  question: string;
-  response: string;
-  ai_score: number;
-  ai_explanation: string;
-  completion_duration: number;
+  responseHighlights: IHighlight[];
 }
 
 export interface IAIScore {

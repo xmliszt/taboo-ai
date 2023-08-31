@@ -1,8 +1,6 @@
 import { IDisplayScore } from './types/score.interface';
 import ILevel from './types/level.interface';
-import IUser from './types/user.interface';
 import { HASH } from './hash';
-import IGame from './types/game.interface';
 
 //ANCHOR - Level
 export function cacheLevel(level: ILevel) {
@@ -39,20 +37,6 @@ export function clearScores() {
   localStorage.removeItem(HASH.scores);
 }
 
-//ANCHOR - User data storage
-export function getUser(): IUser | null {
-  const userString = localStorage.getItem(HASH.user);
-  return userString === null ? null : JSON.parse(userString);
-}
-
-export function setUser(user: IUser) {
-  localStorage.setItem(HASH.user, JSON.stringify(user));
-}
-
-export function clearUser() {
-  localStorage.removeItem(HASH.user);
-}
-
 //ANCHOR - Feature pop up
 export function getFeaturePopupString(): string | null {
   return localStorage.getItem(HASH.hasReadFeaturePopup);
@@ -69,18 +53,4 @@ export function getTipsAck(): boolean {
 
 export function setTipsAck(ack: boolean) {
   localStorage.setItem(HASH.hasReadTips, JSON.stringify(ack));
-}
-
-//ANCHOR - Submitted Game
-export function getCachedGame(): IGame | null {
-  const gameString = localStorage.getItem(HASH.game);
-  return gameString ? JSON.parse(gameString) : null;
-}
-
-export function setCachedGame(game: IGame) {
-  localStorage.setItem(HASH.game, JSON.stringify(game));
-}
-
-export function clearCachedGame() {
-  localStorage.removeItem(HASH.game);
 }

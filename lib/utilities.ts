@@ -1,13 +1,10 @@
 import _ from 'lodash';
 import crypto from 'crypto';
-import IVariation from './types/variation.interface';
-import { Highlight, IHighlight } from './types/highlight.interface';
-import { IDisplayScore, IScore } from './types/score.interface';
-import ILevel from './types/level.interface';
-import IGame from './types/game.interface';
-import { CONSTANTS } from './constants';
+import { IHighlight } from './types/highlight.interface';
+import { IDisplayScore } from './types/score.interface';
 import { NextApiRequest } from 'next';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
+import IWord from './types/word.interface';
 
 interface DelayRouterPushProps {
   delay?: number;
@@ -73,8 +70,8 @@ export function getFormattedToday(): string {
  * that has the larget end.
  * @param highlights The array of Highlight object
  */
-export const sanitizeHighlights = (highlights: Highlight[]): Highlight[] => {
-  const highlightMap: { [key: number]: Highlight } = {};
+export const sanitizeHighlights = (highlights: IHighlight[]): IHighlight[] => {
+  const highlightMap: { [key: number]: IHighlight } = {};
   for (const highlight of highlights) {
     const start = highlight.start;
     if (start in highlightMap) {
@@ -87,7 +84,7 @@ export const sanitizeHighlights = (highlights: Highlight[]): Highlight[] => {
   }
   const highlightsArray = Object.values(highlightMap);
   highlightsArray.sort((a, b) => a.start - b.start);
-  const results: Highlight[] = [];
+  const results: IHighlight[] = [];
   let prevEnd = 0;
   let idx = 0;
   for (const highlight of highlightsArray) {
@@ -175,11 +172,11 @@ export const getMockResponse = async (
 export const getMockVariations = async (
   target: string,
   shouldSucceed = true
-): Promise<IVariation> => {
-  return new Promise<IVariation>((res, rej) => {
+): Promise<IWord> => {
+  return new Promise<IWord>((res, rej) => {
     setTimeout(() => {
       shouldSucceed
-        ? res({ target: target, variations: Array(15).fill(target) })
+        ? res({ target: target, taboos: Array(15).fill(target) })
         : rej('Mock Failure');
     }, 1000);
   });
@@ -216,30 +213,6 @@ export const getDifficulty = (
     s += ` (${difficulty})`;
   }
   return s;
-};
-
-export const buildScoresForDisplay = (
-  level: ILevel,
-  score: IScore,
-  highlights: IHighlight[]
-): IDisplayScore => {
-  return {
-    id: score.score_id,
-    target: score.target,
-    question: score.question,
-    response: score.response,
-    difficulty: level.difficulty,
-    completion: score.completion_duration,
-    ai_score: score.ai_score,
-    ai_explanation: score.ai_explanation,
-    responseHighlights: highlights.map(
-      (h): Highlight => ({ start: h.start, end: h.end })
-    ),
-  };
-};
-
-export const maskPlayerID = (game: IGame) => {
-  game.player_id = CONSTANTS.mask;
 };
 
 export const emailIsValid = (email: string): boolean => {

@@ -1,57 +1,9 @@
-import ILevel from '../../types/level.interface';
-import _ from 'lodash';
-import { CONSTANTS } from '../../constants';
-import IVariation from '../../types/variation.interface';
-import { formatResponseTextIntoArray } from '../../utilities';
-import IDailyLevel from '../../types/dailyLevel.interface';
-import moment from 'moment';
-import { IAIScore } from '../../types/score.interface';
-
-export async function generateDailyLevel(
-  date: moment.Moment,
-  topic: string,
-  difficulty: number
-): Promise<IDailyLevel> {
-  let difficultyString = '';
-  switch (difficulty) {
-    case 1:
-      difficultyString = 'well-known';
-      break;
-    case 2:
-      difficultyString = 'known by some';
-      break;
-    case 3:
-      difficultyString = 'rare';
-      break;
-    default:
-      difficultyString = 'well-known';
-      break;
-  }
-  const response = await fetch('/api/ai', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prompt: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words related to ${topic} that are ${difficultyString}, in the format of an array of string. In American English.`,
-    }),
-    cache: 'no-store',
-  });
-  const json = await response.json();
-  const words = JSON.parse(json.response) as string[];
-  if (!words || words.length < CONSTANTS.numberOfQuestionsPerGame) {
-    throw Error('Wrong response format!');
-  }
-  const todayDate = date.format('DD-MM-YYYY');
-  return {
-    name: `${topic}-${difficulty}-${todayDate}`,
-    topic: topic,
-    difficulty: difficulty,
-    words: words,
-    created_date: todayDate,
-  };
-}
+import ILevel from '../types/level.interface';
+import _, { uniqueId } from 'lodash';
+import { CONSTANTS } from '../constants';
+import { formatResponseTextIntoArray } from '../utilities';
+import { IAIScore } from '../types/score.interface';
+import IWord from '../types/word.interface';
 
 export async function getQueryResponse(
   prompt: string,
@@ -116,7 +68,7 @@ export async function getAIJudgeScore(
   };
 }
 
-export async function getWordVariations(word: string): Promise<IVariation> {
+export async function getWordVariations(word: string): Promise<IWord> {
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {
@@ -135,7 +87,7 @@ export async function getWordVariations(word: string): Promise<IVariation> {
   const variations = formatResponseTextIntoArray(text, word);
   return {
     target: word,
-    variations: variations,
+    taboos: variations,
   };
 }
 
@@ -175,6 +127,7 @@ export async function getCreativeLevel(
   if (text) {
     const words = formatResponseTextIntoArray(text);
     return {
+      id: uniqueId(topic),
       name: topic,
       difficulty: difficulty,
       words: words,

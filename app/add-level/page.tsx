@@ -58,18 +58,14 @@ import { BsInfoSquareFill } from 'react-icons/bs';
 import { FiArrowUp, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
 import useToast from '../../lib/hooks/useToast';
-import { sendEmail } from '../../lib/services/frontend/emailService';
-import {
-  getVariations,
-  saveVariations,
-  wordExists,
-} from '../../lib/services/frontend/wordService';
+import { sendEmail } from '../../lib/services/emailService';
 import { emailIsValid } from '../../lib/utilities';
-import ILevel from '../../lib/types/level.interface';
-import IVariation from '../../lib/types/variation.interface';
-import { DateUtils } from '@/lib/utils/dateUtils';
-import moment from 'moment';
 import { addLevel } from '@/lib/services/levelService';
+import {
+  addTabooWords,
+  getTabooWords,
+  isTargetWordExists,
+} from '@/lib/services/wordService';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
@@ -242,12 +238,12 @@ const AddLevelPage = () => {
     statuses[targetWordIndex] = true;
     setTabooWordsCheckingStatus(statuses);
     try {
-      const existed = await wordExists(targetWords[targetWordIndex]);
+      const existed = await isTargetWordExists(targetWords[targetWordIndex]);
       const existedStatues = [...tabooWordsExistedStatus];
       existedStatues[targetWordIndex] = existed;
       setTabooWordsExistedStatus(existedStatues);
       if (existed) {
-        const existingTabooWords = await getVariations(
+        const existingTabooWords = await getTabooWords(
           targetWords[targetWordIndex]
         );
         const _tabooWords = [...tabooWords];
@@ -464,7 +460,7 @@ const AddLevelPage = () => {
       await addLevel({
         name: topicName,
         difficulty: Number(difficultyLevel),
-        words: targetWords.map((w) => _.lowerCase(w)),
+        words: targetWords.map((w) => _.toLower(w)),
         author: nickname,
         isNew: true,
       });
@@ -472,11 +468,7 @@ const AddLevelPage = () => {
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
           const targetWord = targetWords[i];
-          const variation: IVariation = {
-            target: targetWord,
-            variations: wordList,
-          };
-          await saveVariations(variation);
+          await addTabooWords(targetWord, wordList);
         }
 
       await sendMyselfEmail();

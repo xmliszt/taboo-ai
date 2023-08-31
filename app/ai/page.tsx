@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent, ChangeEvent } from 'react';
-import { getCreativeLevel } from '../../lib/services/frontend/aiService';
+import { getCreativeLevel } from '../../lib/services/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';

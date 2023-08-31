@@ -7,42 +7,23 @@ import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
 import {
   getScoresCache,
   getLevelCache,
-  getUser,
   clearScores,
   cacheScore,
-  setCachedGame,
-  cacheLevel,
-  getCachedGame,
 } from '../../lib/cache';
 import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Highlight } from '../../lib/types/highlight.interface';
-import {
-  buildLevelForDisplay,
-  buildScoresForDisplay,
-  delayRouterPush,
-} from '../../lib/utilities';
+import { IHighlight } from '../../lib/types/highlight.interface';
+import { delayRouterPush } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import {
-  getGameByPlayerNicknameFilterByDate,
-  saveGame,
-} from '../../lib/services/frontend/gameService';
 import LoadingMask from '../../components/LoadingMask';
-import ConfirmPopUp from '../../components/ConfirmPopUp';
 import { CONSTANTS } from '../../lib/constants';
-import { CgSmile } from 'react-icons/cg';
-import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
-import { getHighlights } from '../../lib/services/frontend/highlightService';
-import IGame from '../../lib/types/game.interface';
-import IUser from '../../lib/types/user.interface';
 import moment from 'moment';
-import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
 import useToast from '../../lib/hooks/useToast';
-import { getAIJudgeScore } from '../../lib/services/frontend/aiService';
+import { getAIJudgeScore } from '../../lib/services/aiService';
 import { BsQuestionCircle } from 'react-icons/bs';
 import Image from 'next/image';
 import { RiCloseCircleLine } from 'react-icons/ri';
@@ -51,21 +32,7 @@ interface StatItem {
   title: string;
   content: string;
   isResponse?: boolean;
-  highlights?: Highlight[];
-}
-
-interface PrompPopupConfiguration {
-  title: string;
-  content: string;
-  yesButtonText: string;
-  noButtonText: string;
-}
-
-enum PromptStep {
-  Idle = 0,
-  PromptSaveResult = 1,
-  PromptIsVisible = 2,
-  Finished = 3,
+  highlights?: IHighlight[];
 }
 
 interface ResultPageProps {}
@@ -74,22 +41,10 @@ export default function ResultPage(props: ResultPageProps) {
   const [showScoreExplained, setShowScoreExplained] = useState(false);
   const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
-  const [displayedLevelName, setDisplayedLevelName] = useState<string | null>();
-  const [displayedLevelTopic, setDisplayedLevelTopic] = useState<
-    string | null
-  >();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
-  const [showSaveResultPrompt, setShowSaveResultPrompt] =
-    useState<boolean>(false);
-  const [promptTitle, setPromptTitle] = useState('');
-  const [promptContent, setPromptContent] = useState('');
-  const [yesButtonText, setYesButtonText] = useState('Yes');
-  const [noButtonText, setNoButtonText] = useState('No');
-  const [promptStep, setPromptStep] = useState<number>(0);
-  const [user, setUser] = useState<IUser | undefined>();
   const [mobileAccordianVisibilityMap, setMobileAccordianVisibilityMap] =
     useState<{ [key: number]: boolean }>({});
   const screenshotRef = useRef<HTMLTableElement>(null);
@@ -103,29 +58,6 @@ export default function ResultPage(props: ResultPageProps) {
   useEffect(() => {
     checkUserStatus();
   }, []);
-
-  useEffect(() => {
-    switch (promptStep) {
-      case PromptStep.PromptSaveResult:
-        setShowSaveResultPrompt(true);
-        break;
-      case PromptStep.PromptIsVisible:
-        configurePromptPopUp({
-          title: 'Show Your Prompts?',
-          content:
-            'Would you like to keep your prompts (your inputs in the game) visible to the public?',
-          yesButtonText: 'Sure! Keep them visible!',
-          noButtonText: 'No, they are secrets!',
-        });
-        break;
-      case PromptStep.Finished:
-        setPromptStep(PromptStep.Idle);
-        setShowSaveResultPrompt(false);
-        break;
-      default:
-        break;
-    }
-  }, [promptStep]);
 
   const performAIJudging = async (
     retries: number,
@@ -147,7 +79,6 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const checkUserStatus = async () => {
-    const user = getUser();
     const level = getLevelCache();
     const scores = getScoresCache();
     if (scores && scores.length === CONSTANTS.numberOfQuestionsPerGame) {
@@ -199,66 +130,7 @@ export default function ResultPage(props: ResultPageProps) {
       clearScores();
       scores.forEach((score) => cacheScore(score));
     }
-    level?.isDaily && setDisplayedLevelName(level?.dailyLevelName);
-    level?.isDaily && setDisplayedLevelTopic(level?.dailyLevelTopic);
-    if (user) {
-      setUser(user);
-      if (level?.isDaily) {
-        try {
-          setIsLoading(true);
-          setLoadingMessage('Restoring your saved game...');
-          await restoreCurrentUserGameForToday(user);
-          setIsLoading(false);
-          return;
-        } catch {
-          setIsLoading(false);
-          if (!scores || !level) {
-            toast({
-              title:
-                'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-              status: 'warning',
-              duration: 3000,
-            });
-            delayRouterPush(router, '/');
-            return;
-          } else {
-            setLevel(level);
-            updateDisplayedScores(scores);
-            if (
-              level.isDaily &&
-              scores.length === CONSTANTS.numberOfQuestionsPerGame
-            ) {
-              showResultSubmissionPrompt();
-            } else {
-              toast({
-                title:
-                  'Sorry! You do not have a complete set of game records. Try play some games before accessing the scores!',
-                status: 'warning',
-                duration: 3000,
-              });
-              delayRouterPush(router, '/');
-              return;
-            }
-            return;
-          }
-        }
-      }
-    } else if (level?.isDaily) {
-      if (!scores || !level) {
-        toast({
-          title:
-            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-          status: 'warning',
-          duration: 3000,
-        });
-        delayRouterPush(router, '/');
-      } else {
-        setLevel(level);
-        updateDisplayedScores(scores);
-        showJoinLeaderboardPrompt();
-      }
-      return;
-    }
+
     if (!scores || !level) {
       toast({
         title:
@@ -271,159 +143,7 @@ export default function ResultPage(props: ResultPageProps) {
     } else {
       setLevel(level);
       updateDisplayedScores(scores);
-      if (level.isDaily) {
-        const savedGame = getCachedGame();
-        if (user && savedGame && user.nickname !== savedGame.player_nickname) {
-          toast({
-            title:
-              'Sorry! The ownership of the saved result does not match you. Please login with the correct recovery key to view it!',
-            status: 'error',
-            duration: 4000,
-          });
-          delayRouterPush(router, '/', { delay: 3000 });
-          return;
-        }
-      }
-      return;
     }
-  };
-
-  const saveGameAsync = async (promptVisible: boolean) => {
-    const level = getLevelCache();
-    const scores = getScoresCache();
-    const user = getUser();
-    if (level && scores && user) {
-      try {
-        const savedGame = await saveGame(
-          level,
-          scores,
-          totalScore,
-          user.nickname,
-          user.recovery_key,
-          promptVisible
-        );
-        setCachedGame(savedGame);
-        toast({
-          title:
-            'Congratulations! Your results have been submitted to global leaderboard successfully!',
-          status: 'success',
-        });
-      } catch (error) {
-        console.error(error);
-        toast({
-          title:
-            'We are currently unable to submit the scores. Please try again later.',
-          status: 'error',
-        });
-      }
-    }
-  };
-
-  const restoreCurrentUserGameForToday = async (user: IUser) => {
-    const todayGameDoneByUser = await getGameByPlayerNicknameFilterByDate(
-      user.nickname,
-      moment()
-    );
-    if (todayGameDoneByUser) {
-      const dailyLevel = await getDailyLevelByName(todayGameDoneByUser.level);
-      if (dailyLevel) {
-        const level = buildLevelForDisplay(dailyLevel);
-        setLevel(level);
-        cacheLevel(level);
-        setDisplayedLevelName(level.dailyLevelName);
-        setDisplayedLevelTopic(level.dailyLevelTopic);
-        setIsLoading(true);
-        await restoreGameScores(level, todayGameDoneByUser);
-        return;
-      }
-    }
-    throw Error('Unable to restore scores for user!');
-  };
-
-  const restoreGameScores = async (level: ILevel, game: IGame) => {
-    try {
-      const scores = await getScoresByGameID(game.game_id);
-      clearScores();
-      const displayScores: IDisplayScore[] = [];
-      for (const score of scores) {
-        const highlights = await getHighlights(game.game_id, score.score_id);
-        const displayScore = buildScoresForDisplay(level, score, highlights);
-        displayScores.push(displayScore);
-        cacheScore(displayScore);
-      }
-      updateDisplayedScores(displayScores);
-      setCachedGame(game);
-      toast({
-        title: 'Your daily challenge results have been restored!',
-        status: 'success',
-      });
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Sorry, we are unable to restore the game results.',
-        status: 'error',
-      });
-    }
-  };
-
-  const showResultSubmissionPrompt = () => {
-    const user = getUser();
-    configurePromptPopUp({
-      title: 'Submit Your Results?',
-      content: `Hi ${user?.nickname}! Would you like to submit your results to the global leaderboard?`,
-      yesButtonText: 'Sure!',
-      noButtonText: 'Maybe next time!',
-    });
-    setPromptStep(PromptStep.PromptSaveResult);
-  };
-
-  const showJoinLeaderboardPrompt = () => {
-    confirmAlert({
-      title: 'Join the global leaderboard 🎉',
-      message:
-        'Tell us your nickname and join the others in the global leaderboard 🏅!',
-      buttons: [
-        {
-          label: 'Yes',
-          onClick: () => router.push('/signup'),
-        },
-        {
-          label: 'I want to recover my game records!',
-          onClick: () => router.push('/recovery'),
-        },
-        {
-          label: 'No',
-        },
-      ],
-    });
-  };
-
-  const configurePromptPopUp = (configuration: PrompPopupConfiguration) => {
-    setPromptTitle(configuration.title);
-    setPromptContent(configuration.content);
-    setYesButtonText(configuration.yesButtonText);
-    setNoButtonText(configuration.noButtonText);
-  };
-
-  const onPromptYesButtonClick = async () => {
-    if (promptStep === PromptStep.PromptSaveResult) {
-      setIsLoading(true);
-      setLoadingMessage('Submitting your scores to the leaderboard...');
-      await saveGameAsync(true);
-      setIsLoading(false);
-      setPromptStep(PromptStep.Finished);
-      // setPromptStep(PromptStep.PromptIsVisible);
-    }
-  };
-
-  const onPromptNoButtonClick = async () => {
-    if (promptStep === PromptStep.PromptIsVisible) {
-      setIsLoading(true);
-      setLoadingMessage('Submitting your scores to the leaderboard...');
-      await saveGameAsync(false);
-      setIsLoading(false);
-    }
-    setPromptStep(PromptStep.Finished);
   };
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
@@ -474,15 +194,9 @@ export default function ResultPage(props: ResultPageProps) {
       parts.push(`The difficulty level of this game is: ${difficultyString}.`);
     }
     if (parts.length > 0) {
-      if (level?.isDaily) {
-        parts.push(
-          `Join me in the Daily Challenge and compete against other players around the world in the daily Wall of Fame!`
-        );
-      } else {
-        parts.push(
-          `Join me to explore different topics and have fun playing the game of Taboo against AI!`
-        );
-      }
+      parts.push(
+        `Join me to explore different topics and have fun playing the game of Taboo against AI!`
+      );
     } else {
       parts.push(
         `I completed a round of game in https://taboo-ai.vercel.app/ ! Join me to explore different topics and have fun playing the game of Taboo against AI!`
@@ -596,7 +310,7 @@ export default function ResultPage(props: ResultPageProps) {
 
   const applyHighlightsToMessage = (
     message: string,
-    highlights: Highlight[],
+    highlights: IHighlight[],
     onNormalMessagePart: (s: string) => JSX.Element,
     onHighlightMessagePart: (s: string) => JSX.Element
   ): JSX.Element[] => {
@@ -629,7 +343,7 @@ export default function ResultPage(props: ResultPageProps) {
 
   const generateDesktopResponseCellContent = (
     responseText: string,
-    highlights: Highlight[] = []
+    highlights: IHighlight[] = []
   ): JSX.Element => {
     let parts: JSX.Element[] = [];
     if (highlights.length > 0) {
@@ -665,7 +379,7 @@ export default function ResultPage(props: ResultPageProps) {
     title: string,
     content: string,
     isResponse = false,
-    highlights: Highlight[] = []
+    highlights: IHighlight[] = []
   ) => {
     let parts: JSX.Element[] = [];
     if (isResponse && highlights.length > 0) {
@@ -750,24 +464,10 @@ export default function ResultPage(props: ResultPageProps) {
     setScores(displayScores);
     setTotal(total);
     setTotalScore(totalScore);
-    window.dispatchEvent(
-      new CustomEvent<{ score: number }>(CONSTANTS.eventKeys.scoreComputed, {
-        detail: { score: totalScore },
-      })
-    );
   };
 
   const generateTopicName = (): string => {
-    const parts: string[] = [];
-    if (displayedLevelTopic) {
-      parts.push(displayedLevelTopic);
-    }
-    if (displayedLevelName) {
-      parts.push(displayedLevelName);
-    }
-    const dailyTopicName: string | null =
-      parts.length <= 0 ? null : parts.join(' - ');
-    const topicName = dailyTopicName ?? level?.name ?? 'Unknown';
+    const topicName = _.startCase(level?.name) ?? 'Unknown';
     return topicName;
   };
 
@@ -841,7 +541,7 @@ export default function ResultPage(props: ResultPageProps) {
             toggleMobileScoreStack(score.id);
           }}
         >
-          <span key={uniqueId()}>{score.target}</span>
+          <span key={uniqueId()}>{_.startCase(score.target)}</span>
           <span className='text-gray text-center flex-grow'>
             Tap To {mobileAccordianVisibilityMap[score.id] ? 'Fold' : 'Expand'}
           </span>
@@ -978,7 +678,9 @@ export default function ResultPage(props: ResultPageProps) {
               {scores.map((score) => (
                 <tr key={score.id}>
                   <td className='p-3 font-medium'>{score.id}</td>
-                  <td className='p-3 font-medium'>{score.target}</td>
+                  <td className='p-3 font-medium'>
+                    {_.startCase(score.target)}
+                  </td>
                   <td className='p-3 font-medium'>{score.question}</td>
                   <td className='p-3 font-medium'>
                     {generateDesktopResponseCellContent(
@@ -1040,22 +742,6 @@ export default function ResultPage(props: ResultPageProps) {
 
   return (
     <section className='relative'>
-      <ConfirmPopUp
-        disabled={isLoading}
-        show={showSaveResultPrompt}
-        title={promptTitle}
-        content={promptContent}
-        buttons={[
-          {
-            label: yesButtonText,
-            onClick: onPromptYesButtonClick,
-          },
-          {
-            label: noButtonText,
-            onClick: onPromptNoButtonClick,
-          },
-        ]}
-      />
       <LoadingMask
         key='loading-mask'
         isLoading={isLoading}
@@ -1068,38 +754,17 @@ export default function ResultPage(props: ResultPageProps) {
         ref={screenshotRef}
         className='!leading-screenshot pb-20 lg:pb-48 pt-4'
       >
-        {user && (
-          <h1 className='w-full mt-10 lg:mt-16 text-center z-50'>
-            <CgSmile className='inline' /> Hi {user.nickname}!{' '}
-            <CgSmile className='inline' />
-          </h1>
-        )}
         {isMobile ? renderMobile() : renderDesktop()}
       </section>
       <div className='fixed bottom-2 z-40 w-full text-center py-4'>
-        {level?.isDaily ? (
-          <button
-            id='leaderboard'
-            data-style='none'
-            className='h-12 lg:h-24  w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)]'
-            onClick={() => {
-              router.push('/leaderboard');
-            }}
-          >
-            <div className='text-lg lg:text-2xl !text-white hover:!text-black !bg-black dark:!bg-neon-gray hover:!bg-yellow hover:dark:!bg-neon-green color-gradient-animated-background-golden flex items-center justify-center'>
-              Go To The Leaderboard
-            </div>
-          </button>
-        ) : (
-          <button
-            className='h-12 lg:h-24 lg:text-2xl w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
-            onClick={() => {
-              router.push('/level');
-            }}
-          >
-            Play This Topic Again
-          </button>
-        )}
+        <button
+          className='h-12 lg:h-24 lg:text-2xl w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
+          onClick={() => {
+            router.push('/level');
+          }}
+        >
+          Play This Topic Again
+        </button>
       </div>
       <button
         id='share'

@@ -6,25 +6,24 @@ import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
   getQueryResponse,
   getWordVariations,
-} from '../../lib/services/frontend/aiService';
+} from '../../lib/services/aiService';
 import InputDisplay from '../../components/InputDisplay';
 import _ from 'lodash';
-import { Author } from '../../lib/enums/Author';
 import ProgressBar from '../../components/ProgressBar';
 import { CONSTANTS } from '../../lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
 import { cacheScore, clearScores, getLevelCache } from '../../lib/cache';
-import { Highlight } from '../../lib/types/highlight.interface';
-import IVariation from '../../lib/types/variation.interface';
+import { IHighlight } from '../../lib/types/highlight.interface';
 import {
   formatStringForDisplay,
   getMockResponse,
   getMockVariations,
 } from '../../lib/utilities';
-import { getVariations } from '../../lib/services/frontend/wordService';
 import { HASH } from '../../lib/hash';
 import useToast from '../../lib/hooks/useToast';
+import { getTabooWords } from '@/lib/services/wordService';
+import IWord from '@/lib/types/word.interface';
 
 interface LevelPageProps {}
 
@@ -39,8 +38,8 @@ export default function LevelPage(props: LevelPageProps) {
   const [isGeneratingVariations, setIsGeneratingVariations] =
     useState<boolean>(false);
   const [pickedWords, setPickedWords] = useState<string[]>([]);
-  const [highlights, setHighlights] = useState<Highlight[]>([]);
-  const [userInputHighlights, setUserInputHighlights] = useState<Highlight[]>(
+  const [highlights, setHighlights] = useState<IHighlight[]>([]);
+  const [userInputHighlights, setUserInputHighlights] = useState<IHighlight[]>(
     []
   );
   const [isValidInput, setIsValidInput] = useState<boolean>(true);
@@ -88,11 +87,6 @@ export default function LevelPage(props: LevelPageProps) {
     const unused = [...words];
     _.remove(unused, (s) => s === _target);
     setWords(unused);
-    window.dispatchEvent(
-      new CustomEvent<{ target: string }>(CONSTANTS.eventKeys.targetChanged, {
-        detail: { target: _target },
-      })
-    );
     return _target;
   };
 
@@ -129,8 +123,8 @@ export default function LevelPage(props: LevelPageProps) {
   const generateHighlights = (
     str: string,
     forResponse: boolean
-  ): Highlight[] => {
-    const highlights: Highlight[] = [];
+  ): IHighlight[] => {
+    const highlights: IHighlight[] = [];
     if (forResponse && target) {
       const regex = getRegexPattern(target);
       let result;
@@ -278,7 +272,7 @@ export default function LevelPage(props: LevelPageProps) {
   const generateVariationsForTarget = async (
     retries: number,
     target: string,
-    callback: (variations?: IVariation) => void
+    callback: (variations?: IWord) => void
   ) => {
     setRetryCount(retries);
     if (localStorage.getItem(HASH.dev)) {
@@ -294,9 +288,9 @@ export default function LevelPage(props: LevelPageProps) {
           }
         });
     } else {
-      const savedWords = await getVariations(target);
+      const savedWords = await getTabooWords(target);
       if (savedWords.length > 1) {
-        callback({ target: target, variations: savedWords });
+        callback({ target: target, taboos: savedWords });
       } else {
         getWordVariations(target)
           .then(async (variations) => {
@@ -333,7 +327,7 @@ export default function LevelPage(props: LevelPageProps) {
           setIsGeneratingVariations(false);
           let _variations = [target];
           if (variations && variations.target === target) {
-            _variations = variations.variations;
+            _variations = variations.taboos;
           }
           setVariations(
             _variations.map((variation) => formatStringForDisplay(variation))
@@ -487,7 +481,7 @@ export default function LevelPage(props: LevelPageProps) {
                 target={target}
                 message={responseText}
                 highlights={highlights}
-                author={Author.AI}
+                author='AI'
                 faded={isResponseFaded}
                 inputConfirmed={false}
                 shouldFadeOut={responseShouldFadeOut}
@@ -498,7 +492,7 @@ export default function LevelPage(props: LevelPageProps) {
                 target={target}
                 message={userInput}
                 highlights={userInputHighlights}
-                author={Author.Me}
+                author='USER'
                 faded={false}
                 inputConfirmed={isInputConfirmed}
                 shouldFadeOut={inputShouldFadeOut}
