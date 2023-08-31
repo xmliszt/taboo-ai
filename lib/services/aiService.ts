@@ -5,10 +5,7 @@ import { formatResponseTextIntoArray } from '../utilities';
 import { IAIScore } from '../types/score.interface';
 import IWord from '../types/word.interface';
 
-export async function getQueryResponse(
-  prompt: string,
-  target?: string | null
-): Promise<string> {
+export async function getQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {
