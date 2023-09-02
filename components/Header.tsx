@@ -1,7 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import BackButton from './BackButton';
+import NavBarLeftItem from './NavBarLeftItem';
+import { UserLoginPortal } from './UserLoginPortal';
 
 interface HeaderProps {
   maintenanceOn: boolean;
@@ -22,7 +23,8 @@ const Header = ({ maintenanceOn }: HeaderProps) => {
           : 'backdrop-blur-lg gradient-blur-mask'
       } `}
     >
-      {maintenanceOn ? <></> : <BackButton />}
+      {maintenanceOn ? <></> : <NavBarLeftItem />}
+      {maintenanceOn ? <></> : <UserLoginPortal />}
     </header>
   );
 };

@@ -1,9 +1,7 @@
 import _ from 'lodash';
 import { useCallback, useDeferredValue, useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-
-import { firestore } from '@/firebase';
 import ILevel from '@/lib/types/level.interface';
+import { getAllLevels } from '../services/levelService';
 
 export const useLevels = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,12 +12,7 @@ export const useLevels = () => {
 
   const fetchAllLevels = useCallback(async () => {
     setIsLoading(true);
-    const snapshot = await getDocs(collection(firestore, 'levels'));
-    const allLevels: ILevel[] = [];
-    snapshot.forEach((result) => {
-      const level = result.data() as ILevel;
-      allLevels.push(level);
-    });
+    const allLevels = await getAllLevels();
     setLevels(allLevels);
     setIsLoading(false);
   }, []);
@@ -39,5 +32,11 @@ export const useLevels = () => {
     setFilteredLevels(filtered);
   }, [deferredSearchTerm, levels]);
 
-  return { levels, filteredLevels, setFilterKeyword, isLoading };
+  return {
+    levels,
+    filteredLevels,
+    setFilterKeyword,
+    isFetchingLevels: isLoading,
+    refetch: fetchAllLevels,
+  };
 };

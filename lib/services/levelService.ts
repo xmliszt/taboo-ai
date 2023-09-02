@@ -1,7 +1,26 @@
 import { firestore } from '@/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc,
+} from 'firebase/firestore';
 import moment from 'moment';
+import ILevel from '../types/level.interface';
 import { DateUtils } from '../utils/dateUtils';
+
+export const getAllLevels = async (): Promise<ILevel[]> => {
+  const snapshot = await getDocs(collection(firestore, 'levels'));
+  const allLevels: ILevel[] = [];
+  snapshot.forEach((result) => {
+    const level = result.data() as ILevel;
+    level.id = result.id;
+    allLevels.push(level);
+  });
+  return allLevels;
+};
 
 export const addLevel = async ({
   name,
@@ -29,4 +48,16 @@ export const addLevel = async ({
     isNew,
     createdAt,
   });
+};
+
+export const updateLevel = async (level: ILevel): Promise<void> => {
+  await updateDoc(doc(firestore, 'levels', level.id), { ...level });
+};
+
+export const deleteLevel = async (id: string): Promise<void> => {
+  await deleteDoc(doc(firestore, 'levels', id));
+};
+
+export const verifyLevel = async (id: string): Promise<void> => {
+  await updateDoc(doc(firestore, 'levels', id), { isVerified: true });
 };

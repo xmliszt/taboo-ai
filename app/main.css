@@ -1,9 +1,22 @@
+/* stylelint-disable rule-empty-line-before */
 /* stylelint-disable property-no-vendor-prefix */
 /* stylelint-disable color-hex-length */
 /* stylelint-disable selector-class-pattern */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+}
 
 @layer components {
   .unicorn-color {
@@ -156,7 +169,7 @@
 }
 
 .btn-menu {
-  @apply text-2xl px-8 py-2 transition-all bg-white text-black hover:text-white hover:bg-black rounded-tl-[2rem] rounded-br-[2rem] border-white border-2;
+  @apply text-2xl px-8 py-2 transition-all bg-white text-black hover:text-white hover:bg-black rounded-md border-white border-2;
 }
 
 .unicorn-color {
@@ -164,41 +177,7 @@
 }
 
 b {
-  @apply font-bold text-yellow dark:text-neon-yellow;
-}
-
-button:not(.Toastify__close-button, [data-style='none']) {
-  @apply transition-all shadow-lg border-2 border-white bg-white text-black hover:text-white hover:bg-black hover:border-gray rounded-tl-[2rem] rounded-br-[2rem];
-}
-
-input,
-button,
-a {
-  @apply disabled:cursor-not-allowed disabled:opacity-50;
-}
-
-input,
-textarea {
-  @apply !text-white !bg-black !border-2 !border-white !outline-none focus:!outline-none focus:!border-4 h-8 !ease-in-out !transition-all text-base lg:text-2xl lg:h-16 px-8 lg:px-10 !rounded-tl-2xl !rounded-br-2xl;
-}
-
-h1 {
-  @apply text-2xl lg:text-5xl;
-}
-
-.react-confirm-alert {
-  line-height: 1.2rem;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-}
-
-.react-confirm-alert h1 {
-  font-weight: 900;
-  font-size: 1.2rem;
-  margin-bottom: 1.2rem;
-}
-
-.react-confirm-alert button {
-  border-radius: 2rem !important;
+  @apply font-bold text-yellow;
 }
 
 .gradient-blur-mask {

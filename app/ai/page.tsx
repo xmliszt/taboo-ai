@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent, ChangeEvent } from 'react';
-import { getCreativeLevel } from '../../lib/services/aiService';
+import { askAIForCreativeTopic } from '../../lib/services/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';
@@ -23,7 +23,7 @@ export default function AiPage(props: AiPageProps) {
     if (topic.length > 0) {
       setIsLoading(true);
       try {
-        const level = await getCreativeLevel(topic, difficulty);
+        const level = await askAIForCreativeTopic(topic, difficulty);
         if (level) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
             return setSomethingWrong(true);

@@ -4,8 +4,8 @@ import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
 import Timer from '../../components/Timer';
 import { AiOutlineSend, AiFillCloseCircle } from 'react-icons/ai';
 import {
-  getQueryResponse,
-  getWordVariations,
+  askAIForQueryResponse,
+  askAITabooWordsForTarget,
 } from '../../lib/services/aiService';
 import InputDisplay from '../../components/InputDisplay';
 import _ from 'lodash';
@@ -201,7 +201,7 @@ export default function LevelPage(props: LevelPageProps) {
             localStorage.getItem('mode') ?? '1'
           );
         } else {
-          responseText = await getQueryResponse(prompt);
+          responseText = await askAIForQueryResponse(prompt);
         }
         setIsInputConfirmed(false); // Reset input ping animation
         if (responseText === undefined || responseText === null) {
@@ -292,7 +292,7 @@ export default function LevelPage(props: LevelPageProps) {
       if (savedWords.length > 1) {
         callback({ target: target, taboos: savedWords });
       } else {
-        getWordVariations(target)
+        askAITabooWordsForTarget(target)
           .then(async (variations) => {
             callback(variations);
           })

@@ -23,7 +23,7 @@ import LoadingMask from '../../components/LoadingMask';
 import { CONSTANTS } from '../../lib/constants';
 import moment from 'moment';
 import useToast from '../../lib/hooks/useToast';
-import { getAIJudgeScore } from '../../lib/services/aiService';
+import { askAIForJudgingScore } from '../../lib/services/aiService';
 import { BsQuestionCircle } from 'react-icons/bs';
 import Image from 'next/image';
 import { RiCloseCircleLine } from 'react-icons/ri';
@@ -66,7 +66,7 @@ export default function ResultPage(props: ResultPageProps) {
     completion: (aiScore: IAIScore) => void
   ) => {
     try {
-      const score = await getAIJudgeScore(target, userInput);
+      const score = await askAIForJudgingScore(target, userInput);
       completion(score);
     } catch (error) {
       console.error(error);

@@ -5,7 +5,32 @@ import { formatResponseTextIntoArray } from '../utilities';
 import { IAIScore } from '../types/score.interface';
 import IWord from '../types/word.interface';
 
-export async function getQueryResponse(prompt: string): Promise<string> {
+export async function askAITabooWordsForTarget(
+  targetWord: string
+): Promise<IWord> {
+  const response = await fetch('/api/ai', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: `Generate 5-8 words related to '${targetWord}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
+      temperature: 1,
+      maxToken: 100,
+    }),
+    cache: 'no-store',
+  });
+  const json = await response.json();
+  const text = json.response;
+  const variations = formatResponseTextIntoArray(text, targetWord);
+  return {
+    target: targetWord,
+    taboos: variations,
+  };
+}
+
+export async function askAIForQueryResponse(prompt: string): Promise<string> {
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {
@@ -23,7 +48,7 @@ export async function getQueryResponse(prompt: string): Promise<string> {
   return json.response;
 }
 
-export async function getAIJudgeScore(
+export async function askAIForJudgingScore(
   target: string,
   prompt: string
 ): Promise<IAIScore> {
@@ -65,30 +90,7 @@ export async function getAIJudgeScore(
   };
 }
 
-export async function getWordVariations(word: string): Promise<IWord> {
-  const response = await fetch('/api/ai', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prompt: `Generate 5-8 words related to '${word}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
-      temperature: 1,
-      maxToken: 100,
-    }),
-    cache: 'no-store',
-  });
-  const json = await response.json();
-  const text = json.response;
-  const variations = formatResponseTextIntoArray(text, word);
-  return {
-    target: word,
-    taboos: variations,
-  };
-}
-
-export async function getCreativeLevel(
+export async function askAIForCreativeTopic(
   topic: string,
   difficulty: number
 ): Promise<ILevel | undefined> {
