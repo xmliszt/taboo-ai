@@ -3,8 +3,9 @@
 import { useAuth } from '@/app/AuthProvider';
 import { firebaseAuth } from '@/firebase';
 import useToast from '@/lib/hooks/useToast';
+import { signInWithGoogle } from '@/lib/services/authService';
 import { IconButton, Spinner, Stack, Tooltip } from '@chakra-ui/react';
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { BiLogOut } from 'react-icons/bi';
 import { BsPersonFill } from 'react-icons/bs';
 
@@ -14,7 +15,7 @@ export function UserLoginPortal() {
   const onLogin = async () => {
     try {
       setStatus('loading');
-      await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+      await signInWithGoogle();
       setStatus('authenticated');
     } catch (error) {
       console.error(error.message);
@@ -26,6 +27,7 @@ export function UserLoginPortal() {
   const onLogout = async () => {
     setStatus('loading');
     await signOut(firebaseAuth);
+    await firebaseAuth.signOut();
     setStatus('unauthenticated');
   };
 

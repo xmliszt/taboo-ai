@@ -1,8 +1,8 @@
 'use client';
 
 import DevToggle from '@/components/DevToggle';
-import { firebaseAuth } from '@/firebase';
 import useToast from '@/lib/hooks/useToast';
+import { signInWithGoogle } from '@/lib/services/authService';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -13,7 +13,6 @@ import {
   Spinner,
   useDisclosure,
 } from '@chakra-ui/react';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { useRef } from 'react';
@@ -53,7 +52,7 @@ export default function HomePage(props: HomePageProps) {
     onClose();
     try {
       setStatus('loading');
-      await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+      await signInWithGoogle();
       setStatus('authenticated');
     } catch (error) {
       console.error(error.message);
