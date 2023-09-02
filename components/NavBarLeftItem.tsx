@@ -15,11 +15,10 @@
 'use client';
 
 import { IconButton, Stack, Tooltip } from '@chakra-ui/react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BackButton } from './BackButton';
-import { ArrowBackIcon, QuestionIcon, DownloadIcon } from '@chakra-ui/icons';
-
+import { QuestionIcon, DownloadIcon } from '@chakra-ui/icons';
+import { useMemo } from 'react';
 interface NavBarItemProps {}
 
 export default function NavBarLeftItem(props: NavBarItemProps) {
@@ -29,6 +28,25 @@ export default function NavBarLeftItem(props: NavBarItemProps) {
   const navigateTo = (href: string) => {
     router.push(href);
   };
+
+  const backHref = useMemo(() => {
+    if (
+      [
+        '/roadmap',
+        '/whatsnew',
+        '/pwa',
+        '/rule',
+        '/levels',
+        '/result',
+        '/add-level',
+        '/x/review-words',
+      ].includes(pathname ?? '')
+    ) {
+      return '/';
+    } else {
+      return undefined;
+    }
+  }, [pathname]);
 
   return (
     <Stack direction='row' gap={2}>
@@ -66,7 +84,7 @@ export default function NavBarLeftItem(props: NavBarItemProps) {
           </Tooltip>
         </>
       ) : (
-        <BackButton />
+        <BackButton href={backHref} />
       )}
     </Stack>
   );

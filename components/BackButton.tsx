@@ -3,25 +3,30 @@
 import { IconButton, Tooltip } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@chakra-ui/icons';
+import { BiHome } from 'react-icons/bi';
 
 interface BackButtonProps {
   href?: string;
+  customIcon?: React.ReactElement;
 }
 
-export function BackButton({ href }: BackButtonProps = { href: '/' }) {
+export function BackButton({ href, customIcon }: BackButtonProps) {
   const router = useRouter();
   const back = () => {
-    const link = href ?? '/';
-    router.push(link);
+    if (href) {
+      router.push(href);
+    } else {
+      router.back();
+    }
   };
 
   return (
-    <Tooltip label='Back' hasArrow>
+    <Tooltip label={`${href === '/' ? 'Go to home' : 'Back'}`} hasArrow>
       <IconButton
         size='sm'
         aria-label='Click to navigate back'
         onClick={back}
-        icon={<ArrowLeftIcon />}
+        icon={customIcon ?? (href === '/' ? <BiHome /> : <ArrowLeftIcon />)}
       />
     </Tooltip>
   );

@@ -10,6 +10,7 @@ interface HeaderProps {
 
 const Header = ({ maintenanceOn }: HeaderProps) => {
   const pathName = usePathname();
+  const hasUserLoginPortal = ['/', '/x/review-words'];
   const noBackdropSolidBGRoutes = ['/add-level'];
   const noBackdropNoBGRoutes = ['/level', '/ai'];
   return (
@@ -24,7 +25,13 @@ const Header = ({ maintenanceOn }: HeaderProps) => {
       } `}
     >
       {maintenanceOn ? <></> : <NavBarLeftItem />}
-      {maintenanceOn ? <></> : <UserLoginPortal />}
+      {maintenanceOn ? (
+        <></>
+      ) : hasUserLoginPortal.includes(pathName ?? '') ? (
+        <UserLoginPortal />
+      ) : (
+        <></>
+      )}
     </header>
   );
 };

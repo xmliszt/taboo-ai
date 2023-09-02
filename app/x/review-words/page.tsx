@@ -11,7 +11,6 @@ import { useLevels } from '@/lib/hooks/useLevels';
 import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
 import { askAITabooWordsForTarget } from '@/lib/services/aiService';
 import useToast from '@/lib/hooks/useToast';
-import NavBarLeftItem from '@/components/NavBarLeftItem';
 import {
   deleteLevel,
   updateLevel,
@@ -46,8 +45,8 @@ const DevReviewWordsPage = () => {
         (level) => level.name === selectedLevel?.name
       )[0];
     }
-    setSelectedLevel(levelToSelect);
-    getCachedWordList(levelToSelect);
+    levelToSelect && setSelectedLevel(levelToSelect);
+    levelToSelect && getCachedWordList(levelToSelect);
   }, [levels]);
 
   const getCachedWordList = async (selectedLevel: ILevel) => {
@@ -278,6 +277,7 @@ const DevReviewWordsPage = () => {
         setIsLoading(true);
         await verifyLevel(selectedLevel.id);
         toast({ title: 'Level verified successfully!', status: 'success' });
+        await refetch();
       } catch (error) {
         console.error(error);
         toast({

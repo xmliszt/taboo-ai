@@ -19,7 +19,12 @@ export const getAllLevels = async (): Promise<ILevel[]> => {
     level.id = result.id;
     allLevels.push(level);
   });
-  return allLevels;
+  const sortedLevels = allLevels.sort(
+    (a, b) =>
+      moment(b.createdAt, DateUtils.formats.levelCreatedAt).unix() -
+      moment(a.createdAt, DateUtils.formats.levelCreatedAt).unix()
+  );
+  return sortedLevels;
 };
 
 export const addLevel = async ({
