@@ -6,7 +6,7 @@ import { cacheScore, getLevelCache } from '../lib/cache';
 import { getRandomInt } from '../lib/utilities';
 import { HASH } from '../lib/hash';
 import { CONSTANTS } from '../lib/constants';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/app/AuthProvider';
 
 interface DevToggleProps {}
 
@@ -15,7 +15,7 @@ const DevToggle = (props: DevToggleProps) => {
   const [selectedMode, setSelectedMode] = useState<number>(1);
   const router = useRouter();
   const path = usePathname();
-  const { data: session, status } = useSession();
+  const { user, status } = useAuth();
 
   useEffect(() => {
     setDevOn(localStorage.getItem(HASH.dev) ? true : false);
@@ -68,8 +68,7 @@ const DevToggle = (props: DevToggleProps) => {
     router.push('/result');
   };
 
-  return session?.user?.email === 'xmliszt@gmail.com' &&
-    status === 'authenticated' ? (
+  return user?.email === 'xmliszt@gmail.com' && status === 'authenticated' ? (
     <div className='flex flex-col gap-2 justify-center'>
       <div className='flex flex-row gap-2 items-center'>
         <input

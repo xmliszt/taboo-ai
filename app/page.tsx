@@ -1,9 +1,7 @@
 'use client';
 
 import DevToggle from '@/components/DevToggle';
-import { Button } from '@chakra-ui/react';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import { Button, Spinner } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { GiCoffeeCup } from 'react-icons/gi';
@@ -13,6 +11,7 @@ import InstallButton from '../components/InstallButton';
 import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
 import Footer from './../components/Footer';
 import SocialLinkButton from './../components/SocialLinkButton';
+import { useAuth } from './AuthProvider';
 
 interface HomePageProps {}
 
@@ -20,15 +19,19 @@ const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
+  const { user, status } = useAuth();
   const router = useRouter();
-  const { data: session, status } = useSession();
-
   const navigateTo = (href: string) => {
     router.push(href);
   };
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
+      {status === 'loading' && (
+        <div className='w-screen h-screen fixed z-50 top-0 left-0 flex justify-center items-center bg-black opacity-60'>
+          <Spinner />
+        </div>
+      )}
       <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-16 lg:pt-24 pb-32'>
         <div className='w-full relative'>
@@ -67,8 +70,7 @@ export default function HomePage(props: HomePageProps) {
           >
             Contribute New Topics
           </Button>
-          {session?.user?.email === 'xmliszt@gmail.com' &&
-          status === 'authenticated' ? (
+          {user?.email === 'xmliszt@gmail.com' && status === 'authenticated' ? (
             <Button
               id='edit'
               data-testid='link-dev-review-words'
