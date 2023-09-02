@@ -66,6 +66,8 @@ import {
   getTabooWords,
   isTargetWordExists,
 } from '@/lib/services/wordService';
+import { useAuth } from '../AuthProvider';
+import { useRouter } from 'next/navigation';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
@@ -75,6 +77,7 @@ const INVALID_WORD_ERROR =
   'Only single space or a single quotation mark is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry. Cannot be empty.';
 
 const AddLevelPage = () => {
+  const { user, status } = useAuth();
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
     useState(false);
   const [topicName, setTopicName] = useState('');
@@ -119,6 +122,17 @@ const AddLevelPage = () => {
   ] = useState<number>(-1);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { toast } = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status !== 'authenticated') {
+      toast({
+        title: 'You need to sign in to contribute a topic',
+        status: 'error',
+      });
+      router.push('/');
+    }
+  }, [status]);
 
   useEffect(() => {
     validateTargetWords();

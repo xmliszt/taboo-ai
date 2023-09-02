@@ -17,8 +17,11 @@ import {
   verifyLevel,
 } from '@/lib/services/levelService';
 import { Button, IconButton, Input, Select } from '@chakra-ui/react';
+import { useAuth } from '@/app/AuthProvider';
+import { useRouter } from 'next/navigation';
 
 const DevReviewWordsPage = () => {
+  const { user, status } = useAuth();
   const { levels, isFetchingLevels, refetch } = useLevels();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<ILevel | null>(null);
@@ -35,6 +38,18 @@ const DevReviewWordsPage = () => {
 
   const isPageInteractive =
     !isFetchingLevels && !isLoading && !isAutoGenerating;
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user || user.email !== 'xmliszt@gmail.com') {
+      toast({
+        title: 'You are not authorized to view this page!',
+        status: 'error',
+      });
+      router.push('/');
+    }
+  }, [user]);
 
   useEffect(() => {
     let levelToSelect;
@@ -313,6 +328,18 @@ const DevReviewWordsPage = () => {
       }
     }
   };
+
+  if (
+    !user ||
+    status !== 'authenticated' ||
+    user.email !== 'xmliszt@gmail.com'
+  ) {
+    return (
+      <section className='w-full h-full flex justify-center items-center'>
+        You are not authorized to view this page!
+      </section>
+    );
+  }
 
   return (
     <section className='flex flex-col gap-8 justify-center items-center py-20'>

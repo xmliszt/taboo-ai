@@ -1,11 +1,22 @@
 'use client';
 
 import DevToggle from '@/components/DevToggle';
-import { Button } from '@chakra-ui/react';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import { firebaseAuth } from '@/firebase';
+import useToast from '@/lib/hooks/useToast';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
+  Spinner,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
+import { useRef } from 'react';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import ContactMe from '../components/ContactMe';
@@ -13,6 +24,7 @@ import InstallButton from '../components/InstallButton';
 import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
 import Footer from './../components/Footer';
 import SocialLinkButton from './../components/SocialLinkButton';
+import { useAuth } from './AuthProvider';
 
 interface HomePageProps {}
 
@@ -20,15 +32,43 @@ const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
+  const { toast } = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user, status, setStatus } = useAuth();
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const { data: session, status } = useSession();
-
   const navigateTo = (href: string) => {
     router.push(href);
   };
 
+  const handleAddTopic = () => {
+    if (status === 'authenticated') {
+      navigateTo('/add-level');
+    } else {
+      onOpen();
+    }
+  };
+
+  const signIn = async () => {
+    onClose();
+    try {
+      setStatus('loading');
+      await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+      setStatus('authenticated');
+    } catch (error) {
+      console.error(error.message);
+      toast({ title: 'Failed to sign in!', status: 'error' });
+      setStatus('unauthenticated');
+    }
+  };
+
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
+      {status === 'loading' && (
+        <div className='w-screen h-screen fixed z-50 top-0 left-0 flex justify-center items-center bg-black opacity-60'>
+          <Spinner />
+        </div>
+      )}
       <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-16 lg:pt-24 pb-32'>
         <div className='w-full relative'>
@@ -61,14 +101,11 @@ export default function HomePage(props: HomePageProps) {
             data-testid='link-edit'
             data-style='none'
             aria-label='Click to contribute new topic'
-            onClick={() => {
-              navigateTo('add-level');
-            }}
+            onClick={handleAddTopic}
           >
             Contribute New Topics
           </Button>
-          {session?.user?.email === 'xmliszt@gmail.com' &&
-          status === 'authenticated' ? (
+          {user?.email === 'xmliszt@gmail.com' && status === 'authenticated' ? (
             <Button
               id='edit'
               data-testid='link-dev-review-words'
@@ -107,6 +144,23 @@ export default function HomePage(props: HomePageProps) {
       </div>
       <Footer />
       <div className='h-28 lg:h-36 bg-black w-full fixed bottom-0 z-0 gradient-blur-up'></div>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              You need to sign in to contribute a topic!
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              <Button onClick={signIn}>Sign In Here</Button>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </main>
   );
 }

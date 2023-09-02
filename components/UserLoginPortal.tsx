@@ -1,25 +1,38 @@
 'use client';
 
+import { useAuth } from '@/app/AuthProvider';
+import { firebaseAuth } from '@/firebase';
+import useToast from '@/lib/hooks/useToast';
 import { IconButton, Spinner, Stack, Tooltip } from '@chakra-ui/react';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { BiLogOut } from 'react-icons/bi';
 import { BsPersonFill } from 'react-icons/bs';
 
 export function UserLoginPortal() {
-  const { data: session, status } = useSession();
-
-  const onLogin = () => {
-    signIn();
+  const { toast } = useToast();
+  const { user, status, setStatus } = useAuth();
+  const onLogin = async () => {
+    try {
+      setStatus('loading');
+      await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+      setStatus('authenticated');
+    } catch (error) {
+      console.error(error.message);
+      toast({ title: 'Failed to sign in!', status: 'error' });
+      setStatus('unauthenticated');
+    }
   };
 
-  const onLogout = () => {
-    signOut();
+  const onLogout = async () => {
+    setStatus('loading');
+    await signOut(firebaseAuth);
+    setStatus('unauthenticated');
   };
 
-  return session && status === 'authenticated' ? (
+  return user && status === 'authenticated' ? (
     <div>
       <Stack direction='row' gap='2' alignItems='center'>
-        <div>Hello! {session.user?.name}</div>
+        <div>Hello! {user.displayName}</div>
         <Tooltip label='Click to logout' hasArrow>
           <IconButton size='sm' aria-label='Click to logout' onClick={onLogout}>
             <BiLogOut />
