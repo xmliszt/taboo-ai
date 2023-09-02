@@ -17,8 +17,6 @@ import { isMobile } from 'react-device-detect';
 import { IHighlight } from '../../lib/types/highlight.interface';
 import { delayRouterPush } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import LoadingMask from '../../components/LoadingMask';
 import { CONSTANTS } from '../../lib/constants';
 import moment from 'moment';
@@ -27,6 +25,16 @@ import { askAIForJudgingScore } from '../../lib/services/aiService';
 import { BsQuestionCircle } from 'react-icons/bs';
 import Image from 'next/image';
 import { RiCloseCircleLine } from 'react-icons/ri';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 interface StatItem {
   title: string;
@@ -38,6 +46,8 @@ interface StatItem {
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const [showScoreExplained, setShowScoreExplained] = useState(false);
   const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
@@ -164,17 +174,6 @@ export default function ResultPage(props: ResultPageProps) {
 
     const blob = new Blob(byteArrays, { type: contentType });
     return blob;
-  };
-
-  const openShare = () => {
-    confirmAlert({
-      title: 'Share Your Scores!',
-      message: 'Choose how you want to share your scores...',
-      buttons: [
-        { label: 'Plain Text', onClick: sharePlainText },
-        { label: 'Screenshot', onClick: shareScreenshot },
-      ],
-    });
   };
 
   const generateShareText = (): string => {
@@ -771,7 +770,7 @@ export default function ResultPage(props: ResultPageProps) {
         data-style='none'
         aria-label='result button'
         className='text-2xl lg:text-5xl fixed top-4 right-4 lg:right-8 hover:opacity-50 transition-all ease-in-out z-40'
-        onClick={openShare}
+        onClick={onOpen}
       >
         <MdShare />
       </button>
@@ -806,6 +805,24 @@ export default function ResultPage(props: ResultPageProps) {
           height={720}
         />
       </div>
+      <AlertDialog
+        isOpen={isOpen}
+        onClose={onClose}
+        leastDestructiveRef={cancelRef}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>Share your scores!</AlertDialogHeader>
+            <AlertDialogBody>
+              Choose how you want to share your scores...
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button onClick={sharePlainText}>Plain Text</Button>
+              <Button onClick={shareScreenshot}>Screenshot</Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </section>
   );
 }
