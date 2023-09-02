@@ -1,13 +1,12 @@
 import { uniqueId } from 'lodash';
-import { Author } from '../lib/enums/Author';
-import { Highlight } from '../types/chat.interface';
+import { IHighlight } from '../lib/types/highlight.interface';
 import { sanitizeHighlights } from '../lib/utilities';
 
 interface ResponseDisplayProps {
   target: string | null;
   message: string;
-  highlights: Highlight[];
-  author: Author;
+  highlights: IHighlight[];
+  author: 'AI' | 'USER';
   faded: boolean;
   inputConfirmed: boolean;
   shouldFadeOut: boolean;
@@ -17,7 +16,7 @@ interface ResponseDisplayProps {
 export default function InputDisplay(props: ResponseDisplayProps) {
   const applyHighlightsToMessage = (
     message: string,
-    highlights: Highlight[],
+    highlights: IHighlight[],
     onNormalMessagePart: (s: string) => JSX.Element,
     onHighlightMessagePart: (s: string) => JSX.Element
   ): JSX.Element[] => {
@@ -52,11 +51,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     return (
       <span
         key={uniqueId(message)}
-        className={
-          props.faded
-            ? 'text-white-faded dark:text-neon-white'
-            : 'text-white dark:text-neon-white'
-        }
+        className={props.faded ? 'text-white-faded' : 'text-white'}
       >
         {message}
       </span>
@@ -68,9 +63,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       <span
         key={uniqueId(message)}
         className={`${
-          props.author === Author.AI
-            ? 'bg-green dark:bg-neon-green text-whtie dark:text-neon-gray'
-            : 'bg-black dark:bg-neon-gray text-yellow dark:text-neon-yellow'
+          props.author === 'AI' ? 'bg-green text-white' : 'bg-black text-yellow'
         } rounded-2xl px-1 py-1`}
       >
         {message}

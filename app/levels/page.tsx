@@ -1,9 +1,7 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { getLevels } from '../../lib/services/frontend/levelService';
-import ILevel from '../../types/level.interface';
-import HotBadge from '../../components/Badges/HotBadge';
+import React, { useState } from 'react';
+import HotBadge from '../../components/HotBadge';
 import LoadingMask from '../../components/LoadingMask';
 import {
   Flex,
@@ -15,47 +13,16 @@ import {
 } from '@chakra-ui/react';
 import { FiX } from 'react-icons/fi';
 import { LevelCard } from '../../components/LevelCard';
+import { useLevels } from '@/lib/hooks/useLevels';
 
-interface LevelsPageProps {}
-
-export default function LevelsPage(props: LevelsPageProps) {
-  const [levels, setLevels] = useState<ILevel[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string | undefined>();
-  const [filteredLevels, setFilteredLevels] = useState<ILevel[]>([]);
-
-  useEffect(() => {
-    const filtered = levels.filter((level) =>
-      level.name
-        .toLowerCase()
-        .includes(searchTerm ? searchTerm.toLowerCase() : '')
-    );
-    setFilteredLevels(filtered);
-  }, [levels, searchTerm]);
-
-  const fetchLevels = async () => {
-    setIsLoading(true);
-    try {
-      let levels = await getLevels();
-      levels = levels.filter((l) => l.isVerified);
-      setLevels(levels);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setSearchTerm(e.target.value);
-  };
+export default function LevelsPage() {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const { filteredLevels, setFilterKeyword, isLoading } = useLevels();
 
   const clearSearch = () => {
     setSearchTerm('');
+    setFilterKeyword('');
   };
-
-  useEffect(() => {
-    fetchLevels();
-  }, []);
 
   return (
     <section className='w-full h-full px-10'>
@@ -64,10 +31,13 @@ export default function LevelsPage(props: LevelsPageProps) {
         <InputGroup size='md'>
           <Input
             className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
-            placeholder='Search for levels...'
+            placeholder='Search by topic name or author...'
             value={searchTerm}
             type='text'
-            onChange={onSearchChange}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setFilterKeyword(e.target.value);
+            }}
           />
           <InputRightElement
             width='60px'

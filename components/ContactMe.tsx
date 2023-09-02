@@ -15,8 +15,8 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import { ChangeEvent, useState } from 'react';
-import useToast from '../lib/hook/useToast';
-import { sendEmail } from '../lib/services/frontend/emailService';
+import useToast from '../lib/hooks/useToast';
+import { sendEmail } from '../lib/services/emailService';
 import ProductHuntBadge from './../public/images/producthunt.svg';
 import { emailIsValid } from '../lib/utilities';
 

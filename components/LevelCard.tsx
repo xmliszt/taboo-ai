@@ -1,18 +1,11 @@
 'use client';
 
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Tag,
-} from '@chakra-ui/react';
-import _ from 'lodash';
+import { Card, CardBody, CardFooter, Tag } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../lib/cache';
 import { getDifficulty } from '../lib/utilities';
-import ILevel from '../types/level.interface';
+import ILevel from '../lib/types/level.interface';
+import { DisplayUtils } from '@/lib/utils/displayUtils';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -55,11 +48,11 @@ export function LevelCard({ level }: LevelCardProps) {
             level ? 'bg-neon-white text-black' : 'bg-black-darker text-white'
           }`}
         >
-          {level ? _.startCase(level.name) : 'AI Mode'}
+          {level ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
         </div>
         {level ? (
           <section className='flex flex-wrap gap-2 mt-4'>
-            {level?.new === true && (
+            {level?.isNew === true && (
               <Tag variant='solid' colorScheme='orange'>
                 New Level
               </Tag>

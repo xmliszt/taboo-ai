@@ -58,30 +58,6 @@ const nextConfig = {
       },
     ];
   },
-  async redirects() {
-    return [
-      {
-        source: '/daily-challenge',
-        destination: '/404',
-        permanent: true,
-      },
-      {
-        source: '/leaderboard',
-        destination: '/404',
-        permanent: true,
-      },
-      {
-        source: '/recovery',
-        destination: '/404',
-        permanent: true,
-      },
-      {
-        source: '/signup',
-        destination: '/404',
-        permanent: true,
-      },
-    ];
-  },
 };
 
 module.exports = withPWA(nextConfig);

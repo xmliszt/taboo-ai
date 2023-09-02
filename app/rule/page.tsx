@@ -4,10 +4,13 @@ import ReactMarkdown from 'react-markdown';
 import ruleContent from './rule.md';
 import style from './style.module.css';
 import Link from 'next/link';
+import { Button } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 
 interface RulePageProps {}
 
 export default function RulePage(props: RulePageProps) {
+  const router = useRouter();
   return (
     <section className='flex justify-center'>
       <h1
@@ -23,14 +26,16 @@ export default function RulePage(props: RulePageProps) {
           </ReactMarkdown>
         </article>
         <div className='flex flex-row justify-start gap-8 items-center'>
-          <Link
+          <Button
             id='start'
-            href='/levels'
             data-testid='link-start'
             data-style='none'
+            onClick={() => {
+              router.push('/levels');
+            }}
           >
-            <div className='btn-menu'>Choose Topics</div>
-          </Link>
+            Choose Topics
+          </Button>
         </div>
         <br />
         <hr />

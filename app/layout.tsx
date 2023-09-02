@@ -12,6 +12,7 @@ import PWAInstaller from './PWAInstaller';
 import './global.css';
 import './main.css';
 import Script from 'next/script';
+import { AuthProvider } from './AuthProvider';
 
 const font = Grenze({
   weight: '400',
@@ -43,11 +44,13 @@ export default function RootLayout({
       <head />
       <body className={`${font.className} bg-black text-white scrollbar-hide`}>
         <ThemeProvider>
-          <Header maintenanceOn={maintenanceMode} />
-          {maintenanceMode && <Maintenance />}
-          <PWAInstaller>{!maintenanceMode && children}</PWAInstaller>
-          {!maintenanceMode && <FeaturePopup />}
-          <AnalyticsWrapper />
+          <AuthProvider>
+            <Header maintenanceOn={maintenanceMode} />
+            {maintenanceMode && <Maintenance />}
+            <PWAInstaller>{!maintenanceMode && children}</PWAInstaller>
+            {!maintenanceMode && <FeaturePopup />}
+            <AnalyticsWrapper />
+          </AuthProvider>
         </ThemeProvider>
         <div className='h-4 fixed bottom-0 w-full backdrop-blur-lg gradient-blur-mask-reverse z-50'></div>
       </body>

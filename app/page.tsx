@@ -1,20 +1,31 @@
+'use client';
+
+import DevToggle from '@/components/DevToggle';
+import { Button } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import ContactMe from '../components/ContactMe';
 import InstallButton from '../components/InstallButton';
-import DevToggle from './../components/DevToggle';
 import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
 import Footer from './../components/Footer';
 import SocialLinkButton from './../components/SocialLinkButton';
 
 interface HomePageProps {}
 
+const title = 'Taboo AI';
+const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
+
 export default function HomePage(props: HomePageProps) {
-  const title = 'Taboo AI';
-  const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
-  const environment = process.env.VERCEL_ENV;
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  const navigateTo = (href: string) => {
+    router.push(href);
+  };
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
@@ -34,24 +45,46 @@ export default function HomePage(props: HomePageProps) {
         </div>
         <InstallButton />
         <section className='mt-4 mb-2 flex-col flex gap-8 text-center w-4/5 max-w-[400px]'>
-          <Link
+          <Button
             id='start'
-            href='/levels'
             data-testid='link-start'
             data-style='none'
+            aria-label='Click to choose a topic to play'
+            onClick={() => {
+              navigateTo('/levels');
+            }}
           >
-            <div className='btn-menu'>Choose Topics</div>
-          </Link>
-          <Link
+            Choose Topics
+          </Button>
+          <Button
             id='edit'
-            href='/add-level'
             data-testid='link-edit'
             data-style='none'
+            aria-label='Click to contribute new topic'
+            onClick={() => {
+              navigateTo('add-level');
+            }}
           >
-            <div className='btn-menu'>Add Custom Topics</div>
-          </Link>
+            Contribute New Topics
+          </Button>
+          {session?.user?.email === 'xmliszt@gmail.com' &&
+          status === 'authenticated' ? (
+            <Button
+              id='edit'
+              data-testid='link-dev-review-words'
+              data-style='none'
+              aria-label='Click to review topics as dev'
+              onClick={() => {
+                navigateTo('/x/review-words');
+              }}
+            >
+              Review Words
+            </Button>
+          ) : (
+            <></>
+          )}
         </section>
-        {environment !== 'production' && <DevToggle />}
+        <DevToggle />
         <section className='w-4/5 mt-10'>
           <ContactMe />
         </section>
