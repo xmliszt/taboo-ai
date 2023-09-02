@@ -17,7 +17,7 @@ import { useLevels } from '@/lib/hooks/useLevels';
 
 export default function LevelsPage() {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { filteredLevels, setFilterKeyword, isLoading } = useLevels();
+  const { filteredLevels, setFilterKeyword, isFetchingLevels } = useLevels();
 
   const clearSearch = () => {
     setSearchTerm('');
@@ -26,7 +26,7 @@ export default function LevelsPage() {
 
   return (
     <section className='w-full h-full px-10'>
-      <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
+      <LoadingMask isLoading={isFetchingLevels} message='Fetching Levels...' />
       <div className='w-full fixed z-20 h-12 top-12 left-0 lg:top-20 px-12 py-2'>
         <InputGroup size='md'>
           <Input
