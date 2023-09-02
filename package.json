@@ -56,7 +56,6 @@
     "@types/dateformat": "^5.0.0",
     "@types/jest": "^29.2.5",
     "@types/lodash": "^4.14.191",
-    "@types/logrocket-react": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "autoprefixer": "^10.4.13",
