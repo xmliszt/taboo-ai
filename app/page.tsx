@@ -1,9 +1,22 @@
 'use client';
 
 import DevToggle from '@/components/DevToggle';
-import { Button, Spinner } from '@chakra-ui/react';
+import { firebaseAuth } from '@/firebase';
+import useToast from '@/lib/hooks/useToast';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
+  Spinner,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
+import { useRef } from 'react';
 import { GiCoffeeCup } from 'react-icons/gi';
 import { SiDiscord } from 'react-icons/si';
 import ContactMe from '../components/ContactMe';
@@ -19,10 +32,34 @@ const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
-  const { user, status } = useAuth();
+  const { toast } = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user, status, setStatus } = useAuth();
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const navigateTo = (href: string) => {
     router.push(href);
+  };
+
+  const handleAddTopic = () => {
+    if (status === 'authenticated') {
+      navigateTo('/add-level');
+    } else {
+      onOpen();
+    }
+  };
+
+  const signIn = async () => {
+    onClose();
+    try {
+      setStatus('loading');
+      await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+      setStatus('authenticated');
+    } catch (error) {
+      console.error(error.message);
+      toast({ title: 'Failed to sign in!', status: 'error' });
+      setStatus('unauthenticated');
+    }
   };
 
   return (
@@ -64,9 +101,7 @@ export default function HomePage(props: HomePageProps) {
             data-testid='link-edit'
             data-style='none'
             aria-label='Click to contribute new topic'
-            onClick={() => {
-              navigateTo('add-level');
-            }}
+            onClick={handleAddTopic}
           >
             Contribute New Topics
           </Button>
@@ -109,6 +144,23 @@ export default function HomePage(props: HomePageProps) {
       </div>
       <Footer />
       <div className='h-28 lg:h-36 bg-black w-full fixed bottom-0 z-0 gradient-blur-up'></div>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              You need to sign in to contribute a topic!
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              <Button onClick={signIn}>Sign In Here</Button>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </main>
   );
 }

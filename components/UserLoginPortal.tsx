@@ -13,20 +13,20 @@ export function UserLoginPortal() {
   const { user, status, setStatus } = useAuth();
   const onLogin = async () => {
     try {
-      setStatus && setStatus('loading');
+      setStatus('loading');
       await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
-      setStatus && setStatus('authenticated');
+      setStatus('authenticated');
     } catch (error) {
       console.error(error.message);
       toast({ title: 'Failed to sign in!', status: 'error' });
-      setStatus && setStatus('unauthenticated');
+      setStatus('unauthenticated');
     }
   };
 
   const onLogout = async () => {
-    setStatus && setStatus('loading');
+    setStatus('loading');
     await signOut(firebaseAuth);
-    setStatus && setStatus('unauthenticated');
+    setStatus('unauthenticated');
   };
 
   return user && status === 'authenticated' ? (

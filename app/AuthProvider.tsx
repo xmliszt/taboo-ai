@@ -13,9 +13,12 @@ export type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 const authProviderContext = createContext<{
   user?: User;
   status: AuthStatus;
-  setStatus?: (status: AuthStatus) => void;
+  setStatus: (status: AuthStatus) => void;
 }>({
   status: 'unauthenticated',
+  setStatus: function (status: AuthStatus): void {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
