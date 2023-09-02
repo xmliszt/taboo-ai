@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import HotBadge from '../../components/Badges/HotBadge';
+import HotBadge from '../../components/HotBadge';
 import LoadingMask from '../../components/LoadingMask';
 import {
   Flex,

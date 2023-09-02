@@ -36,12 +36,6 @@ Run in development environment
 npm run dev
 ```
 
-Try out [Turbopack](https://turbo.build/pack)!
-
-```bash
-npm run dev:turbo
-```
-
 Build the project
 
 ```bash
