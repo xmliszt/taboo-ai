@@ -15,7 +15,7 @@ const authProviderContext = createContext<{
   status: AuthStatus;
   setStatus: (status: AuthStatus) => void;
 }>({
-  status: 'unauthenticated',
+  status: 'loading',
   setStatus: function (status: AuthStatus): void {
     throw new Error('Function not implemented.');
   },

@@ -16,7 +16,7 @@ import {
   updateLevel,
   verifyLevel,
 } from '@/lib/services/levelService';
-import { Button, IconButton, Input, Select } from '@chakra-ui/react';
+import { Button, IconButton, Input, Select, Switch } from '@chakra-ui/react';
 import { useAuth } from '@/app/AuthProvider';
 import { useRouter } from 'next/navigation';
 
@@ -67,8 +67,8 @@ const DevReviewWordsPage = () => {
   const getCachedWordList = async (selectedLevel: ILevel) => {
     setFullWordList([]);
     selectedLevel.words.forEach(async (word) => {
-      const tabooWords = await getTabooWords(word);
-      if (tabooWords.length === 0) {
+      const taboo = await getTabooWords(word);
+      if (taboo?.taboos.length === 0) {
         console.log(`Word: [${word}] does not have cached taboo words.`);
       } else {
         setFullWordList((wordList) => [...wordList, word]);
@@ -94,15 +94,14 @@ const DevReviewWordsPage = () => {
     if (word.length <= 0) {
       return;
     }
-    const savedWords = await getTabooWords(word);
-    if (savedWords.length > 0) {
-      const variations: IWord = { target: word, taboos: savedWords };
-      setTabooWords(variations);
-      return variations;
+    const taboo = await getTabooWords(word);
+    if (taboo && taboo.taboos.length > 0) {
+      setTabooWords(taboo);
+      return taboo;
     } else {
-      const variations = await askAITabooWordsForTarget(word);
-      setTabooWords(variations);
-      return variations;
+      const taboo = await askAITabooWordsForTarget(word);
+      setTabooWords(taboo);
+      return taboo;
     }
   };
 
@@ -149,6 +148,15 @@ const DevReviewWordsPage = () => {
     }
   };
 
+  const onVerifyTargetWord = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (taboos) {
+      const currentTarget: IWord = { ...taboos };
+      currentTarget.isVerified = !currentTarget.isVerified;
+      setTabooWords(currentTarget);
+    }
+  };
+
   const onEditTargetWord = (e: ChangeEvent<HTMLInputElement>) => {
     setTargetWordForEditing(e.target.value);
     if (selectedLevel && currentEditingTargetWordIndex !== undefined) {
@@ -160,7 +168,8 @@ const DevReviewWordsPage = () => {
     if (currentTarget && taboos) {
       await addTabooWords(
         currentTarget,
-        taboos.taboos.map((w) => _.trim(_.toLower(w)))
+        taboos.taboos.map((w) => _.trim(_.toLower(w))),
+        taboos.isVerified
       );
       selectedLevel && (await updateLevel(selectedLevel));
       setFullWordList((wordList) => [
@@ -200,8 +209,8 @@ const DevReviewWordsPage = () => {
     return new Promise((res, rej) => {
       setTimeout(async () => {
         try {
-          const savedWords = await getTabooWords(target);
-          if (savedWords.length > 0) {
+          const taboo = await getTabooWords(target);
+          if (taboo?.taboos.length ?? 0 > 0) {
             res();
           } else {
             const taboos = await askAITabooWordsForTarget(target);
@@ -517,6 +526,12 @@ const DevReviewWordsPage = () => {
           icon={<IoMdAddCircle />}
         />
       </div>
+      <div>
+        Verified:{' '}
+        <Switch isChecked={taboos?.isVerified} onChange={onVerifyTargetWord} />
+      </div>
+      <hr className='bg-white h-1 w-full my-2' />
+
       <div className='w-10/12 text-base flex flex-row gap-4 justify-center'>
         <Button
           disabled={
