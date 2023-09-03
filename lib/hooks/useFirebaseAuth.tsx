@@ -14,6 +14,9 @@ export function useFirebaseAuth() {
     if (currentUser) {
       setUser(currentUser);
       setStatus('authenticated');
+    } else {
+      setUser(undefined);
+      setStatus('unauthenticated');
     }
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       if (user) {
