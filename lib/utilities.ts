@@ -5,6 +5,8 @@ import { IDisplayScore } from './types/score.interface';
 import { NextApiRequest } from 'next';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 import IWord from './types/word.interface';
+import moment from 'moment';
+import { DateUtils } from './utils/dateUtils';
 
 interface DelayRouterPushProps {
   delay?: number;
@@ -129,18 +131,16 @@ export const formatResponseTextIntoArray = (
       wordList = [];
     }
   }
-  wordList = wordList.map((e) =>
-    _.startCase(_.toLower(_.trim(e, punctuation)))
-  );
+  wordList = wordList.map((e) => _.toLower(_.trim(e, punctuation)));
   wordList = _.uniq(wordList);
   if (target) {
-    const _word = _.startCase(_.toLower(target));
+    const _word = _.toLower(target);
     if (!wordList.includes(_word)) {
       wordList.push(_word);
     }
   }
   wordList = wordList.filter((word) => word.length < 20);
-  return wordList;
+  return wordList.map(_.trim);
 };
 
 export const getMockResponse = async (
@@ -176,7 +176,12 @@ export const getMockVariations = async (
   return new Promise<IWord>((res, rej) => {
     setTimeout(() => {
       shouldSucceed
-        ? res({ target: target, taboos: Array(15).fill(target) })
+        ? res({
+            target: target,
+            taboos: Array(15).fill(target),
+            isVerified: true,
+            updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
+          })
         : rej('Mock Failure');
     }, 1000);
   });

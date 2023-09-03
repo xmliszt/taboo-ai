@@ -1,14 +1,22 @@
 import { firestore } from '@/firebase';
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import _ from 'lodash';
+import moment from 'moment';
 import IWord from '../types/word.interface';
+import { DateUtils } from '../utils/dateUtils';
 
 export const isTargetWordExists = async (
   targetWord: string
 ): Promise<boolean> => {
-  return await (
-    await getDoc(doc(firestore, 'words', _.toLower(targetWord)))
-  ).exists();
+  const target = _.toLower(_.trim(targetWord));
+  return (await getDoc(doc(firestore, 'words', target))).exists();
 };
 
 export const getAllTargetWords = async (): Promise<IWord[]> => {
@@ -17,8 +25,10 @@ export const getAllTargetWords = async (): Promise<IWord[]> => {
   snapshots.forEach((snapshot) => {
     const data = snapshot.data();
     const word: IWord = {
-      target: snapshot.id,
+      target: data.target,
       taboos: data.taboos as string[],
+      isVerified: data.isVerified,
+      updatedAt: data.updatedAt,
     };
     results.push(word);
   });
@@ -27,19 +37,34 @@ export const getAllTargetWords = async (): Promise<IWord[]> => {
 
 export const addTabooWords = async (
   targetWord: string,
-  taboos: string[]
+  taboos: string[],
+  isVerified = false
 ): Promise<void> => {
-  await setDoc(doc(firestore, 'words', _.toLower(targetWord)), {
-    taboos: taboos.map(_.toLower),
+  const target = _.toLower(_.trim(targetWord));
+  await setDoc(doc(firestore, 'words', target), {
+    target: target,
+    taboos: taboos.map(_.trim).map(_.toLower),
+    isVerified: isVerified,
+    updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
   });
 };
 
-export const getTabooWords = async (targetWord: string): Promise<string[]> => {
-  const snapshot = await getDoc(doc(firestore, 'words', _.toLower(targetWord)));
+export const verifyTabooWords = async (targetWord: string): Promise<void> => {
+  const target = _.toLower(_.trim(targetWord));
+  await updateDoc(doc(firestore, 'words', target), {
+    isVerified: true,
+  });
+};
+
+export const getTabooWords = async (
+  targetWord: string
+): Promise<IWord | undefined> => {
+  const target = _.toLower(_.trim(targetWord));
+  const snapshot = await getDoc(doc(firestore, 'words', target));
   const data = snapshot.data();
   if (data) {
-    return data.taboos as string[];
+    return data as IWord;
   } else {
-    return [];
+    return undefined;
   }
 };

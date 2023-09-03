@@ -7,12 +7,13 @@ import { useEffect, useState } from 'react';
 
 export function useFirebaseAuth() {
   const [user, setUser] = useState<User>();
-  const [status, setStatus] = useState<AuthStatus>('unauthenticated');
+  const [status, setStatus] = useState<AuthStatus>('loading');
 
   useEffect(() => {
     const currentUser = firebaseAuth.currentUser;
     if (currentUser) {
       setUser(currentUser);
+      setStatus('authenticated');
     }
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       if (user) {

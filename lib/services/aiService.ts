@@ -4,10 +4,13 @@ import { CONSTANTS } from '../constants';
 import { formatResponseTextIntoArray } from '../utilities';
 import { IAIScore } from '../types/score.interface';
 import IWord from '../types/word.interface';
+import moment from 'moment';
+import { DateUtils } from '../utils/dateUtils';
 
 export async function askAITabooWordsForTarget(
   targetWord: string
 ): Promise<IWord> {
+  const target = _.toLower(_.trim(targetWord));
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {
@@ -15,7 +18,7 @@ export async function askAITabooWordsForTarget(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate 5-8 words related to '${targetWord}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
+      prompt: `Generate 5-8 words related to '${target}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
       temperature: 1,
       maxToken: 100,
     }),
@@ -23,10 +26,13 @@ export async function askAITabooWordsForTarget(
   });
   const json = await response.json();
   const text = json.response;
-  const variations = formatResponseTextIntoArray(text, targetWord);
+  const variations = formatResponseTextIntoArray(text, target);
+  console.log(variations);
   return {
-    target: targetWord,
+    target: target,
     taboos: variations,
+    isVerified: false,
+    updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
   };
 }
 

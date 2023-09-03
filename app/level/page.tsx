@@ -288,9 +288,9 @@ export default function LevelPage(props: LevelPageProps) {
           }
         });
     } else {
-      const savedWords = await getTabooWords(target);
-      if (savedWords.length > 1) {
-        callback({ target: target, taboos: savedWords });
+      const taboo = await getTabooWords(target);
+      if (taboo && taboo.taboos.length > 1 && taboo.isVerified) {
+        callback(taboo);
       } else {
         askAITabooWordsForTarget(target)
           .then(async (variations) => {
@@ -326,12 +326,13 @@ export default function LevelPage(props: LevelPageProps) {
         setTimeout(() => {
           setIsGeneratingVariations(false);
           let _variations = [target];
-          if (variations && variations.target === target) {
+          if (
+            variations &&
+            _.toLower(variations.target) === _.toLower(target)
+          ) {
             _variations = variations.taboos;
           }
-          setVariations(
-            _variations.map((variation) => formatStringForDisplay(variation))
-          );
+          setVariations(_variations.map(formatStringForDisplay));
           setResponseShouldFadeOut(true);
           setResponseText('');
           startCountdown();
@@ -590,7 +591,7 @@ export default function LevelPage(props: LevelPageProps) {
             <span className=''>
               Taboo words:{' '}
               <span className='text-red dark:text-neon-red'>
-                {variations.join(', ')}
+                {variations.map(_.startCase).join(', ')}
               </span>{' '}
               {isGeneratingVariations && (
                 <span className='text-black dark:text-gray'>

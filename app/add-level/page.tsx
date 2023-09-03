@@ -61,23 +61,19 @@ import useToast from '../../lib/hooks/useToast';
 import { sendEmail } from '../../lib/services/emailService';
 import { emailIsValid } from '../../lib/utilities';
 import { addLevel } from '@/lib/services/levelService';
-import {
-  addTabooWords,
-  getTabooWords,
-  isTargetWordExists,
-} from '@/lib/services/wordService';
+import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
 import { useAuth } from '../AuthProvider';
 import { useRouter } from 'next/navigation';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
-const VALID_WORD_REGEX = /^(\w+[\s'])*\w+$/;
+const VALID_WORD_REGEX = /^\s*(\s*\w+[\s']*\w+\s*)+\s*$/;
 const INVALID_WORD_ERROR =
-  'Only single space or a single quotation mark is allowed between words. No special characters are allowed. No extra spaces should be in front or at the back of your entry. Cannot be empty.';
+  'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty.';
 
 const AddLevelPage = () => {
-  const { user, status } = useAuth();
+  const { status } = useAuth();
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
     useState(false);
   const [topicName, setTopicName] = useState('');
@@ -125,7 +121,7 @@ const AddLevelPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (status !== 'authenticated') {
+    if (status === 'unauthenticated') {
       toast({
         title: 'You need to sign in to contribute a topic',
         status: 'error',
@@ -252,16 +248,14 @@ const AddLevelPage = () => {
     statuses[targetWordIndex] = true;
     setTabooWordsCheckingStatus(statuses);
     try {
-      const existed = await isTargetWordExists(targetWords[targetWordIndex]);
+      const taboo = await getTabooWords(targetWords[targetWordIndex]);
+      const existed = taboo !== undefined;
       const existedStatues = [...tabooWordsExistedStatus];
       existedStatues[targetWordIndex] = existed;
       setTabooWordsExistedStatus(existedStatues);
-      if (existed) {
-        const existingTabooWords = await getTabooWords(
-          targetWords[targetWordIndex]
-        );
+      if (existed && taboo) {
         const _tabooWords = [...tabooWords];
-        _tabooWords[targetWordIndex] = existingTabooWords;
+        _tabooWords[targetWordIndex] = taboo.taboos;
         setTabooWords(_tabooWords);
         const errorMessages = [...tabooWordsErrorMessages];
         errorMessages[targetWordIndex] = '';
@@ -408,6 +402,12 @@ const AddLevelPage = () => {
         'Some target words input are not valid or empty. Please change them! ' +
           INVALID_WORD_ERROR
       );
+    } else if (
+      _.uniq(targetWords.map(_.trim).map(_.toLower)).length < targetWords.length
+    ) {
+      setTargetWordsErrorMessage(
+        'Please remove duplicate in your target words!'
+      );
     } else {
       setTargetWordsErrorMessage('');
     }
@@ -425,6 +425,12 @@ const AddLevelPage = () => {
       messages[forTargetIndex] =
         'Some taboo words input are not valid. Please change them! ' +
         INVALID_WORD_ERROR;
+    } else if (
+      _.uniq(tabooWords[forTargetIndex].map(_.trim).map(_.toLower)).length <
+      tabooWords[forTargetIndex].length
+    ) {
+      messages[forTargetIndex] =
+        'Please remove duplicate words in your taboo words.';
     } else {
       messages[forTargetIndex] = '';
     }
@@ -474,7 +480,7 @@ const AddLevelPage = () => {
       await addLevel({
         name: topicName,
         difficulty: Number(difficultyLevel),
-        words: targetWords.map((w) => _.toLower(w)),
+        words: targetWords.map((w) => _.toLower(_.trim(w))),
         author: nickname,
         isNew: true,
       });
