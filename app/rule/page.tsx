@@ -3,9 +3,8 @@
 import ReactMarkdown from 'react-markdown';
 import ruleContent from './rule.md';
 import style from './style.module.css';
-import Link from 'next/link';
-import { Button } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 interface RulePageProps {}
 
@@ -15,7 +14,7 @@ export default function RulePage(props: RulePageProps) {
     <section className='flex justify-center'>
       <h1
         data-testid='heading-rule-title'
-        className='h-32 fixed top-0 z-50 leading-normal text-white pt-4 text-xl'
+        className='h-32 fixed top-0 z-50 leading-normal pt-4 text-xl'
       >
         How To Play Taboo AI?
       </h1>

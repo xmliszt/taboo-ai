@@ -53,7 +53,7 @@ const ConfirmPopUp = (props: ConfirmPopUpProps) => {
                 <button
                   disabled={props.disabled}
                   key={idx}
-                  className='h-full flex-grow !bg-black dark:!bg-neon-gray !text-white'
+                  className='h-full flex-grow !bg-primary dark:!bg-neon-gray !text-primary'
                   onClick={props.buttons[idx].onClick}
                 >
                   {buttonProps.label}

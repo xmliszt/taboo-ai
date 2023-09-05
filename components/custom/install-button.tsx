@@ -1,7 +1,7 @@
 'use client';
 
-import { Tag } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
 
 export default function InstallButton() {
   const [showButton, setShowButton] = useState(false);
@@ -19,12 +19,7 @@ export default function InstallButton() {
   };
 
   return showButton ? (
-    <Tag
-      className='cursor-pointer hover:scale-105 transition-transform bg-gray text-black mt-5'
-      onClick={onInstallClick}
-    >
-      INSTALL APP
-    </Tag>
+    <Button onClick={onInstallClick}>INSTALL APP</Button>
   ) : (
     <></>
   );

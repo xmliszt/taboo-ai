@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import content from './roadmap.md';
-import style from './style.module.css';
+// import style from './style.module.css';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
 
@@ -21,7 +21,7 @@ export default async function RoadmapPage(props: RoadmapPageProps) {
         data-testid='content-article'
         className='leading-normal w-10/12 pt-16 lg:pt-32 pb-24 lg:pb-32'
       >
-        <ReactMarkdown className={`${style.markdown}`}>{content}</ReactMarkdown>
+        <ReactMarkdown className={``}>{content}</ReactMarkdown>
       </article>
       <Footer />
     </section>

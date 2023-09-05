@@ -604,7 +604,7 @@ const AddLevelPage = () => {
       <div className='relative w-full h-full flex flex-col items-center'>
         <Card
           id='add-topic-card'
-          className={`relative w-[95%] h-full transition-transform mb-4 overflow-y-scroll scrollbar-hide bg-black-darker text-white leading-4 border-2 ${
+          className={`relative w-[95%] h-full transition-transform mb-4 overflow-y-scroll scrollbar-hide bg-primary-darker text-primary leading-4 border-2 ${
             isAllValid ? 'border-neon-green' : 'border-white'
           }`}
           onScroll={onScrollChange}
@@ -617,7 +617,7 @@ const AddLevelPage = () => {
             <IconButton
               data-style='none'
               variant='solid'
-              className=' bg-white text-black hover:text-white hover:bg-black focus:bg-black-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
+              className=' bg-white text-black hover:text-primary hover:bg-primary focus:bg-primary-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
               fontSize={26}
               aria-label='click to scroll back to top'
               onClick={scrollToTop}
@@ -763,7 +763,7 @@ const AddLevelPage = () => {
                             isDisabled={tabooWordsCheckingStatus[i]}
                             data-style='none'
                             variant='unstyled'
-                            className='text-white hover:opacity-70 flex justify-center items-center'
+                            className='text-primary hover:opacity-70 flex justify-center items-center'
                             aria-label='clear text field'
                             size='sm'
                             onClick={() => {
@@ -781,7 +781,7 @@ const AddLevelPage = () => {
                         isRound
                         fontSize={16}
                         size='sm'
-                        className='text-white bg-red absolute -top-2 -right-4 z-10 p-2'
+                        className='text-primary bg-red absolute -top-2 -right-4 z-10 p-2'
                         aria-label={`delete this target word with index ${i}`}
                         onClick={() => {
                           deleteTargetWordAtIndex(i);
@@ -795,7 +795,7 @@ const AddLevelPage = () => {
                     key='add-button'
                     data-style='none'
                     variant='outline'
-                    className='text-white hover:text-black '
+                    className='text-primary hover:text-black '
                     aria-label='add a new target word'
                     fontSize={24}
                     onClick={addNewTargetWord}
@@ -988,7 +988,7 @@ const AddLevelPage = () => {
                                             }
                                             data-style='none'
                                             variant='unstyled'
-                                            className='text-white hover:opacity-70 flex justify-center items-center'
+                                            className='text-primary hover:opacity-70 flex justify-center items-center'
                                             aria-label='clear text field'
                                             size='sm'
                                             onClick={() => {
@@ -1009,7 +1009,7 @@ const AddLevelPage = () => {
                                         isRound
                                         fontSize={16}
                                         size='sm'
-                                        className='text-white bg-red absolute -top-2 -right-4 z-10 p-2'
+                                        className='text-primary bg-red absolute -top-2 -right-4 z-10 p-2'
                                         aria-label={`delete this target word with index ${i}`}
                                         onClick={() => {
                                           deleteTabooWordAtIndex(i, ti);
@@ -1029,7 +1029,7 @@ const AddLevelPage = () => {
                                   key='add-button'
                                   data-style='none'
                                   variant='outline'
-                                  className='text-white hover:text-black '
+                                  className='text-primary hover:text-black '
                                   aria-label='add a new target word'
                                   fontSize={24}
                                   onClick={() => {
@@ -1055,7 +1055,7 @@ const AddLevelPage = () => {
           <Button
             data-style='none'
             variant='solid'
-            className=' bg-neon-green text-black hover:text-neon-green hover:bg-black focus:bg-black-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
+            className=' bg-neon-green text-black hover:text-neon-green hover:bg-primary focus:bg-primary-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
             fontSize={26}
             aria-label='click to review the topic'
             onClick={onReviewTopic}
@@ -1072,7 +1072,7 @@ const AddLevelPage = () => {
         allowPinchZoom
       >
         <DrawerOverlay />
-        <DrawerContent className='leading-4 text-white bg-black-darker h-full'>
+        <DrawerContent className='leading-4 text-primary bg-primary-darker h-full'>
           <DrawerCloseButton data-style='none' className='hover:opacity-70' />
           <DrawerHeader borderBottomWidth='1px'>
             Review Your Topic: <b>{topicName}</b>
@@ -1080,7 +1080,7 @@ const AddLevelPage = () => {
           <DrawerBody className='w-full flex flex-col items-stretch'>
             <SimpleGrid minChildWidth='240px' spacing={10} my={10} mx={6}>
               {targetWords.map((w, i) => (
-                <Card key={i} className='bg-black text-white'>
+                <Card key={i} className='bg-primary text-primary'>
                   <CardHeader className='text-center text-2xl font-bold'>
                     <h2>{w}</h2>
                   </CardHeader>
@@ -1148,7 +1148,7 @@ const AddLevelPage = () => {
                 emailErrorMessage.length > 0
                   ? 'bg-yellow'
                   : 'bg-neon-green'
-              } text-black hover:text-gray hover:bg-black focus:bg-black-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]`}
+              } text-black hover:text-gray hover:bg-primary focus:bg-primary-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]`}
               fontSize={32}
               aria-label='click to submit the topic created'
               mb={4}
@@ -1169,7 +1169,7 @@ const AddLevelPage = () => {
         <ModalOverlay />
         <ModalContent
           data-style='none'
-          className='leading-4 bg-black text-white'
+          className='leading-4 bg-primary text-primary'
         >
           <ModalHeader className='text-yellow'>
             Submit Appeal For &quot;{selectedWordForAppeal}&quot;

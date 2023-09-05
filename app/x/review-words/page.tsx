@@ -354,11 +354,11 @@ const DevReviewWordsPage = () => {
     <section className='flex flex-col gap-8 justify-center items-center py-20'>
       <div className='flex flex-row gap-2 justify-center items-center p-2'>
         {selectedLevel?.isVerified ? (
-          <div className='bg-green text-white rounded-md drop-shadow-sm p-2'>
+          <div className='bg-green text-primary rounded-md drop-shadow-sm p-2'>
             Verified
           </div>
         ) : (
-          <div className='bg-red text-white rounded-md drop-shadow-sm p-2'>
+          <div className='bg-red text-primary rounded-md drop-shadow-sm p-2'>
             Not Verified
           </div>
         )}
@@ -368,7 +368,7 @@ const DevReviewWordsPage = () => {
         <div
           className={`${
             selectedLevel?.isNew ? 'bg-green' : 'bg-red'
-          } text-white rounded-md drop-shadow-sm p-2`}
+          } text-primary rounded-md drop-shadow-sm p-2`}
         >
           NEW
         </div>
@@ -380,7 +380,7 @@ const DevReviewWordsPage = () => {
           id='level'
           value={selectedLevel?.name}
           onChange={onLevelSelected}
-          className='w-full text-white rounded-full px-4 py-2 appearance-none'
+          className='w-full text-primary rounded-full px-4 py-2 appearance-none'
         >
           {levels.map((level, idx) => (
             <option key={idx} value={level.name}>
@@ -412,7 +412,7 @@ const DevReviewWordsPage = () => {
                 fullWordList
                   .map((w) => _.trim(_.toLower(w)))
                   .includes(_.trim(_.toLower(word)))
-                  ? '!bg-green !text-white'
+                  ? '!bg-green !text-primary'
                   : '!bg-yellow !text-black'
               } ${
                 currentEditingTargetWordIndex === idx
@@ -448,7 +448,7 @@ const DevReviewWordsPage = () => {
                   aria-label='delete'
                   size='xs'
                   disabled={!isPageInteractive}
-                  className='absolute -top-5 -right-3 rounded-full p-2 bg-red text-white'
+                  className='absolute -top-5 -right-3 rounded-full p-2 bg-red text-primary'
                   id='delete'
                   data-style='none'
                   onClick={() => {

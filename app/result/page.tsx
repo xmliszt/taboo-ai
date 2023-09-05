@@ -17,7 +17,7 @@ import { isMobile } from 'react-device-detect';
 import { IHighlight } from '../../lib/types/highlight.interface';
 import { delayRouterPush } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
-import LoadingMask from '../../components/LoadingMask';
+import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
 import moment from 'moment';
 import useToast from '../../lib/hooks/useToast';
@@ -356,7 +356,7 @@ export default function ResultPage(props: ResultPageProps) {
           return (
             <span
               key={uniqueId()}
-              className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'
+              className='bg-green dark:bg-neon-green p-1 rounded-lg text-primary dark:text-neon-gray'
             >
               {highlight}
             </span>
@@ -392,7 +392,7 @@ export default function ResultPage(props: ResultPageProps) {
           return (
             <span
               key={uniqueId()}
-              className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'
+              className='bg-green dark:bg-neon-green p-1 rounded-lg text-primary dark:text-neon-gray'
             >
               {highlight}
             </span>
@@ -535,7 +535,7 @@ export default function ResultPage(props: ResultPageProps) {
         className='border-2 border-white bg-white text-black flex flex-col gap-1 rounded-2xl dark:border-neon-red dark:bg-neon-gray dark:text-neon-white'
       >
         <div
-          className='bg-black dark:bg-neon-black dark:shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'
+          className='bg-primary dark:bg-neon-black dark:shadow-xl text-primary p-3 rounded-2xl flex flex-row justify-between'
           onClick={() => {
             toggleMobileScoreStack(score.id);
           }}
@@ -565,7 +565,7 @@ export default function ResultPage(props: ResultPageProps) {
     return (
       <div className='w-full flex flex-col gap-6 mb-8 mt-10 px-4'>
         <div className='text-center flex justify-center items-center'>
-          <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 shadow-lg'>
+          <span className='dark:bg-neon-gray bg-primary rounded-2xl p-3 dark:border-neon-white border-2 shadow-lg'>
             Topic: {generateTopicName()}
           </span>
         </div>
@@ -636,7 +636,7 @@ export default function ResultPage(props: ResultPageProps) {
       <div className='mt-12 lg:mt-16 px-4 w-full h-full text-center'>
         <div className='font-mono relative rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
           <table className='relative table-fixed w-full'>
-            <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
+            <thead className='relative font-semibold uppercase bg-primary text-primary dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
               <tr>
                 {headers.map((header, idx) => (
                   <th
@@ -654,7 +654,7 @@ export default function ResultPage(props: ResultPageProps) {
               <tr>
                 <td
                   colSpan={4}
-                  className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
+                  className='w-full h-12 text-xl lg:text-3xl text-primary-faded bg-white dark:text-neon-red dark:bg-neon-black'
                 >
                   {' '}
                   Topic:{' '}
@@ -664,7 +664,7 @@ export default function ResultPage(props: ResultPageProps) {
                 </td>
                 <td
                   colSpan={4}
-                  className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
+                  className='w-full h-12 text-xl lg:text-3xl text-primary-faded bg-white dark:text-neon-red dark:bg-neon-black'
                 >
                   {' '}
                   Difficulty:{' '}
@@ -757,7 +757,7 @@ export default function ResultPage(props: ResultPageProps) {
       </section>
       <div className='fixed bottom-2 z-40 w-full text-center py-4'>
         <button
-          className='h-12 lg:h-24 lg:text-2xl w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
+          className='h-12 lg:h-24 lg:text-2xl w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-primary text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
           onClick={() => {
             router.push('/level');
           }}
@@ -787,7 +787,7 @@ export default function ResultPage(props: ResultPageProps) {
       <div
         hidden={!showScoreExplained}
         id='modal-rule-page'
-        className='fixed top-0 left-0 w-full h-full bg-black flex justify-center items-center z-50 animate-fade-in'
+        className='fixed top-0 left-0 w-full h-full bg-primary flex justify-center items-center z-50 animate-fade-in'
       >
         <button
           data-style='none'

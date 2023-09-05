@@ -5,7 +5,8 @@ import { askAIForCreativeTopic } from '../../lib/services/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';
-import LoadingMask from '../../components/LoadingMask';
+import LoadingMask from '../../components/custom/loading-mask';
+import { Input } from '@/components/ui/input';
 
 interface AiPageProps {}
 
@@ -85,7 +86,7 @@ export default function AiPage(props: AiPageProps) {
               the word will be in the generated game.
             </label>
             <div className='flex flex-col xs:flex-row md:flex-row lg:flex-row gap-4'>
-              <input
+              <Input
                 aria-labelledby='topicInputLabel'
                 aria-label='topic input field'
                 aria-placeholder='for example: Planets'
@@ -123,8 +124,8 @@ export default function AiPage(props: AiPageProps) {
               rounded-full
               transition
               ease-in-out
-              hover:bg-black
-              hover:text-white
+              hover:bg-primary
+              hover:text-primary
               hover:border-gray
               hover:dark:bg-neon-gray
               hover:dark:text-neon-white

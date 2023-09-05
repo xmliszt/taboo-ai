@@ -10,7 +10,7 @@ export default function Timer(props: TimerProps) {
       id='timer'
       className={`shadow-lg min-w-[5rem] lg:min-w-[10rem] border-gray dark:border-neon-gray border-2 lg:border-4 rounded-tl-2xl rounded-br-2xl ${
         props.time > 100
-          ? 'bg-red  text-white'
+          ? 'bg-red  text-primary'
           : props.time > 50
           ? 'bg-yellow text-black'
           : 'bg-white text-red'

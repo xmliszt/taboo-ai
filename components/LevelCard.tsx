@@ -1,11 +1,12 @@
 'use client';
 
-import { Card, CardBody, CardFooter, Tag } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../lib/cache';
 import { getDifficulty } from '../lib/utilities';
 import ILevel from '../lib/types/level.interface';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
+import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
+import { Badge } from './ui/badge';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -38,36 +39,25 @@ export function LevelCard({ level }: LevelCardProps) {
   return (
     <Card
       onClick={goToLevel}
-      className={`w-[200px] h-[250px] transition-all hover:scale-105 ease-in-out cursor-pointer aspect-square rounded-xl shadow-lg shadow-lg bg-white ${
+      className={`w-[200px] h-[250px] transition-all hover:scale-105 ease-in-out cursor-pointer shadow-md flex flex-col ${
         level ? '' : 'unicorn-color'
       }`}
     >
-      <CardBody p='2' className='relative'>
-        <div
-          className={`text-xl leading-tight font-extrabold rounded-lg p-2 shadow-md ${
-            level ? 'bg-neon-white text-black' : 'bg-black-darker text-white'
-          }`}
-        >
+      <CardHeader>
+        <div className='text-xl leading-tight font-extrabold rounded-lg p-2 shadow-md bg-primary text-primary-foreground'>
           {level ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
         </div>
+      </CardHeader>
+      <CardContent className='relative'>
         {level ? (
-          <section className='flex flex-wrap gap-2 mt-4'>
-            {level?.isNew === true && (
-              <Tag variant='solid' colorScheme='orange'>
-                New Level
-              </Tag>
-            )}
+          <section className='flex flex-wrap gap-2'>
+            {level?.isNew === true && <Badge>New Level</Badge>}
             {level?.difficulty && (
-              <Tag
-                variant='solid'
-                colorScheme={getDifficultyColor(level.difficulty)}
-              >
+              <Badge>
                 Difficulty: {getDifficulty(level.difficulty, false)}
-              </Tag>
+              </Badge>
             )}
-            {level?.words && (
-              <Tag variant='solid'>{level.words.length} words</Tag>
-            )}
+            {level?.words && <Badge>{level.words.length} words</Badge>}
           </section>
         ) : (
           <section className='mt-4 p-2 leading-tight text-left font-bold'>
@@ -75,7 +65,8 @@ export function LevelCard({ level }: LevelCardProps) {
             generate for you!
           </section>
         )}
-      </CardBody>
+      </CardContent>
+      <div className='flex-grow h-auto w-full'></div>
       {level?.author && (
         <CardFooter>
           <div className='w-full italic text-right'>

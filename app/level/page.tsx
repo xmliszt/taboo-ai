@@ -438,7 +438,7 @@ export default function LevelPage(props: LevelPageProps) {
   //!SECTION
 
   return (
-    <section className='flex justify-center h-full bg-black dark:bg-neon-black'>
+    <section className='flex justify-center h-full bg-primary dark:bg-neon-black'>
       {isCountingdown && (
         <div
           className={`fixed z-50 top-1/3 w-full h-24 text-center text-[3rem] lg:text-[5rem] animate-bounce`}
@@ -532,7 +532,7 @@ export default function LevelPage(props: LevelPageProps) {
                   isGeneratingVariations ||
                   isSuccess
                 }
-                className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-white hover:bg-black hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
+                className='absolute right-16 lg:right-20 z-10 text-lg lg:text-2xl transition-opacity ease-in-out shadow-lg border-2 lg:border-8 border-white bg-white dark:bg-neon-gray text-black hover:text-primary hover:bg-primary hover:dark:text-neon-black hover:dark:bg-neon-green hover:dark:border-neon-green dark:text-neon-white dark:border-neon-green rounded-full'
                 onClick={() => {
                   setUserInput('');
                   setIsEmptyInput(true);

@@ -1,4 +1,4 @@
-import DevToggle from '../../components/DevToggle';
+import DevToggle from '../../components/custom/dev-toggle';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

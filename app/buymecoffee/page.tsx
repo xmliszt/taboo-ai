@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { GiCoffeeCup } from 'react-icons/gi';
-import SocialLinkButton from '../../components/SocialLinkButton';
+import SocialLinkButton from '../../components/custom/social-link-button';
 import ReactMarkdown from 'react-markdown';
 import content from './content.md';
 import style from './style.module.css';
@@ -28,7 +28,7 @@ const BuyMeCoffeePage = () => {
           newTab={true}
           icon={<GiCoffeeCup />}
           href='https://www.buymeacoffee.com/yuxuanli'
-          customClass='text-2xl'
+          className='text-2xl'
         />
 
         <article

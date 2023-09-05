@@ -25,9 +25,9 @@ export default function HotBadge(props: BadgeProps) {
   return (
     <div className='relative'>
       <span
-        className={`absolute shadow-lg ${locationClass} h-4 lg:h-8 text-xs lg:text-xl w-auto px-2 lg:px-4 z-10 text-white font-bold rounded-full font-mono flex justify-center items-center ${
-          props.customClass ?? 'bg-red-light dark:bg-neon-red-light z-10'
-        } whitespace-nowrap`}
+        className={`absolute shadow-lg ${locationClass} h-4 lg:h-8 text-xs lg:text-xl w-auto px-2 lg:px-4 z-10 text-orange-700 font-bold rounded-full font-mono flex justify-center items-center ${
+          props.customClass ?? 'z-10 bg-orange-400'
+        } whitespace-nowrap animate-bounce`}
       >
         HOT
       </span>

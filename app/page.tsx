@@ -1,28 +1,28 @@
 'use client';
 
-import DevToggle from '@/components/DevToggle';
-import useToast from '@/lib/hooks/useToast';
-import { signInWithGoogle } from '@/lib/services/authService';
+import { Spinner } from '@/components/custom/spinner';
+import DevToggle from '@/components/custom/dev-toggle';
 import {
   AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
+  AlertDialogAction,
+  AlertDialogTitle,
+  AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-  Spinner,
-  useDisclosure,
-} from '@chakra-ui/react';
+  AlertDialogContent,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { signInWithGoogle } from '@/lib/services/authService';
+import { Coffee } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { useRef } from 'react';
-import { GiCoffeeCup } from 'react-icons/gi';
-import { SiDiscord } from 'react-icons/si';
-import ContactMe from '../components/ContactMe';
-import InstallButton from '../components/InstallButton';
+import { useState } from 'react';
+import { BsDiscord } from 'react-icons/bs';
+import ContactMe from '../components/custom/contact-me';
+import InstallButton from '../components/custom/install-button';
 import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
-import Footer from './../components/Footer';
-import SocialLinkButton from './../components/SocialLinkButton';
+import Footer from '@/components/Footer';
+import SocialLinkButton from '../components/custom/social-link-button';
 import { useAuth } from './AuthProvider';
 
 interface HomePageProps {}
@@ -32,9 +32,8 @@ const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
   const { toast } = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isSignInPromptOpen, setIsSignInPromptOpen] = useState(false);
   const { user, status, setStatus } = useAuth();
-  const cancelRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const navigateTo = (href: string) => {
     router.push(href);
@@ -44,19 +43,19 @@ export default function HomePage(props: HomePageProps) {
     if (status === 'authenticated') {
       navigateTo('/add-level');
     } else {
-      onOpen();
+      setIsSignInPromptOpen(true);
     }
   };
 
   const signIn = async () => {
-    onClose();
+    setIsSignInPromptOpen(false);
     try {
       setStatus('loading');
       await signInWithGoogle();
       setStatus('authenticated');
     } catch (error) {
       console.error(error.message);
-      toast({ title: 'Failed to sign in!', status: 'error' });
+      toast({ title: 'Failed to sign in!' });
       setStatus('unauthenticated');
     }
   };
@@ -64,21 +63,18 @@ export default function HomePage(props: HomePageProps) {
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
       {status === 'loading' && (
-        <div className='w-screen h-screen fixed z-50 top-0 left-0 flex justify-center items-center bg-black opacity-60'>
+        <div className='w-screen h-screen fixed z-[60] top-0 left-0 flex justify-center items-center backdrop-blur-md'>
           <Spinner />
         </div>
       )}
       <Script id='pwa-script' src='/js/pwa.js' />
-      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-16 lg:pt-24 pb-32'>
+      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-24 lg:pt-24 pb-32 lg:pb-44'>
         <div className='w-full relative'>
           <h1
             data-testid='heading-title'
             className='text-center text-6xl lg:text-8xl drop-shadow-lg'
           >
-            {title}{' '}
-            <span className='text-lg text-white-faded dark:text-neon-white'>
-              {versionNumber}
-            </span>
+            {title} <span className='text-lg'>{versionNumber}</span>
           </h1>
           <FeatureUpdatesLink />
         </div>
@@ -129,36 +125,34 @@ export default function HomePage(props: HomePageProps) {
       <div className='fixed bottom-20 lg:bottom-28 w-full flex flex-row gap-2 justify-center z-10'>
         <SocialLinkButton
           content='Buy Me Coffee'
-          icon={<GiCoffeeCup />}
+          icon={<Coffee />}
           href='/buymecoffee'
         />
         <SocialLinkButton
           content='Join Discord!'
-          icon={<SiDiscord />}
+          icon={<BsDiscord />}
           href='https://discord.gg/dgqs29CHC2'
           newTab={true}
-          accentColorClass='bg-purple dark:bg-neon-purple'
-          dropShadowClass='hover:shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
         />
       </div>
       <Footer />
-      <div className='h-28 lg:h-36 bg-black w-full fixed bottom-0 z-0 gradient-blur-up'></div>
+      <div className='h-28 lg:h-36 bw-full fixed bottom-0 z-0 gradient-blur-up'></div>
       <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-        isCentered
+        open={isSignInPromptOpen}
+        onOpenChange={(open) => {
+          setIsSignInPromptOpen(open);
+        }}
       >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
               You need to sign in to contribute a topic!
-            </AlertDialogHeader>
-            <AlertDialogBody>
-              <Button onClick={signIn}>Sign In Here</Button>
-            </AlertDialogBody>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={signIn}>Sign In Here</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
       </AlertDialog>
     </main>
   );

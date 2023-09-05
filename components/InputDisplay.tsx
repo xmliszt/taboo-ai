@@ -51,7 +51,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
     return (
       <span
         key={uniqueId(message)}
-        className={props.faded ? 'text-white-faded' : 'text-white'}
+        className={props.faded ? 'text-primary-faded' : 'text-primary'}
       >
         {message}
       </span>
@@ -63,7 +63,9 @@ export default function InputDisplay(props: ResponseDisplayProps) {
       <span
         key={uniqueId(message)}
         className={`${
-          props.author === 'AI' ? 'bg-green text-white' : 'bg-black text-yellow'
+          props.author === 'AI'
+            ? 'bg-green text-primary'
+            : 'bg-primary text-yellow'
         } rounded-2xl px-1 py-1`}
       >
         {message}
@@ -91,7 +93,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         }
       >
         <p
-          className={`absolute bottom-0 left-0 z-10 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 text-white dark:text-neon-white
+          className={`absolute bottom-0 left-0 z-10 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 text-primary dark:text-neon-white
           } ${props.shouldFadeOut ? 'animate-fade-out' : ''} ${
             props.shouldFadeIn ? 'animate-fade-in' : ''
           }`}
@@ -100,7 +102,7 @@ export default function InputDisplay(props: ResponseDisplayProps) {
         </p>
         {props.inputConfirmed && (
           <p
-            className={`absolute bottom-0 left-0 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 text-white dark:text-neon-white
+            className={`absolute bottom-0 left-0 py-4 w-full max-h-full transition-opacity overflow-y-scroll scrollbar-hide px-8 lg:px-16 text-primary dark:text-neon-white
             } ${props.shouldFadeOut ? '' : 'animate-ping'}`}
             style={{ maxHeight: '40vh' }}
           >

@@ -6,7 +6,7 @@ export default function CustomWordListLink() {
       aria-label='Submit your own word list for approval here'
       href='https://forms.gle/mfAdSeDNaxtXvPJE8'
       target='__blank'
-      className='text-white dark:text-neon-white hover:text-yellow hover:dark:text-neon-yellow text-center animate-pulse text-lg'
+      className='text-primary dark:text-neon-white hover:text-yellow hover:dark:text-neon-yellow text-center animate-pulse text-lg'
     >
       <RiQuillPenLine className='inline' /> Create Your Own Word List!
     </a>

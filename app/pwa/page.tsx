@@ -2,7 +2,7 @@ import ReactMarkdown from 'react-markdown';
 import content from './content.md';
 import style from './style.module.css';
 import Footer from '../../components/Footer';
-import SocialLinkButton from '../../components/SocialLinkButton';
+import SocialLinkButton from '../../components/custom/social-link-button';
 import { SiDiscord } from 'react-icons/si';
 
 interface InstallPWAProps {}
@@ -22,8 +22,6 @@ export default async function InstallPWAPage(props: InstallPWAProps) {
             icon={<SiDiscord />}
             href='https://discord.gg/dgqs29CHC2'
             newTab={true}
-            accentColorClass='bg-purple dark:bg-neon-purple'
-            dropShadowClass='hover:shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
           />
         </div>
       </article>

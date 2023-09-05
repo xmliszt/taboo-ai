@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <h1 className='fixed top-0 h-20 py-4 text-center z-50'>
         Contribute New Topics
       </h1>
-      <div className='w-full px-2 flex flex-row justify-center items-center gap-2 fixed top-14 lg:top-20 h-20 text-center z-50 text-sm lg:text-lg bg-black gradient-blur-mask-down'>
+      <div className='w-full px-2 flex flex-row justify-center items-center gap-2 fixed top-14 lg:top-20 h-20 text-center z-50 text-sm lg:text-lg bg-primary gradient-blur-mask-down'>
         <div className='leading-4 backdrop-blur-lg'>
           You can create your custom topics here! Fill up the fields below and
           submit your topics. Your topic will be reviewed and uploaded to Taboo

@@ -1,14 +1,14 @@
 'use client';
 
 import ReactMarkdown from 'react-markdown';
-import content from '../../public/features/content.md';
+import content from '@/public/features/content.md';
 import style from './style.module.css';
 import { KeyboardEvent, useEffect, useState } from 'react';
-import { MdOutlineClose } from 'react-icons/md';
-import { getFeaturePopupString, setFeaturePopupString } from '../../lib/cache';
-import SocialLinkButton from '../SocialLinkButton';
-import { SiDiscord } from 'react-icons/si';
+import { getFeaturePopupString, setFeaturePopupString } from '@/lib/cache';
+import SocialLinkButton from '@/components/custom/social-link-button';
 import semver from 'semver';
+import { X } from 'lucide-react';
+import { BsDiscord } from 'react-icons/bs';
 
 interface FeaturePopupProps {}
 
@@ -82,7 +82,7 @@ export default function FeaturePopup(props: FeaturePopupProps) {
             className='absolute aspect-square p-2 top-10 right-12 lg:top-12 lg:right-16 text-black z-10 text-3xl rounded-full'
             onClick={close}
           >
-            <MdOutlineClose />
+            <X />
           </button>
           <div
             onClick={(e) => {
@@ -100,12 +100,10 @@ export default function FeaturePopup(props: FeaturePopupProps) {
               <div className='sticky bottom-0 w-full flex px-2'>
                 <SocialLinkButton
                   content='Join our Discord for more updates!'
-                  icon={<SiDiscord />}
+                  icon={<BsDiscord />}
                   href='https://discord.gg/dgqs29CHC2'
                   newTab={true}
-                  customClass='flex-grow'
-                  accentColorClass='bg-purple dark:bg-neon-purple'
-                  dropShadowClass='hover:shadow-[0_5px_15px_rgba(224,158,255,0.6)]'
+                  className='flex-grow'
                 />
               </div>
             </article>
