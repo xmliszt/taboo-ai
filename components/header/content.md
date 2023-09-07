@@ -5,7 +5,3 @@ _Developed by_ [Li Yuxuan](https://xmliszt.github.io/)
 [Privacy Policy](/privacy)
 
 [Cookie Policy](/cookie-policy)
-
-[Features](/whatsnew)
-
-[Releases Roadmap](/roadmap)
