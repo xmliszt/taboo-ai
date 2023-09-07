@@ -3,7 +3,7 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { ArrowLeft, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Button } from '../ui/button';
+import { IconButton } from '../ui/icon-button';
 
 interface BackButtonProps {
   href?: string;
@@ -23,9 +23,13 @@ export function BackButton({ href, customIcon }: BackButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button aria-label='Click to navigate back' onClick={back}>
+        <IconButton
+          tooltip={href === '/' ? 'Go to Home' : 'Go Back'}
+          aria-label='Click to navigate back'
+          onClick={back}
+        >
           {customIcon ?? (href === '/' ? <Home /> : <ArrowLeft />)}
-        </Button>
+        </IconButton>
       </TooltipTrigger>
       <TooltipContent>
         {`${href === '/' ? 'Go to home' : 'Back'}`}

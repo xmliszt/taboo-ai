@@ -3,7 +3,6 @@ import { GiCoffeeCup } from 'react-icons/gi';
 import SocialLinkButton from '../../components/custom/social-link-button';
 import ReactMarkdown from 'react-markdown';
 import content from './content.md';
-import style from './style.module.css';
 
 const BuyMeCoffeeQR = '/images/bmc_qr.png';
 const BuyMeCoffeePage = () => {
@@ -35,9 +34,7 @@ const BuyMeCoffeePage = () => {
           id='disclaimer'
           className='text-justify px-10 lg:px-32 !leading-[1.3rem] lg:!leading-[2rem] text-sm lg:text-3xl pb-8'
         >
-          <ReactMarkdown className={`${style.markdown}`}>
-            {content}
-          </ReactMarkdown>
+          <ReactMarkdown>{content}</ReactMarkdown>
         </article>
       </section>
     </>

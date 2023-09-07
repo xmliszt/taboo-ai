@@ -7,15 +7,18 @@ import { getRandomInt } from '@/lib/utilities';
 import { HASH } from '@/lib/hash';
 import { CONSTANTS } from '@/lib/constants';
 import { useAuth } from '@/app/AuthProvider';
+import { Button } from '../ui/button';
+import { Switch } from '../ui/switch';
+import { Checkbox } from '../ui/checkbox';
 
 interface DevToggleProps {}
 
 const DevToggle = (props: DevToggleProps) => {
   const [devOn, setDevOn] = useState<boolean>(false);
   const [selectedMode, setSelectedMode] = useState<number>(1);
+  const { user, status } = useAuth();
   const router = useRouter();
   const path = usePathname();
-  const { user, status } = useAuth();
 
   useEffect(() => {
     setDevOn(localStorage.getItem(HASH.dev) ? true : false);
@@ -28,20 +31,18 @@ const DevToggle = (props: DevToggleProps) => {
     }
   }, []);
 
-  const onDevToggle = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
+  const onDevToggle = (isChecked: boolean) => {
+    if (isChecked) {
       localStorage.setItem(HASH.dev, '1');
     } else {
       localStorage.removeItem(HASH.dev);
     }
-    setDevOn(event.target.checked);
+    setDevOn(isChecked);
   };
 
-  const onModeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setSelectedMode(Number(event.target.value));
-      localStorage.setItem('mode', event.target.value);
-    }
+  const onModeChange = (mode: number) => {
+    setSelectedMode(mode);
+    localStorage.setItem('mode', String(mode));
   };
 
   const autoCompleteLevel = () => {
@@ -69,16 +70,14 @@ const DevToggle = (props: DevToggleProps) => {
   };
 
   return user?.email === 'xmliszt@gmail.com' && status === 'authenticated' ? (
-    <div className='flex flex-col gap-2 justify-center'>
-      <div className='flex flex-row gap-2 items-center'>
-        <input
-          className='!h-auto'
-          type='checkbox'
+    <div className='flex flex-col gap-2 justify-center w-[300px]'>
+      <div className='flex flex-row gap-2 w-full justify-center items-center'>
+        <Switch
           id='dev-toggle'
           aria-label='Toggle for development mode'
           name='dev-toggle'
           checked={devOn}
-          onChange={onDevToggle}
+          onCheckedChange={onDevToggle}
         />
         <label htmlFor='dev-toggle'>Dev Mode</label>
       </div>
@@ -86,57 +85,65 @@ const DevToggle = (props: DevToggleProps) => {
         <>
           <fieldset
             id='response-mode'
-            className='p-4 bg-white text-black leading-none rounded-lg opacity-50'
+            className='w-full p-4 bg-card border-[1px] border-primary text-primary leading-none rounded-lg'
           >
-            <h2 className='mb-4'>Server Response Mode</h2>
+            <h2 className='mb-4 font-bold'>Server Response Mode</h2>
             <div className='flex flex-col gap-2'>
               <div className='flex flex-row gap-2 items-center'>
-                <input
-                  className='!h-auto'
-                  type='checkbox'
+                <Checkbox
                   id='response-success'
                   aria-label='Toggle for response success mode'
                   name='response-success'
-                  onChange={onModeChange}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      onModeChange(1);
+                    }
+                  }}
                   checked={selectedMode === 1}
                   value='1'
                 />
                 <label htmlFor='response-success'>success</label>
               </div>
               <div className='flex flex-row gap-2 items-center'>
-                <input
-                  className='!h-auto'
-                  type='checkbox'
+                <Checkbox
                   id='response-nomatch'
                   aria-label='Toggle for response no match mode'
                   name='response-nomatch'
-                  onChange={onModeChange}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      onModeChange(2);
+                    }
+                  }}
                   checked={selectedMode === 2}
                   value='2'
                 />
                 <label htmlFor='response-nomatch'>no-match</label>
               </div>
               <div className='flex flex-row gap-2 items-center'>
-                <input
-                  className='!h-auto'
-                  type='checkbox'
+                <Checkbox
                   id='response-overload'
                   aria-label='Toggle for overloaded mode'
                   name='response-overload'
-                  onChange={onModeChange}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      onModeChange(3);
+                    }
+                  }}
                   checked={selectedMode === 3}
                   value='3'
                 />
                 <label htmlFor='response-overload'>overloaded</label>
               </div>
               <div className='flex flex-row gap-2 items-center'>
-                <input
-                  className='!h-auto'
-                  type='checkbox'
+                <Checkbox
                   id='response-error'
                   aria-label='Toggle for server error mode'
                   name='response-error'
-                  onChange={onModeChange}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      onModeChange(4);
+                    }
+                  }}
                   checked={selectedMode === 4}
                   value='4'
                 />
@@ -144,13 +151,12 @@ const DevToggle = (props: DevToggleProps) => {
               </div>
             </div>
           </fieldset>
-          <button
+          <Button
             disabled={path !== '/level' && path !== '/daily-challenge'}
-            className='h-6 !rounded-full'
             onClick={autoCompleteLevel}
           >
             auto complete
-          </button>
+          </Button>
         </>
       )}
     </div>

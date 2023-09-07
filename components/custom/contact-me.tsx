@@ -123,15 +123,14 @@ const ContactMe = () => {
               </form>
             </Form>
 
-            <div className='flex flex-row gap-4'>
+            <div className='w-full flex flex-col lg:flex-row gap-4 items-center'>
               <a
-                className='hover:opacity-70 hover:scale-105 hover:shadow-2xl transition-all'
+                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
                 href='https://theresanaiforthat.com/ai/taboo-ai/?ref=embed'
                 target='_blank'
                 rel='noreferrer'
               >
                 <Image
-                  className='shadow-xl bg-blend-overlay'
                   alt="TabooAI is featured on THERE'S AN AI FOR THAT"
                   width='240'
                   height='65'
@@ -139,13 +138,12 @@ const ContactMe = () => {
                 />
               </a>
               <a
-                className='hover:opacity-70 hover:scale-105 hover:shadow-2xl transition-all'
+                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
                 href='https://www.producthunt.com/products/taboo-ai?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
                 target='_blank'
                 rel='noreferrer'
               >
                 <Image
-                  className='shadow-xl bg-blend-overlay'
                   alt='Taboo&#0046;AI - Taboo&#0046;AI&#0032;&#0045;&#0032;The&#0032;Ultimate&#0032;Wordplay&#0032;Challenge&#0032;against&#0032;AI | Product Hunt'
                   width='240'
                   height='50'

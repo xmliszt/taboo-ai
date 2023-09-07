@@ -1,3 +1,5 @@
+import Footer from '@/components/footer/Footer';
+import Header from '@/components/header/Header';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -5,5 +7,11 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <Header isTransparent />
+      {children}
+      <Footer />
+    </>
+  );
 }

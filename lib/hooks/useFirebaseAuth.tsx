@@ -1,13 +1,44 @@
 'use client';
 
 import { AuthStatus } from '@/app/AuthProvider';
+import { useToast } from '@/components/ui/use-toast';
 import { firebaseAuth } from '@/firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { useCallback, useEffect, useState } from 'react';
+import { signInWithGoogle } from '../services/authService';
 
 export function useFirebaseAuth() {
+  const { toast } = useToast();
   const [user, setUser] = useState<User>();
   const [status, setStatus] = useState<AuthStatus>('loading');
+
+  const login = useCallback(async () => {
+    try {
+      setStatus('loading');
+      await signInWithGoogle();
+      toast({ title: 'Signed in!' });
+      setStatus('authenticated');
+    } catch (error) {
+      if (error.code === 'auth/popup-blocked') {
+        toast({
+          title: 'Sign in popup blocked by browser.',
+          variant: 'destructive',
+        });
+        setStatus('unauthenticated');
+        return;
+      }
+      console.error(error);
+      toast({ title: 'Failed to sign in!', variant: 'destructive' });
+      setStatus('unauthenticated');
+    }
+  }, []);
+
+  const logout = useCallback(async () => {
+    setStatus('loading');
+    await signOut(firebaseAuth);
+    await firebaseAuth.signOut();
+    setStatus('unauthenticated');
+  }, []);
 
   useEffect(() => {
     const currentUser = firebaseAuth.currentUser;
@@ -28,5 +59,5 @@ export function useFirebaseAuth() {
     return () => unsubscribe();
   }, []);
 
-  return { user, status, setStatus };
+  return { user, status, login, logout };
 }

@@ -1,6 +1,5 @@
 'use client';
 
-import { Spinner } from '@/components/custom/spinner';
 import DevToggle from '@/components/custom/dev-toggle';
 import {
   AlertDialog,
@@ -11,19 +10,16 @@ import {
   AlertDialogContent,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { signInWithGoogle } from '@/lib/services/authService';
 import { Coffee } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { useState } from 'react';
 import { BsDiscord } from 'react-icons/bs';
 import ContactMe from '../components/custom/contact-me';
-import InstallButton from '../components/custom/install-button';
-import FeatureUpdatesLink from './../components/FeatureUpdatesLink';
-import Footer from '@/components/Footer';
 import SocialLinkButton from '../components/custom/social-link-button';
 import { useAuth } from './AuthProvider';
+import Link from 'next/link';
+import Header from '@/components/header/Header';
 
 interface HomePageProps {}
 
@@ -31,9 +27,8 @@ const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
-  const { toast } = useToast();
   const [isSignInPromptOpen, setIsSignInPromptOpen] = useState(false);
-  const { user, status, setStatus } = useAuth();
+  const { user, status, login } = useAuth();
   const router = useRouter();
   const navigateTo = (href: string) => {
     router.push(href);
@@ -49,36 +44,23 @@ export default function HomePage(props: HomePageProps) {
 
   const signIn = async () => {
     setIsSignInPromptOpen(false);
-    try {
-      setStatus('loading');
-      await signInWithGoogle();
-      setStatus('authenticated');
-    } catch (error) {
-      console.error(error.message);
-      toast({ title: 'Failed to sign in!' });
-      setStatus('unauthenticated');
-    }
+    login && (await login());
   };
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
-      {status === 'loading' && (
-        <div className='w-screen h-screen fixed z-[60] top-0 left-0 flex justify-center items-center backdrop-blur-md'>
-          <Spinner />
-        </div>
-      )}
+      <Header isTransparent />
       <Script id='pwa-script' src='/js/pwa.js' />
-      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-24 lg:pt-24 pb-32 lg:pb-44'>
+      <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-24 lg:pt-24 pb-4'>
         <div className='w-full relative'>
           <h1
             data-testid='heading-title'
             className='text-center text-6xl lg:text-8xl drop-shadow-lg'
           >
-            {title} <span className='text-lg'>{versionNumber}</span>
+            {title}
           </h1>
-          <FeatureUpdatesLink />
         </div>
-        <InstallButton />
+        <span className='text-lg'>{versionNumber}</span>
         <section className='mt-4 mb-2 flex-col flex gap-8 text-center w-4/5 max-w-[400px]'>
           <Button
             id='start'
@@ -117,26 +99,33 @@ export default function HomePage(props: HomePageProps) {
           )}
         </section>
         <DevToggle />
-        <section className='w-4/5 mt-10'>
+        <section className='mt-10 w-11/12'>
           <ContactMe />
         </section>
+        <div className='px-4 my-2 w-full flex flex-col lg:flex-row gap-2 justify-center'>
+          <SocialLinkButton
+            content='Buy Me Coffee'
+            icon={<Coffee />}
+            href='/buymecoffee'
+          />
+          <SocialLinkButton
+            content='Join Discord!'
+            icon={<BsDiscord />}
+            href='https://discord.gg/dgqs29CHC2'
+            newTab={true}
+          />
+        </div>
+        <p className='px-4 my-2 w-full text-primary text-xs leading-tight text-center'>
+          We improve our products and advertising by using Microsoft Clarity to
+          see how you use our website. By using our site, you agree that we and
+          Microsoft can collect and use this data. Our{' '}
+          <Link href='/privacy' className='underline'>
+            privacy statement
+          </Link>{' '}
+          has more details.
+        </p>
       </section>
 
-      <div className='fixed bottom-20 lg:bottom-28 w-full flex flex-row gap-2 justify-center z-10'>
-        <SocialLinkButton
-          content='Buy Me Coffee'
-          icon={<Coffee />}
-          href='/buymecoffee'
-        />
-        <SocialLinkButton
-          content='Join Discord!'
-          icon={<BsDiscord />}
-          href='https://discord.gg/dgqs29CHC2'
-          newTab={true}
-        />
-      </div>
-      <Footer />
-      <div className='h-28 lg:h-36 bw-full fixed bottom-0 z-0 gradient-blur-up'></div>
       <AlertDialog
         open={isSignInPromptOpen}
         onOpenChange={(open) => {

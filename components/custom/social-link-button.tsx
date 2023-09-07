@@ -21,11 +21,15 @@ const SocialLinkButton = ({
 }: SocialLinkButtonProps) => {
   return (
     <Button
-      className={`shadow-2xl transition-transform hover:scale-105 ease-in-out ${className}`}
+      className={`shadow-md ${className}`}
       aria-label={`Link to ${content}`}
     >
-      <Link href={href} target={newTab ? '_blank' : ''}>
-        <div className='flex grow flex-row gap-2 items-center justify-center'>
+      <Link
+        className='!no-underline'
+        href={href}
+        target={newTab ? '_blank' : ''}
+      >
+        <div className='flex flex-row gap-2 items-center justify-center'>
           <span>{icon}</span>
           <span>{content}</span>
         </div>

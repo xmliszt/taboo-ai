@@ -19,7 +19,9 @@ export default function InstallButton() {
   };
 
   return showButton ? (
-    <Button onClick={onInstallClick}>INSTALL APP</Button>
+    <Button className='shadow-xl' onClick={onInstallClick}>
+      Install App Now
+    </Button>
   ) : (
     <></>
   );

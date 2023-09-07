@@ -52,7 +52,7 @@ export default function PWAInstaller({
             You Can Install Taboo AI as App!
           </SheetHeader>
           <div className='flex flex-col gap-2'>
-            <p className='leading-none'>
+            <p className='leading-snug mb-2'>
               Taboo AI can be easily installed as an application on your device,
               allowing you to seamlessly incorporate it into your routine just
               like any other app, without the need to open a separate browser.
