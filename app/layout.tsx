@@ -31,7 +31,7 @@ export default function RootLayout({
     process.env.NEXT_PUBLIC_MAINTENANCE || 'false'
   );
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning={true}>
       <Script id='pwa-script' src='/js/pwa.js' />
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />

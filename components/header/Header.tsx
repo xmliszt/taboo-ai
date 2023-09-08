@@ -4,13 +4,13 @@ import { useAuth } from '@/app/AuthProvider';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, Menu } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { MouseEventHandler, useMemo, useState } from 'react';
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import ReactMarkdown from 'react-markdown';
 import content from './content.md';
 import { UserLoginPortal } from '../custom/user-login-portal';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { IconButton } from '../ui/icon-button';
+import IconButton from '../ui/icon-button';
 import {
   Sheet,
   SheetContent,
@@ -44,7 +44,8 @@ const Header = ({
   hasBackButton = false,
 }: HeaderProps) => {
   const { user, status, login } = useAuth();
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -76,7 +77,6 @@ const Header = ({
         subtitle:
           'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
         visible: user !== undefined && status === 'authenticated',
-        highlight: true,
         href: '/profile',
       },
       {
@@ -109,6 +109,22 @@ const Header = ({
     [user, status]
   );
 
+  useEffect(() => {
+    if (!isFocused) {
+      return;
+    }
+    const currentSelectedIndex = Math.max(
+      0,
+      menuItems.findIndex((item) => item.href === pathname)
+    );
+    const currentSelectedElement = document.getElementById(
+      `menu-${currentSelectedIndex}`
+    );
+    console.log(`Scroll to ${currentSelectedIndex}`);
+    console.log(currentSelectedElement);
+    currentSelectedElement?.scrollIntoView({ behavior: 'smooth' });
+  }, [isFocused]);
+
   return (
     <header
       id='header-section'
@@ -135,6 +151,12 @@ const Header = ({
             <SheetContent
               side='left'
               className={`${isMobile ? 'w-full' : 'w-auto'}`}
+              onOpenAutoFocus={() => {
+                setIsFocused(true);
+              }}
+              onCloseAutoFocus={() => {
+                setIsFocused(false);
+              }}
             >
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
@@ -145,10 +167,11 @@ const Header = ({
               <Separator className='mt-2' />
               <div className='p-4 pb-16 flex flex-col gap-4 h-full overflow-y-scroll scrollbar-hide'>
                 {menuItems.map(
-                  (item) =>
+                  (item, idx) =>
                     item.visible && (
                       <Card
                         key={item.title}
+                        id={`menu-${idx}`}
                         className={cn(
                           item.highlight ? 'animate-pulse' : '',
                           pathname === item.href

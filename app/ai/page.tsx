@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { PenTool, SpellCheck2 } from 'lucide-react';
-import ILevel from '@/lib/types/level.interface';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/custom/spinner';
@@ -112,20 +111,22 @@ export default function AiPage(props: AiPageProps) {
                 <Label htmlFor='difficulty-3'>Hard</Label>
               </div>
             </RadioGroup>
-            <Button
-              type='submit'
-              className='mt-8'
-              aria-label='Confirm to submit your input'
-            >
-              {isLoading ? (
+            {isLoading ? (
+              <Button className='mt-8 w-full' disabled>
                 <Spinner />
-              ) : (
+              </Button>
+            ) : (
+              <Button
+                type='submit'
+                className='mt-8 w-full'
+                aria-label='Confirm to submit your input'
+              >
                 <div className='flex flex-row gap-2 items-center'>
                   <PenTool />
                   Generate
                 </div>
-              )}
-            </Button>
+              </Button>
+            )}
           </div>
         </form>
       </section>

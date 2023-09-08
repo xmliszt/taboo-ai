@@ -26,6 +26,13 @@ export function useFirebaseAuth() {
         });
         setStatus('unauthenticated');
         return;
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        setStatus('loading');
+        return;
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        toast({ title: 'Sign in is cancelled.' });
+        setStatus('unauthenticated');
+        return;
       }
       console.error(error);
       toast({ title: 'Failed to sign in!', variant: 'destructive' });

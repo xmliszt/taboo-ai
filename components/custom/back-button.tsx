@@ -3,7 +3,7 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { ArrowLeft, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { IconButton } from '../ui/icon-button';
+import IconButton from '../ui/icon-button';
 
 interface BackButtonProps {
   href?: string;

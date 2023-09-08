@@ -1,5 +1,3 @@
-'use client';
-
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';
 import { getDifficulty } from '../../lib/utilities';
@@ -26,7 +24,7 @@ export function LevelCard({ level }: LevelCardProps) {
   return (
     <Card
       onClick={goToLevel}
-      className={`w-full h-auto lg:w-[200px] lg:h-[270px] transition-all hover:scale-105 ease-in-out cursor-pointer shadow-md flex flex-col ${
+      className={`w-full h-auto lg:w-[200px] lg:h-[270px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02] ${
         level ? '' : 'unicorn-color'
       }`}
     >

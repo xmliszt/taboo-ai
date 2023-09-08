@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { isMobile } from 'react-device-detect';
-import { IconButton } from '@/components/ui/icon-button';
+import IconButton from '@/components/ui/icon-button';
 import { ChevronsUp, Circle } from 'lucide-react';
 import { Skeleton } from '@/components/custom/skeleton';
 

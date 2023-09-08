@@ -11,7 +11,10 @@ export function Skeleton({
     const rows: React.ReactElement[] = [];
     for (let i = 0; i < numberOfRows; i++) {
       rows.push(
-        <div className='w-full h-[24px] bg-accent rounded-lg animate-pulse'></div>
+        <div
+          key={i}
+          className='w-full h-[24px] bg-accent rounded-lg animate-pulse'
+        ></div>
       );
     }
     return rows;
