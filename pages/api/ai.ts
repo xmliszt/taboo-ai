@@ -6,8 +6,8 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;
   if (!apiKey) return res.status(500).json({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
-    const prompts = req.body.prompt as IChat[];
     const system = req.body.system;
+    const prompts = req.body.prompt as IChat[];
     const temperature = parseFloat(req.body.temperature);
     const maxToken = parseInt(req.body.maxToken);
 
@@ -18,8 +18,10 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         content: system,
       });
     }
-    for (const prompt of prompts) {
-      messages.push(prompt as { role: string; content: string });
+    if (prompts !== undefined) {
+      for (const prompt of prompts) {
+        messages.push(prompt as { role: string; content: string });
+      }
     }
     try {
       const response = await fetch(
@@ -44,9 +46,11 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const json = await response.json();
       if (json.error) {
         res.status(500).json(json.error); // Return ChatGPT side API error
-      } else {
+      } else if (json.choices.length > 0) {
         const responseText = json.choices[0].message.content;
         res.status(200).json({ response: responseText });
+      } else {
+        res.status(200).json({ response: null });
       }
     } catch (err) {
       res.status(500).json({ error: err.message });
