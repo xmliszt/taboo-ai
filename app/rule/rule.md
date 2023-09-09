@@ -1,3 +1,5 @@
+# How to play Taboo AI?
+
 Get ready to experience the most innovative twist on Taboo yet with **Taboo AI**! This thrilling game pits you against an **AI opponent** in a battle of wits, as you try to help AI guess the "**Guess Words**" without using any of the "**Taboo Words**" in your clues.
 
 ---
@@ -20,7 +22,7 @@ By playing Taboo AI, you'll be exposed to a wide range of words from different c
 
 So not only will you have a blast playing Taboo AI, but you'll also be building your vocabulary and improving your language skills without even realizing it!
 
-What are you waiting for? [Choose Your Topic](/levels), start the game, and see if you have what it takes to beat the unbeatable AI in Taboo AI!
+What are you waiting for? Start the game, and see if you have what it takes to beat the unbeatable AI in Taboo AI!
 
 ## How to write high-quality clue?
 

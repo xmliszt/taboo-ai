@@ -2,7 +2,7 @@ import ILevel from '../types/level.interface';
 import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '../constants';
 import { formatResponseTextIntoArray } from '../utilities';
-import { IAIScore } from '../types/score.interface';
+import { IAIScore, IChat } from '../types/score.interface';
 import IWord from '../types/word.interface';
 import moment from 'moment';
 import { DateUtils } from '../utils/dateUtils';
@@ -18,7 +18,12 @@ export async function askAITabooWordsForTarget(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate 5-8 words related to '${target}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
+      prompt: [
+        {
+          role: 'user',
+          content: `Generate 5-8 words related to '${target}', in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`,
+        },
+      ],
       temperature: 1,
       maxToken: 100,
     }),
@@ -27,7 +32,6 @@ export async function askAITabooWordsForTarget(
   const json = await response.json();
   const text = json.response;
   const variations = formatResponseTextIntoArray(text, target);
-  console.log(variations);
   return {
     target: target,
     taboos: variations,
@@ -36,7 +40,7 @@ export async function askAITabooWordsForTarget(
   };
 }
 
-export async function askAIForQueryResponse(prompt: string): Promise<string> {
+export async function askAIForQueryResponse(prompt: IChat[]): Promise<string> {
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {
@@ -122,7 +126,12 @@ export async function askAIForCreativeTopic(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in the topic of ${topic} that are ${difficultyString}. In American English. Insert the words generated in an array: [word1, word2, ...]`,
+      prompt: [
+        {
+          role: 'user',
+          content: `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in the topic of ${topic} that are ${difficultyString}. In American English. Insert the words generated in an array: [word1, word2, ...]`,
+        },
+      ],
       temperature: 0.8,
       maxToken: 50,
     }),

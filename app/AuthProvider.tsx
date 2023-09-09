@@ -13,18 +13,19 @@ export type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 const authProviderContext = createContext<{
   user?: User;
   status: AuthStatus;
-  setStatus: (status: AuthStatus) => void;
+  login?: () => Promise<void>;
+  logout?: () => Promise<void>;
 }>({
   status: 'loading',
-  setStatus: function (status: AuthStatus): void {
-    throw new Error('Function not implemented.');
-  },
 });
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
-  const { user, status, setStatus } = useFirebaseAuth();
+  const { user, status, login, logout } = useFirebaseAuth();
   return (
-    <authProviderContext.Provider value={{ user, status, setStatus }}>
+    <authProviderContext.Provider
+      {...props}
+      value={{ user, status, login, logout }}
+    >
       {children}
     </authProviderContext.Provider>
   );

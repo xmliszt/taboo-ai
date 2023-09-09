@@ -1,30 +1,23 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
-import { Grenze } from 'next/font/google';
+import { Lora } from 'next/font/google';
 import { AnalyticsWrapper } from '../components/AnalayticsWrapper';
-import FeaturePopup from '../components/FeaturePopup/FeaturePopup';
-import { ThemeProvider } from './ThemeProvider';
-import Header from '../components/Header';
+import FeaturePopup from '../components/custom/feature-popup';
 import Maintenance from '../components/Maintenance';
 import { Metadata } from 'next';
 import { _meta } from '../lib/metadata';
 import PWAInstaller from './PWAInstaller';
-
-import './global.css';
-import './main.css';
 import Script from 'next/script';
 import { AuthProvider } from './AuthProvider';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { Toaster } from '@/components/ui/toaster';
+import { GlobalTooltipProvider } from '@/components/TooltipProvider';
 
-const font = Grenze({
-  weight: '400',
-  subsets: ['latin'],
-  fallback: [
-    'ui-serif',
-    'Georgia',
-    'Cambria',
-    'Times New Roman',
-    'Times',
-    'serif',
-  ],
+import './markdown.css';
+import './globals.css';
+
+const font = Lora({
+  subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
+  fallback: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
 });
 
 export const metadata: Metadata = _meta;
@@ -38,21 +31,27 @@ export default function RootLayout({
     process.env.NEXT_PUBLIC_MAINTENANCE || 'false'
   );
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning={true}>
       <Script id='pwa-script' src='/js/pwa.js' />
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
-      <body className={`${font.className} bg-black text-white scrollbar-hide`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <Header maintenanceOn={maintenanceMode} />
-            {maintenanceMode && <Maintenance />}
-            <PWAInstaller>{!maintenanceMode && children}</PWAInstaller>
-            {!maintenanceMode && <FeaturePopup />}
-            <AnalyticsWrapper />
-          </AuthProvider>
+      <body className={`${font.className}`}>
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+          <GlobalTooltipProvider delayDuration={300}>
+            <AuthProvider>
+              {maintenanceMode ? (
+                <Maintenance />
+              ) : (
+                <>
+                  <PWAInstaller>{children}</PWAInstaller>
+                  <FeaturePopup />
+                </>
+              )}
+              <AnalyticsWrapper />
+            </AuthProvider>
+          </GlobalTooltipProvider>
+          <Toaster />
         </ThemeProvider>
-        <div className='h-4 fixed bottom-0 w-full backdrop-blur-lg gradient-blur-mask-reverse z-50'></div>
       </body>
     </html>
   );

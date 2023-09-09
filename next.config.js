@@ -14,6 +14,7 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   sw: '/next-sw.js',
+  disable: process.env.NODE_ENV !== 'production',
 });
 
 const nextConfig = {
@@ -27,6 +28,7 @@ const nextConfig = {
       'api.producthunt.com',
       'i.ibb.co',
       'media.giphy.com',
+      'github.com',
     ],
     formats: ['image/webp'],
   },

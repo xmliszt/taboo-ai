@@ -4,8 +4,7 @@ import { IHighlight } from './highlight.interface';
 export interface IDisplayScore {
   id: number;
   target: string;
-  question: string;
-  response: string;
+  conversation: IChat[];
   difficulty: number;
   completion: number;
   ai_score?: number;
@@ -16,4 +15,9 @@ export interface IDisplayScore {
 export interface IAIScore {
   score?: number;
   explanation?: string;
+}
+
+export interface IChat {
+  role: 'user' | 'assistant' | 'system' | 'error';
+  content: string;
 }

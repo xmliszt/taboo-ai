@@ -1,31 +1,67 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('tailwindcss').Config} */
-
-const { fontFamily } = require('tailwindcss/defaultTheme');
-const scrollBarHide = require('tailwind-scrollbar-hide');
 module.exports = {
   darkMode: 'class',
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   content: [
-    './app/**/*.{js,ts,jsx,tsx}',
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
-      fontFamily: {
-        light: ['var(--font-light)', ...fontFamily.serif],
-        dark: ['var(--font-dark)', ...fontFamily.sans],
+      colors: {
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
       },
-      blur: {
-        xxxxs: '2px',
-        xxxs: '1.5px',
-        xxs: '1px',
-        xs: '0.5px',
-      },
-      lineHeight: {
-        screenshot: '1.5',
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
         'unicorn-flow': 'unicornFlow 10s ease-in-out infinite',
         'ping-once': 'ping 1s linear 1',
         'fade-out': 'fadeOut 0.5s ease-in-out',
@@ -40,6 +76,14 @@ module.exports = {
         'fade-inout-delay-loop': 'fadeInOut 10s ease-in-out 5s infinite',
       },
       keyframes: {
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
+        },
         unicornFlow: {
           '0%': { 'background-position': '0% 0%' },
           '100%': { 'background-position': '0% 100%' },
@@ -66,36 +110,6 @@ module.exports = {
         },
       },
     },
-    screens: {
-      sm: '640px',
-      md: '768px',
-      lg: '1300px',
-    },
-    colors: {
-      white: '#ede8d9',
-      black: '#4c453e',
-      gray: '#908c7f',
-      red: '#9c2b1d',
-      green: '#476f5d',
-      yellow: '#ecbe3f',
-      purple: '#e09eff',
-      'black-darker': '#302c28',
-      'red-light': '#cf5c5c',
-      'white-faded': '#afaca3',
-      'neon-white': '#ffffff',
-      'neon-green': '#00ff9f',
-      'neon-red': '#FF0677',
-      'neon-yellow': '#FEE302',
-      'neon-black': '#02090E',
-      'neon-blue': '#3AE6F7',
-      'neon-white-faded': '#112022',
-      'neon-gray': '#112022',
-      'neon-red-light': '#F73C5D',
-      'neon-purple': '#e09eff',
-      'neon-silver': '#c0c0c0',
-      'neon-bronze': '#cd7f32',
-      'neon-white-light': '#e0e0e0',
-    },
   },
-  plugins: [scrollBarHide],
+  plugins: [require('tailwindcss-animate'), require('tailwind-scrollbar-hide')],
 };

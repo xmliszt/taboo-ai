@@ -1,28 +1,22 @@
 'use client';
-import {
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-} from '@chakra-ui/react';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader } from '@/components/ui/sheet';
+import { Download } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { FiDownload } from 'react-icons/fi';
 
 export default function PWAInstaller({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isDrawOpen, setIsDrawOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     window.addEventListener('openPWADrawer', () => {
-      setIsDrawOpen(true);
+      setIsSheetOpen(true);
     });
     window.addEventListener('closePWADrawer', () => {
-      setIsDrawOpen(false);
+      setIsSheetOpen(false);
     });
   }, []);
 
@@ -36,37 +30,29 @@ export default function PWAInstaller({
         localStorage.setItem('pwa-user-choice', 'cancelled');
       }
     }
-    setIsDrawOpen(false);
+    setIsSheetOpen(false);
   };
 
   const onCancel = () => {
     localStorage.setItem('pwa-user-choice', 'cancelled');
-    setIsDrawOpen(false);
+    setIsSheetOpen(false);
   };
 
-  const onDrawerClose = () => {
-    setIsDrawOpen(false);
+  const onSheetOpenChange = (isOpen: boolean) => {
+    setIsSheetOpen(isOpen);
   };
 
   return (
     <>
       {children}
-      <Drawer
-        placement='bottom'
-        size='md'
-        onClose={onDrawerClose}
-        isOpen={isDrawOpen}
-        closeOnOverlayClick={false}
-        closeOnEsc={false}
-      >
-        <DrawerOverlay className='backdrop-blur-sm' />
-        <DrawerContent className='h-auto rounded-t-2xl py-4'>
-          <DrawerHeader className='text-black flex flex-row gap-2 items-center'>
-            <FiDownload />
+      <Sheet onOpenChange={onSheetOpenChange} open={isSheetOpen}>
+        <SheetContent side='bottom'>
+          <SheetHeader className='text-black flex flex-row gap-1 items-center mb-2 font-extrabold text-lg'>
+            <Download size={16} />
             You Can Install Taboo AI as App!
-          </DrawerHeader>
-          <DrawerBody className='flex flex-col gap-2'>
-            <p className='text-xl text-black'>
+          </SheetHeader>
+          <div className='flex flex-col gap-2'>
+            <p className='leading-snug mb-2'>
               Taboo AI can be easily installed as an application on your device,
               allowing you to seamlessly incorporate it into your routine just
               like any other app, without the need to open a separate browser.
@@ -75,19 +61,16 @@ export default function PWAInstaller({
               id='button-group'
               className='flex flex-row justify-around gap-4'
             >
-              <Button
-                className='w-1/2 !bg-yellow !text-black'
-                onClick={onInstall}
-              >
+              <Button className='w-1/2' onClick={onInstall}>
                 Install
               </Button>
-              <Button className='w-1/2 !bg-gray !text-white' onClick={onCancel}>
+              <Button className='w-1/2' onClick={onCancel}>
                 Cancel
               </Button>
             </div>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

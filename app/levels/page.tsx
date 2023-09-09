@@ -1,21 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
-import HotBadge from '../../components/HotBadge';
-import LoadingMask from '../../components/LoadingMask';
-import {
-  Flex,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Tag,
-} from '@chakra-ui/react';
-import { FiX } from 'react-icons/fi';
-import { LevelCard } from '../../components/LevelCard';
+import React, { useRef, useState } from 'react';
+import { LevelCard } from '@/components/custom/level-card';
 import { useLevels } from '@/lib/hooks/useLevels';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { isMobile } from 'react-device-detect';
+import IconButton from '@/components/ui/icon-button';
+import { ChevronsUp, Circle } from 'lucide-react';
+import { Skeleton } from '@/components/custom/skeleton';
 
 export default function LevelsPage() {
+  const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
+    useState(false);
+  const levelSectionRef = useRef<HTMLDivElement | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { filteredLevels, setFilterKeyword, isFetchingLevels } = useLevels();
 
@@ -24,13 +23,27 @@ export default function LevelsPage() {
     setFilterKeyword('');
   };
 
+  const handleScrollToTop = () => {
+    levelSectionRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const onScrollChange = (e: React.UIEvent<HTMLDivElement>) => {
+    const clientHeight = document.getElementById('level-section')?.clientHeight;
+    const scrollTop = e.currentTarget.scrollTop;
+    console.log(clientHeight, scrollTop);
+    if (clientHeight && scrollTop > clientHeight) {
+      !isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(true);
+    } else {
+      isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(false);
+    }
+  };
+
   return (
-    <section className='w-full h-full px-10'>
-      <LoadingMask isLoading={isFetchingLevels} message='Fetching Levels...' />
-      <div className='w-full fixed z-20 h-12 top-12 left-0 lg:top-20 px-12 py-2'>
-        <InputGroup size='md'>
+    <section className='w-full h-full'>
+      <div className='w-full fixed z-20 left-0 top-14 lg:top-20 px-4 lg:px-12 py-4 bg-card shadow-lg'>
+        <div className='flex flex-row gap-4 items-center'>
           <Input
-            className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
+            className='w-full'
             placeholder='Search by topic name or author...'
             value={searchTerm}
             type='text'
@@ -39,40 +52,42 @@ export default function LevelsPage() {
               setFilterKeyword(e.target.value);
             }}
           />
-          <InputRightElement
-            width='60px'
-            height='40px'
-            hidden={(searchTerm?.length ?? 0) <= 0}
-          >
-            <IconButton
-              data-style='none'
-              variant='unstyled'
-              className='text-white hover:opacity-70 flex justify-center items-center'
-              aria-label='clear text field'
-              size='sm'
-              onClick={clearSearch}
-              icon={<FiX />}
-            />
-          </InputRightElement>
-        </InputGroup>
+          {!isMobile && searchTerm.length > 0 && (
+            <Button className='animate-fade-in' onClick={clearSearch}>
+              Clear
+            </Button>
+          )}
+        </div>
         {searchTerm && searchTerm.length > 0 && (
-          <Tag className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
+          <Badge className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
             Found {filteredLevels.length} topics
-          </Tag>
+          </Badge>
         )}
       </div>
-      <Flex
-        wrap='wrap'
-        gap={8}
-        className='w-full h-full justify-center content-start text-center pt-36 lg:pt-44 pb-16 overflow-y-scroll scrollbar-hide'
+      <div
+        id='level-section'
+        ref={levelSectionRef}
+        className='flex flex-wrap gap-8 w-full h-full px-10 justify-center content-start text-center pt-36 lg:pt-44 pb-16 overflow-x-hidden overflow-y-scroll scrollbar-hide'
+        onScroll={onScrollChange}
       >
-        <HotBadge>
-          <LevelCard />
-        </HotBadge>
-        {filteredLevels.map((level, idx) => (
-          <LevelCard key={idx} level={level} />
-        ))}
-      </Flex>
+        <LevelCard />
+        {isFetchingLevels ? (
+          <Skeleton numberOfRows={6} />
+        ) : (
+          filteredLevels.map((level, idx) => (
+            <LevelCard key={idx} level={level} />
+          ))
+        )}
+      </div>
+      {isScrollToTopButtonVisible && (
+        <IconButton
+          className='fixed bottom-2 right-2 animate-fade-in'
+          tooltip='Scroll to top'
+          onClick={handleScrollToTop}
+        >
+          <ChevronsUp />
+        </IconButton>
+      )}
     </section>
   );
 }
