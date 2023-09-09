@@ -22,7 +22,10 @@ const authProviderContext = createContext<{
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
   const { user, status, login, logout } = useFirebaseAuth();
   return (
-    <authProviderContext.Provider value={{ user, status, login, logout }}>
+    <authProviderContext.Provider
+      {...props}
+      value={{ user, status, login, logout }}
+    >
       {children}
     </authProviderContext.Provider>
   );

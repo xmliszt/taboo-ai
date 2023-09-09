@@ -34,7 +34,7 @@ export default function HomePage(props: HomePageProps) {
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {
-      router.push('/add-levels');
+      router.push('/add-level');
     } else {
       setIsSignInPromptOpen(true);
     }

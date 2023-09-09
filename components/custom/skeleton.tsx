@@ -1,11 +1,15 @@
+import { cn } from '@/lib/utils';
+
 interface SkeletonProps {
   hasHearRow?: boolean;
   numberOfRows?: number;
+  className?: string;
 }
 
 export function Skeleton({
   hasHearRow = true,
   numberOfRows = 3,
+  className = '',
 }: SkeletonProps) {
   const renderRows = () => {
     const rows: React.ReactElement[] = [];
@@ -21,7 +25,7 @@ export function Skeleton({
   };
 
   return (
-    <div className='w-full flex flex-col gap-2'>
+    <div className={cn(className, 'w-full flex flex-col gap-2')}>
       {hasHearRow === true && (
         <div className='w-full flex flex-row gap-2'>
           <div className='h-full aspect-square bg-accent rounded-full  animate-pulse' />

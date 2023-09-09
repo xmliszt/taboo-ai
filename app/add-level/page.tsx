@@ -1,85 +1,70 @@
 'use client';
 
-import {
-  Card,
-  CardBody,
-  FormControl,
-  FormLabel,
-  IconButton,
-  Input,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Box,
-  Stack,
-  StackDivider,
-  Fade,
-  FormErrorMessage,
-  InputGroup,
-  InputRightElement,
-  Button,
-  useDisclosure,
-  Drawer,
-  DrawerContent,
-  DrawerOverlay,
-  DrawerHeader,
-  DrawerBody,
-  DrawerCloseButton,
-  SimpleGrid,
-  CardHeader,
-  Flex,
-  Tag,
-  RadioGroup,
-  Radio,
-  Switch,
-  Spinner,
-  SkeletonText,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverHeader,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Textarea,
-} from '@chakra-ui/react';
 import _ from 'lodash';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { BsInfoSquareFill } from 'react-icons/bs';
-import { FiArrowUp, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
-import { RiAddFill } from 'react-icons/ri';
-import useToast from '../../lib/hooks/useToast';
-import { sendEmail } from '../../lib/services/emailService';
-import { emailIsValid } from '../../lib/utilities';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { sendEmail } from '@/lib/services/emailService';
 import { addLevel } from '@/lib/services/levelService';
 import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
 import { useAuth } from '../AuthProvider';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
+import IconButton from '@/components/ui/icon-button';
+import { ChevronsUp, Info, Plus, SpellCheck, Trash, X } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { Spinner } from '@/components/custom/spinner';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Skeleton } from '@/components/custom/skeleton';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
+import { InfoButton } from '@/components/custom/info-button';
+import { Separator } from '@/components/ui/separator';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
-const VALID_WORD_REGEX = /^\s*(\s*\w+[\s']*\w+\s*)+\s*$/;
+const VALID_WORD_REGEX = /\s*(\w+[\s']?)+/;
 const INVALID_WORD_ERROR =
   'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty.';
 
 const AddLevelPage = () => {
-  const { status } = useAuth();
+  const { user, status } = useAuth();
+  const [reviewSheetOpen, setReviewSheetOpen] = useState(false);
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
     useState(false);
   const [topicName, setTopicName] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('1');
   const [shouldUseAIForTabooWords, setShouldUseAIForTabooWords] =
-    useState(false);
+    useState(true);
   const [targetWords, setTargetWords] = useState<string[]>([]);
   const [tabooWords, setTabooWords] = useState<string[][]>([]);
   const [tabooWordsCheckingStatus, setTabooWordsCheckingStatus] = useState<
@@ -90,41 +75,35 @@ const AddLevelPage = () => {
   >([]);
   const [topicNameErrorMessage, setTopicNameErrorMessage] = useState('');
   const [targetWordsErrorMessage, setTargetWordsErrorMessage] = useState('');
+  const [targetWordsErrorIndexs, setTargetWordsErrorIndexs] = useState<
+    number[]
+  >([]);
   const [tabooWordsErrorMessages, setTabooWordsErrorMessages] = useState<
     string[]
   >([]);
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [tabooWordsErrorIndexs, setTabooWordsErrorIndexs] = useState<
+    number[][]
+  >([]);
   const [isCreatingLevel, setisCreatingLevel] = useState(false);
-  const [isTopicNameValid, setIsTopicNameValid] = useState<
-    boolean | undefined
-  >();
-  const [nickname, setNickname] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [isAllValid, setIsAllValid] = useState(false);
+  const [nickname, setNickname] = useState(user?.displayName ?? '');
 
   //ANCHOR - States for appeal
   const [selectedWordForAppeal, setselectedWordForAppeal] = useState('');
   const [isAppealModalOpen, setIsAppealModalOpen] = useState(false);
   const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
-  const [appealEmail, setAppealEmail] = useState('');
   const [appealReasons, setAppealReasons] = useState('');
-  const [appealEmailErrorMessage, setAppealEmailErrorMessage] = useState('');
   const [appealReasonErrorMessage, setAppealReasonErrorMessage] = useState('');
 
   //ANCHOR - States for component control
-  const [
-    controlledAccordianExpandedIndex,
-    setControlledAccordianExpandedIndex,
-  ] = useState<number>(-1);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [expandedAccItem, setExpandedAccItem] = useState<string>('');
   const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
+    console.log(status);
     if (status === 'unauthenticated') {
       toast({
         title: 'You need to sign in to contribute a topic',
-        status: 'error',
       });
       router.push('/');
     }
@@ -135,78 +114,37 @@ const AddLevelPage = () => {
   }, [targetWords]);
 
   useEffect(() => {
-    if (
-      controlledAccordianExpandedIndex >= 0 &&
-      controlledAccordianExpandedIndex < tabooWords.length
-    ) {
-      validateTabooWords(controlledAccordianExpandedIndex);
-    }
-  }, [tabooWords]);
+    validateTabooWords(Number(expandedAccItem));
+  }, [tabooWords, expandedAccItem]);
 
-  useEffect(() => {
-    validateAll();
-  }, [
-    isTopicNameValid,
-    topicName,
-    shouldUseAIForTabooWords,
-    difficultyLevel,
-    targetWordsErrorMessage,
-    tabooWordsErrorMessages,
-  ]);
-
-  const validateInputEntry = (
-    input: string
-  ): { isValid: boolean; message: string } => {
-    if (input.length === 0) {
-      return { isValid: false, message: 'Cannot be empty!' };
-    }
-    if (VALID_WORD_REGEX.test(input)) {
-      return { isValid: true, message: '' };
-    } else {
-      return { isValid: false, message: INVALID_WORD_ERROR };
-    }
-  };
+  const validateInputEntry = useCallback(
+    (input: string): { isValid: boolean; message: string } => {
+      if (input.length === 0) {
+        return { isValid: false, message: 'Cannot be empty!' };
+      }
+      const matches = VALID_WORD_REGEX.exec(input);
+      if (matches && matches[0] === input) {
+        return { isValid: true, message: '' };
+      } else {
+        return { isValid: false, message: INVALID_WORD_ERROR };
+      }
+    },
+    [VALID_WORD_REGEX]
+  );
 
   const onReviewTopic = () => {
     let targets = [...targetWords];
     targets = targets.filter((t) => _.trim(t).length > 0);
     setTargetWords(targets);
-    onOpen();
+    setReviewSheetOpen(true);
   };
 
   const onTopicNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const changeValue = e.target.value;
     if (changeValue.length > CHARACTER_LIMIT) return;
-    setIsTopicNameValid(undefined);
     setTopicName(changeValue);
     const result = validateInputEntry(changeValue);
-    setIsTopicNameValid(result.isValid);
     setTopicNameErrorMessage(result.isValid ? '' : result.message);
-  };
-
-  const onNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
-    validateNickname(e.target.value);
-  };
-
-  const onEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmailAddress(e.target.value);
-    validateEmail(e.target.value);
-  };
-
-  const onAppealEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAppealEmail(e.target.value);
-    validateAppealEmail(e.target.value);
-  };
-
-  const validateAppealEmail = (email: string) => {
-    if (email.length <= 0) {
-      setAppealEmailErrorMessage('Email is required');
-    } else if (!emailIsValid(email)) {
-      setAppealEmailErrorMessage('Invalid email address');
-    } else {
-      setAppealEmailErrorMessage('');
-    }
   };
 
   const onAppealReasonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -218,29 +156,6 @@ const AddLevelPage = () => {
     setAppealReasonErrorMessage(
       reason.length <= 0 ? 'Reason cannot be empty!' : ''
     );
-  };
-
-  const validateNickname = (nickname: string) => {
-    if (nickname.length <= 0) {
-      setEmailErrorMessage('Nickname is required');
-      return;
-    }
-    const result = validateInputEntry(nickname);
-    if (!result.isValid) {
-      setEmailErrorMessage(result.message);
-    } else {
-      setEmailErrorMessage('');
-    }
-  };
-
-  const validateEmail = (email: string) => {
-    if (email.length <= 0) {
-      setEmailErrorMessage('Email is required');
-    } else if (!emailIsValid(email)) {
-      setEmailErrorMessage('Invalid email address');
-    } else {
-      setEmailErrorMessage('');
-    }
   };
 
   const checkIfTabooWordsExistedForTarget = async (targetWordIndex: number) => {
@@ -271,15 +186,15 @@ const AddLevelPage = () => {
   };
 
   const addNewTargetWord = () => {
+    const finalIndex = targetWords.length;
     setTargetWords((w) => [...w, '']);
     setTabooWords((w) => [...w, []]);
     setTabooWordsErrorMessages((m) => [...m, '']);
     setTabooWordsCheckingStatus((c) => [...c, false]);
     setTabooWordsExistedStatus((e) => [...e, null]);
-    document.getElementById('add-topic-card')?.scrollBy({
-      top: 56,
-      behavior: 'smooth',
-    });
+    document
+      .getElementById(`target-input-${finalIndex}`)
+      ?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const changeTargetWordAtIndex = (changeValue: string, index: number) => {
@@ -297,8 +212,8 @@ const AddLevelPage = () => {
     tabooErrorMessages[index] =
       'You need to create at least 5 taboo words for ' + `"${changeValue}"`;
     setTabooWordsErrorMessages(tabooErrorMessages);
-    if (controlledAccordianExpandedIndex === index) {
-      setControlledAccordianExpandedIndex(-1);
+    if (Number(expandedAccItem) === index) {
+      setExpandedAccItem('');
     }
   };
 
@@ -325,26 +240,15 @@ const AddLevelPage = () => {
     setTabooWordsErrorMessages(messages);
     setTabooWordsCheckingStatus(statuses);
     setTabooWordsExistedStatus(existedStatuses);
-    if (controlledAccordianExpandedIndex === index) {
-      setControlledAccordianExpandedIndex(-1);
+    if (Number(expandedAccItem) === index) {
+      setExpandedAccItem('');
     }
-  };
-
-  const clearTargetWordInputAtIndex = (index: number) => {
-    const words = [...targetWords];
-    words[index] = '';
-    setTargetWords(words);
   };
 
   const addNewTabooWord = (forTargetAtIndex: number) => {
     const words = [...tabooWords];
     words[forTargetAtIndex].push('');
     setTabooWords(words);
-    document
-      .getElementById(
-        `target-${forTargetAtIndex}-${words[forTargetAtIndex].length - 1}`
-      )
-      ?.focus();
   };
 
   const changeTabooWordAtIndex = (
@@ -383,81 +287,114 @@ const AddLevelPage = () => {
     setTabooWords(words);
   };
 
-  const clearTabooWordInputAtIndex = (
-    forTargetAtIndex: number,
-    forTabooAtIndex: number
-  ) => {
-    const words = [...tabooWords];
-    words[forTargetAtIndex][forTabooAtIndex] = '';
-    setTabooWords(words);
-  };
-
   const validateTargetWords = () => {
     if (targetWords.filter((w) => w.length > 0).length < 3) {
       setTargetWordsErrorMessage(
         'You need to create at least 3 target words for the topic.'
       );
-    } else if (targetWords.some((w) => !validateInputEntry(w).isValid)) {
+      setTargetWordsErrorIndexs([]);
+      return;
+    }
+    const invalidTargetIndexs: number[] = [];
+    // Check valid word
+    for (let i = 0; i < targetWords.length; i++) {
+      if (!validateInputEntry(targetWords[i]).isValid) {
+        invalidTargetIndexs.push(i);
+      }
+    }
+    if (invalidTargetIndexs.length > 0) {
       setTargetWordsErrorMessage(
         'Some target words input are not valid or empty. Please change them! ' +
           INVALID_WORD_ERROR
       );
-    } else if (
+      setTargetWordsErrorIndexs(invalidTargetIndexs);
+      return;
+    }
+
+    if (
       _.uniq(targetWords.map(_.trim).map(_.toLower)).length < targetWords.length
     ) {
       setTargetWordsErrorMessage(
         'Please remove duplicate in your target words!'
       );
-    } else {
-      setTargetWordsErrorMessage('');
+      setTargetWordsErrorIndexs([]);
+      return;
     }
+
+    setTargetWordsErrorMessage('');
+    setTargetWordsErrorIndexs([]);
   };
 
   const validateTabooWords = (forTargetIndex: number) => {
+    if (forTargetIndex >= tabooWords.length) {
+      return;
+    }
     const messages = [...tabooWordsErrorMessages];
+    const errorIndexes = [...tabooWordsErrorIndexs];
     if (tabooWords[forTargetIndex].filter((w) => w.length > 0).length < 5) {
       messages[
         forTargetIndex
       ] = `You need to create at least 5 taboo words for "${targetWords[forTargetIndex]}".`;
-    } else if (
-      tabooWords[forTargetIndex].some((w) => !validateInputEntry(w).isValid)
-    ) {
-      messages[forTargetIndex] =
-        'Some taboo words input are not valid. Please change them! ' +
-        INVALID_WORD_ERROR;
-    } else if (
-      _.uniq(tabooWords[forTargetIndex].map(_.trim).map(_.toLower)).length <
-      tabooWords[forTargetIndex].length
-    ) {
-      messages[forTargetIndex] =
-        'Please remove duplicate words in your taboo words.';
+      errorIndexes[forTargetIndex] = [];
     } else {
-      messages[forTargetIndex] = '';
+      const inValidIndexes = [];
+      for (let i = 0; i < tabooWords[forTargetIndex].length; i++) {
+        if (!validateInputEntry(tabooWords[forTargetIndex][i]).isValid) {
+          inValidIndexes.push(i);
+        }
+      }
+      if (inValidIndexes.length > 0) {
+        messages[forTargetIndex] =
+          'Some taboo words input are not valid. Please change them! ' +
+          INVALID_WORD_ERROR;
+        errorIndexes[forTargetIndex] = inValidIndexes;
+      } else {
+        if (
+          _.uniq(tabooWords[forTargetIndex].map(_.trim).map(_.toLower)).length <
+          tabooWords[forTargetIndex].length
+        ) {
+          messages[forTargetIndex] =
+            'Please remove duplicate words in your taboo words.';
+          errorIndexes[forTargetIndex] = [];
+        } else {
+          messages[forTargetIndex] = '';
+          errorIndexes[forTargetIndex] = [];
+        }
+      }
     }
     setTabooWordsErrorMessages(messages);
+    setTabooWordsErrorIndexs(errorIndexes);
   };
 
-  const validateAll = () => {
+  const isAllValid = useMemo(() => {
     let _isAllValid = false;
     if (shouldUseAIForTabooWords) {
       _isAllValid =
-        isTopicNameValid === true &&
+        !topicNameErrorMessage &&
         topicName.length > 0 &&
         targetWordsErrorMessage.length <= 0 &&
         targetWords.length >= 3;
     } else {
       _isAllValid =
-        isTopicNameValid === true &&
+        !topicNameErrorMessage &&
         topicName.length > 0 &&
         targetWordsErrorMessage.length <= 0 &&
         tabooWordsErrorMessages.filter((w) => w.length > 0).length <= 0 &&
         targetWords.length >= 3 &&
         tabooWords.every((words) => words.length >= 5);
     }
-    setIsAllValid(_isAllValid);
-  };
+    return _isAllValid;
+  }, [
+    shouldUseAIForTabooWords,
+    topicNameErrorMessage,
+    topicName,
+    targetWordsErrorMessage,
+    targetWords,
+    tabooWordsErrorMessages,
+    tabooWords,
+  ]);
 
-  const scrollToTop = () => {
+  const handleScrollToTop = () => {
     document
       .getElementById('add-topic-card')
       ?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -496,52 +433,54 @@ const AddLevelPage = () => {
       toast({
         title:
           'Your topic has been submitted for review. The outcome of the submission will be notified via email.',
-        status: 'success',
-        duration: 5000,
       });
     } catch (error) {
       toast({
         title: 'Sorry, we are unable to submit the topic at the moment!',
-        status: 'error',
+        variant: 'destructive',
       });
       console.error(error);
     } finally {
       setisCreatingLevel(false);
-      onClose();
+      setReviewSheetOpen(false);
     }
   };
 
   const sendMyselfEmail = async () => {
-    try {
-      await sendEmail(
-        nickname,
-        emailAddress,
-        `${emailAddress} has submitted a new topic!`,
-        `Taboo AI New Topic Submission: ${emailAddress} has submitted a new topic!`,
-        `<article>
-      <h1>New Topic Submitted: <b>${topicName}</b></h1>
-      <div>
-          <p>Nickname: ${nickname}</p>
-          <p>Email: ${emailAddress}</p>
-          <p>Topic Name: <b>${topicName}</b></p>
-      </div>
-      <br/>
-      ${targetWords.map(
-        (w, i) => `
-        <hr/>
-        <h2>Target: ${w}</h2>
-        <h3>Difficulty Level: ${difficultyLevel}</h3>
-        ${
-          shouldUseAIForTabooWords
-            ? '<div>This user has opted in for AI to generate taboo words.</div>'
-            : tabooWords[i].map((tw) => `<div>${tw}</div>`)
-        }
-      `
-      )}
-      </article>`
-      );
-    } catch (error) {
-      console.error(error);
+    if (user?.email) {
+      const email = user.email;
+      const name = nickname || 'anonymous';
+      try {
+        await sendEmail(
+          name,
+          email,
+          `${email} has submitted a new topic!`,
+          `Taboo AI New Topic Submission: ${email} has submitted a new topic!`,
+          `<article>
+        <h1>New Topic Submitted: <b>${topicName}</b></h1>
+        <div>
+            <p>Nickname: ${name}</p>
+            <p>Email: ${email}</p>
+            <p>Topic Name: <b>${topicName}</b></p>
+        </div>
+        <br/>
+        ${targetWords.map(
+          (w, i) => `
+          <hr/>
+          <h2>Target: ${w}</h2>
+          <h3>Difficulty Level: ${difficultyLevel}</h3>
+          ${
+            shouldUseAIForTabooWords
+              ? '<div>This user has opted in for AI to generate taboo words.</div>'
+              : tabooWords[i].map((tw) => `<div>${tw}</div>`)
+          }
+        `
+        )}
+        </article>`
+        );
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -551,35 +490,26 @@ const AddLevelPage = () => {
   };
 
   const submitAppeal = async (forTarget: string) => {
-    validateAppealEmail(appealEmail);
     validateAppealReason(appealReasons);
-    if (
-      !(
-        appealEmail.length > 0 &&
-        appealReasons.length > 0 &&
-        emailIsValid(appealEmail)
-      )
-    )
-      return;
+    if (appealReasons.length <= 0 || !user?.email) return;
     setIsSubmittingAppeal(true);
     try {
       await sendEmail(
         '',
-        appealEmail,
+        user.email,
         appealReasons,
-        `Taboo AI Taboo Words Appeal Request for [${forTarget}] from ${appealEmail}`
+        `Taboo AI Taboo Words Appeal Request for [${forTarget}] from ${user.email}`
       );
       toast({
         title:
           'Appeal submitted successfully! We will get in touch with you soon!',
-        status: 'success',
       });
       setAppealReasons('');
     } catch (error) {
       toast({
         title:
           'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!',
-        status: 'error',
+        variant: 'destructive',
       });
       console.error(error);
     } finally {
@@ -590,312 +520,249 @@ const AddLevelPage = () => {
 
   const reset = () => {
     setTopicName('');
+    setTopicNameErrorMessage('');
     setDifficultyLevel('1');
     setShouldUseAIForTabooWords(false);
     setTargetWords([]);
     setTabooWords([]);
     setTabooWordsCheckingStatus([]);
     setTabooWordsExistedStatus([]);
-    setIsTopicNameValid(undefined);
   };
 
   return (
-    <>
-      <div className='relative w-full h-full flex flex-col items-center'>
-        <Card
-          id='add-topic-card'
-          className={`relative w-[95%] h-full transition-transform mb-4 overflow-y-scroll scrollbar-hide bg-primary-darker text-primary leading-4 border-2 ${
-            isAllValid ? 'border-neon-green' : 'border-white'
-          }`}
-          onScroll={onScrollChange}
+    <div className='w-full h-full flex flex-col gap-4 items-center p-4 pt-16'>
+      {isScrollToTopButtonVisible && (
+        <IconButton
+          className='fixed bottom-6 right-6 animate-fade-in z-40'
+          tooltip='Scroll to top'
+          onClick={handleScrollToTop}
         >
-          <Fade
-            hidden={!isScrollToTopButtonVisible}
-            className='fixed bottom-6 right-4 z-50'
-            in={isScrollToTopButtonVisible}
-          >
-            <IconButton
-              data-style='none'
-              variant='solid'
-              className=' bg-white text-black hover:text-primary hover:bg-primary focus:bg-primary-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
-              fontSize={26}
-              aria-label='click to scroll back to top'
-              onClick={scrollToTop}
-              icon={<FiArrowUp />}
+          <ChevronsUp />
+        </IconButton>
+      )}
+      <Card
+        id='add-topic-card'
+        className={`relative w-full flex-grow transition-transform overflow-y-scroll scrollbar-hide leading-snug border-2 ${
+          isAllValid ? 'border-green-500' : 'border-primary'
+        }`}
+        onScroll={onScrollChange}
+      >
+        <CardContent className='p-6 pt-2'>
+          <p className='leading-snug text-sm mt-2 text-muted-foreground'>
+            You can create your custom topics here! Fill up the fields below and
+            submit your topics. Your topic will be reviewed and uploaded to
+            Taboo AI within 3 working days!{' '}
+            <InfoButton
+              className='!w-[20px] !h-[20px]'
+              tooltip='Read About Taboo AI Content Policy'
+              title='Taboo AI Content Policy'
+              description='Taboo AI, our innovative web application, is designed to
+                    ensure a safe and respectful user experience for everyone.
+                    As part of our commitment to maintaining a positive online
+                    environment, all content submitted by users will be
+                    carefully reviewed. Any content found to be explicit,
+                    offensive, sexually explicit, violent, discriminatory, or
+                    harmful in nature will be automatically filtered and
+                    prevented from being uploaded. By implementing these
+                    measures, we aim to create a platform where users can freely
+                    express themselves while upholding a responsible and
+                    respectful community.'
             />
-          </Fade>
-          <CardBody>
-            <Stack divider={<StackDivider />} spacing={4}>
-              <FormControl isInvalid={!isTopicNameValid}>
-                <FormLabel
-                  mb={0}
-                  className={`text-bold text-lg ${
-                    isTopicNameValid === true
-                      ? 'text-neon-green'
-                      : 'text-yellow'
-                  }`}
-                  htmlFor='input-topicName'
-                >
-                  1. Topic name
-                </FormLabel>
-                <FormErrorMessage mt={0}>
-                  {topicNameErrorMessage}
-                </FormErrorMessage>
-                <InputGroup size='md' className='my-4'>
-                  <Input
-                    id='input-topicName'
-                    className={`w-full ${
-                      isTopicNameValid === true
-                        ? '!border-neon-green'
-                        : isTopicNameValid === false
-                        ? '!border-red-light'
-                        : '!border-white'
-                    }`}
-                    value={topicName}
-                    placeholder='Name for your topic...'
-                    pr='40px'
-                    onChange={onTopicNameChange}
-                  />
-                  <InputRightElement width='60px' height='40px'>
-                    {isTopicNameValid === true ? (
-                      <FiCheck className='text-neon-green' />
-                    ) : (
-                      <></>
-                    )}
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              <FormControl>
-                <FormLabel
-                  mb={0}
-                  className={'text-bold text-lg text-neon-green'}
-                >
-                  2. Assess the difficulty level for your topic
-                </FormLabel>
-                <RadioGroup
-                  onChange={setDifficultyLevel}
-                  value={difficultyLevel}
-                >
-                  <Stack direction='row' mt={4}>
-                    <Radio colorScheme='green' value='1'>
-                      Easy
-                    </Radio>
-                    <Radio colorScheme='green' value='2'>
-                      Medium
-                    </Radio>
-                    <Radio colorScheme='green' value='3'>
-                      Hard
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-              <FormControl
-                isDisabled={tabooWordsCheckingStatus.some((s) => s === true)}
-                display='flex'
-                flexDirection='column'
-                alignItems='start'
-              >
-                <FormLabel
-                  className={'text-bold text-lg text-neon-green'}
+          </p>
+          <div className='flex flex-col gap-1 mt-4'>
+            <Label className='text-lg' htmlFor='input-topicName'>
+              1. Topic name
+            </Label>
+            <div className='relative w-full'>
+              <Input
+                id='input-topicName'
+                className={cn(
+                  topicNameErrorMessage.length > 0
+                    ? '!border-red-500'
+                    : topicName.length > 0
+                    ? '!border-green-500'
+                    : '!border-border',
+                  'pr-[40px] w-full'
+                )}
+                value={topicName}
+                placeholder='Name for your topic...'
+                onChange={onTopicNameChange}
+              />
+              {!topicNameErrorMessage && topicName.length > 0 && (
+                <SpellCheck
+                  className='absolute h-full right-2 top-0'
+                  size={30}
+                  strokeWidth={1.5}
+                  color='green'
+                />
+              )}
+            </div>
+            {topicNameErrorMessage && (
+              <p className='text-red-500 text-xs my-1 animate-fade-in'>
+                {topicNameErrorMessage}
+              </p>
+            )}
+            <Separator className='mt-2 mb-1' />
+            <Label className='text-lg'>
+              2. Assess the difficulty level for your topic
+            </Label>
+            <RadioGroup
+              onValueChange={setDifficultyLevel}
+              value={difficultyLevel}
+              className='flex flex-row gap-2 items-center'
+            >
+              <div className='flex flex-row items-center gap-2'>
+                <RadioGroupItem id='diff-1' value='1' />
+                <Label htmlFor='diff-1'>Easy</Label>
+              </div>
+              <div className='flex flex-row items-center gap-2'>
+                <RadioGroupItem id='diff-2' value='2' />
+                <Label htmlFor='diff-2'>Medium</Label>
+              </div>
+              <div className='flex flex-row items-center gap-2'>
+                <RadioGroupItem id='diff-3' value='3' />
+                <Label htmlFor='diff-3'>Hard</Label>
+              </div>
+            </RadioGroup>
+            <Separator className='mt-2 mb-1' />
+            <div className='flex flex-col gap-2'>
+              <div className='flex flex-row items-center justify-between'>
+                <Label
+                  className='mt-2 text-lg text-primary'
                   htmlFor='ai-switch'
                 >
                   3. Use AI to generate taboo words for each target word?
-                </FormLabel>
-                <FormLabel htmlFor='ai-switch'>
-                  If turned on, you are not required to create taboo words for
-                  each target word that you created. After submission, if your
-                  submission passes the review, we will use AI to create the
-                  taboo words for you.
-                </FormLabel>
+                </Label>
                 <Switch
                   id='ai-switch'
-                  isChecked={shouldUseAIForTabooWords}
-                  size='lg'
-                  colorScheme='green'
-                  onChange={() => {
-                    setShouldUseAIForTabooWords((b) => !b);
+                  checked={shouldUseAIForTabooWords}
+                  onCheckedChange={(checked) => {
+                    setShouldUseAIForTabooWords(checked);
                   }}
                 />
-              </FormControl>
-              <FormControl isInvalid={targetWordsErrorMessage.length > 0}>
-                <FormLabel
-                  mb={0}
-                  className={`text-bold text-lg ${
-                    targetWordsErrorMessage.length > 0
-                      ? 'text-yellow'
-                      : 'text-neon-green'
-                  }`}
-                >
-                  4. Give at least 3 target words relevant to the topic provided
-                </FormLabel>
-                <FormErrorMessage mt={0}>
-                  {targetWordsErrorMessage}
-                </FormErrorMessage>
-                <div className='flex flex-row flex-wrap gap-4 justify-start items-center w-full my-4'>
-                  {targetWords.map((w, i) => (
-                    <div key={i} className='w-full lg:w-52 relative'>
-                      <InputGroup size='md'>
-                        <Input
-                          autoFocus
-                          isDisabled={tabooWordsCheckingStatus[i]}
-                          id={`target-${i}`}
-                          className={`w-full ${
-                            targetWordsErrorMessage.length > 0
-                              ? '!border-white'
-                              : '!border-neon-green'
-                          }`}
-                          value={w}
-                          placeholder='target word...'
-                          pr='40px'
-                          onChange={(e) => {
-                            changeTargetWordAtIndex(e.target.value, i);
-                          }}
-                          onBlur={() => {
-                            onTargetWordInputOutOfFocus(w);
-                          }}
-                        />
-                        <InputRightElement
-                          width='60px'
-                          height='40px'
-                          hidden={w.length == 0}
-                        >
-                          <IconButton
-                            isDisabled={tabooWordsCheckingStatus[i]}
-                            data-style='none'
-                            variant='unstyled'
-                            className='text-primary hover:opacity-70 flex justify-center items-center'
-                            aria-label='clear text field'
-                            size='sm'
-                            onClick={() => {
-                              clearTargetWordInputAtIndex(i);
-                            }}
-                            icon={<FiX />}
-                          />
-                        </InputRightElement>
-                      </InputGroup>
-                      <IconButton
-                        isDisabled={tabooWordsCheckingStatus[i]}
-                        data-style='none'
-                        variant='solid'
-                        colorScheme='red'
-                        isRound
-                        fontSize={16}
-                        size='sm'
-                        className='text-primary bg-red absolute -top-2 -right-4 z-10 p-2'
-                        aria-label={`delete this target word with index ${i}`}
-                        onClick={() => {
-                          deleteTargetWordAtIndex(i);
-                        }}
-                        icon={<FiTrash2 />}
-                      />
-                    </div>
-                  ))}
-                  <IconButton
-                    hidden={targetWords.length >= MAX_TARGET_WORDS_COUNT}
-                    key='add-button'
-                    data-style='none'
-                    variant='outline'
-                    className='text-primary hover:text-black '
-                    aria-label='add a new target word'
-                    fontSize={24}
-                    onClick={addNewTargetWord}
-                    icon={<RiAddFill />}
+              </div>
+              <p className='text-muted-foreground text-sm leading-tight'>
+                If turned on, you are not required to create taboo words for
+                each target word that you created. After submission, if your
+                submission passes the review, we will use AI to create the taboo
+                words for you.
+              </p>
+            </div>
+            <Separator className='mt-2 mb-1' />
+            <Label className='text-lg'>
+              4. Give at least 3 target words relevant to the topic provided
+            </Label>
+            {targetWordsErrorMessage && (
+              <p className='text-red-500 text-xs animate-fade-in'>
+                {targetWordsErrorMessage}
+              </p>
+            )}
+            <div className='flex flex-row flex-wrap gap-4 justify-start items-center w-full my-4'>
+              {targetWords.map((w, i) => (
+                <div key={i} className='w-full lg:w-52 relative'>
+                  <Input
+                    autoFocus
+                    disabled={tabooWordsCheckingStatus[i]}
+                    id={`target-input-${i}`}
+                    className={cn(
+                      'w-full pr-[40px]',
+                      targetWordsErrorIndexs.includes(i) || w.length <= 0
+                        ? '!border-red-500'
+                        : targetWordsErrorMessage.length > 0
+                        ? '!border-yellow-500'
+                        : '!border-green-500'
+                    )}
+                    value={w}
+                    placeholder='target word...'
+                    onChange={(e) => {
+                      changeTargetWordAtIndex(e.target.value, i);
+                    }}
+                    onBlur={() => {
+                      onTargetWordInputOutOfFocus(w);
+                    }}
                   />
-                </div>
-              </FormControl>
-              {!shouldUseAIForTabooWords && (
-                <FormControl
-                  hidden={
-                    targetWords.length <= 0 ||
-                    targetWords.every((v) => v.length <= 0)
-                  }
-                >
-                  <FormLabel
-                    className={`text-bold text-lg ${
-                      tabooWordsErrorMessages.filter((m) => m.length > 0)
-                        .length > 0
-                        ? 'text-yellow'
-                        : 'text-neon-green'
-                    }`}
-                  >
-                    5. For each target word, define at least 5 taboo words
-                  </FormLabel>
-                  <Accordion
-                    allowToggle
-                    index={controlledAccordianExpandedIndex}
-                    onChange={(expandedIndex) => {
-                      setControlledAccordianExpandedIndex(
-                        expandedIndex as number
-                      );
-                      if (expandedIndex < 0) {
-                        setTabooWordsCheckingStatus(
-                          Array(targetWords.length).fill(false)
-                        );
-                      } else if (
-                        tabooWordsExistedStatus[expandedIndex as number] ===
-                          null ||
-                        (tabooWordsExistedStatus[expandedIndex as number] ===
-                          true &&
-                          tabooWords[expandedIndex as number].length === 0)
-                      ) {
-                        checkIfTabooWordsExistedForTarget(
-                          expandedIndex as number
-                        );
-                      }
+                  <IconButton
+                    tooltip='Delete'
+                    disabled={tabooWordsCheckingStatus[i]}
+                    className='rounded-full shadow-sm absolute -top-4 -right-3 z-10 p-2'
+                    aria-label={`delete this target word with index ${i}`}
+                    variant='destructive'
+                    onClick={() => {
+                      deleteTargetWordAtIndex(i);
                     }}
                   >
-                    {targetWords.map((w, i) =>
-                      w.length > 0 ? (
-                        <AccordionItem
-                          key={i}
-                          isDisabled={tabooWordsCheckingStatus.some(
-                            (s) => s === true
-                          )}
-                        >
-                          <h2>
-                            <AccordionButton data-style='none'>
-                              <Box
-                                as='span'
-                                flex='1'
-                                textAlign='left'
-                                className='overflow-clip'
-                              >
-                                Target Word:{' '}
-                                <b
-                                  className={`${
-                                    tabooWordsErrorMessages[i].length > 0
-                                      ? 'text-yellow'
-                                      : 'text-neon-green'
-                                  }`}
-                                >
-                                  {w}
-                                </b>
-                              </Box>
-                              <AccordionIcon />
-                            </AccordionButton>
-                          </h2>
-                          <AccordionPanel key={i} pb={4} pt={0}>
-                            {tabooWordsCheckingStatus[i] ? (
-                              <SkeletonText
-                                noOfLines={2}
-                                className='w-full'
-                                boxShadow='lg'
-                                spacing={2}
-                                skeletonHeight={2}
-                              />
-                            ) : (
-                              <FormControl
-                                mt={0}
-                                isInvalid={
-                                  tabooWordsErrorMessages[i].length > 0
-                                }
-                                className='w-full'
-                              >
-                                <FormErrorMessage mt={0} mb={0}>
-                                  {tabooWordsErrorMessages[i]}
-                                </FormErrorMessage>
-                                {tabooWordsExistedStatus[i] && (
-                                  <FormLabel className='text-gray'>
+                    <Trash size={15} />
+                  </IconButton>
+                </div>
+              ))}
+              {targetWords.length < MAX_TARGET_WORDS_COUNT && (
+                <IconButton
+                  tooltip='Add target word'
+                  key='add-button'
+                  aria-label='add a new target word'
+                  onClick={addNewTargetWord}
+                >
+                  <Plus />
+                </IconButton>
+              )}
+            </div>
+            {!shouldUseAIForTabooWords && (
+              <>
+                <Separator className='mt-2 mb-1' />
+                <Label className='text-lg'>
+                  5. For each target word, define at least 5 taboo words
+                </Label>
+                <Accordion
+                  type='single'
+                  collapsible
+                  onValueChange={(value) => {
+                    console.log(value);
+                    setExpandedAccItem(value);
+                    const expandedIndex = Number(value);
+                    if (expandedIndex < 0) {
+                      setTabooWordsCheckingStatus(
+                        Array(targetWords.length).fill(false)
+                      );
+                    } else if (
+                      tabooWordsExistedStatus[expandedIndex] === null ||
+                      (tabooWordsExistedStatus[expandedIndex] === true &&
+                        tabooWords[expandedIndex].length === 0)
+                    ) {
+                      checkIfTabooWordsExistedForTarget(expandedIndex);
+                    }
+                  }}
+                >
+                  {targetWords.map((w, i) =>
+                    w.length > 0 ? (
+                      <AccordionItem
+                        key={i}
+                        value={String(i)}
+                        disabled={tabooWordsCheckingStatus.some(
+                          (s) => s === true
+                        )}
+                      >
+                        <AccordionTrigger>
+                          <div>
+                            Target Word:{' '}
+                            <b
+                              className={`${
+                                tabooWordsErrorMessages[i].length > 0
+                                  ? 'text-red-500'
+                                  : 'text-green-500'
+                              }`}
+                            >
+                              {w}
+                            </b>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent key={i} className='px-4'>
+                          {tabooWordsCheckingStatus[i] ? (
+                            <Skeleton numberOfRows={2} />
+                          ) : (
+                            <div>
+                              {tabooWordsExistedStatus[i] && (
+                                <div className='text-primary'>
+                                  <span>
                                     Taboo words for &quot;{w}&quot; have already
                                     been defined in our system by others. In
                                     order to respect the contents created by
@@ -904,187 +771,162 @@ const AddLevelPage = () => {
                                     here. However, you can still appeal if you
                                     insist on changing. Appeal will be reviewed
                                     in case-by-case basis.{' '}
-                                    <span>
-                                      <Popover strategy='fixed'>
-                                        <PopoverTrigger>
-                                          <button
-                                            data-style='none'
-                                            className='hover:opacity-50 transition-opacity ease-in mx-1 mt-1'
-                                          >
-                                            <BsInfoSquareFill />
-                                          </button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className='text-black'>
-                                          <PopoverArrow />
-                                          <PopoverCloseButton
-                                            data-style='none'
-                                            className='hover:opacity-50 transition-opacity ease-in'
-                                          />
-                                          <PopoverHeader>
-                                            How to appeal?
-                                          </PopoverHeader>
-                                          <PopoverBody className='leading-5'>
-                                            <Button
-                                              data-style='none'
-                                              variant='outline'
-                                              colorScheme='red'
-                                              onClick={() => {
-                                                openAppeal(w);
-                                              }}
-                                            >
-                                              Click to submit your appeal
-                                            </Button>
-                                          </PopoverBody>
-                                        </PopoverContent>
-                                      </Popover>
-                                    </span>
-                                  </FormLabel>
-                                )}
-                                <div className='flex flex-row flex-wrap gap-4 justify-start items-center w-full my-4'>
-                                  {tabooWords[i].map((tw, ti) => (
-                                    <div
-                                      key={ti}
-                                      className='w-full lg:w-52 relative'
-                                    >
-                                      <InputGroup size='md'>
-                                        <Input
-                                          autoFocus
-                                          isDisabled={
+                                  </span>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <IconButton
+                                        tooltip='How to appeal?'
+                                        className='!p-0 !m-0 !w-fit'
+                                        variant='link'
+                                      >
+                                        <Info size={12} />
+                                      </IconButton>
+                                    </PopoverTrigger>
+                                    <PopoverContent className='text-card-foreground bg-card'>
+                                      <h4 className='mb-4'>How to appeal?</h4>
+                                      <Button
+                                        disabled={!user || !user.email}
+                                        onClick={() => {
+                                          openAppeal(w);
+                                        }}
+                                      >
+                                        {user && user.email
+                                          ? 'Click to submit your appeal'
+                                          : 'Sorry, you are not eligible for appeal submission.'}
+                                      </Button>
+                                    </PopoverContent>
+                                  </Popover>
+                                </div>
+                              )}
+                              {tabooWordsErrorMessages[i] && (
+                                <p className='text-red-500 text-xs animate-fade-in'>
+                                  {tabooWordsErrorMessages[i]}
+                                </p>
+                              )}
+
+                              <div className='flex flex-row flex-wrap gap-4 justify-start items-center w-full my-4'>
+                                {tabooWords[i].map((tw, ti) => (
+                                  <div
+                                    key={`taboo-${ti}`}
+                                    className='w-full lg:w-52 relative'
+                                  >
+                                    <Input
+                                      autoFocus
+                                      disabled={
+                                        tabooWordsExistedStatus[i] ?? false
+                                      }
+                                      id={`taboo-${i}-${ti}`}
+                                      key={`taboo-${i}-${ti}`}
+                                      className={`w-full ${
+                                        tabooWordsErrorIndexs[i].includes(ti) ||
+                                        tw.length <= 0
+                                          ? '!border-red-500'
+                                          : tabooWordsErrorMessages[i].length >
+                                            0
+                                          ? '!border-yellow-500'
+                                          : '!border-green-500'
+                                      }`}
+                                      value={tw}
+                                      placeholder='taboo word...'
+                                      onChange={(e) => {
+                                        changeTabooWordAtIndex(
+                                          e.target.value,
+                                          i,
+                                          ti
+                                        );
+                                      }}
+                                      onBlur={() => {
+                                        onTabooWordInputOutOfFocus(i, tw);
+                                      }}
+                                    />
+                                    {!(tabooWordsExistedStatus[i] ?? false) && (
+                                      <>
+                                        <IconButton
+                                          tooltip='Delete'
+                                          disabled={tabooWordsCheckingStatus[i]}
+                                          className='rounded-full shadow-sm absolute -top-4 -right-3 z-10 p-2'
+                                          hidden={
                                             tabooWordsExistedStatus[i] ?? false
                                           }
-                                          id={`taboo-${i}-${ti}`}
-                                          key={`taboo-${i}-${ti}`}
-                                          className={`w-full ${
-                                            tabooWordsErrorMessages[i].length >
-                                            0
-                                              ? '!border-white'
-                                              : '!border-neon-green'
-                                          }`}
-                                          value={tw}
-                                          placeholder='taboo word...'
-                                          onChange={(e) => {
-                                            changeTabooWordAtIndex(
-                                              e.target.value,
-                                              i,
-                                              ti
-                                            );
+                                          variant='destructive'
+                                          aria-label={`delete this target word with index ${i}`}
+                                          onClick={() => {
+                                            deleteTabooWordAtIndex(i, ti);
                                           }}
-                                          onBlur={() => {
-                                            onTabooWordInputOutOfFocus(i, tw);
-                                          }}
-                                        />
-                                        <InputRightElement
-                                          width='60px'
-                                          height='40px'
-                                          hidden={
-                                            w.length == 0 ||
-                                            (tabooWordsExistedStatus[i] ??
-                                              false)
-                                          }
                                         >
-                                          <IconButton
-                                            hidden={
-                                              tabooWords[i][ti].length <= 0
-                                            }
-                                            data-style='none'
-                                            variant='unstyled'
-                                            className='text-primary hover:opacity-70 flex justify-center items-center'
-                                            aria-label='clear text field'
-                                            size='sm'
-                                            onClick={() => {
-                                              clearTabooWordInputAtIndex(i, ti);
-                                            }}
-                                            icon={<FiX />}
-                                          />
-                                        </InputRightElement>
-                                      </InputGroup>
-
-                                      <IconButton
-                                        hidden={
-                                          tabooWordsExistedStatus[i] ?? false
-                                        }
-                                        data-style='none'
-                                        variant='solid'
-                                        colorScheme='red'
-                                        isRound
-                                        fontSize={16}
-                                        size='sm'
-                                        className='text-primary bg-red absolute -top-2 -right-4 z-10 p-2'
-                                        aria-label={`delete this target word with index ${i}`}
-                                        onClick={() => {
-                                          deleteTabooWordAtIndex(i, ti);
-                                        }}
-                                        icon={<FiTrash2 />}
-                                      />
-                                    </div>
-                                  ))}
-                                </div>
-
-                                <IconButton
-                                  hidden={
-                                    (tabooWordsExistedStatus[i] ?? false) ||
-                                    tabooWords[i].length >=
-                                      MAX_TABOO_WORDS_COUNT
-                                  }
-                                  key='add-button'
-                                  data-style='none'
-                                  variant='outline'
-                                  className='text-primary hover:text-black '
-                                  aria-label='add a new target word'
-                                  fontSize={24}
-                                  onClick={() => {
-                                    addNewTabooWord(i);
-                                  }}
-                                  icon={<RiAddFill />}
-                                />
-                              </FormControl>
-                            )}
-                          </AccordionPanel>
-                        </AccordionItem>
-                      ) : (
-                        <></>
-                      )
-                    )}
-                  </Accordion>
-                </FormControl>
-              )}
-            </Stack>
-          </CardBody>
-        </Card>
-        <Fade hidden={!isAllValid} className='mb-4' in={isAllValid}>
-          <Button
-            data-style='none'
-            variant='solid'
-            className=' bg-neon-green text-black hover:text-neon-green hover:bg-primary focus:bg-primary-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]'
-            fontSize={26}
-            aria-label='click to review the topic'
-            onClick={onReviewTopic}
+                                          <Trash size={15} />
+                                        </IconButton>
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                              {!(tabooWordsExistedStatus[i] ?? false) &&
+                                tabooWords[i].length <
+                                  MAX_TABOO_WORDS_COUNT && (
+                                  <IconButton
+                                    tooltip='Add target word'
+                                    key='add-button'
+                                    aria-label='add a new target word'
+                                    onClick={() => {
+                                      addNewTabooWord(i);
+                                    }}
+                                  >
+                                    <Plus />
+                                  </IconButton>
+                                )}
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ) : (
+                      <></>
+                    )
+                  )}
+                </Accordion>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      {isAllValid && (
+        <Sheet
+          open={reviewSheetOpen}
+          onOpenChange={(open) => {
+            setReviewSheetOpen(open);
+          }}
+        >
+          <SheetTrigger asChild>
+            <Button
+              disabled={!user || !user.email}
+              className='animate-fade-in'
+              aria-label='click to review the topic'
+              onClick={onReviewTopic}
+            >
+              {user && user.email
+                ? 'Review Your Topic'
+                : 'You need to login to proceed'}
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            side='bottom'
+            className='leading-snug h-full overflow-y-auto'
           >
-            Review Your Topic
-          </Button>
-        </Fade>
-      </div>
-      <Drawer
-        size='full'
-        placement='bottom'
-        onClose={onClose}
-        isOpen={isOpen}
-        allowPinchZoom
-      >
-        <DrawerOverlay />
-        <DrawerContent className='leading-4 text-primary bg-primary-darker h-full'>
-          <DrawerCloseButton data-style='none' className='hover:opacity-70' />
-          <DrawerHeader borderBottomWidth='1px'>
-            Review Your Topic: <b>{topicName}</b>
-          </DrawerHeader>
-          <DrawerBody className='w-full flex flex-col items-stretch'>
-            <SimpleGrid minChildWidth='240px' spacing={10} my={10} mx={6}>
+            <SheetHeader>
+              <SheetTitle className='flex flex-col gap-1 justify-center'>
+                Review Your Topic:{' '}
+                <b className='ml-2 text-2xl font-extrabold'>{topicName}</b>
+              </SheetTitle>
+            </SheetHeader>
+            <div className='flex flex-wrap gap-8 mt-4 justify-center'>
               {targetWords.map((w, i) => (
-                <Card key={i} className='bg-primary text-primary'>
-                  <CardHeader className='text-center text-2xl font-bold'>
-                    <h2>{w}</h2>
+                <Card key={i} className='max-w-[300px]'>
+                  <CardHeader className='text-center text-2xl font-bold p-2'>
+                    <CardTitle className='bg-secondary py-4 rounded-lg shadow-md'>
+                      {_.startCase(_.trim(w))}
+                    </CardTitle>
                   </CardHeader>
-                  <CardBody>
+                  <CardContent className='text-center mt-2'>
                     {shouldUseAIForTabooWords ? (
                       <p>
                         You chose to use AI to generate the taboo words. Your
@@ -1093,135 +935,102 @@ const AddLevelPage = () => {
                       </p>
                     ) : (
                       <>
-                        <p className='text-red-light'>Taboo Words:</p>
-                        <Flex gap={4} flexWrap='wrap' mt={4}>
+                        <p className='text-red-400'>Taboo Words:</p>
+                        <div className='flex flex-wrap gap-4 mt-4'>
                           {tabooWords[i]
                             .filter((w) => w.length > 0)
                             .map((tw, ti) => (
-                              <Tag
-                                variant='solid'
-                                key={ti}
-                                size='lg'
-                                colorScheme='green'
-                              >
-                                {tw}
-                              </Tag>
+                              <Badge key={ti}>{tw}</Badge>
                             ))}
-                        </Flex>
+                        </div>
                       </>
                     )}
-                  </CardBody>
+                  </CardContent>
                 </Card>
               ))}
-            </SimpleGrid>
-            <FormControl mb={4}>
-              <FormLabel>Enter your creator nickname:</FormLabel>
+            </div>
+            {user?.email && (
+              <div className='flex flex-col gap-2 my-4'>
+                <Label htmlFor='email-input'>Contributor email: </Label>
+                <Input disabled id='email-input' defaultValue={user.email} />
+              </div>
+            )}
+            <div className='flex flex-col gap-2 my-4'>
+              <Label htmlFor='nickname-input'>Nickname: </Label>
               <Input
+                id='nickname-input'
                 value={nickname}
-                placeholder='Creator nickname...'
-                onChange={onNicknameChange}
+                onChange={(e) => {
+                  setNickname(e.target.value);
+                }}
               />
-            </FormControl>
-            <FormControl mb={4} isInvalid={emailErrorMessage.length > 0}>
-              <FormLabel>
-                We will notify you about the review result via email:
-              </FormLabel>
-              <Input
-                type='email'
-                value={emailAddress}
-                placeholder='Your email address...'
-                onChange={onEmailChange}
-              />
-              <FormErrorMessage>{emailErrorMessage}</FormErrorMessage>
-            </FormControl>
-            <Button
-              isDisabled={
-                nickname.length <= 0 ||
-                emailAddress.length <= 0 ||
-                emailErrorMessage.length > 0
-              }
-              data-style='none'
-              variant='solid'
-              className={`${
-                nickname.length <= 0 ||
-                emailAddress.length <= 0 ||
-                emailErrorMessage.length > 0
-                  ? 'bg-yellow'
-                  : 'bg-neon-green'
-              } text-black hover:text-gray hover:bg-primary focus:bg-primary-darker shadow-[0_5px_15px_rgba(0,0,0,0.9)]`}
-              fontSize={32}
-              aria-label='click to submit the topic created'
-              mb={4}
-              isLoading={isCreatingLevel}
-              onClick={submitNewTopic}
-            >
-              Submit Topic
-            </Button>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-      <Modal
-        isOpen={isAppealModalOpen}
-        onClose={() => {
-          setIsAppealModalOpen(false);
+              <p className='text-muted-foreground text-xs'>
+                Nickname will be displayed under the successfully contributed
+                topic and visible to all players.
+              </p>
+            </div>
+            <div className='flex justify-center'>
+              {isCreatingLevel ? (
+                <Button disabled>
+                  <Spinner />
+                </Button>
+              ) : (
+                <Button
+                  disabled={!user || !user.email || nickname.length <= 0}
+                  className='mb-4'
+                  aria-label='click to submit the topic created'
+                  onClick={submitNewTopic}
+                >
+                  {user && user.email
+                    ? 'Submit Topic'
+                    : 'Please login to proceed'}
+                </Button>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
+      <Dialog
+        open={isAppealModalOpen}
+        onOpenChange={(open) => {
+          setIsAppealModalOpen(open);
         }}
       >
-        <ModalOverlay />
-        <ModalContent
-          data-style='none'
-          className='leading-4 bg-primary text-primary'
-        >
-          <ModalHeader className='text-yellow'>
-            Submit Appeal For &quot;{selectedWordForAppeal}&quot;
-          </ModalHeader>
-          <ModalCloseButton data-style='none' />
-          <ModalBody>
-            <FormControl isInvalid={appealEmailErrorMessage.length > 0}>
-              <FormLabel>
-                Please provide us with your email address and reasons for the
-                appeal, so that we can contact you once we finish the review.
-                Thank you for your understanding!
-              </FormLabel>
-              <Input
-                mt={4}
-                type='email'
-                value={appealEmail}
-                placeholder='Email address...'
-                onChange={onAppealEmailChange}
-              />
-              <FormErrorMessage>{appealEmailErrorMessage}</FormErrorMessage>
-            </FormControl>
-            <FormControl mt={4} isInvalid={appealReasonErrorMessage.length > 0}>
-              <Textarea
-                value={appealReasons}
-                placeholder='Appeal reasons.'
-                onChange={onAppealReasonChange}
-              />
-              <FormErrorMessage>{appealReasonErrorMessage}</FormErrorMessage>
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              isLoading={isSubmittingAppeal}
-              isDisabled={
-                appealReasonErrorMessage.length > 0 ||
-                appealEmailErrorMessage.length > 0
-              }
-              data-style='none'
-              colorScheme='green'
-              variant='outline'
-              mr={3}
-              onClick={() => {
-                submitAppeal(selectedWordForAppeal);
-              }}
-            >
-              Submit Appeal
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+        <DialogContent className='leading-snug bg-card text-card-foreground rounded-lg'>
+          <DialogHeader className='text-primary'>
+            <DialogTitle>
+              {' '}
+              Submit Appeal For &quot;{selectedWordForAppeal}&quot;
+            </DialogTitle>
+          </DialogHeader>
+          {user?.email && <Input disabled defaultValue={user.email} />}
+          <Textarea
+            value={appealReasons}
+            placeholder='Appeal reasons.'
+            onChange={onAppealReasonChange}
+          />
+          <DialogFooter>
+            {isSubmittingAppeal ? (
+              <Button disabled>
+                <Spinner />
+              </Button>
+            ) : (
+              <Button
+                disabled={
+                  appealReasons.length <= 0 ||
+                  appealReasonErrorMessage.length > 0
+                }
+                onClick={() => {
+                  submitAppeal(selectedWordForAppeal);
+                }}
+              >
+                Submit Appeal
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

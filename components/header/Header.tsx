@@ -82,6 +82,13 @@ const Header = ({
         href: '/levels',
       },
       {
+        title: 'Contribute A Topic',
+        subtitle:
+          'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
+        visible: user !== undefined && status === 'authenticated',
+        href: '/add-level',
+      },
+      {
         title: 'My Profile',
         subtitle:
           'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
@@ -139,7 +146,7 @@ const Header = ({
       id='header-section'
       className={cn(
         isTransparent ? '' : 'bg-card',
-        'w-full fixed top-0 h-16 lg:h-20 gap-2 z-40 p-4 flex flex-row justify-between text-center items-center'
+        'w-full fixed top-0 h-16 gap-2 z-40 p-4 flex flex-row justify-between text-center items-center'
       )}
     >
       <div id='left-header-slot' className='flex justify-start gap-1'>
