@@ -142,7 +142,7 @@ const Header = ({
         'w-full fixed top-0 h-16 lg:h-20 gap-2 z-40 p-4 flex flex-row justify-between text-center items-center'
       )}
     >
-      <div id='left-header-slot' className='min-w-1/6 flex justify-start gap-2'>
+      <div id='left-header-slot' className='flex justify-start gap-1'>
         {hideMenu === true ? (
           <></>
         ) : (
@@ -224,10 +224,13 @@ const Header = ({
         {!hideThemeToggle && <ThemeToggle />}
         {additionLeftItems.map((item) => item)}
       </div>
-      <h1 data-testid='heading-rule-title' className='flex-grow leading-normal'>
+      <h1
+        data-testid='heading-rule-title'
+        className='absolute -z-10 left-0 w-full text-center text-xl'
+      >
         {title}
       </h1>
-      <div id='right-header-slot' className='min-w-1/6 flex justify-end'>
+      <div id='right-header-slot' className='flex justify-end gap-1'>
         {additionRightItems.reverse().map((item) => item)}
         {!hideUserMenu && <UserLoginPortal />}
       </div>

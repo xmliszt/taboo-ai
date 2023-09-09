@@ -5,6 +5,8 @@ import ILevel from '../../lib/types/level.interface';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
+import { cn } from '@/lib/utils';
+import { isMobile } from 'react-device-detect';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -24,9 +26,11 @@ export function LevelCard({ level }: LevelCardProps) {
   return (
     <Card
       onClick={goToLevel}
-      className={`w-full h-auto lg:w-[200px] lg:h-[270px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02] ${
-        level ? '' : 'unicorn-color'
-      }`}
+      className={cn(
+        isMobile ? 'w-full h-auto' : 'w-[200px] lg:h-[270px]',
+        level ? '' : 'unicorn-color',
+        'transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
+      )}
     >
       <CardHeader>
         <div className='text-md leading-tight font-extrabold rounded-lg p-2 shadow-md bg-primary text-primary-foreground'>
@@ -36,13 +40,30 @@ export function LevelCard({ level }: LevelCardProps) {
       <CardContent className='relative'>
         {level ? (
           <section className='flex flex-wrap gap-2'>
-            {level?.isNew === true && <Badge>New Level</Badge>}
+            {level?.isNew === true && (
+              <Badge
+                variant='outline'
+                className='bg-secondary text-secondary-foreground'
+              >
+                New Level
+              </Badge>
+            )}
             {level?.difficulty && (
-              <Badge>
+              <Badge
+                variant='outline'
+                className='bg-secondary text-secondary-foreground'
+              >
                 Difficulty: {getDifficulty(level.difficulty, false)}
               </Badge>
             )}
-            {level?.words && <Badge>{level.words.length} words</Badge>}
+            {level?.words && (
+              <Badge
+                variant='outline'
+                className='bg-secondary text-secondary-foreground'
+              >
+                {level.words.length} words
+              </Badge>
+            )}
           </section>
         ) : (
           <section className='mt-2 leading-tight text-left'>

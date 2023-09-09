@@ -28,6 +28,7 @@ const nextConfig = {
       'api.producthunt.com',
       'i.ibb.co',
       'media.giphy.com',
+      'github.com',
     ],
     formats: ['image/webp'],
   },

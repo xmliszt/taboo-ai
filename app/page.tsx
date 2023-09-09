@@ -1,15 +1,6 @@
 'use client';
 
 import DevToggle from '@/components/custom/dev-toggle';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { Coffee, PenSquare, Quote, View } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
@@ -20,8 +11,16 @@ import SocialLinkButton from '../components/custom/social-link-button';
 import { useAuth } from './AuthProvider';
 import Link from 'next/link';
 import Header from '@/components/header/Header';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { HomeMenuButton } from '@/components/custom/home-menu-button';
+import {
+  Dialog,
+  DialogHeader,
+  DialogFooter,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface HomePageProps {}
 
@@ -32,13 +31,10 @@ export default function HomePage(props: HomePageProps) {
   const [isSignInPromptOpen, setIsSignInPromptOpen] = useState(false);
   const { user, status, login } = useAuth();
   const router = useRouter();
-  const navigateTo = (href: string) => {
-    router.push(href);
-  };
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {
-      navigateTo('/add-level');
+      router.push('/add-levels');
     } else {
       setIsSignInPromptOpen(true);
     }
@@ -51,7 +47,10 @@ export default function HomePage(props: HomePageProps) {
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
-      <Header isTransparent />
+      <Header
+        isTransparent
+        additionLeftItems={[<DevToggle key='dev-toggle' />]}
+      />
       <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-24 lg:pt-24 pb-4'>
         <div className='w-full relative'>
@@ -75,7 +74,7 @@ export default function HomePage(props: HomePageProps) {
             icon={<PenSquare size={20} />}
             title='Contribute New Topics'
             subtitle='Be a contributor! Your creative topic will be played by all Taboo AI players around the world!'
-            href='/add-level'
+            onClick={handleAddTopic}
             aria-label='Click to contribute a new topic to Taboo AI'
           />
           {user?.email === 'xmliszt@gmail.com' &&
@@ -89,7 +88,6 @@ export default function HomePage(props: HomePageProps) {
               />
             )}
         </section>
-        <DevToggle />
         <section className='mt-10 w-11/12'>
           <ContactMe />
         </section>
@@ -117,23 +115,23 @@ export default function HomePage(props: HomePageProps) {
         </p>
       </section>
 
-      <AlertDialog
+      <Dialog
         open={isSignInPromptOpen}
         onOpenChange={(open) => {
           setIsSignInPromptOpen(open);
         }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className='leading-snug'>
               You need to sign in to contribute a topic!
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={signIn}>Sign In Here</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={signIn}>Sign In Here</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

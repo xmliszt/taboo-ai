@@ -15,7 +15,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           <Button
             ref={ref}
             {...props}
-            className={cn(className, 'w-[40px] h-[40px] p-1')}
+            className={cn(className, 'w-[30px] h-[30px] p-1')}
           >
             {children}
           </Button>

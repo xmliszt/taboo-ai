@@ -21,13 +21,14 @@ import { HASH } from '@/lib/hash';
 import { getTabooWords } from '@/lib/services/wordService';
 import IWord from '@/lib/types/word.interface';
 import { useToast } from '@/components/ui/use-toast';
-import { Flame, SendHorizonal, X } from 'lucide-react';
-import { Alert, AlertTitle } from '@/components/ui/alert';
+import { SendHorizonal, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
+import { IChat } from '@/lib/types/score.interface';
+import DevToggle from '@/components/custom/dev-toggle';
 
 interface LevelPageProps {}
 
@@ -67,9 +68,7 @@ export default function LevelPage(props: LevelPageProps) {
   });
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const [userInputError, setUserInputError] = useState<string>();
-  const [cachedPrompts, setCachedPrompts] = useState<
-    { role: string; content: string }[]
-  >([]);
+  const [conversation, setConversation] = useState<IChat[]>([]);
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -175,26 +174,20 @@ export default function LevelPage(props: LevelPageProps) {
     event.preventDefault();
     setResponseText('');
     if (userInputMatchedTabooWords.length <= 0 && userInput.length > 0) {
-      setCachedPrompts([
-        ...cachedPrompts,
-        { role: 'user', content: userInput },
-      ]);
+      setConversation([...conversation, { role: 'user', content: userInput }]);
       setUserInput('');
     }
   };
   //!SECTION
 
   useEffect(() => {
-    const lastPrompt = cachedPrompts[cachedPrompts.length - 1];
+    const lastPrompt = conversation[conversation.length - 1];
     if (lastPrompt && lastPrompt.role === 'user') {
-      setCachedPrompts([
-        ...cachedPrompts,
-        { role: 'assistant', content: '...' },
-      ]);
+      setConversation([...conversation, { role: 'assistant', content: '...' }]);
       fetchResponse(lastPrompt);
     }
     document.getElementById('chat-end')?.scrollIntoView({ behavior: 'smooth' });
-  }, [cachedPrompts]);
+  }, [conversation]);
 
   //SECTION - Fetch Response
   const fetchResponse = async (prompt: { role: string; content: string }) => {
@@ -210,7 +203,7 @@ export default function LevelPage(props: LevelPageProps) {
             localStorage.getItem('mode') ?? '1'
           );
         } else {
-          const filteredPrompts = cachedPrompts.filter(
+          const filteredPrompts = conversation.filter(
             (p) => p.role !== 'error'
           );
           responseText = await askAIForQueryResponse([
@@ -219,16 +212,16 @@ export default function LevelPage(props: LevelPageProps) {
           ]);
         }
         if (responseText === undefined || responseText === null) {
-          setCachedPrompts([
-            ...cachedPrompts,
+          setConversation([
+            ...conversation,
             { role: 'error', content: CONSTANTS.errors.overloaded },
           ]);
           setIsLoading(false);
           start();
           return;
         } else {
-          setCachedPrompts([
-            ...cachedPrompts,
+          setConversation([
+            ...conversation,
             { role: 'assistant', content: responseText },
           ]);
         }
@@ -240,8 +233,8 @@ export default function LevelPage(props: LevelPageProps) {
       } catch (err) {
         // Server error
         setIsSuccess(false);
-        setCachedPrompts([
-          ...cachedPrompts,
+        setConversation([
+          ...conversation,
           { role: 'error', content: CONSTANTS.errors.overloaded },
         ]);
         setIsLoading(false);
@@ -254,12 +247,10 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - Next Question
   const nextQuestion = async () => {
     pause();
-    const question = userInput.slice();
     cacheScore({
       id: currentProgress,
       target: target ?? '',
-      question: question,
-      response: responseText,
+      conversation: conversation,
       difficulty: difficulty,
       completion: time,
       responseHighlights: highlights,
@@ -330,7 +321,7 @@ export default function LevelPage(props: LevelPageProps) {
   useEffect(() => {
     if (target) {
       setVariations([target]);
-      setCachedPrompts([]);
+      setConversation([]);
       setIsGeneratingVariations(true);
       generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
@@ -482,7 +473,7 @@ export default function LevelPage(props: LevelPageProps) {
     return (
       <span
         key={uniqueId(message)}
-        className='rounded-lg px-1 py-1 bg-green-400 text-primary-foreground'
+        className='rounded-lg px-1 py-1 bg-green-400 text-black'
       >
         {message}
       </span>
@@ -491,7 +482,7 @@ export default function LevelPage(props: LevelPageProps) {
 
   return (
     <section className='flex justify-center h-full'>
-      <h1 className='fixed z-30 top-3 w-full flex justify-center'>
+      <h1 className='fixed z-20 top-3 w-full flex justify-center'>
         <div className='rounded-lg shadow-lg px-3 py-1 w-fit'>Taboo AI</div>
       </h1>
       {isCountingdown && (
@@ -510,7 +501,7 @@ export default function LevelPage(props: LevelPageProps) {
       />
       <section className='flex flex-col gap-4 text-center h-full w-full pt-20'>
         <div className='flex-grow w-full flex flex-col gap-4 px-4 pb-4 overflow-y-scroll scrollbar-hide'>
-          {cachedPrompts.map((prompt, idx) => (
+          {conversation.map((prompt, idx) => (
             <p
               key={idx}
               className={cn(
@@ -520,7 +511,7 @@ export default function LevelPage(props: LevelPageProps) {
               )}
             >
               {prompt.role === 'assistant' &&
-              idx === cachedPrompts.length - 1 ? (
+              idx === conversation.length - 1 ? (
                 generateHighlightedMessage(prompt.content)
               ) : prompt.role === 'error' ? (
                 <span className='text-slate-400'>{prompt.content}</span>
