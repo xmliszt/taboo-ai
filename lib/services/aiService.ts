@@ -36,7 +36,9 @@ export async function askAITabooWordsForTarget(
   };
 }
 
-export async function askAIForQueryResponse(prompt: string): Promise<string> {
+export async function askAIForQueryResponse(
+  prompt: { role: string; content: string }[]
+): Promise<string> {
   const response = await fetch('/api/ai', {
     method: 'POST',
     headers: {

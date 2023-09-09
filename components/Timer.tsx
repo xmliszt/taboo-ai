@@ -1,25 +1,38 @@
-'use client';
+import { cn } from '@/lib/utils';
+import _ from 'lodash';
+import { Status } from 'use-timer/lib/types';
+import { Badge } from './ui/badge';
 
 interface TimerProps {
   time: number;
+  status: Status;
+  className?: string;
 }
 
-export default function Timer(props: TimerProps) {
+export default function Timer({ time, status, className = '' }: TimerProps) {
   return (
-    <div
+    <Badge
       id='timer'
-      className={`shadow-lg min-w-[5rem] lg:min-w-[10rem] border-gray dark:border-neon-gray border-2 lg:border-4 rounded-tl-2xl rounded-br-2xl ${
-        props.time > 100
-          ? 'bg-red  text-primary'
-          : props.time > 50
-          ? 'bg-yellow text-black'
-          : 'bg-white text-red'
-      } flex items-center justify-center text-base transition-colors ease-in-out lg:text-2xl px-2 py-1 lg:px-5 lg:py-2`}
+      className={cn(
+        className,
+        'transition-colors ease-in-out px-2 py-1 text-xl rounded-md border-2 border-primary',
+        time > 100
+          ? 'bg-red-400  text-primary'
+          : time > 50
+          ? 'bg-yellow-500 text-primary'
+          : 'bg-card text-primary'
+      )}
     >
-      <span>
-        {props.time}
-        <span className='text-base lg:text-2xl'>s</span>
-      </span>
-    </div>
+      <pre>
+        {status === 'RUNNING' ? (
+          <>
+            <span>{_.padStart(String(time), 4, '0')}</span>
+            <span>SEC</span>
+          </>
+        ) : (
+          <span>{status}</span>
+        )}
+      </pre>
+    </Badge>
   );
 }

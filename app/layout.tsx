@@ -36,7 +36,7 @@ export default function RootLayout({
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
       <body className={`${font.className} scrollbar-hide`}>
-        <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <GlobalTooltipProvider delayDuration={300}>
             <AuthProvider>
               {maintenanceMode ? (

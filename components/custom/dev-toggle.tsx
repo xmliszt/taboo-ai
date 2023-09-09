@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cacheScore, getLevelCache } from '@/lib/cache';
 import { getRandomInt } from '@/lib/utilities';
 import { HASH } from '@/lib/hash';

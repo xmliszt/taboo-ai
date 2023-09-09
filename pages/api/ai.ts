@@ -5,7 +5,7 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;
   if (!apiKey) return res.status(500).json({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
-    const prompt = req.body.prompt;
+    const prompts = req.body.prompt;
     const system = req.body.system;
     const temperature = parseFloat(req.body.temperature);
     const maxToken = parseInt(req.body.maxToken);
@@ -17,10 +17,9 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         content: system,
       });
     }
-    messages.push({
-      role: 'user',
-      content: prompt,
-    });
+    for (const prompt of prompts) {
+      messages.push(prompt as { role: string; content: string });
+    }
     try {
       const response = await fetch(
         'https://api.openai.com/v1/chat/completions',

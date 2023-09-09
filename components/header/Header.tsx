@@ -20,12 +20,17 @@ import {
   SheetTrigger,
 } from '../ui/sheet';
 import { Separator } from '../ui/separator';
+import { ThemeToggle } from '../custom/theme-toggle';
 
 interface HeaderProps {
   title?: string;
   hideMenu?: boolean;
+  hideUserMenu?: boolean;
+  hideThemeToggle?: boolean;
   isTransparent?: boolean;
   hasBackButton?: boolean;
+  additionLeftItems?: React.ReactElement[];
+  additionRightItems?: React.ReactElement[];
 }
 
 interface MenuItem {
@@ -40,8 +45,12 @@ interface MenuItem {
 const Header = ({
   title = '',
   hideMenu = false,
+  hideUserMenu = false,
+  hideThemeToggle = false,
   isTransparent = false,
   hasBackButton = false,
+  additionLeftItems = [],
+  additionRightItems = [],
 }: HeaderProps) => {
   const { user, status, login } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -212,12 +221,15 @@ const Header = ({
         ) : (
           <></>
         )}
+        {!hideThemeToggle && <ThemeToggle />}
+        {additionLeftItems.map((item) => item)}
       </div>
       <h1 data-testid='heading-rule-title' className='flex-grow leading-normal'>
         {title}
       </h1>
       <div id='right-header-slot' className='min-w-1/6 flex justify-end'>
-        <UserLoginPortal />
+        {additionRightItems.reverse().map((item) => item)}
+        {!hideUserMenu && <UserLoginPortal />}
       </div>
     </header>
   );
