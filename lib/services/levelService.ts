@@ -55,8 +55,18 @@ export const addLevel = async ({
   });
 };
 
-export const updateLevel = async (level: ILevel): Promise<void> => {
-  await updateDoc(doc(firestore, 'levels', level.id), { ...level });
+export const updateLevelTargetWords = async (
+  id: string,
+  words: string[]
+): Promise<void> => {
+  await updateDoc(doc(firestore, 'levels', id), { words: words });
+};
+
+export const updateLevelIsNew = async (
+  id: string,
+  isNew: boolean
+): Promise<void> => {
+  await updateDoc(doc(firestore, 'levels', id), { isNew: isNew });
 };
 
 export const deleteLevel = async (id: string): Promise<void> => {

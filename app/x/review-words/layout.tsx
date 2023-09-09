@@ -2,13 +2,13 @@ import Header from '@/components/header/Header';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Buy Me Coffee',
+  title: 'Dev Mode: Review Topics & Words',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header isTransparent />
+      <Header title='Review Topics & Words' />
       {children}
     </>
   );

@@ -529,6 +529,12 @@ const AddLevelPage = () => {
     setTabooWordsExistedStatus([]);
   };
 
+  if (!user || status !== 'authenticated') {
+    return (
+      <section className='w-full h-full flex justify-center items-center'></section>
+    );
+  }
+
   return (
     <div className='w-full h-full flex flex-col gap-4 items-center p-4 pt-16'>
       {isScrollToTopButtonVisible && (
@@ -963,6 +969,11 @@ const AddLevelPage = () => {
                 onChange={(e) => {
                   setNickname(e.target.value);
                 }}
+                className={cn(
+                  _.trim(nickname).length <= 0
+                    ? '!border-red-500'
+                    : '!border-border'
+                )}
               />
               <p className='text-muted-foreground text-xs'>
                 Nickname will be displayed under the successfully contributed
@@ -976,7 +987,9 @@ const AddLevelPage = () => {
                 </Button>
               ) : (
                 <Button
-                  disabled={!user || !user.email || nickname.length <= 0}
+                  disabled={
+                    !user || !user.email || _.trim(nickname).length <= 0
+                  }
                   className='mb-4'
                   aria-label='click to submit the topic created'
                   onClick={submitNewTopic}

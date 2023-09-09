@@ -3,6 +3,7 @@
 import { AuthStatus } from '@/app/AuthProvider';
 import { useToast } from '@/components/ui/use-toast';
 import { firebaseAuth } from '@/firebase';
+import { async } from '@firebase/util';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useCallback, useEffect, useState } from 'react';
 import { signInWithGoogle } from '../services/authService';
@@ -47,7 +48,8 @@ export function useFirebaseAuth() {
     setStatus('unauthenticated');
   }, []);
 
-  useEffect(() => {
+  const onFirstLoadSetupAuth = useCallback(async () => {
+    await firebaseAuth.authStateReady();
     const currentUser = firebaseAuth.currentUser;
     if (currentUser) {
       setUser(currentUser);
@@ -56,6 +58,10 @@ export function useFirebaseAuth() {
       setUser(undefined);
       setStatus('unauthenticated');
     }
+  }, []);
+
+  useEffect(() => {
+    onFirstLoadSetupAuth();
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       if (user) {
         setUser(user);
@@ -64,7 +70,7 @@ export function useFirebaseAuth() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [onFirstLoadSetupAuth]);
 
   return { user, status, login, logout };
 }

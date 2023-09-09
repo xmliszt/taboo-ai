@@ -190,7 +190,7 @@ export default function LevelPage(props: LevelPageProps) {
   }, [conversation]);
 
   //SECTION - Fetch Response
-  const fetchResponse = async (prompt: { role: string; content: string }) => {
+  const fetchResponse = async (prompt: IChat) => {
     setIsLoading(true);
     pause();
     // * Make sure response fade out completely!

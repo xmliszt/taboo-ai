@@ -1,119 +1,159 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
-import { IoMdAddCircle, IoMdRefreshCircle } from 'react-icons/io';
-import { AiFillDelete } from 'react-icons/ai';
+import {
+  ChangeEvent,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import _ from 'lodash';
-import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi';
 import ILevel from '@/lib/types/level.interface';
 import IWord from '@/lib/types/word.interface';
 import { useLevels } from '@/lib/hooks/useLevels';
-import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
+import {
+  addTabooWords,
+  getTabooWords,
+  isTargetWordExists,
+} from '@/lib/services/wordService';
 import { askAITabooWordsForTarget } from '@/lib/services/aiService';
-import useToast from '@/lib/hooks/useToast';
 import {
   deleteLevel,
-  updateLevel,
+  updateLevelIsNew,
+  updateLevelTargetWords,
   verifyLevel,
 } from '@/lib/services/levelService';
-import { Button, IconButton, Input, Select, Switch } from '@chakra-ui/react';
 import { useAuth } from '@/app/AuthProvider';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import IconButton from '@/components/ui/icon-button';
+import { Plus, RefreshCcw, Trash } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
   const { levels, isFetchingLevels, refetch } = useLevels();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<ILevel | null>(null);
-  const [taboos, setTabooWords] = useState<IWord>();
-  const [editText, setEditText] = useState<string>();
-  const [currentEditingIndex, setCurrentEditingIndex] = useState<number>(-1);
-  const [currentTarget, setCurrentTarget] = useState<string>();
-  const [fullWordList, setFullWordList] = useState<string[]>([]);
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<ILevel | undefined>();
+  const [selectedLevelId, setSelectedLevelId] = useState('');
+  const [taboos, setTabooWords] = useState<IWord>();
+  const [fullWordList, setFullWordList] = useState<string[]>([]);
+  const [currentEditingTabooWordIndex, setCurrentEditingTabooWordIndex] =
+    useState<number>();
   const [currentEditingTargetWordIndex, setCurrentEditingTargetWordIndex] =
     useState<number>();
-  const [targetWordForEditing, setTargetWordForEditing] = useState('');
   const { toast } = useToast();
 
-  const isPageInteractive =
-    !isFetchingLevels && !isLoading && !isAutoGenerating;
+  const isPageInteractive = useMemo(() => {
+    return (
+      !isFetchingLevels &&
+      !isLoading &&
+      !isAutoGenerating &&
+      selectedLevel &&
+      levels &&
+      user &&
+      status === 'authenticated'
+    );
+  }, [
+    isFetchingLevels,
+    isLoading,
+    isAutoGenerating,
+    selectedLevel,
+    levels,
+    user,
+    status,
+  ]);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (!user || user.email !== 'xmliszt@gmail.com') {
+    const level = levels.find((level) => level.id === selectedLevelId);
+    setSelectedLevel(level);
+  }, [selectedLevelId]);
+
+  useEffect(() => {
+    if (
+      status === 'unauthenticated' ||
+      (user && user.email !== 'xmliszt@gmail.com')
+    ) {
       toast({
         title: 'You are not authorized to view this page!',
-        status: 'error',
+        variant: 'destructive',
       });
       router.push('/');
     }
-  }, [user]);
+  }, [user, status]);
 
-  useEffect(() => {
-    let levelToSelect;
-    if (!selectedLevel) {
-      levelToSelect = levels[0];
-    } else {
-      levelToSelect = levels.filter(
-        (level) => level.name === selectedLevel?.name
-      )[0];
-    }
-    levelToSelect && setSelectedLevel(levelToSelect);
-    levelToSelect && getCachedWordList(levelToSelect);
-  }, [levels]);
-
-  const getCachedWordList = async (selectedLevel: ILevel) => {
-    setFullWordList([]);
-    selectedLevel.words.forEach(async (word) => {
-      const taboo = await getTabooWords(word);
-      if (taboo?.taboos.length === 0) {
-        console.log(`Word: [${word}] does not have cached taboo words.`);
-      } else {
+  const getCachedWordList = useCallback(async () => {
+    selectedLevel?.words.forEach(async (word) => {
+      if (word.length <= 0 || fullWordList.includes(word)) {
+        return;
+      }
+      const exists = await isTargetWordExists(word);
+      if (exists) {
         setFullWordList((wordList) => [...wordList, word]);
       }
     });
-  };
+  }, [selectedLevel, setFullWordList]);
 
-  const onLevelSelected = async (e: ChangeEvent<HTMLSelectElement>) => {
-    e.preventDefault();
-    const selectedLevel = levels.filter(
-      (level) => level.name === e.target.value
-    )[0];
+  useEffect(() => {
+    getCachedWordList();
+  }, [getCachedWordList]);
+
+  const onLevelSelected = async (levelId: string) => {
     setTabooWords(undefined);
-    setCurrentEditingIndex(-1);
+    setCurrentEditingTabooWordIndex(undefined);
     setCurrentEditingTargetWordIndex(undefined);
-    setTargetWordForEditing('');
-    setEditText('');
-    setSelectedLevel(selectedLevel);
-    await getCachedWordList(selectedLevel);
+    setSelectedLevelId(levelId);
   };
 
-  const getVariationsForWord = async (word: string) => {
-    if (word.length <= 0) {
-      return;
-    }
-    const taboo = await getTabooWords(word);
-    if (taboo && taboo.taboos.length > 0) {
-      setTabooWords(taboo);
-      return taboo;
-    } else {
-      const taboo = await askAITabooWordsForTarget(word);
-      setTabooWords(taboo);
-      return taboo;
-    }
-  };
+  const getVariationsForWord = useCallback(
+    async (word: string) => {
+      if (word.length <= 0) {
+        return;
+      }
+      try {
+        const taboo = await getTabooWords(word);
+        if (taboo && taboo.taboos.length > 0) {
+          setTabooWords(taboo);
+          return taboo;
+        } else {
+          const taboo = await askAITabooWordsForTarget(word);
+          setTabooWords(taboo);
+          return taboo;
+        }
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: 'Unable to get taboo words for: ' + `"${word}"`,
+          variant: 'destructive',
+        });
+      }
+    },
+    [setTabooWords]
+  );
 
-  const startEditWord = (idx: number, word: string) => {
-    setEditText(word);
-    setCurrentEditingIndex(idx);
+  const startEditWord = (idx: number) => {
+    setCurrentEditingTabooWordIndex(idx);
   };
 
   const addNewWord = () => {
     if (taboos) {
-      setEditText('');
-      setCurrentEditingIndex(taboos?.taboos.length);
+      setCurrentEditingTabooWordIndex(taboos?.taboos.length);
       const currentVariations = taboos.taboos;
       currentVariations.push('');
       setTabooWords({ ...taboos, taboos: currentVariations });
@@ -121,9 +161,8 @@ const DevReviewWordsPage = () => {
   };
 
   const deleteWord = (idx: number) => {
-    setEditText('');
-    if (currentEditingIndex === idx) {
-      setCurrentEditingIndex(-1);
+    if (currentEditingTabooWordIndex === idx) {
+      setCurrentEditingTabooWordIndex(-1);
     }
     if (taboos) {
       const currentVariations = taboos.taboos;
@@ -133,54 +172,57 @@ const DevReviewWordsPage = () => {
   };
 
   const refreshWord = async (word: string) => {
-    setEditText('');
     const variations = await askAITabooWordsForTarget(word);
     setTabooWords(variations);
   };
 
   const onEdit = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setEditText(e.target.value);
     const currentVariations = taboos?.taboos;
-    if (currentVariations) {
-      currentVariations[currentEditingIndex] = e.target.value;
+    if (currentVariations && currentEditingTabooWordIndex) {
+      currentVariations[currentEditingTabooWordIndex] = e.target.value;
       setTabooWords({ ...taboos, taboos: currentVariations });
     }
   };
 
-  const onVerifyTargetWord = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
+  const onVerifyTargetWord = (checked: boolean) => {
     if (taboos) {
       const currentTarget: IWord = { ...taboos };
-      currentTarget.isVerified = !currentTarget.isVerified;
+      currentTarget.isVerified = checked;
       setTabooWords(currentTarget);
     }
   };
 
   const onEditTargetWord = (e: ChangeEvent<HTMLInputElement>) => {
-    setTargetWordForEditing(e.target.value);
-    if (selectedLevel && currentEditingTargetWordIndex !== undefined) {
-      selectedLevel.words[currentEditingTargetWordIndex] = e.target.value;
+    if (currentEditingTargetWordIndex !== undefined && selectedLevel) {
+      const copyLevel = { ...selectedLevel };
+      copyLevel.words[currentEditingTargetWordIndex] = e.target.value;
+      setSelectedLevel(copyLevel);
+    }
+    if (taboos) {
+      const copyTaboos: IWord = { ...taboos };
+      copyTaboos.target = e.target.value;
+      setTabooWords(copyTaboos);
     }
   };
 
   const onSave = async () => {
-    if (currentTarget && taboos) {
+    if (taboos) {
       await addTabooWords(
-        currentTarget,
+        taboos.target,
         taboos.taboos.map((w) => _.trim(_.toLower(w))),
         taboos.isVerified
       );
-      selectedLevel && (await updateLevel(selectedLevel));
+      selectedLevel &&
+        (await updateLevelTargetWords(selectedLevel.id, selectedLevel.words));
       setFullWordList((wordList) => [
         ...wordList,
-        _.trim(_.toLower(currentTarget)),
+        _.trim(_.toLower(taboos.target)),
       ]);
-      toast({ title: 'Saved successfully!', status: 'success' });
+      toast({ title: 'Saved successfully!' });
     } else {
       toast({
         title: 'No target word or variations available!',
-        status: 'error',
       });
     }
   };
@@ -190,10 +232,9 @@ const DevReviewWordsPage = () => {
     setIsAutoGenerating(true);
     if (words) {
       for (let i = 0; i < words.length; i++) {
-        const target = words[i];
-        setCurrentTarget(target);
+        setCurrentEditingTargetWordIndex(i);
         try {
-          await autoGenerateWithDelay(1000, target);
+          await autoGenerateWithDelay(1000, words[i]);
         } catch {
           continue;
         }
@@ -223,11 +264,10 @@ const DevReviewWordsPage = () => {
                 ...wordList,
                 _.trim(_.toLower(target)),
               ]);
-              toast({ title: 'Saved successfully!', status: 'success' });
+              toast({ title: 'Saved successfully!' });
             } else {
               toast({
                 title: 'No target word or variations available!',
-                status: 'error',
               });
             }
             res();
@@ -240,34 +280,25 @@ const DevReviewWordsPage = () => {
     });
   };
 
-  useEffect(() => {
-    if (selectedLevel && currentEditingTargetWordIndex !== undefined) {
-      setTargetWordForEditing(
-        selectedLevel.words[currentEditingTargetWordIndex]
-      );
-    }
-  }, [currentEditingTargetWordIndex, selectedLevel]);
-
   const deleteTargetWord = (index: number) => {
     if (!selectedLevel) {
       return;
     }
-    const level = { ...selectedLevel };
-    level.words.splice(index);
-    setSelectedLevel(level);
-    const newTarget = level.words[level.words.length - 1];
-    setCurrentTarget(newTarget);
+    const copyLevel = { ...selectedLevel };
+    copyLevel.words.splice(index);
+    const newTarget = copyLevel.words[copyLevel.words.length - 1];
     getVariationsForWord(newTarget);
-    setCurrentEditingIndex(level.words.length - 1);
+    setCurrentEditingTabooWordIndex(copyLevel.words.length - 1);
+    setSelectedLevel(copyLevel);
   };
 
   const addNewTargetWord = () => {
     if (!selectedLevel) {
       return;
     }
-    const level = { ...selectedLevel };
-    level.words.push('');
-    setSelectedLevel(level);
+    const copyLevel = { ...selectedLevel };
+    copyLevel.words.push('');
+    setSelectedLevel(copyLevel);
   };
 
   const rejectLevel = async () => {
@@ -275,14 +306,17 @@ const DevReviewWordsPage = () => {
       try {
         setIsLoading(true);
         await deleteLevel(selectedLevel.id);
-        setSelectedLevel(null);
-        toast({ title: 'Level deleted successfully!', status: 'success' });
+        setSelectedLevelId('');
+        setCurrentEditingTargetWordIndex(undefined);
+        setCurrentEditingTabooWordIndex(undefined);
+        setTabooWords(undefined);
+        toast({ title: 'Level deleted successfully!' });
         await refetch();
       } catch (error) {
         console.error(error);
         toast({
           title: `Unable to reject level: ${error.message}`,
-          status: 'error',
+          variant: 'destructive',
         });
       } finally {
         setIsLoading(false);
@@ -290,7 +324,7 @@ const DevReviewWordsPage = () => {
     } else {
       toast({
         title: 'Unable to reject level as no level is selected!',
-        status: 'error',
+        variant: 'destructive',
       });
     }
   };
@@ -299,14 +333,17 @@ const DevReviewWordsPage = () => {
     if (selectedLevel) {
       try {
         setIsLoading(true);
-        await verifyLevel(selectedLevel.id);
-        toast({ title: 'Level verified successfully!', status: 'success' });
+        const copyLevel = { ...selectedLevel };
+        copyLevel.isVerified = true;
+        await verifyLevel(copyLevel.id);
+        toast({ title: 'Level verified successfully!' });
+        setSelectedLevel(copyLevel);
         await refetch();
       } catch (error) {
         console.error(error);
         toast({
           title: `Unable to verify level: ${error.message}`,
-          status: 'error',
+          variant: 'destructive',
         });
       } finally {
         setIsLoading(false);
@@ -314,23 +351,26 @@ const DevReviewWordsPage = () => {
     } else {
       toast({
         title: 'Unable to verify level as no level is selected!',
-        status: 'error',
+        variant: 'destructive',
       });
     }
   };
 
   const setLevelIsNew = async (isNew: boolean) => {
     if (selectedLevel) {
-      selectedLevel.isNew = isNew;
       try {
         setIsLoading(true);
-        await updateLevel(selectedLevel);
-        toast({ title: 'Level updated successfully!', status: 'success' });
+        const copyLevel = { ...selectedLevel };
+        copyLevel.isNew = isNew;
+        await updateLevelIsNew(copyLevel.id, isNew);
+        toast({ title: 'Level updated successfully!' });
+        setSelectedLevel(copyLevel);
+        await refetch();
       } catch (error) {
         console.error(error);
         toast({
           title: `Unable to update level: ${error.message}`,
-          status: 'error',
+          variant: 'destructive',
         });
       } finally {
         setIsLoading(false);
@@ -344,55 +384,64 @@ const DevReviewWordsPage = () => {
     user.email !== 'xmliszt@gmail.com'
   ) {
     return (
-      <section className='w-full h-full flex justify-center items-center'>
-        You are not authorized to view this page!
-      </section>
+      <section className='w-full h-full flex justify-center items-center'></section>
     );
   }
 
   return (
-    <section className='flex flex-col gap-8 justify-center items-center py-20'>
-      <div className='flex flex-row gap-2 justify-center items-center p-2'>
-        {selectedLevel?.isVerified ? (
-          <div className='bg-green text-primary rounded-md drop-shadow-sm p-2'>
-            Verified
-          </div>
-        ) : (
-          <div className='bg-red text-primary rounded-md drop-shadow-sm p-2'>
-            Not Verified
-          </div>
-        )}
-        <div className='bg-white text-black rounded-md drop-shadow-sm p-2'>
+    <section className='flex flex-col gap-4 justify-center items-center py-20 leading-snug'>
+      <div className='flex flex-wrap gap-2 justify-center p-2'>
+        <Badge variant={selectedLevel?.isVerified ? 'default' : 'destructive'}>
+          {selectedLevel?.isVerified ? 'Verified' : 'Not Verified'}
+        </Badge>
+        <Badge>
           {selectedLevel?.author ? `by: ${selectedLevel.author}` : 'No Author'}
-        </div>
-        <div
-          className={`${
-            selectedLevel?.isNew ? 'bg-green' : 'bg-red'
-          } text-primary rounded-md drop-shadow-sm p-2`}
-        >
-          NEW
-        </div>
+        </Badge>
+        {selectedLevel?.isNew && <Badge>NEW</Badge>}
       </div>
       <div className='w-full px-8'>
         <Select
-          disabled={!isPageInteractive}
           name='level'
-          id='level'
           value={selectedLevel?.name}
-          onChange={onLevelSelected}
-          className='w-full text-primary rounded-full px-4 py-2 appearance-none'
+          onValueChange={onLevelSelected}
         >
-          {levels.map((level, idx) => (
-            <option key={idx} value={level.name}>
-              {level.name}
-            </option>
-          ))}
+          <SelectTrigger>
+            <SelectValue
+              placeholder='Select A Topic to Review'
+              className='text-primary'
+            >
+              <b>{selectedLevel?.name}</b>
+              {selectedLevel?.author && (
+                <span>
+                  {' - '}
+                  {selectedLevel.author}
+                </span>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className='w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)]'>
+            {levels.map((level, idx) => (
+              <SelectItem key={idx} value={level.id}>
+                <b>{level?.name}</b>
+                {level?.author && (
+                  <span>
+                    {' - '}
+                    {level.author}
+                  </span>
+                )}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </div>
-      <div className='w-full px-8 h-10'>
+      <div className='w-full px-8'>
         <Input
-          className='w-full h-full text-xl'
-          value={targetWordForEditing}
+          className='w-full h-full'
+          value={
+            currentEditingTargetWordIndex !== undefined
+              ? selectedLevel?.words[currentEditingTargetWordIndex]
+              : ''
+          }
           onChange={onEditTargetWord}
           disabled={
             selectedLevel === null ||
@@ -403,26 +452,24 @@ const DevReviewWordsPage = () => {
           type='text'
         />
       </div>
-      <div className='w-10/12 p-8 flex flex-wrap gap-4 max-h-52 overflow-y-scroll scrollbar-hide border-black border-2 rounded-xl shadow-lg'>
+      <div className='w-10/12 p-8 flex flex-wrap gap-4 max-h-52 overflow-y-auto shadow-lg rounded-lg'>
         {selectedLevel?.words.map((word, idx) => (
           <div key={idx} className='relative w-auto'>
             <Button
               disabled={!isPageInteractive}
-              className={`p-3 rounded-lg w-auto leading-none ${
+              className={cn(
                 fullWordList
                   .map((w) => _.trim(_.toLower(w)))
                   .includes(_.trim(_.toLower(word)))
-                  ? '!bg-green !text-primary'
-                  : '!bg-yellow !text-black'
-              } ${
+                  ? '!bg-green-500 !text-black'
+                  : '!bg-yellow-500 !text-black',
                 currentEditingTargetWordIndex === idx
                   ? '!border-1 !border-white'
                   : ''
-              }`}
+              )}
               key={idx}
               onClick={() => {
                 setCurrentEditingTargetWordIndex(idx);
-                setCurrentTarget(word);
                 getVariationsForWord(word);
               }}
             >
@@ -431,165 +478,189 @@ const DevReviewWordsPage = () => {
             {currentEditingTargetWordIndex === idx && (
               <>
                 <IconButton
+                  tooltip='Ask AI for Taboo Words again'
                   aria-label='refresh'
                   disabled={!isPageInteractive}
-                  className='absolute -top-5 -left-4'
-                  bg='orange'
-                  rounded='full'
+                  className='absolute -top-5 -left-4 rounded-full bg-yellow-500'
                   id='refresh'
-                  size='xs'
                   data-style='none'
                   onClick={() => {
                     refreshWord(word);
                   }}
-                  icon={<IoMdRefreshCircle />}
-                />
+                >
+                  <RefreshCcw size={15} color='black' />
+                </IconButton>
                 <IconButton
+                  tooltip='Delete'
                   aria-label='delete'
-                  size='xs'
                   disabled={!isPageInteractive}
-                  className='absolute -top-5 -right-3 rounded-full p-2 bg-red text-primary'
+                  className='absolute -top-5 -right-3 rounded-full'
+                  variant='destructive'
                   id='delete'
-                  data-style='none'
                   onClick={() => {
                     deleteTargetWord(idx);
                   }}
-                  icon={<BiMinusCircle />}
-                />
+                >
+                  <Trash size={15} />
+                </IconButton>
               </>
             )}
           </div>
         ))}
-        <Button
+        <IconButton
+          tooltip='Add target word'
           disabled={
+            !isPageInteractive ||
             selectedLevel === null ||
-            selectedLevel?.words[selectedLevel.words.length - 1].length <= 0
+            (selectedLevel &&
+              selectedLevel.words[selectedLevel.words.length - 1].length <= 0)
           }
           onClick={addNewTargetWord}
         >
-          <BiPlusCircle />
-        </Button>
+          <Plus />
+        </IconButton>
       </div>
-      <hr className='bg-white h-1 w-full my-2' />
+      <Separator />
       <div className='w-10/12 flex flex-wrap gap-4'>
         {taboos?.taboos.map((word, idx) => (
           <div key={idx} className='relative w-auto'>
             <Button
               disabled={!isPageInteractive}
               variant='outline'
-              color='white'
-              colorScheme='gray'
-              className={`p-3 rounded-lg w-auto leading-none ${
-                currentEditingIndex === idx ? 'border-2 border-yellow' : ''
-              } hover:text-black`}
+              className={cn(
+                currentEditingTabooWordIndex === idx
+                  ? 'border-2 border-yellow-500'
+                  : ''
+              )}
               onClick={() => {
-                startEditWord(idx, word);
+                startEditWord(idx);
               }}
             >
               {word}
             </Button>
             <IconButton
+              tooltip='Delete'
               aria-label='delete'
               disabled={!isPageInteractive}
-              size='xs'
-              className='absolute -top-5 -left-2 rounded-full p-2 bg-red text-xs'
+              className='absolute -top-4 -right-3 rounded-full'
               id='delete'
-              data-style='none'
+              variant='destructive'
               onClick={() => {
                 deleteWord(idx);
               }}
-              icon={<AiFillDelete />}
-            />
+            >
+              <Trash size={15} />
+            </IconButton>
           </div>
         ))}
       </div>
-      <div className='flex flex-row gap-4 w-full p-4 items-center'>
+      <div className='flex flex-row gap-2 w-full px-2 items-center'>
         <Input
           disabled={
             (taboos?.taboos.length ?? 0) <= 0 ||
-            currentEditingIndex < 0 ||
+            (currentEditingTabooWordIndex &&
+              currentEditingTabooWordIndex < 0) ||
             !isPageInteractive
           }
           placeholder='Pick a word to edit...'
           type='text'
           onChange={onEdit}
-          value={editText}
+          value={
+            currentEditingTabooWordIndex !== undefined
+              ? taboos?.taboos[currentEditingTabooWordIndex]
+              : ''
+          }
           className='grow h-12 text-xl'
         />
         <IconButton
+          tooltip='Add taboo word'
           aria-label='add word'
-          disabled={!isPageInteractive}
-          className='text-black rounded-full drop-shadow-lg text-4xl'
+          disabled={
+            !isPageInteractive ||
+            currentEditingTargetWordIndex === undefined ||
+            currentEditingTargetWordIndex < 0 ||
+            !taboos?.taboos.every((s) => s.length > 0)
+          }
+          className='rounded-full drop-shadow-lg'
           id='add'
           data-style='none'
           onClick={addNewWord}
-          icon={<IoMdAddCircle />}
-        />
+        >
+          <Plus />
+        </IconButton>
       </div>
-      <div>
-        Verified:{' '}
-        <Switch isChecked={taboos?.isVerified} onChange={onVerifyTargetWord} />
-      </div>
-      <hr className='bg-white h-1 w-full my-2' />
+      {(taboos?.taboos.length ?? 0) > 0 &&
+        currentEditingTabooWordIndex &&
+        currentEditingTabooWordIndex >= 0 &&
+        isPageInteractive && (
+          <div>
+            Verified:{' '}
+            <Switch
+              checked={taboos?.isVerified}
+              onCheckedChange={onVerifyTargetWord}
+            />
+          </div>
+        )}
 
-      <div className='w-10/12 text-base flex flex-row gap-4 justify-center'>
+      <Separator />
+      <div className='w-10/12 grid grid-cols-2 gap-4'>
         <Button
           disabled={
             !isPageInteractive ||
-            !selectedLevel?.words.every((s) => s.length > 0)
+            !selectedLevel?.words.every((s) => s.length > 0) ||
+            !taboos?.taboos.every((s) => s.length > 0)
           }
-          variant='solid'
-          className='flex-grow'
+          className='flex-grow bg-green-500 text-black'
           onClick={onSave}
         >
           SAVE
         </Button>
         <Button
-          variant='solid'
-          disabled={!isPageInteractive}
-          className='flex-grow'
+          disabled={
+            !isPageInteractive ||
+            !selectedLevel?.words.every((s) => s.length > 0)
+          }
+          className='flex-grow bg-yellow-500 text-black'
           onClick={generateForAll}
         >
           AUTO GENERATE
         </Button>
-      </div>
-      <div className='w-10/12 text-base flex flex-row gap-4 justify-center'>
         <Button
           disabled={!isPageInteractive}
-          className='flex-grow !bg-red'
-          onClick={() => {
-            setLevelIsNew(false);
-          }}
-        >
-          NEW = false
-        </Button>
-        <Button
-          disabled={!isPageInteractive}
-          className='flex-grow !bg-green'
+          className='flex-grow'
           onClick={() => {
             setLevelIsNew(true);
           }}
         >
-          NEW = true
+          SET IS NEW
         </Button>
-      </div>
-      <div className='w-10/12 text-base flex flex-row gap-4 justify-center'>
         <Button
           disabled={!isPageInteractive}
-          className='flex-grow !bg-red'
-          onClick={rejectLevel}
+          className='flex-grow'
+          onClick={() => {
+            setLevelIsNew(false);
+          }}
+          variant='destructive'
         >
-          REJECT
+          SET NOT NEW
         </Button>
         {!selectedLevel?.isVerified && (
           <Button
             disabled={!isPageInteractive}
-            className='flex-grow !bg-green'
+            className='flex-grow'
             onClick={setVerifyLevel}
           >
             VERIFY
           </Button>
         )}
+        <Button
+          disabled={!isPageInteractive}
+          className='flex-grow'
+          onClick={rejectLevel}
+          variant='destructive'
+        >
+          REJECT
+        </Button>
       </div>
     </section>
   );

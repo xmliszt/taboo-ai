@@ -1,3 +1,4 @@
+import { IChat } from '@/lib/types/score.interface';
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../lib/middleware/middlewareWrapper';
 
@@ -5,7 +6,7 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;
   if (!apiKey) return res.status(500).json({ error: 'No API Key provided!' });
   if (req.method === 'POST') {
-    const prompts = req.body.prompt;
+    const prompts = req.body.prompt as IChat[];
     const system = req.body.system;
     const temperature = parseFloat(req.body.temperature);
     const maxToken = parseInt(req.body.maxToken);
