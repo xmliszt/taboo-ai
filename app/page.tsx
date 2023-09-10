@@ -9,7 +9,6 @@ import { BsDiscord } from 'react-icons/bs';
 import ContactMe from '../components/custom/contact-me';
 import SocialLinkButton from '../components/custom/social-link-button';
 import { useAuth } from '../components/auth-provider';
-import Link from 'next/link';
 import Header from '@/components/header/Header';
 import { HomeMenuButton } from '@/components/custom/home-menu-button';
 import {
@@ -18,7 +17,6 @@ import {
   DialogFooter,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
@@ -111,9 +109,9 @@ export default function HomePage(props: HomePageProps) {
           We improve our products and advertising by using Microsoft Clarity to
           see how you use our website. By using our site, you agree that we and
           Microsoft can collect and use this data. Our{' '}
-          <Link href='/privacy' className='underline'>
+          <a href='/privacy' className='underline'>
             privacy statement
-          </Link>{' '}
+          </a>{' '}
           has more details.
         </p>
       </section>
