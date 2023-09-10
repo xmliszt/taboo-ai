@@ -76,6 +76,6 @@ export const verifyLevel = async (id: string): Promise<void> => {
   await updateDoc(doc(firestore, 'levels', id), { isVerified: true });
 };
 
-export const updateLevelPopularity = async (id: string, popularity = 0) => {
+export const updateLevelPopularity = async (id: string, popularity: number) => {
   await updateDoc(doc(firestore, 'levels', id), { popularity: popularity });
 };

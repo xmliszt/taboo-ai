@@ -42,11 +42,11 @@ export class LevelUtils {
         };
       case 'most-popular':
         return (a, b) => {
-          return b.popularity ?? 0 - (a.popularity ?? 0);
+          return (b.popularity ?? 0) - (a.popularity ?? 0);
         };
       case 'least-popular':
         return (a, b) => {
-          return a.popularity ?? 0 - (b.popularity ?? 0);
+          return (a.popularity ?? 0) - (b.popularity ?? 0);
         };
     }
   }

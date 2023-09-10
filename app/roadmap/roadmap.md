@@ -1,5 +1,15 @@
 # Taboo AI Releases Roadmap
 
+## 10 Sep - Release Notes (V3.0.0)
+
+- **Revamped UI/UX**: Say hello to a sleek and intuitive interface that makes navigating Taboo AI a breeze. Experience the charm of classic typography brought to life! Our new design invokes a sense of nostalgia while providing a seamless and intuitive experience. Enjoy a seamless and engaging experience from start to finish.
+- **Dark/Light Mode**: Tailor your gaming environment to suit your style. Whether you prefer a dark or light backdrop, Taboo AI now supports both modes for your convenience.
+- **Dynamic Gameplay**: Engage in "conversation mode" with the AI, turning your sessions into dynamic exchanges. No more one-question-one-answer routines. Keep the conversation flowing while cleverly coaxing out the 'taboo word'.
+- **Detailed Results**: The results page now offers comprehensive logs of your conversations. Save and share your entire gaming session with friends to relive those memorable moments.
+- **User Login and Authentication**: For those eager to contribute topics, now you can! Securely log in with your Google Account (more platforms will be included in later releases...) and share your creative ideas with the Taboo AI community.
+- **Enhanced Topic Selection**: Finding your preferred topics has never been easier. Sort by various criteria, and see which topics are most popular. Discover what fellow players are diving into!
+- **Streamlined Menu**: Everything you need is right at your fingertips. Navigate through a comprehensive menu that covers every functionality Taboo AI has to offer.
+
 ## 28 Aug - Release Notes (V2.10.0)
 
 - Fresh new look for the topics page - flashcard design, that is easy to understand.
