@@ -48,6 +48,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { InfoButton } from '@/components/custom/info-button';
 import { Separator } from '@/components/ui/separator';
+import { updateUserFromUser } from '@/lib/services/userService';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
@@ -85,7 +86,7 @@ const AddLevelPage = () => {
     number[][]
   >([]);
   const [isCreatingLevel, setisCreatingLevel] = useState(false);
-  const [nickname, setNickname] = useState(user?.displayName ?? '');
+  const [nickname, setNickname] = useState('');
 
   //ANCHOR - States for appeal
   const [selectedWordForAppeal, setselectedWordForAppeal] = useState('');
@@ -100,7 +101,6 @@ const AddLevelPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(status);
     if (status === 'unauthenticated') {
       toast({
         title: 'You need to sign in to contribute a topic',
@@ -108,6 +108,12 @@ const AddLevelPage = () => {
       router.push('/');
     }
   }, [status]);
+
+  useEffect(() => {
+    if (user) {
+      setNickname(user.nickname ?? user.name ?? '');
+    }
+  }, [user]);
 
   useEffect(() => {
     validateTargetWords();
@@ -421,6 +427,11 @@ const AddLevelPage = () => {
         author: nickname,
         isNew: true,
       });
+      user?.email &&
+        (await updateUserFromUser({
+          email: user.email,
+          nickname: nickname,
+        }));
       if (!shouldUseAIForTabooWords)
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
@@ -966,6 +977,7 @@ const AddLevelPage = () => {
               <Input
                 id='nickname-input'
                 value={nickname}
+                maxLength={20}
                 onChange={(e) => {
                   setNickname(e.target.value);
                 }}

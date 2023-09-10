@@ -1,5 +1,5 @@
 import { useAuth } from '@/components/auth-provider';
-import { LogIn, LogOut, User } from 'lucide-react';
+import { Construction, LogIn, LogOut, PenTool, User } from 'lucide-react';
 import { Spinner } from './spinner';
 import IconButton from '../ui/icon-button';
 import {
@@ -10,22 +10,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface UserMenuItem {
   label: string;
   icon: React.ReactElement;
+  isVisible: boolean;
+  isUpcoming?: boolean;
   onClick: (event: Event) => void;
 }
 
 export function UserLoginPortal() {
+  const pathname = usePathname();
   const router = useRouter();
   const { user, status, login, logout } = useAuth();
 
   const userMenuItems: UserMenuItem[] = [
     {
+      label: 'Contribute A Topic',
+      icon: <PenTool />,
+      isVisible: pathname !== '/add-level',
+      onClick: () => {
+        router.push('/add-level');
+      },
+    },
+    {
       label: 'Profile',
       icon: <User />,
+      isVisible: pathname !== '/profile',
+      isUpcoming: true,
       onClick: () => {
         router.push('/profile');
       },
@@ -33,6 +47,7 @@ export function UserLoginPortal() {
     {
       label: 'Logout',
       icon: <LogOut />,
+      isVisible: true,
       onClick: () => {
         logout && logout();
       },
@@ -56,16 +71,30 @@ export function UserLoginPortal() {
             <span>{user.email}</span>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {userMenuItems.map((item) => (
-            <DropdownMenuItem
-              key={item.label}
-              className='gap-2 hover:cursor-pointer'
-              onSelect={item.onClick}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </DropdownMenuItem>
-          ))}
+          {userMenuItems.map(
+            (item) =>
+              item.isVisible === true && (
+                <DropdownMenuItem
+                  key={item.label}
+                  className={cn(
+                    'gap-2 hover:cursor-pointer',
+                    item.isUpcoming && 'opacity-20'
+                  )}
+                  onSelect={(e) => {
+                    if (item.isUpcoming) {
+                      e.preventDefault();
+                      return;
+                    }
+                    item.onClick(e);
+                  }}
+                >
+                  {item.isUpcoming ? <Construction /> : item.icon}
+                  <span>
+                    {item.label + (item.isUpcoming ? ' (coming soon)' : '')}
+                  </span>
+                </DropdownMenuItem>
+              )
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

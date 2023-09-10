@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
 import ProductHuntBadge from '@/public/images/producthunt.svg';
 import { useToast } from '../ui/use-toast';
@@ -21,6 +21,8 @@ import { Textarea } from '../ui/textarea';
 import { Spinner } from './spinner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useAuth } from '../auth-provider';
+import { updateUserFromUser } from '@/lib/services/userService';
 
 const contactFormSchema = z.object({
   nickname: z
@@ -35,6 +37,7 @@ const contactFormSchema = z.object({
 });
 
 const ContactMe = () => {
+  const { user } = useAuth();
   const form = useForm<z.infer<typeof contactFormSchema>>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -45,6 +48,13 @@ const ContactMe = () => {
   });
   const { toast } = useToast();
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      user.nickname && form.setValue('nickname', user.nickname);
+      user.email && form.setValue('email', user.email);
+    }
+  }, [user]);
 
   const onValid = async (values: z.infer<typeof contactFormSchema>) => {
     try {
