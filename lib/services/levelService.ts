@@ -19,12 +19,7 @@ export const getAllLevels = async (): Promise<ILevel[]> => {
     level.id = result.id;
     allLevels.push(level);
   });
-  const sortedLevels = allLevels.sort(
-    (a, b) =>
-      moment(b.createdAt, DateUtils.formats.levelCreatedAt).unix() -
-      moment(a.createdAt, DateUtils.formats.levelCreatedAt).unix()
-  );
-  return sortedLevels;
+  return allLevels;
 };
 
 export const addLevel = async ({
@@ -32,6 +27,7 @@ export const addLevel = async ({
   difficulty,
   words,
   author = undefined,
+  authorEmail = undefined,
   isNew = undefined,
   isVerified = false,
   createdAt = moment().format(DateUtils.formats.levelCreatedAt),
@@ -40,6 +36,7 @@ export const addLevel = async ({
   difficulty: number;
   words: string[];
   author?: string;
+  authorEmail?: string;
   isNew?: boolean;
   isVerified?: boolean;
   createdAt?: string;
@@ -50,8 +47,10 @@ export const addLevel = async ({
     words,
     isVerified,
     author,
+    authorEmail,
     isNew,
     createdAt,
+    popularity: 0,
   });
 };
 
@@ -75,4 +74,8 @@ export const deleteLevel = async (id: string): Promise<void> => {
 
 export const verifyLevel = async (id: string): Promise<void> => {
   await updateDoc(doc(firestore, 'levels', id), { isVerified: true });
+};
+
+export const updateLevelPopularity = async (id: string, popularity = 0) => {
+  await updateDoc(doc(firestore, 'levels', id), { popularity: popularity });
 };

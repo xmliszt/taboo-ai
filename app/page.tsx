@@ -42,7 +42,10 @@ export default function HomePage(props: HomePageProps) {
 
   const signIn = async () => {
     setIsSignInPromptOpen(false);
-    login && (await login());
+    if (login) {
+      await login();
+      router.push('/add-level');
+    }
   };
 
   return (

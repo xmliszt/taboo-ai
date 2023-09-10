@@ -1,7 +1,7 @@
 'use client';
 
 import { useFirebaseAuth } from '@/lib/hooks/useFirebaseAuth';
-import { User } from 'firebase/auth';
+import IUser from '@/lib/types/user.interface';
 import { createContext, useContext } from 'react';
 
 interface AuthProviderProps {
@@ -11,7 +11,7 @@ interface AuthProviderProps {
 export type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
 const authProviderContext = createContext<{
-  user?: User;
+  user?: IUser;
   status: AuthStatus;
   login?: () => Promise<void>;
   logout?: () => Promise<void>;

@@ -42,6 +42,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { LevelUtils } from '@/lib/utils/levelUtils';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
@@ -56,7 +57,14 @@ const DevReviewWordsPage = () => {
     useState<number>();
   const [currentEditingTargetWordIndex, setCurrentEditingTargetWordIndex] =
     useState<number>();
+  const [sortedLevels, setSortedLevels] = useState<ILevel[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const copyLevels = [...levels];
+    copyLevels.sort(LevelUtils.getCompareFn('create-new'));
+    setSortedLevels(copyLevels);
+  }, [levels]);
 
   const isPageInteractive = useMemo(() => {
     return (
@@ -64,7 +72,7 @@ const DevReviewWordsPage = () => {
       !isLoading &&
       !isAutoGenerating &&
       selectedLevel &&
-      levels &&
+      sortedLevels &&
       user &&
       status === 'authenticated'
     );
@@ -73,7 +81,7 @@ const DevReviewWordsPage = () => {
     isLoading,
     isAutoGenerating,
     selectedLevel,
-    levels,
+    sortedLevels,
     user,
     status,
   ]);
@@ -420,7 +428,7 @@ const DevReviewWordsPage = () => {
             </SelectValue>
           </SelectTrigger>
           <SelectContent className='w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)]'>
-            {levels.map((level, idx) => (
+            {sortedLevels.map((level, idx) => (
               <SelectItem key={idx} value={level.id}>
                 <b>{level?.name}</b>
                 {level?.author && (

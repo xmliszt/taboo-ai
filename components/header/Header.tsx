@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/components/auth-provider';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Menu } from 'lucide-react';
+import { ArrowLeft, Construction, Menu } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -37,6 +37,7 @@ interface MenuItem {
   title: string;
   subtitle: string;
   visible: boolean;
+  isUpcoming?: boolean;
   highlight?: boolean;
   href?: string;
   onClick?: MouseEventHandler;
@@ -69,7 +70,7 @@ const Header = ({
       {
         title: 'Login',
         subtitle:
-          'Login to Taboo AI to enjoy more features! You can contribute topics for other players to play, own customized profile to manage your word flashcards, and much more!',
+          'Login to Taboo AI to enjoy more features! You can contribute more topics for others to play. Personal profile and flashcards are coming soon!',
         visible: user === undefined || status !== 'authenticated',
         highlight: true,
         onClick: login,
@@ -93,7 +94,13 @@ const Header = ({
         subtitle:
           'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
         visible: user !== undefined && status === 'authenticated',
+        isUpcoming: true,
         href: '/profile',
+      },
+      {
+        title: 'separator',
+        subtitle: '',
+        visible: true,
       },
       {
         title: 'Rules of Taboo AI',
@@ -136,8 +143,6 @@ const Header = ({
     const currentSelectedElement = document.getElementById(
       `menu-${currentSelectedIndex}`
     );
-    console.log(`Scroll to ${currentSelectedIndex}`);
-    console.log(currentSelectedElement);
     currentSelectedElement?.scrollIntoView({ behavior: 'smooth' });
   }, [isFocused]);
 
@@ -182,8 +187,10 @@ const Header = ({
               </SheetHeader>
               <Separator className='mt-2' />
               <div className='p-4 pb-16 flex flex-col gap-4 h-full overflow-y-scroll scrollbar-hide'>
-                {menuItems.map(
-                  (item, idx) =>
+                {menuItems.map((item, idx) =>
+                  item.title === 'separator' ? (
+                    <Separator key={`sep-${idx}`} />
+                  ) : (
                     item.visible && (
                       <Card
                         key={item.title}
@@ -193,20 +200,30 @@ const Header = ({
                           pathname === item.href
                             ? 'border-4 border-primary font-bold'
                             : '',
+                          item.isUpcoming && 'opacity-20',
                           'hover:shadow-lg hover:cursor-pointer hover:scale-105 transition-all ease-in-out'
                         )}
                         onClick={(e) => {
+                          if (item.isUpcoming) {
+                            return;
+                          }
                           setMenuOpen(false);
                           item.onClick && item.onClick(e);
                           item.href && router.push(item.href);
                         }}
                       >
                         <CardHeader>
+                          {item.isUpcoming === true && <Construction />}
                           <CardTitle>{item.title}</CardTitle>
-                          <CardDescription>{item.subtitle}</CardDescription>
+                          <CardDescription>
+                            {item.isUpcoming
+                              ? 'Taboo AI is still developing this feature for you. Stay tuned for more updates!'
+                              : item.subtitle}
+                          </CardDescription>
                         </CardHeader>
                       </Card>
                     )
+                  )
                 )}
                 <Separator />
                 <article className='mt-4'>

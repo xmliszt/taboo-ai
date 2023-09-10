@@ -3,4 +3,5 @@ export default interface IWord {
   taboos: string[];
   isVerified: boolean;
   updatedAt: string;
+  creatorEmail?: string;
 }

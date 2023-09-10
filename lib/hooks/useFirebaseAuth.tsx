@@ -6,12 +6,18 @@ import { firebaseAuth } from '@/firebase';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { signInWithGoogle } from '../services/authService';
+import {
+  updateUserFromAuth,
+  getUser,
+  signinUser,
+} from '../services/userService';
+import IUser from '../types/user.interface';
 
 const TIMEOUT = 60000; // seconds
 
 export function useFirebaseAuth() {
   const { toast } = useToast();
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<IUser>();
   const [status, setStatus] = useState<AuthStatus>('loading');
   const loginTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -28,8 +34,6 @@ export function useFirebaseAuth() {
         }
       }, TIMEOUT);
       await signInWithGoogle();
-      toast({ title: 'Signed in!' });
-      setStatus('authenticated');
     } catch (error) {
       if (
         error.code === 'auth/popup-blocked' ||
@@ -39,15 +43,12 @@ export function useFirebaseAuth() {
           title: 'Sign in popup blocked by browser.',
           variant: 'destructive',
         });
-        setStatus('unauthenticated');
-        return;
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({ title: 'Sign in is cancelled.' });
-        setStatus('unauthenticated');
-        return;
+      } else {
+        console.error(error);
+        toast({ title: 'Failed to sign in!', variant: 'destructive' });
       }
-      console.error(error);
-      toast({ title: 'Failed to sign in!', variant: 'destructive' });
       setStatus('unauthenticated');
     } finally {
       loginTimer.current && clearTimeout(loginTimer.current);
@@ -56,34 +57,54 @@ export function useFirebaseAuth() {
 
   const logout = useCallback(async () => {
     setStatus('loading');
-    await signOut(firebaseAuth);
-    await firebaseAuth.signOut();
-    setStatus('unauthenticated');
-  }, []);
-
-  const onFirstLoadSetupAuth = useCallback(async () => {
-    await firebaseAuth.authStateReady();
-    const currentUser = firebaseAuth.currentUser;
-    if (currentUser) {
-      setUser(currentUser);
-      setStatus('authenticated');
-    } else {
-      setUser(undefined);
+    try {
+      await signOut(firebaseAuth);
+      await firebaseAuth.signOut();
+      toast({ title: 'You are logged out.' });
+    } catch (error) {
+      console.error(error);
+    } finally {
       setStatus('unauthenticated');
     }
   }, []);
 
-  useEffect(() => {
-    onFirstLoadSetupAuth();
-    const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
-      if (user) {
-        setUser(user);
-        setStatus('authenticated');
+  const handleAuthUser = useCallback(
+    async (currentUser: User | null | undefined) => {
+      if (currentUser && currentUser.email) {
+        try {
+          const user = await getUser(currentUser.email);
+          if (user) {
+            // existing user
+            await signinUser(user.email);
+            setUser(user);
+            setStatus('authenticated');
+            toast({ title: 'Welcome Back!' });
+          } else {
+            // new user
+            const newUser = await updateUserFromAuth(currentUser);
+            setUser(newUser);
+            setStatus('authenticated');
+            toast({ title: 'Welcome to Taboo AI!!' });
+          }
+        } catch (error) {
+          console.log(error.message);
+          setStatus('unauthenticated');
+        }
+      } else {
+        setUser(undefined);
+        setStatus('unauthenticated');
       }
+    },
+    []
+  );
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+      await handleAuthUser(user);
     });
 
     return () => unsubscribe();
-  }, [onFirstLoadSetupAuth]);
+  }, [handleAuthUser]);
 
   return { user, status, login, logout };
 }

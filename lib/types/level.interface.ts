@@ -7,4 +7,6 @@ export default interface ILevel {
   author?: string;
   isNew?: boolean;
   createdAt?: string;
+  popularity?: number;
+  authorEmail?: string;
 }
