@@ -29,6 +29,7 @@ interface HeaderProps {
   hideThemeToggle?: boolean;
   isTransparent?: boolean;
   hasBackButton?: boolean;
+  customBackHref?: string;
   additionLeftItems?: React.ReactElement[];
   additionRightItems?: React.ReactElement[];
 }
@@ -50,6 +51,7 @@ const Header = ({
   hideThemeToggle = false,
   isTransparent = false,
   hasBackButton = false,
+  customBackHref,
   additionLeftItems = [],
   additionRightItems = [],
 }: HeaderProps) => {
@@ -237,7 +239,7 @@ const Header = ({
           <IconButton
             tooltip='Go Back'
             onClick={() => {
-              router.back();
+              customBackHref ? router.push(customBackHref) : router.back();
             }}
           >
             <ArrowLeft />

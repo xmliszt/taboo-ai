@@ -12,6 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         hideMenu
         isTransparent
         hasBackButton
+        customBackHref='/levels'
         hideUserMenu
         additionLeftItems={[<DevToggle key='dev-toggle' />]}
       />
