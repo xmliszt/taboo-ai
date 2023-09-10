@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { isMobile } from 'react-device-detect';
+import { updateLevelPopularity } from '@/lib/services/levelService';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -16,6 +17,7 @@ export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const goToLevel = () => {
     if (level) {
+      updateLevelPopularity(level.id, level.popularity ?? 0 + 1);
       cacheLevel(level);
       return router.push(`/level`);
     } else {
@@ -27,7 +29,7 @@ export function LevelCard({ level }: LevelCardProps) {
     <Card
       onClick={goToLevel}
       className={cn(
-        isMobile ? 'w-full h-auto' : 'w-[200px] lg:h-[270px]',
+        isMobile ? '!w-full h-auto' : 'w-[200px] lg:h-[270px]',
         level ? '' : 'unicorn-color',
         'transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
@@ -43,7 +45,7 @@ export function LevelCard({ level }: LevelCardProps) {
             {level?.isNew === true && (
               <Badge
                 variant='outline'
-                className='bg-secondary text-secondary-foreground'
+                className='bg-secondary text-secondary-foreground border-yellow-500'
               >
                 New Level
               </Badge>
@@ -51,7 +53,16 @@ export function LevelCard({ level }: LevelCardProps) {
             {level?.difficulty && (
               <Badge
                 variant='outline'
-                className='bg-secondary text-secondary-foreground'
+                className={cn(
+                  'bg-secondary text-secondary-foreground',
+                  level.difficulty === 1
+                    ? 'border-green-500'
+                    : level.difficulty === 2
+                    ? 'border-amber-500'
+                    : level.difficulty === 3
+                    ? 'border-red-500'
+                    : 'border-border'
+                )}
               >
                 Difficulty: {getDifficulty(level.difficulty, false)}
               </Badge>
@@ -62,6 +73,14 @@ export function LevelCard({ level }: LevelCardProps) {
                 className='bg-secondary text-secondary-foreground'
               >
                 {level.words.length} words
+              </Badge>
+            )}
+            {level?.popularity && (
+              <Badge
+                variant='outline'
+                className='bg-secondary text-secondary-foreground border-primary'
+              >
+                attempted by {level.popularity} players
               </Badge>
             )}
           </section>

@@ -146,6 +146,7 @@ export async function askAIForCreativeTopic(
       difficulty: difficulty,
       words: words,
       isVerified: true,
+      popularity: 0,
     };
   } else {
     return;
