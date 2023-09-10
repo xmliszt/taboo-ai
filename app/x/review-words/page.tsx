@@ -24,7 +24,7 @@ import {
   updateLevelTargetWords,
   verifyLevel,
 } from '@/lib/services/levelService';
-import { useAuth } from '@/app/AuthProvider';
+import { useAuth } from '@/components/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';

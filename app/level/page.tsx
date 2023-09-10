@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
-import Timer from '@/components/Timer';
+import Timer from '@/components/custom/timer';
 import {
   askAIForQueryResponse,
   askAITabooWordsForTarget,
@@ -611,7 +611,7 @@ export default function LevelPage(props: LevelPageProps) {
               </Label>
             )}
           </form>
-          <div className='text-base mt-4 w-full px-4 pb-3 overflow-x-auto whitespace-nowrap'>
+          <div className='text-base mt-4 w-full px-4 pb-8 overflow-x-auto whitespace-nowrap'>
             <span>
               <span className='font-light italic'>Taboos: </span>
               <span className='text-red-400'>

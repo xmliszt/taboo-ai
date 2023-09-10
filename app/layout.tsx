@@ -1,16 +1,16 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { Lora } from 'next/font/google';
-import { AnalyticsWrapper } from '../components/AnalayticsWrapper';
+import { AnalyticsWrapper } from '../components/analytics-wrapper';
 import FeaturePopup from '../components/custom/feature-popup';
-import Maintenance from '../components/Maintenance';
+import Maintenance from '../components/custom/maintenance';
 import { Metadata } from 'next';
 import { _meta } from '../lib/metadata';
-import PWAInstaller from './PWAInstaller';
+import PWAInstaller from '../components/custom/pwa-installer';
 import Script from 'next/script';
-import { AuthProvider } from './AuthProvider';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { AuthProvider } from '../components/auth-provider';
+import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-import { GlobalTooltipProvider } from '@/components/TooltipProvider';
+import { GlobalTooltipProvider } from '@/components/tooltip-provider';
 
 import './markdown.css';
 import './globals.css';

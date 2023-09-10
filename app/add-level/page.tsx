@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
 import { addLevel } from '@/lib/services/levelService';
 import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
-import { useAuth } from '../AuthProvider';
+import { useAuth } from '../../components/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import IconButton from '@/components/ui/icon-button';
@@ -539,7 +539,7 @@ const AddLevelPage = () => {
     <div className='w-full h-full flex flex-col gap-4 items-center p-4 pt-16'>
       {isScrollToTopButtonVisible && (
         <IconButton
-          className='fixed bottom-6 right-6 animate-fade-in z-40'
+          className='fixed bottom-8 right-8 animate-fade-in z-40'
           tooltip='Scroll to top'
           onClick={handleScrollToTop}
         >

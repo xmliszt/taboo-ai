@@ -1,6 +1,6 @@
-import { IChat } from '@/lib/types/score.interface';
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../lib/middleware/middlewareWrapper';
+import { IChat } from '../../lib/types/score.interface';
 
 const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;
@@ -11,7 +11,7 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const temperature = parseFloat(req.body.temperature);
     const maxToken = parseInt(req.body.maxToken);
 
-    const messages = [];
+    const messages: IChat[] = [];
     if (system && typeof system === 'string') {
       messages.push({
         role: 'system',
@@ -20,7 +20,7 @@ const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     if (prompts !== undefined) {
       for (const prompt of prompts) {
-        messages.push(prompt as { role: string; content: string });
+        messages.push(prompt);
       }
     }
     try {

@@ -6,7 +6,7 @@ import { cacheScore, getLevelCache } from '@/lib/cache';
 import { getRandomInt } from '@/lib/utilities';
 import { HASH } from '@/lib/hash';
 import { CONSTANTS } from '@/lib/constants';
-import { useAuth } from '@/app/AuthProvider';
+import { useAuth } from '@/components/auth-provider';
 import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
 import { Checkbox } from '../ui/checkbox';

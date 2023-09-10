@@ -1,34 +1,45 @@
 'use client';
 
-import { AuthStatus } from '@/app/AuthProvider';
+import { AuthStatus } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
 import { firebaseAuth } from '@/firebase';
-import { async } from '@firebase/util';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { signInWithGoogle } from '../services/authService';
+
+const TIMEOUT = 60000; // seconds
 
 export function useFirebaseAuth() {
   const { toast } = useToast();
   const [user, setUser] = useState<User>();
   const [status, setStatus] = useState<AuthStatus>('loading');
+  const loginTimer = useRef<NodeJS.Timeout | null>(null);
 
   const login = useCallback(async () => {
     try {
       setStatus('loading');
+      loginTimer.current = setTimeout(() => {
+        if (status === 'loading') {
+          setStatus('unauthenticated');
+          toast({
+            title: 'Sign in timeout. Please try again!',
+            variant: 'destructive',
+          });
+        }
+      }, TIMEOUT);
       await signInWithGoogle();
       toast({ title: 'Signed in!' });
       setStatus('authenticated');
     } catch (error) {
-      if (error.code === 'auth/popup-blocked') {
+      if (
+        error.code === 'auth/popup-blocked' ||
+        error.code === 'auth/cancelled-popup-request'
+      ) {
         toast({
           title: 'Sign in popup blocked by browser.',
           variant: 'destructive',
         });
         setStatus('unauthenticated');
-        return;
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        setStatus('loading');
         return;
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({ title: 'Sign in is cancelled.' });
@@ -38,6 +49,8 @@ export function useFirebaseAuth() {
       console.error(error);
       toast({ title: 'Failed to sign in!', variant: 'destructive' });
       setStatus('unauthenticated');
+    } finally {
+      loginTimer.current && clearTimeout(loginTimer.current);
     }
   }, []);
 
