@@ -17,7 +17,11 @@ export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const goToLevel = () => {
     if (level) {
-      updateLevelPopularity(level.id, level.popularity ?? 0 + 1);
+      updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
+        (error) => {
+          console.error(error);
+        }
+      );
       cacheLevel(level);
       return router.push(`/level`);
     } else {
@@ -29,7 +33,7 @@ export function LevelCard({ level }: LevelCardProps) {
     <Card
       onClick={goToLevel}
       className={cn(
-        isMobile ? '!w-full h-auto' : 'w-[200px] lg:h-[270px]',
+        isMobile ? '!w-full h-auto' : 'w-[200px] lg:h-[300px]',
         level ? '' : 'unicorn-color',
         'transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
@@ -80,7 +84,7 @@ export function LevelCard({ level }: LevelCardProps) {
                 variant='outline'
                 className='bg-secondary text-secondary-foreground border-primary'
               >
-                attempted by {level.popularity} players
+                {level.popularity} attempts
               </Badge>
             )}
           </section>

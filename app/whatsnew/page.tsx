@@ -13,7 +13,7 @@ export default async function WhatsNewPage(props: WhatsNewPageProps) {
         className='leading-normal w-10/12 pt-16 lg:pt-32 pb-24'
       >
         <ReactMarkdown>{content}</ReactMarkdown>
-        <div className='sticky z-40 bottom-4 lg:bottom-24 w-full flex gap-2 justify-center px-2 mt-2'>
+        <div className='sticky z-40 bottom-4 w-full flex gap-2 justify-center px-2 mt-2'>
           <SocialLinkButton
             content='Join Discord Community'
             icon={<SiDiscord />}

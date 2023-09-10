@@ -61,7 +61,6 @@ export default function LevelsPage() {
   const onScrollChange = (e: React.UIEvent<HTMLDivElement>) => {
     const clientHeight = document.getElementById('level-section')?.clientHeight;
     const scrollTop = e.currentTarget.scrollTop;
-    console.log(clientHeight, scrollTop);
     if (clientHeight && scrollTop > clientHeight) {
       !isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(true);
     } else {
