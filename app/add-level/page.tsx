@@ -425,6 +425,7 @@ const AddLevelPage = () => {
         difficulty: Number(difficultyLevel),
         words: targetWords.map((w) => _.toLower(_.trim(w))),
         author: nickname,
+        authorEmail: user?.email,
         isNew: true,
       });
       user?.email &&
@@ -436,7 +437,7 @@ const AddLevelPage = () => {
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
           const targetWord = targetWords[i];
-          await addTabooWords(targetWord, wordList);
+          await addTabooWords(targetWord, wordList, false, user?.email);
         }
 
       await sendMyselfEmail();

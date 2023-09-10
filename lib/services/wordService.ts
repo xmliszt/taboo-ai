@@ -38,7 +38,8 @@ export const getAllTargetWords = async (): Promise<IWord[]> => {
 export const addTabooWords = async (
   targetWord: string,
   taboos: string[],
-  isVerified = false
+  isVerified = false,
+  creatorEmail: string | undefined = undefined
 ): Promise<void> => {
   const target = _.toLower(_.trim(targetWord));
   await setDoc(doc(firestore, 'words', target), {
@@ -46,6 +47,7 @@ export const addTabooWords = async (
     taboos: taboos.map(_.trim).map(_.toLower),
     isVerified: isVerified,
     updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
+    creatorEmail,
   });
 };
 

@@ -8,4 +8,5 @@ export default interface ILevel {
   isNew?: boolean;
   createdAt?: string;
   popularity?: number;
+  authorEmail?: string;
 }

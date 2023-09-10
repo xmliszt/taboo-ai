@@ -27,6 +27,7 @@ export const addLevel = async ({
   difficulty,
   words,
   author = undefined,
+  authorEmail = undefined,
   isNew = undefined,
   isVerified = false,
   createdAt = moment().format(DateUtils.formats.levelCreatedAt),
@@ -35,6 +36,7 @@ export const addLevel = async ({
   difficulty: number;
   words: string[];
   author?: string;
+  authorEmail?: string;
   isNew?: boolean;
   isVerified?: boolean;
   createdAt?: string;
@@ -45,6 +47,7 @@ export const addLevel = async ({
     words,
     isVerified,
     author,
+    authorEmail,
     isNew,
     createdAt,
     popularity: 0,
