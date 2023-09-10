@@ -1,7 +1,7 @@
-import { cn } from '@/lib/utils';
 import _ from 'lodash';
+import { cn } from '@/lib/utils';
 import { Status } from 'use-timer/lib/types';
-import { Badge } from './ui/badge';
+import { Badge } from '../ui/badge';
 
 interface TimerProps {
   time: number;

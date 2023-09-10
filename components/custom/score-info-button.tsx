@@ -14,7 +14,7 @@ export const ScoreInfoButton = ({ className = '' }: { className?: string }) => {
           variant='link'
           tooltip='How do we calculate the scores?'
         >
-          <Info color='black' size={20} />
+          <Info size={20} />
         </IconButton>
       </DialogTrigger>
       <DialogContent className='p-0 rounded-lg'>

@@ -1,4 +1,4 @@
-import { useAuth } from '@/app/AuthProvider';
+import { useAuth } from '@/components/auth-provider';
 import { LogIn, LogOut, User } from 'lucide-react';
 import { Spinner } from './spinner';
 import IconButton from '../ui/icon-button';

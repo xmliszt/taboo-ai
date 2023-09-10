@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { BsDiscord } from 'react-icons/bs';
 import ContactMe from '../components/custom/contact-me';
 import SocialLinkButton from '../components/custom/social-link-button';
-import { useAuth } from './AuthProvider';
+import { useAuth } from '../components/auth-provider';
 import Link from 'next/link';
 import Header from '@/components/header/Header';
 import { HomeMenuButton } from '@/components/custom/home-menu-button';

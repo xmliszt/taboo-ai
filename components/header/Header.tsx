@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/app/AuthProvider';
+import { useAuth } from '@/components/auth-provider';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, Menu } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
