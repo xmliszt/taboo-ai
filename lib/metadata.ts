@@ -35,7 +35,7 @@ export const _meta: Metadata = {
     siteName: 'Taboo AI',
     images: [
       {
-        url: 'https://i.ibb.co/Q9xK7rs/Poster-2-0.png',
+        url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Poster%202.0.png?raw=true',
         width: 800,
         height: 600,
         alt: 'Online Game of Taboo, against AI',
@@ -64,7 +64,9 @@ export const _meta: Metadata = {
     siteId: '1704579643',
     creator: '@xmliszt',
     creatorId: '1704579643',
-    images: ['https://i.ibb.co/dmCtsXW/Poster.png'],
+    images: [
+      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Poster.png?raw=true',
+    ],
   },
   viewport: {
     width: 'device-width',
@@ -73,7 +75,9 @@ export const _meta: Metadata = {
   appleWebApp: {
     title: 'Online Game of Taboo, against AI',
     statusBarStyle: 'black-translucent',
-    startupImage: ['https://i.ibb.co/Q9xK7rs/Poster-2-0.png'],
+    startupImage: [
+      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Poster%202.0.png?raw=true',
+    ],
   },
   other: {
     'google-site-verification': 'ropLCQ8cEksVS7dB6jbFu4wrAfkdeTPe05Tj2m4zZGk',

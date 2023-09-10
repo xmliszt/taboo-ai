@@ -1,114 +1,143 @@
 'use client';
 
-import React, {
-  ChangeEvent,
-  useDeferredValue,
-  useEffect,
-  useState,
-} from 'react';
-import { getLevels } from '../../lib/services/frontend/levelService';
-import ILevel from '../../types/level.interface';
-import HotBadge from '../../components/Badges/HotBadge';
-import LoadingMask from '../../components/LoadingMask';
+import React, { useEffect, useRef, useState } from 'react';
+import { LevelCard } from '@/components/custom/level-card';
+import { useLevels } from '@/lib/hooks/useLevels';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { isMobile } from 'react-device-detect';
+import IconButton from '@/components/ui/icon-button';
+import { ChevronsUp } from 'lucide-react';
+import { Skeleton } from '@/components/custom/skeleton';
 import {
-  Flex,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Tag,
-} from '@chakra-ui/react';
-import { FiX } from 'react-icons/fi';
-import { LevelCard } from '../../components/LevelCard';
-import _ from 'lodash';
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import ILevel from '@/lib/types/level.interface';
+import { LevelUtils, SortType } from '@/lib/utils/levelUtils';
+interface SortItem {
+  value: SortType;
+  label: string;
+}
+const sorters: SortItem[] = [
+  { value: 'a-z', label: 'A to Z' },
+  { value: 'z-a', label: 'Z to A' },
+  { value: 'create-old', label: 'Oldest First' },
+  { value: 'create-new', label: 'Newest First' },
+  { value: 'most-popular', label: 'Most Popular First' },
+  { value: 'least-popular', label: 'Least Popular First' },
+];
 
-interface LevelsPageProps {}
-
-export default function LevelsPage(props: LevelsPageProps) {
-  const [levels, setLevels] = useState<ILevel[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export default function LevelsPage() {
+  const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
+    useState(false);
+  const levelSectionRef = useRef<HTMLDivElement | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const deferredSearchTerm = useDeferredValue(searchTerm);
-  const [filteredLevels, setFilteredLevels] = useState<ILevel[]>([]);
+  const { filteredLevels, setFilterKeyword, isFetchingLevels } = useLevels();
+  const [selectedSorter, setSelectedSorter] = useState<SortType>('create-new');
+  const [sortedLevels, setSortedLevels] = useState<ILevel[]>([]);
 
   useEffect(() => {
-    const filtered = levels
-      .filter(
-        (level) =>
-          _.lowerCase(level.name).includes(_.lowerCase(deferredSearchTerm)) ||
-          _.lowerCase(level.author).includes(_.lowerCase(deferredSearchTerm))
-      )
-      .filter((level) => level.isVerified);
-    setFilteredLevels(filtered);
-  }, [levels, deferredSearchTerm]);
-
-  const fetchLevels = async () => {
-    setIsLoading(true);
-    try {
-      let levels = await getLevels();
-      levels = levels.filter((l) => l.isVerified);
-      setLevels(levels);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const copyLevels = [...filteredLevels];
+    copyLevels.sort(LevelUtils.getCompareFn(selectedSorter));
+    setSortedLevels(copyLevels);
+  }, [selectedSorter, filteredLevels]);
 
   const clearSearch = () => {
     setSearchTerm('');
+    setFilterKeyword('');
   };
 
-  useEffect(() => {
-    fetchLevels();
-  }, []);
+  const handleScrollToTop = () => {
+    levelSectionRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const onScrollChange = (e: React.UIEvent<HTMLDivElement>) => {
+    const clientHeight = document.getElementById('level-section')?.clientHeight;
+    const scrollTop = e.currentTarget.scrollTop;
+    if (clientHeight && scrollTop > clientHeight) {
+      !isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(true);
+    } else {
+      isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(false);
+    }
+  };
 
   return (
-    <section className='w-full h-full px-10'>
-      <LoadingMask isLoading={isLoading} message='Fetching Levels...' />
-      <div className='w-full fixed z-20 h-12 top-12 left-0 lg:top-20 px-12 py-2'>
-        <InputGroup size='md'>
+    <section className='w-full h-full'>
+      <div className='w-full fixed z-20 left-0 top-14 lg:top-16 px-4 lg:px-12 py-4 bg-card shadow-lg'>
+        <div className='flex flex-row gap-4 items-center'>
+          <Select
+            value={selectedSorter}
+            onValueChange={(value) => {
+              setSelectedSorter(value as SortType);
+            }}
+          >
+            <SelectTrigger className='w-[250px]'>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className='w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)]'>
+              <SelectGroup>
+                <SelectLabel>Sort Topics</SelectLabel>
+                {sorters.map((sorter, idx) => (
+                  <SelectItem key={idx} value={sorter.value}>
+                    {sorter.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <Input
-            className='w-full shadow-[0_5px_20px_rgba(0,0,0,0.4)] bg-white text-black border-gray'
-            placeholder='Search by topic name or author...'
+            className='w-full !text-sm'
+            placeholder='Search by name/author'
             value={searchTerm}
             type='text'
             onChange={(e) => {
               setSearchTerm(e.target.value);
+              setFilterKeyword(e.target.value);
             }}
           />
-          <InputRightElement
-            width='60px'
-            height='40px'
-            hidden={(searchTerm?.length ?? 0) <= 0}
-          >
-            <IconButton
-              data-style='none'
-              variant='unstyled'
-              className='text-white hover:opacity-70 flex justify-center items-center'
-              aria-label='clear text field'
-              size='sm'
-              onClick={clearSearch}
-              icon={<FiX />}
-            />
-          </InputRightElement>
-        </InputGroup>
-        {searchTerm && searchTerm.length > 0 && (
-          <Tag className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
-            Found {filteredLevels.length} topics
-          </Tag>
+          {!isMobile && searchTerm.length > 0 && (
+            <Button className='animate-fade-in' onClick={clearSearch}>
+              Clear
+            </Button>
+          )}
+        </div>
+        <Badge className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
+          {searchTerm && searchTerm.length > 0
+            ? `Found ${filteredLevels.length} topics`
+            : `Total ${filteredLevels.length} topics`}
+        </Badge>
+      </div>
+      <div
+        id='level-section'
+        ref={levelSectionRef}
+        className='flex flex-wrap gap-8 w-full h-full px-10 justify-center content-start text-center pt-44 lg:pt-48 pb-16 overflow-x-hidden overflow-y-scroll scrollbar-hide'
+        onScroll={onScrollChange}
+      >
+        <LevelCard />
+        {isFetchingLevels ? (
+          <Skeleton numberOfRows={6} />
+        ) : (
+          sortedLevels.map((level, idx) => (
+            <LevelCard key={idx} level={level} />
+          ))
         )}
       </div>
-      <Flex
-        wrap='wrap'
-        gap={8}
-        className='w-full h-full justify-center content-start text-center pt-36 lg:pt-44 pb-16 overflow-y-scroll scrollbar-hide'
-      >
-        <HotBadge>
-          <LevelCard />
-        </HotBadge>
-        {filteredLevels.map((level, idx) => (
-          <LevelCard key={idx} level={level} />
-        ))}
-      </Flex>
+      {isScrollToTopButtonVisible && (
+        <IconButton
+          className='fixed bottom-2 right-2 animate-fade-in'
+          tooltip='Scroll to top'
+          onClick={handleScrollToTop}
+        >
+          <ChevronsUp />
+        </IconButton>
+      )}
     </section>
   );
 }

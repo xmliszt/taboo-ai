@@ -22,7 +22,7 @@ describe('/api/ai 200', () => {
       'x-forwarded-for': ['http://localhost:3000'],
       origin: 'http://localhost:3000',
     };
-    mockReq.body = { prompt: 'hello' };
+    mockReq.body = { prompt: [{ role: 'user', content: 'hello' }] };
     mockRes.status = jest.fn().mockReturnThis();
     mockRes.json = jest.fn();
     mockRes.end = jest.fn();
@@ -40,7 +40,11 @@ describe('/api/ai 200', () => {
 
   it('should return successful 200 response with custom settings', async () => {
     mockReq.method = 'POST';
-    mockReq.body = { prompt: 'hello', temperature: 0.5, maxToken: 100 };
+    mockReq.body = {
+      prompt: [{ role: 'user', content: 'hello' }],
+      temperature: 0.5,
+      maxToken: 100,
+    };
     await handler(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({ response: 'test' });
@@ -57,6 +61,36 @@ describe('/api/ai 200', () => {
     await handler(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({ response: null });
+  });
+
+  it('should return successful 200 response with error text when choices is empty', async () => {
+    (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({ choices: [] }),
+      })
+    );
+    mockReq.method = 'POST';
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({ response: null });
+  });
+
+  it('should return successful response with system prompt', async () => {
+    (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({ choices: [{ message: { content: null } }] }),
+      })
+    );
+    mockReq.method = 'POST';
+    mockReq.body = {
+      system: 'hello',
+      temperature: 0.5,
+      maxToken: 100,
+    };
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledTimes(1);
   });
 
   it('should return successful response with nothing', async () => {
@@ -110,17 +144,6 @@ describe('/api/ai 500', () => {
   beforeAll(() => {
     process.env['OPENAI_API'] = 'something';
   });
-  it('should return unsuccessful 500 response', async () => {
-    (global.fetch as jest.Mock).mockImplementationOnce(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({ error: { error: 'error' } }),
-      })
-    );
-    mockReq.method = 'POST';
-    await handler(mockReq, mockRes);
-    expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.json).toHaveBeenCalledWith({ error: 'error' });
-  });
 
   it('should return unsuccessful 500 response', async () => {
     (global.fetch as jest.Mock).mockImplementationOnce(() =>
@@ -129,6 +152,38 @@ describe('/api/ai 500', () => {
       })
     );
     mockReq.method = 'POST';
+    mockReq.body = {
+      prompt: [{ role: 'user', content: 'hello' }],
+    };
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+  });
+
+  it('should return unsuccessful 500 response when ChatGPT side error', async () => {
+    (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            error: 'test',
+          }),
+      })
+    );
+    mockReq.method = 'POST';
+    mockReq.body = {
+      prompt: [{ role: 'user', content: 'hello' }],
+    };
+    await handler(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+  });
+
+  it('should return unsuccessful 500 response when throw', async () => {
+    (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      Promise.reject(Error('test'))
+    );
+    mockReq.method = 'POST';
+    mockReq.body = {
+      prompt: [{ role: 'user', content: 'hello' }],
+    };
     await handler(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   });

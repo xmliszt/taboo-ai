@@ -2,99 +2,67 @@
 
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef } from 'react';
-import ILevel from '../../types/level.interface';
-import { IAIScore, IDisplayScore } from '../../types/score.interface';
+import ILevel from '../../lib/types/level.interface';
+import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
 import {
   getScoresCache,
   getLevelCache,
-  getUser,
   clearScores,
   cacheScore,
-  setCachedGame,
-  cacheLevel,
-  getCachedGame,
 } from '../../lib/cache';
-import { MdShare } from 'react-icons/md';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
-import { isMobile } from 'react-device-detect';
-import { Highlight } from '../../types/chat.interface';
-import {
-  buildLevelForDisplay,
-  buildScoresForDisplay,
-  delayRouterPush,
-} from '../../lib/utilities';
+import { IHighlight } from '../../lib/types/highlight.interface';
+import { delayRouterPush } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import {
-  getGameByPlayerNicknameFilterByDate,
-  saveGame,
-} from '../../lib/services/frontend/gameService';
-import LoadingMask from '../../components/LoadingMask';
-import ConfirmPopUp from '../../components/ConfirmPopUp';
+import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
-import { CgSmile } from 'react-icons/cg';
-import { getScoresByGameID } from '../../lib/services/frontend/scoreService';
-import { getHighlights } from '../../lib/services/frontend/highlightService';
-import IGame from '../../types/game.interface';
-import IUser from '../../types/user.interface';
 import moment from 'moment';
-import { getDailyLevelByName } from '../../lib/services/frontend/levelService';
-import useToast from '../../lib/hook/useToast';
-import { getAIJudgeScore } from '../../lib/services/frontend/aiService';
-import { BsQuestionCircle } from 'react-icons/bs';
-import Image from 'next/image';
-import { RiCloseCircleLine } from 'react-icons/ri';
+import { askAIForJudgingScore } from '../../lib/services/aiService';
+import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Share, Type } from 'lucide-react';
+import Header from '@/components/header/Header';
+import IconButton from '@/components/ui/icon-button';
+import { ScoreInfoButton } from '@/components/custom/score-info-button';
+import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 interface StatItem {
   title: string;
   content: string;
-  isResponse?: boolean;
-  highlights?: Highlight[];
-}
-
-interface PrompPopupConfiguration {
-  title: string;
-  content: string;
-  yesButtonText: string;
-  noButtonText: string;
-}
-
-enum PromptStep {
-  Idle = 0,
-  PromptSaveResult = 1,
-  PromptIsVisible = 2,
-  Finished = 3,
+  highlights?: IHighlight[];
 }
 
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
-  const [showScoreExplained, setShowScoreExplained] = useState(false);
   const [scores, setScores] = useState<IDisplayScore[]>([]);
   const [level, setLevel] = useState<ILevel>();
-  const [displayedLevelName, setDisplayedLevelName] = useState<string | null>();
-  const [displayedLevelTopic, setDisplayedLevelTopic] = useState<
-    string | null
-  >();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
-  const [showSaveResultPrompt, setShowSaveResultPrompt] =
-    useState<boolean>(false);
-  const [promptTitle, setPromptTitle] = useState('');
-  const [promptContent, setPromptContent] = useState('');
-  const [yesButtonText, setYesButtonText] = useState('Yes');
-  const [noButtonText, setNoButtonText] = useState('No');
-  const [promptStep, setPromptStep] = useState<number>(0);
-  const [user, setUser] = useState<IUser | undefined>();
-  const [mobileAccordianVisibilityMap, setMobileAccordianVisibilityMap] =
-    useState<{ [key: number]: boolean }>({});
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { theme } = useTheme();
 
   const getCompletionSeconds = (completion: number): number => {
     return completion <= 0 ? 1 : completion;
@@ -104,29 +72,6 @@ export default function ResultPage(props: ResultPageProps) {
     checkUserStatus();
   }, []);
 
-  useEffect(() => {
-    switch (promptStep) {
-      case PromptStep.PromptSaveResult:
-        setShowSaveResultPrompt(true);
-        break;
-      case PromptStep.PromptIsVisible:
-        configurePromptPopUp({
-          title: 'Show Your Prompts?',
-          content:
-            'Would you like to keep your prompts (your inputs in the game) visible to the public?',
-          yesButtonText: 'Sure! Keep them visible!',
-          noButtonText: 'No, they are secrets!',
-        });
-        break;
-      case PromptStep.Finished:
-        setPromptStep(PromptStep.Idle);
-        setShowSaveResultPrompt(false);
-        break;
-      default:
-        break;
-    }
-  }, [promptStep]);
-
   const performAIJudging = async (
     retries: number,
     target: string,
@@ -134,7 +79,7 @@ export default function ResultPage(props: ResultPageProps) {
     completion: (aiScore: IAIScore) => void
   ) => {
     try {
-      const score = await getAIJudgeScore(target, userInput);
+      const score = await askAIForJudgingScore(target, userInput);
       completion(score);
     } catch (error) {
       console.error(error);
@@ -147,7 +92,6 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const checkUserStatus = async () => {
-    const user = getUser();
     const level = getLevelCache();
     const scores = getScoresCache();
     if (scores && scores.length === CONSTANTS.numberOfQuestionsPerGame) {
@@ -159,7 +103,10 @@ export default function ResultPage(props: ResultPageProps) {
       for (let i = 0; i < scores.length; i++) {
         const tempScores: IAIScore[] = [];
         const score = scores[i];
-        const userInput = score.question;
+        const userInput = score.conversation
+          .filter((chat) => chat.role === 'user')
+          .map((chat) => chat.content)
+          .join(' | ');
         const target = score.target;
         const aiScore = score.ai_score;
         const aiExplanation = score.ai_explanation;
@@ -199,231 +146,18 @@ export default function ResultPage(props: ResultPageProps) {
       clearScores();
       scores.forEach((score) => cacheScore(score));
     }
-    level?.isDaily && setDisplayedLevelName(level?.dailyLevelName);
-    level?.isDaily && setDisplayedLevelTopic(level?.dailyLevelTopic);
-    if (user) {
-      setUser(user);
-      if (level?.isDaily) {
-        try {
-          setIsLoading(true);
-          setLoadingMessage('Restoring your saved game...');
-          await restoreCurrentUserGameForToday(user);
-          setIsLoading(false);
-          return;
-        } catch {
-          setIsLoading(false);
-          if (!scores || !level) {
-            toast({
-              title:
-                'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-              status: 'warning',
-              duration: 3000,
-            });
-            delayRouterPush(router, '/');
-            return;
-          } else {
-            setLevel(level);
-            updateDisplayedScores(scores);
-            if (
-              level.isDaily &&
-              scores.length === CONSTANTS.numberOfQuestionsPerGame
-            ) {
-              showResultSubmissionPrompt();
-            } else {
-              toast({
-                title:
-                  'Sorry! You do not have a complete set of game records. Try play some games before accessing the scores!',
-                status: 'warning',
-                duration: 3000,
-              });
-              delayRouterPush(router, '/');
-              return;
-            }
-            return;
-          }
-        }
-      }
-    } else if (level?.isDaily) {
-      if (!scores || !level) {
-        toast({
-          title:
-            'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-          status: 'warning',
-          duration: 3000,
-        });
-        delayRouterPush(router, '/');
-      } else {
-        setLevel(level);
-        updateDisplayedScores(scores);
-        showJoinLeaderboardPrompt();
-      }
-      return;
-    }
+
     if (!scores || !level) {
       toast({
         title:
           'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-        status: 'warning',
-        duration: 3000,
       });
       delayRouterPush(router, '/');
       return;
     } else {
       setLevel(level);
       updateDisplayedScores(scores);
-      if (level.isDaily) {
-        const savedGame = getCachedGame();
-        if (user && savedGame && user.nickname !== savedGame.player_nickname) {
-          toast({
-            title:
-              'Sorry! The ownership of the saved result does not match you. Please login with the correct recovery key to view it!',
-            status: 'error',
-            duration: 4000,
-          });
-          delayRouterPush(router, '/', { delay: 3000 });
-          return;
-        }
-      }
-      return;
     }
-  };
-
-  const saveGameAsync = async (promptVisible: boolean) => {
-    const level = getLevelCache();
-    const scores = getScoresCache();
-    const user = getUser();
-    if (level && scores && user) {
-      try {
-        const savedGame = await saveGame(
-          level,
-          scores,
-          totalScore,
-          user.nickname,
-          user.recovery_key,
-          promptVisible
-        );
-        setCachedGame(savedGame);
-        toast({
-          title:
-            'Congratulations! Your results have been submitted to global leaderboard successfully!',
-          status: 'success',
-        });
-      } catch (error) {
-        console.error(error);
-        toast({
-          title:
-            'We are currently unable to submit the scores. Please try again later.',
-          status: 'error',
-        });
-      }
-    }
-  };
-
-  const restoreCurrentUserGameForToday = async (user: IUser) => {
-    const todayGameDoneByUser = await getGameByPlayerNicknameFilterByDate(
-      user.nickname,
-      moment()
-    );
-    if (todayGameDoneByUser) {
-      const dailyLevel = await getDailyLevelByName(todayGameDoneByUser.level);
-      if (dailyLevel) {
-        const level = buildLevelForDisplay(dailyLevel);
-        setLevel(level);
-        cacheLevel(level);
-        setDisplayedLevelName(level.dailyLevelName);
-        setDisplayedLevelTopic(level.dailyLevelTopic);
-        setIsLoading(true);
-        await restoreGameScores(level, todayGameDoneByUser);
-        return;
-      }
-    }
-    throw Error('Unable to restore scores for user!');
-  };
-
-  const restoreGameScores = async (level: ILevel, game: IGame) => {
-    try {
-      const scores = await getScoresByGameID(game.game_id);
-      clearScores();
-      const displayScores: IDisplayScore[] = [];
-      for (const score of scores) {
-        const highlights = await getHighlights(game.game_id, score.score_id);
-        const displayScore = buildScoresForDisplay(level, score, highlights);
-        displayScores.push(displayScore);
-        cacheScore(displayScore);
-      }
-      updateDisplayedScores(displayScores);
-      setCachedGame(game);
-      toast({
-        title: 'Your daily challenge results have been restored!',
-        status: 'success',
-      });
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Sorry, we are unable to restore the game results.',
-        status: 'error',
-      });
-    }
-  };
-
-  const showResultSubmissionPrompt = () => {
-    const user = getUser();
-    configurePromptPopUp({
-      title: 'Submit Your Results?',
-      content: `Hi ${user?.nickname}! Would you like to submit your results to the global leaderboard?`,
-      yesButtonText: 'Sure!',
-      noButtonText: 'Maybe next time!',
-    });
-    setPromptStep(PromptStep.PromptSaveResult);
-  };
-
-  const showJoinLeaderboardPrompt = () => {
-    confirmAlert({
-      title: 'Join the global leaderboard 🎉',
-      message:
-        'Tell us your nickname and join the others in the global leaderboard 🏅!',
-      buttons: [
-        {
-          label: 'Yes',
-          onClick: () => router.push('/signup'),
-        },
-        {
-          label: 'I want to recover my game records!',
-          onClick: () => router.push('/recovery'),
-        },
-        {
-          label: 'No',
-        },
-      ],
-    });
-  };
-
-  const configurePromptPopUp = (configuration: PrompPopupConfiguration) => {
-    setPromptTitle(configuration.title);
-    setPromptContent(configuration.content);
-    setYesButtonText(configuration.yesButtonText);
-    setNoButtonText(configuration.noButtonText);
-  };
-
-  const onPromptYesButtonClick = async () => {
-    if (promptStep === PromptStep.PromptSaveResult) {
-      setIsLoading(true);
-      setLoadingMessage('Submitting your scores to the leaderboard...');
-      await saveGameAsync(true);
-      setIsLoading(false);
-      setPromptStep(PromptStep.Finished);
-      // setPromptStep(PromptStep.PromptIsVisible);
-    }
-  };
-
-  const onPromptNoButtonClick = async () => {
-    if (promptStep === PromptStep.PromptIsVisible) {
-      setIsLoading(true);
-      setLoadingMessage('Submitting your scores to the leaderboard...');
-      await saveGameAsync(false);
-      setIsLoading(false);
-    }
-    setPromptStep(PromptStep.Finished);
   };
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
@@ -446,17 +180,6 @@ export default function ResultPage(props: ResultPageProps) {
     return blob;
   };
 
-  const openShare = () => {
-    confirmAlert({
-      title: 'Share Your Scores!',
-      message: 'Choose how you want to share your scores...',
-      buttons: [
-        { label: 'Plain Text', onClick: sharePlainText },
-        { label: 'Screenshot', onClick: shareScreenshot },
-      ],
-    });
-  };
-
   const generateShareText = (): string => {
     const level = getLevelCache();
     const parts: string[] = [];
@@ -474,15 +197,9 @@ export default function ResultPage(props: ResultPageProps) {
       parts.push(`The difficulty level of this game is: ${difficultyString}.`);
     }
     if (parts.length > 0) {
-      if (level?.isDaily) {
-        parts.push(
-          `Join me in the Daily Challenge and compete against other players around the world in the daily Wall of Fame!`
-        );
-      } else {
-        parts.push(
-          `Join me to explore different topics and have fun playing the game of Taboo against AI!`
-        );
-      }
+      parts.push(
+        `Join me to explore different topics and have fun playing the game of Taboo against AI!`
+      );
     } else {
       parts.push(
         `I completed a round of game in https://taboo-ai.vercel.app/ ! Join me to explore different topics and have fun playing the game of Taboo against AI!`
@@ -500,7 +217,13 @@ export default function ResultPage(props: ResultPageProps) {
     if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
         scale: 2,
-        backgroundColor: '#4c453e',
+        backgroundColor:
+          theme === 'light'
+            ? '#ffffff'
+            : theme === 'dark'
+            ? '#000000'
+            : '#ffffff',
+        height: screenshotRef.current.scrollHeight,
       }).then((canvas) => {
         const text = generateShareText();
         const href = canvas
@@ -566,8 +289,6 @@ export default function ResultPage(props: ResultPageProps) {
         .then(() => {
           toast({
             title: 'Sharing content has been copied to clipboard!',
-            status: 'success',
-            duration: 2000,
           });
         })
         .catch((error) => {
@@ -575,7 +296,7 @@ export default function ResultPage(props: ResultPageProps) {
           toast({
             title:
               'Sorry, we are unable to generate the sharing content at the moment. Please try again later.',
-            status: 'error',
+            variant: 'destructive',
           });
         });
     }
@@ -594,9 +315,36 @@ export default function ResultPage(props: ResultPageProps) {
     }
   };
 
+  const generateHighlightedMessage = (
+    content: string,
+    highlights: IHighlight[]
+  ): React.ReactElement[] => {
+    let parts: JSX.Element[] = [];
+    if (highlights.length > 0) {
+      parts = applyHighlightsToMessage(
+        content,
+        highlights,
+        (normal) => {
+          return <span key={uniqueId()}>{normal}</span>;
+        },
+        (highlight) => {
+          return (
+            <span
+              key={uniqueId()}
+              className='bg-green-400 px-1 rounded-lg text-black'
+            >
+              {highlight}
+            </span>
+          );
+        }
+      );
+    }
+    return parts;
+  };
+
   const applyHighlightsToMessage = (
     message: string,
-    highlights: Highlight[],
+    highlights: IHighlight[],
     onNormalMessagePart: (s: string) => JSX.Element,
     onHighlightMessagePart: (s: string) => JSX.Element
   ): JSX.Element[] => {
@@ -627,85 +375,17 @@ export default function ResultPage(props: ResultPageProps) {
     return parts;
   };
 
-  const generateDesktopResponseCellContent = (
-    responseText: string,
-    highlights: Highlight[] = []
-  ): JSX.Element => {
-    let parts: JSX.Element[] = [];
-    if (highlights.length > 0) {
-      parts = applyHighlightsToMessage(
-        responseText,
-        highlights,
-        (normal) => {
-          return <span key={uniqueId()}>{normal}</span>;
-        },
-        (highlight) => {
-          return (
-            <span
-              key={uniqueId()}
-              className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'
-            >
-              {highlight}
-            </span>
-          );
-        }
-      );
-    }
-    let contentElement: JSX.Element;
-    if (parts.length > 0) {
-      contentElement = <p>{parts}</p>;
-    } else {
-      contentElement = <p>{responseText}</p>;
-    }
-    return contentElement;
-  };
-
   const generateMobileStatsRow = (
     rowID: number,
     title: string,
-    content: string,
-    isResponse = false,
-    highlights: Highlight[] = []
+    content: string
   ) => {
-    let parts: JSX.Element[] = [];
-    if (isResponse && highlights.length > 0) {
-      parts = applyHighlightsToMessage(
-        content,
-        highlights,
-        (normal) => {
-          return <span key={uniqueId()}>{normal}</span>;
-        },
-        (highlight) => {
-          return (
-            <span
-              key={uniqueId()}
-              className='bg-green dark:bg-neon-green p-1 rounded-lg text-white dark:text-neon-gray'
-            >
-              {highlight}
-            </span>
-          );
-        }
-      );
-    }
-    let contentElement: JSX.Element;
-    if (parts.length > 0) {
-      contentElement = <p>{parts}</p>;
-    } else {
-      contentElement = <p>{content}</p>;
-    }
     return (
-      <div
-        hidden={!mobileAccordianVisibilityMap[rowID]}
-        key={rowID}
-        className='px-3 py-1'
-      >
-        <span
-          key={uniqueId()}
-          className='font-extrabold text-black border-b-2 border-black dark:text-neon-blue dark:border-neon-blue'
-        >
-          {title}
+      <div key={`${title}-${rowID}`} className='px-3 py-1 leading-snug'>
+        <span key={uniqueId()} className='font-extrabold text-primary'>
+          {title}:{' '}
         </span>
-        {contentElement}
+        {content}
       </div>
     );
   };
@@ -750,25 +430,39 @@ export default function ResultPage(props: ResultPageProps) {
     setScores(displayScores);
     setTotal(total);
     setTotalScore(totalScore);
-    window.dispatchEvent(
-      new CustomEvent<{ score: number }>(CONSTANTS.eventKeys.scoreComputed, {
-        detail: { score: totalScore },
-      })
-    );
   };
 
   const generateTopicName = (): string => {
-    const parts: string[] = [];
-    if (displayedLevelTopic) {
-      parts.push(displayedLevelTopic);
-    }
-    if (displayedLevelName) {
-      parts.push(displayedLevelName);
-    }
-    const dailyTopicName: string | null =
-      parts.length <= 0 ? null : parts.join(' - ');
-    const topicName = dailyTopicName ?? level?.name ?? 'Unknown';
+    const topicName = _.startCase(level?.name) ?? 'Unknown';
     return topicName;
+  };
+
+  const generateConversation = (score: IDisplayScore): React.ReactElement => {
+    return (
+      <div className='w-full flex flex-col gap-4 bg-secondary text-secondary-foreground p-4'>
+        {score.conversation.map((chat, idx) => (
+          <p
+            key={`chat-bubble-${idx}`}
+            className={cn(
+              chat.role === 'user'
+                ? 'chat-bubble-right'
+                : chat.role === 'assistant'
+                ? 'chat-bubble-left !bg-primary-foreground !text-primary'
+                : 'hidden'
+            )}
+          >
+            {chat.role === 'assistant' &&
+            idx === score.conversation.length - 1 ? (
+              generateHighlightedMessage(chat.content, score.responseHighlights)
+            ) : chat.role === 'error' ? (
+              <span className='text-slate-400'>{chat.content}</span>
+            ) : (
+              `${chat.content}`
+            )}
+          </p>
+        ))}
+      </div>
+    );
   };
 
   const generateStatsItems = (score: IDisplayScore): StatItem[] => {
@@ -779,16 +473,6 @@ export default function ResultPage(props: ResultPageProps) {
       ? getDifficultyMultipliers(level.difficulty).promptMultiplier
       : null;
     return [
-      {
-        title: 'Player Inputs',
-        content: score.question,
-      },
-      {
-        title: "AI's Response",
-        content: score.response,
-        isResponse: true,
-        highlights: score.responseHighlights,
-      },
       {
         title: 'Total Time Taken',
         content: `${getCompletionSeconds(score.completion)} seconds`,
@@ -822,238 +506,107 @@ export default function ResultPage(props: ResultPageProps) {
     ];
   };
 
-  const toggleMobileScoreStack = (scoreID: number) => {
-    const copyMap = { ...mobileAccordianVisibilityMap };
-    const currentValue = scoreID in copyMap ? copyMap[scoreID] : false;
-    copyMap[scoreID] = currentValue === true ? false : true;
-    setMobileAccordianVisibilityMap(copyMap);
+  const generateMobileScoreStack = (scores: IDisplayScore[]) => {
+    return scores.map((score) => (
+      <Accordion type='multiple' key={score.id}>
+        <AccordionItem value={`word-${score.id}`} className='pb-1'>
+          <AccordionTrigger>
+            <div className='w-full text-primary pr-2 flex flex-row justify-between items-center'>
+              <span key={uniqueId()}>{_.startCase(score.target)}</span>
+              <div className='flex flex-row items-center'>
+                <ScoreInfoButton />
+                <span className='font-extrabold' key={uniqueId()}>
+                  Score: {calculateScore(score)}
+                </span>
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className='bg-secondary rounded-lg'>
+            {generateConversation(score)}
+            {generateStatsItems(score).map((item) => {
+              return generateMobileStatsRow(score.id, item.title, item.content);
+            })}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    ));
   };
 
-  const generateMobileScoreStack = (score: IDisplayScore) => {
+  const renderResults = () => {
     return (
-      <div
-        key={score.id}
-        className='border-2 border-white bg-white text-black flex flex-col gap-1 rounded-2xl dark:border-neon-red dark:bg-neon-gray dark:text-neon-white'
-      >
-        <div
-          className='bg-black dark:bg-neon-black dark:shadow-xl text-white p-3 rounded-2xl flex flex-row justify-between'
-          onClick={() => {
-            toggleMobileScoreStack(score.id);
-          }}
-        >
-          <span key={uniqueId()}>{score.target}</span>
-          <span className='text-gray text-center flex-grow'>
-            Tap To {mobileAccordianVisibilityMap[score.id] ? 'Fold' : 'Expand'}
-          </span>
-          <span className='font-extrabold' key={uniqueId()}>
-            Score: {calculateScore(score)}
-          </span>
-        </div>
-        {generateStatsItems(score).map((item) => {
-          return generateMobileStatsRow(
-            score.id,
-            item.title,
-            item.content,
-            item.isResponse ?? false,
-            item.highlights
-          );
-        })}
-      </div>
-    );
-  };
-
-  const renderMobile = () => {
-    return (
-      <div className='w-full flex flex-col gap-6 mb-8 mt-10 px-4'>
-        <div className='text-center flex justify-center items-center'>
-          <span className='dark:bg-neon-gray bg-black rounded-2xl p-3 dark:border-neon-white border-2 shadow-lg'>
+      <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
+        <Alert className='shadow-lg text-xl'>
+          <AlertTitle className='flex flex-row gap-2 items-center'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              width='24'
+              height='24'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              stroke-width='2'
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              className='lucide lucide-ligature'
+            >
+              <path d='M8 20V8c0-2.2 1.8-4 4-4 1.5 0 2.8.8 3.5 2' />
+              <path d='M6 12h4' />
+              <path d='M14 12h2v8' />
+              <path d='M6 20h4' />
+              <path d='M14 20h4' />
+            </svg>
             Topic: {generateTopicName()}
-          </span>
-        </div>
-        <div className='p-2 dark:border-neon-yellow dark:border-4 rounded-2xl bg-white text-black dark:bg-neon-white dark:text-neon-gray flex flex-col gap-2 justify-center'>
-          <div className='flex flex-row justify-between'>
-            <span>Total Time Taken: </span>
-            <span className='font-extrabold'>{total} seconds</span>
-          </div>
-          <div className='flex flex-row justify-between'>
-            <span>Total Score:</span>
-            <span className='font-extrabold'>{_.round(totalScore, 1)}</span>
-          </div>
-          <div className='flex flex-row justify-between'>
-            <span>Difficulty:</span>
-            <span className='font-extrabold'>
-              {level?.difficulty ?? 1}{' '}
-              <span>({getDifficulty(level?.difficulty ?? 1)})</span>
-            </span>
-          </div>
-        </div>
-        {scores.map((score) => {
-          return generateMobileScoreStack(score);
-        })}
-      </div>
-    );
-  };
-
-  const getColumnWidthClass = (colIdx: number) => {
-    switch (colIdx) {
-      case 0:
-        return 'w-[5%]';
-      case 1:
-        return 'w-[8%]';
-      case 2:
-        return 'w-[20%]';
-      case 3:
-        return 'w-[20%]';
-      case 4:
-        return 'w-[7%]';
-      case 5:
-      case 6:
-      case 7:
-        return 'w-[7%]';
-      case 8:
-        return 'w-[29%]';
-    }
-  };
-
-  const renderDesktop = () => {
-    const timeMultipler = level
-      ? getDifficultyMultipliers(level.difficulty).timeMultipler
-      : null;
-    const promptMultiplier = level
-      ? getDifficultyMultipliers(level.difficulty).promptMultiplier
-      : null;
-    const headers = [
-      'S/N',
-      'Taboo Word',
-      'Player Inputs',
-      "AI's Response",
-      'Time Taken',
-      'Total Score',
-      `Time Score (${(timeMultipler ?? 0) * 100}%)`,
-      `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
-      'AI Explanation',
-    ];
-    return (
-      <div className='mt-12 lg:mt-16 px-4 w-full h-full text-center'>
-        <div className='font-mono relative rounded-xl lg:rounded-3xl h-full bg-white dark:bg-neon-black overflow-scroll scrollbar-hide border-4 border-white dark:border-neon-green'>
-          <table className='relative table-fixed w-full'>
-            <thead className='relative font-semibold uppercase bg-black text-white dark:bg-neon-gray dark:text-neon-white h-24 rounded-t-xl lg:rounded-t-3xl'>
-              <tr>
-                {headers.map((header, idx) => (
-                  <th
-                    className={`px-4 pb-2 pt-4 font-semibold text-left text-xs lg:text-xl ${getColumnWidthClass(
-                      idx
-                    )}`}
-                    key={header}
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className='divide-y text-left text-xs lg:text-xl text-gray bg-white dark:text-neon-white dark:bg-neon-black'>
-              <tr>
-                <td
-                  colSpan={4}
-                  className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
-                >
-                  {' '}
-                  Topic:{' '}
-                  <span className='block text-black dark:text-neon-white text-ellipsis overflow-hidden break-words'>
-                    {generateTopicName()}
-                  </span>
-                </td>
-                <td
-                  colSpan={4}
-                  className='w-full h-12 text-xl lg:text-3xl text-white-faded bg-white dark:text-neon-red dark:bg-neon-black'
-                >
-                  {' '}
-                  Difficulty:{' '}
-                  <span className='block text-black dark:text-neon-white'>
-                    {level?.difficulty ?? 1}
-                    <span>({getDifficulty(level?.difficulty ?? 1)})</span>
-                  </span>
-                </td>
-              </tr>
-              {scores.map((score) => (
-                <tr key={score.id}>
-                  <td className='p-3 font-medium'>{score.id}</td>
-                  <td className='p-3 font-medium'>{score.target}</td>
-                  <td className='p-3 font-medium'>{score.question}</td>
-                  <td className='p-3 font-medium'>
-                    {generateDesktopResponseCellContent(
-                      score.response,
-                      score.responseHighlights
-                    )}
-                  </td>
-                  <td className='p-3 font-medium'>
-                    {getCompletionSeconds(score.completion)} sec
-                  </td>
-                  <td className='p-3 font-medium'>{calculateScore(score)}</td>
-                  <td className='p-3 font-medium'>
-                    {`${calculateTimeScore(
-                      score
-                    ).toString()} x ${timeMultipler} = ${_.round(
-                      calculateTimeScore(score) * (timeMultipler ?? 0),
-                      1
-                    )}`}
-                  </td>
-                  <td className='p-3 font-medium'>{`${(
-                    score.ai_score ?? 50
-                  ).toString()} x ${promptMultiplier} = ${_.round(
-                    (score.ai_score ?? 50) * (promptMultiplier ?? 0),
-                    1
-                  )}`}</td>
-                  <td className='p-3 font-medium'>
-                    {score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail}
-                  </td>
-                </tr>
-              ))}
-              <tr>
-                <td
-                  colSpan={4}
-                  className='px-3 pt-4 pb-8 border-collapse font-extrabold'
-                >
-                  Total Time Taken
-                </td>
-                <td colSpan={2} className='px-3 pt-4 pb-8 font-extrabold'>
-                  {total} sec
-                </td>
-              </tr>
-              <tr>
-                <td
-                  colSpan={5}
-                  className='px-3 pt-4 pb-8 border-collapse font-extrabold'
-                >
-                  Total Score
-                </td>
-                <td className='px-3 pt-4 pb-8 font-extrabold'>
-                  {_.round(totalScore, 1)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          </AlertTitle>
+          <AlertDescription className='mt-4 text-lg'>
+            <div className='flex flex-row justify-between'>
+              <span>Total Score:</span>
+              <div className='flex flex-row items-center'>
+                <ScoreInfoButton />
+                <span className='font-bold'>{_.round(totalScore, 1)}</span>
+              </div>
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span>Difficulty:</span>
+              <span className='font-bold'>
+                {level?.difficulty ?? 1}{' '}
+                <span>({getDifficulty(level?.difficulty ?? 1)})</span>
+              </span>
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span>Total Time Taken: </span>
+              <span className='font-bold'>{total} seconds</span>
+            </div>
+          </AlertDescription>
+        </Alert>
+        <div>{generateMobileScoreStack(scores)}</div>
       </div>
     );
   };
 
   return (
     <section className='relative'>
-      <ConfirmPopUp
-        disabled={isLoading}
-        show={showSaveResultPrompt}
-        title={promptTitle}
-        content={promptContent}
-        buttons={[
-          {
-            label: yesButtonText,
-            onClick: onPromptYesButtonClick,
-          },
-          {
-            label: noButtonText,
-            onClick: onPromptNoButtonClick,
-          },
+      <Header
+        title='Game Results'
+        additionRightItems={[
+          <Dialog key='share-1'>
+            <DialogTrigger asChild>
+              <IconButton tooltip='Share your scores'>
+                <Share />
+              </IconButton>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Share your scores!</DialogTitle>
+                <DialogDescription>
+                  Choose how you want to share your scores...
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
+                <Button onClick={sharePlainText}>Plain Text</Button>
+                <Button onClick={shareScreenshot}>Screenshot</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>,
         ]}
       />
       <LoadingMask
@@ -1061,85 +614,21 @@ export default function ResultPage(props: ResultPageProps) {
         isLoading={isLoading}
         message={loadingMessage}
       />
-      <div className='flex justify-center'>
-        <h1 className='fixed z-50 h-20 py-4 text-center'>Game Results</h1>
-      </div>
       <section
-        ref={screenshotRef}
         className='!leading-screenshot pb-20 lg:pb-48 pt-4'
+        ref={screenshotRef}
       >
-        {user && (
-          <h1 className='w-full mt-10 lg:mt-16 text-center z-50'>
-            <CgSmile className='inline' /> Hi {user.nickname}!{' '}
-            <CgSmile className='inline' />
-          </h1>
-        )}
-        {isMobile ? renderMobile() : renderDesktop()}
+        {renderResults()}
       </section>
       <div className='fixed bottom-2 z-40 w-full text-center py-4'>
-        {level?.isDaily ? (
-          <button
-            id='leaderboard'
-            data-style='none'
-            className='h-12 lg:h-24  w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)]'
-            onClick={() => {
-              router.push('/leaderboard');
-            }}
-          >
-            <div className='text-lg lg:text-2xl !text-white hover:!text-black !bg-black dark:!bg-neon-gray hover:!bg-yellow hover:dark:!bg-neon-green color-gradient-animated-background-golden flex items-center justify-center'>
-              Go To The Leaderboard
-            </div>
-          </button>
-        ) : (
-          <button
-            className='h-12 lg:h-24 lg:text-2xl w-4/5 !shadow-[0px_10px_20px_rgba(0,0,0,1)] !bg-green dark:!bg-neon-gray !text-white text-lg hover:!text-black hover:!bg-yellow hover:dark:!bg-neon-green'
-            onClick={() => {
-              router.push('/level');
-            }}
-          >
-            Play This Topic Again
-          </button>
-        )}
-      </div>
-      <button
-        id='share'
-        data-style='none'
-        aria-label='result button'
-        className='text-2xl lg:text-5xl fixed top-4 right-4 lg:right-8 hover:opacity-50 transition-all ease-in-out z-40'
-        onClick={openShare}
-      >
-        <MdShare />
-      </button>
-      <button
-        data-style='none'
-        aria-label='score system explained button'
-        className='text-2xl lg:text-5xl fixed top-4 right-12 lg:right-24 hover:opacity-50 transition-all ease-in-out z-40'
-        onClick={() => {
-          setShowScoreExplained(true);
-        }}
-      >
-        <BsQuestionCircle />
-      </button>
-      <div
-        hidden={!showScoreExplained}
-        id='modal-rule-page'
-        className='fixed top-0 left-0 w-full h-full bg-black flex justify-center items-center z-50 animate-fade-in'
-      >
-        <button
-          data-style='none'
-          className='absolute top-4 right-4 text-2xl lg:text-5xl hover:opacity-50 transition-all ease-in-out'
+        <Button
+          className='w-4/5 shadow-xl'
           onClick={() => {
-            setShowScoreExplained(false);
+            router.push('/level');
           }}
         >
-          <RiCloseCircleLine />
-        </button>
-        <Image
-          alt='scoring system explained'
-          src='/images/Artboard%20Rule.png'
-          width={1024}
-          height={720}
-        />
+          Play This Topic Again
+        </Button>
       </div>
     </section>
   );

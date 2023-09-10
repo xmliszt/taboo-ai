@@ -14,6 +14,7 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   sw: '/next-sw.js',
+  disable: process.env.NODE_ENV !== 'production',
 });
 
 const nextConfig = {
@@ -27,6 +28,7 @@ const nextConfig = {
       'api.producthunt.com',
       'i.ibb.co',
       'media.giphy.com',
+      'github.com',
     ],
     formats: ['image/webp'],
   },
@@ -55,30 +57,6 @@ const nextConfig = {
       {
         source: '/cookie-policy',
         destination: '/html/cookie-policy.html',
-      },
-    ];
-  },
-  async redirects() {
-    return [
-      {
-        source: '/daily-challenge',
-        destination: '/404',
-        permanent: true,
-      },
-      {
-        source: '/leaderboard',
-        destination: '/404',
-        permanent: true,
-      },
-      {
-        source: '/recovery',
-        destination: '/404',
-        permanent: true,
-      },
-      {
-        source: '/signup',
-        destination: '/404',
-        permanent: true,
       },
     ];
   },

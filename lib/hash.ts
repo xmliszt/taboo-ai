@@ -5,11 +5,9 @@ export function getHash(key: string): string {
 }
 
 export const HASH = {
-  user: getHash('user'),
   level: getHash('level'),
   scores: getHash('scores'),
   dev: getHash('dev'),
-  game: getHash('game'),
   hasReadFeaturePopup: getHash('has-read-feature-popup'),
   hasReadTips: getHash('has-read-tips'),
 };
