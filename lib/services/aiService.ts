@@ -48,7 +48,8 @@ export async function askAIForQueryResponse(prompt: IChat[]): Promise<string> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      system: 'Answer in American English.',
+      system:
+        'You are playing the Game of Taboo with user. User gives you clues, you try to guess the word(s). Ask user for confirmation. In American English.',
       prompt: prompt,
       temperature: 0,
     }),
