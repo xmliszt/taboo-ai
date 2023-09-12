@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { cacheLevel } from '../../lib/cache';
 import { getDifficulty } from '../../lib/utilities';
@@ -8,6 +10,7 @@ import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { isMobile } from 'react-device-detect';
 import { updateLevelPopularity } from '@/lib/services/levelService';
+import { useState } from 'react';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -15,6 +18,8 @@ interface LevelCardProps {
 
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
+  const [pointHasDown, setPointHasDown] = useState(false);
+
   const goToLevel = () => {
     if (level) {
       updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
@@ -31,11 +36,19 @@ export function LevelCard({ level }: LevelCardProps) {
 
   return (
     <Card
-      onClick={goToLevel}
+      onPointerDown={() => {
+        setPointHasDown(true);
+      }}
+      onClick={() => {
+        if (pointHasDown) {
+          goToLevel();
+          setPointHasDown(false);
+        }
+      }}
       className={cn(
-        isMobile ? '!w-full h-auto' : 'w-[200px] lg:h-[300px]',
+        !isMobile && 'md:!w-[200px] md:!h-[300px]',
         level ? '' : 'unicorn-color',
-        'transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
+        'w-full h-auto transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
     >
       <CardHeader>
