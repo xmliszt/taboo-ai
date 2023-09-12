@@ -219,7 +219,8 @@ const DevReviewWordsPage = () => {
       await addTabooWords(
         taboos.target,
         taboos.taboos.map((w) => _.trim(_.toLower(w))),
-        taboos.isVerified
+        taboos.isVerified,
+        user?.email
       );
       selectedLevel &&
         (await updateLevelTargetWords(selectedLevel.id, selectedLevel.words));
@@ -266,12 +267,11 @@ const DevReviewWordsPage = () => {
             if (target && taboos) {
               await addTabooWords(
                 target,
-                taboos.taboos.map((w) => _.trim(_.toLower(w)))
+                taboos.taboos.map((w) => _.trim(_.toLower(w))),
+                false,
+                user?.email
               );
-              setFullWordList((wordList) => [
-                ...wordList,
-                _.trim(_.toLower(target)),
-              ]);
+              setFullWordList((wordList) => [...wordList, target]);
               toast({ title: 'Saved successfully!' });
             } else {
               toast({
@@ -597,19 +597,15 @@ const DevReviewWordsPage = () => {
           <Plus />
         </IconButton>
       </div>
-      {(taboos?.taboos.length ?? 0) > 0 &&
-        currentEditingTabooWordIndex &&
-        currentEditingTabooWordIndex >= 0 &&
-        isPageInteractive && (
-          <div>
-            Verified:{' '}
-            <Switch
-              checked={taboos?.isVerified}
-              onCheckedChange={onVerifyTargetWord}
-            />
-          </div>
-        )}
-
+      {(taboos?.taboos.length ?? 0) > 0 && isPageInteractive && (
+        <div>
+          Verified:{' '}
+          <Switch
+            checked={taboos?.isVerified}
+            onCheckedChange={onVerifyTargetWord}
+          />
+        </div>
+      )}
       <Separator />
       <div className='w-10/12 grid grid-cols-2 gap-4'>
         <Button
