@@ -79,12 +79,13 @@ export function LevelCard({ level }: LevelCardProps) {
                 {level.words.length} words
               </Badge>
             )}
-            {level?.popularity && (
+            {level?.popularity !== undefined && (
               <Badge
                 variant='outline'
                 className='bg-secondary text-secondary-foreground border-primary'
               >
-                {level.popularity} attempts
+                {level.popularity}{' '}
+                {level.popularity < 1 ? 'attempt' : 'attempts'}
               </Badge>
             )}
           </section>
