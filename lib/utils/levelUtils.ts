@@ -9,7 +9,11 @@ export type SortType =
   | 'create-old'
   | 'create-new'
   | 'most-popular'
-  | 'least-popular';
+  | 'least-popular'
+  | 'most-likes'
+  | 'least-likes'
+  | 'hard-first'
+  | 'easy-first';
 
 export class LevelUtils {
   static getCompareFn(sortType: SortType): (a: ILevel, b: ILevel) => number {
@@ -47,6 +51,18 @@ export class LevelUtils {
       case 'least-popular':
         return (a, b) => {
           return (a.popularity ?? 0) - (b.popularity ?? 0);
+        };
+      case 'easy-first':
+        return (a, b) => {
+          return (a.difficulty ?? 0) - (b.difficulty ?? 0);
+        };
+      case 'hard-first':
+        return (a, b) => {
+          return (b.difficulty ?? 0) - (a.difficulty ?? 0);
+        };
+      default:
+        return () => {
+          return 0;
         };
     }
   }

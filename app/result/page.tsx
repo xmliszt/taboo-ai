@@ -37,12 +37,14 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Share, Type } from 'lucide-react';
+import { Hand, MousePointerClick, Share } from 'lucide-react';
 import Header from '@/components/header/Header';
 import IconButton from '@/components/ui/icon-button';
 import { ScoreInfoButton } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
+import { HASH } from '@/lib/hash';
+import { isMobile } from 'react-device-detect';
 
 interface StatItem {
   title: string;
@@ -59,10 +61,11 @@ export default function ResultPage(props: ResultPageProps) {
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
+  const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const getCompletionSeconds = (completion: number): number => {
     return completion <= 0 ? 1 : completion;
@@ -116,6 +119,9 @@ export default function ResultPage(props: ResultPageProps) {
               scores.length
             }]`
           );
+        } else if (localStorage.getItem(HASH.dev) === '1') {
+          scores[i].ai_score = 50;
+          scores[i].ai_explanation = 'This is a test run.';
         } else {
           for (let t = 0; t < 3; t++) {
             await performAIJudging(5, target, userInput, (aiJudgeScore) => {
@@ -217,12 +223,7 @@ export default function ResultPage(props: ResultPageProps) {
     if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
         scale: 2,
-        backgroundColor:
-          theme === 'light'
-            ? '#ffffff'
-            : theme === 'dark'
-            ? '#000000'
-            : '#ffffff',
+        backgroundColor: resolvedTheme === 'light' ? '#ffffff' : '#000000',
         height: screenshotRef.current.scrollHeight,
       }).then((canvas) => {
         const text = generateShareText();
@@ -508,27 +509,44 @@ export default function ResultPage(props: ResultPageProps) {
 
   const generateMobileScoreStack = (scores: IDisplayScore[]) => {
     return scores.map((score) => (
-      <Accordion type='multiple' key={score.id}>
-        <AccordionItem value={`word-${score.id}`} className='pb-1'>
-          <AccordionTrigger>
-            <div className='w-full text-primary pr-2 flex flex-row justify-between items-center'>
-              <span key={uniqueId()}>{_.startCase(score.target)}</span>
-              <div className='flex flex-row items-center'>
-                <ScoreInfoButton />
-                <span className='font-extrabold' key={uniqueId()}>
-                  Score: {calculateScore(score)}
-                </span>
+      <AccordionItem
+        key={`word-${score.id}`}
+        value={`word-${score.id}`}
+        className='pb-1'
+      >
+        <AccordionTrigger>
+          <div className='w-full text-primary flex flex-row gap-2 items-center justify-between'>
+            <div className='flex flex-row flex-grow items-center gap-2 justify-between'>
+              <span className='text-left' key={uniqueId()}>
+                {_.startCase(score.target)}
+              </span>
+              <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1'>
+                {isMobile ? (
+                  <Hand size={15} />
+                ) : (
+                  <MousePointerClick size={15} />
+                )}{' '}
+                {isMobile ? 'Tap' : 'Click'} to{' '}
+                {expandedValues.includes(`word-${score.id}`)
+                  ? 'fold'
+                  : 'expand'}
               </div>
             </div>
-          </AccordionTrigger>
-          <AccordionContent className='bg-secondary rounded-lg'>
-            {generateConversation(score)}
-            {generateStatsItems(score).map((item) => {
-              return generateMobileStatsRow(score.id, item.title, item.content);
-            })}
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+            <div className='flex flex-row items-center'>
+              <ScoreInfoButton />
+              <span className='font-extrabold leading-snug' key={uniqueId()}>
+                Score: {calculateScore(score)}
+              </span>
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className='bg-secondary rounded-lg'>
+          {generateConversation(score)}
+          {generateStatsItems(score).map((item) => {
+            return generateMobileStatsRow(score.id, item.title, item.content);
+          })}
+        </AccordionContent>
+      </AccordionItem>
     ));
   };
 
@@ -578,7 +596,17 @@ export default function ResultPage(props: ResultPageProps) {
             </div>
           </AlertDescription>
         </Alert>
-        <div>{generateMobileScoreStack(scores)}</div>
+        <div>
+          <Accordion
+            type='multiple'
+            value={expandedValues}
+            onValueChange={(value) => {
+              setExpandedValues(value);
+            }}
+          >
+            {generateMobileScoreStack(scores)}
+          </Accordion>
+        </div>
       </div>
     );
   };

@@ -32,6 +32,8 @@ const sorters: SortItem[] = [
   { value: 'create-new', label: 'Newest First' },
   { value: 'most-popular', label: 'Most Popular First' },
   { value: 'least-popular', label: 'Least Popular First' },
+  { value: 'easy-first', label: 'Easiest First' },
+  { value: 'hard-first', label: 'Hardest First' },
 ];
 
 export default function LevelsPage() {
