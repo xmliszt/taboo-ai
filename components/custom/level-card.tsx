@@ -100,7 +100,7 @@ export function LevelCard({ level }: LevelCardProps) {
                 className='bg-secondary text-secondary-foreground border-primary'
               >
                 {level.popularity}{' '}
-                {level.popularity < 1 ? 'attempt' : 'attempts'}
+                {level.popularity <= 1 ? 'attempt' : 'attempts'}
               </Badge>
             )}
           </section>
