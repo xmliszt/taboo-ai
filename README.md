@@ -5,3 +5,11 @@ _Learn English Vacabulary while having fun playing a game with intelligent chat 
 Visit https://taboo-ai.vercel.app/
 
 ![Taboo AI](<https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true>)
+
+![Feature 01](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%201.png?raw=true)
+
+![Feature 02](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%202.png?raw=true)
+
+![Feature 03](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%203.png?raw=true)
+
+![Feature 04](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%204.png?raw=true)
