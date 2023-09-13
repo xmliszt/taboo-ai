@@ -46,7 +46,7 @@ export function LevelCard({ level }: LevelCardProps) {
         }
       }}
       className={cn(
-        !isMobile && 'md:!w-[200px] md:!h-[300px]',
+        !isMobile && 'md:!w-[200px] md:!min-h-[300px]',
         level ? '' : 'unicorn-color',
         'w-full h-auto transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
@@ -112,7 +112,7 @@ export function LevelCard({ level }: LevelCardProps) {
       <div className='flex-grow h-auto w-full'></div>
       {level?.author && (
         <CardFooter>
-          <div className='w-full italic text-right'>
+          <div className='w-full italic text-right leading-snug'>
             by <span className='font-extrabold'>{level.author}</span>
           </div>
         </CardFooter>
