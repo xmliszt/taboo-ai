@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 import { isMobile } from 'react-device-detect';
 import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
+import IconButton from '../ui/icon-button';
+import { Heart } from 'lucide-react';
 
 interface LevelCardProps {
   level?: ILevel;
