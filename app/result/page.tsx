@@ -515,10 +515,12 @@ export default function ResultPage(props: ResultPageProps) {
         className='pb-1'
       >
         <AccordionTrigger>
-          <div className='w-full text-primary pr-2 flex flex-row justify-between items-center'>
-            <div className='flex flex-row gap-2 items-center'>
-              <span key={uniqueId()}>{_.startCase(score.target)}</span>
-              <span className='animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1'>
+          <div className='w-full text-primary flex flex-row gap-2 items-center justify-between'>
+            <div className='flex flex-row flex-grow items-center gap-2 justify-between'>
+              <span className='text-left' key={uniqueId()}>
+                {_.startCase(score.target)}
+              </span>
+              <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1'>
                 {isMobile ? (
                   <Hand size={15} />
                 ) : (
@@ -528,11 +530,11 @@ export default function ResultPage(props: ResultPageProps) {
                 {expandedValues.includes(`word-${score.id}`)
                   ? 'fold'
                   : 'expand'}
-              </span>
+              </div>
             </div>
             <div className='flex flex-row items-center'>
               <ScoreInfoButton />
-              <span className='font-extrabold' key={uniqueId()}>
+              <span className='font-extrabold leading-snug' key={uniqueId()}>
                 Score: {calculateScore(score)}
               </span>
             </div>

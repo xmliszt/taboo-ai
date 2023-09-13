@@ -39,10 +39,7 @@ export function useFirebaseAuth() {
         error.code === 'auth/popup-blocked' ||
         error.code === 'auth/cancelled-popup-request'
       ) {
-        toast({
-          title: 'Sign in popup blocked by browser.',
-          variant: 'destructive',
-        });
+        throw Error('Sign in popup was blocked by browser.');
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({ title: 'Sign in is cancelled.' });
       } else {
@@ -106,5 +103,5 @@ export function useFirebaseAuth() {
     return () => unsubscribe();
   }, [handleAuthUser]);
 
-  return { user, status, login, logout };
+  return { user, status, setStatus, login, logout };
 }
