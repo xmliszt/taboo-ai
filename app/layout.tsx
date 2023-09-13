@@ -35,7 +35,7 @@ export default function RootLayout({
       <Script id='pwa-script' src='/js/pwa.js' />
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
-      <body className={`${font.className}`}>
+      <body className={`${font.className} scrollbar-hide`}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <GlobalTooltipProvider delayDuration={300}>
             <AuthProvider>

@@ -35,7 +35,7 @@ export const _meta: Metadata = {
     siteName: 'Taboo AI',
     images: [
       {
-        url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Poster%202.0.png?raw=true',
+        url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
         width: 800,
         height: 600,
         alt: 'Online Game of Taboo, against AI',
@@ -65,7 +65,8 @@ export const _meta: Metadata = {
     creator: '@xmliszt',
     creatorId: '1704579643',
     images: [
-      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Poster.png?raw=true',
+      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0.png?raw=true',
+      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
     ],
   },
   viewport: {
@@ -76,7 +77,7 @@ export const _meta: Metadata = {
     title: 'Online Game of Taboo, against AI',
     statusBarStyle: 'black-translucent',
     startupImage: [
-      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/Poster%202.0.png?raw=true',
+      'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0.png?raw=true',
     ],
   },
   other: {

@@ -248,12 +248,9 @@ a {
   text-decoration: none;
 }
 
-article > h3 {
-  margin-bottom: 2rem;
-}
-
 article > p {
   margin-bottom: 1.25rem;
+  margin-top: 1.25rem;
 }
 
 @media screen and (max-width: 767px) {

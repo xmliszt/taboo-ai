@@ -32,39 +32,46 @@
   ],
   "screenshots": [
     {
-      "src": "https://i.ibb.co/Q9xK7rs/Poster-2-0.png",
+      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
       "label": "Online Game of Taboo, against AI."
     },
     {
-      "src": "https://i.ibb.co/wSdsGzM/Artboard-1.png",
+      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "A place where you can learn English, broaden knowledge, and simply have fun!"
+      "label": "Online Game of Taboo, against AI."
     },
     {
-      "src": "https://i.ibb.co/BGJTrVk/Artboard-2.png",
+      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%201.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Trick AI into saying the taboo word, without you saying it!"
+      "label": "Interactive Gameplay with Real Conversation"
     },
     {
-      "src": "https://i.ibb.co/7tfRNM5/Artboard-3.png",
+      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%202.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Create and submit your own topics to be featured by Taboo AI, and played by others!"
+      "label": "Intuitive Menu Brings You Anywhere with Ease"
     },
     {
-      "src": "https://i.ibb.co/mrjXGJF/Artboard-4.png",
+      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%203.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Continue the fun across platforms via our Recovery Key system!"
+      "label": "Comprehensive Results to be Shared with Your Friends"
+    },
+    {
+      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%204.png?raw=true",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Easy Google Login to Contribute your Creative Topics"
     }
   ]
 }
