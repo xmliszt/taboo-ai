@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  ChangeEvent,
-  use,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import ILevel from '@/lib/types/level.interface';
 import IWord from '@/lib/types/word.interface';
@@ -36,6 +29,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -43,6 +37,11 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { LevelUtils } from '@/lib/utils/levelUtils';
+import { sendEmailX } from '@/lib/services/emailService';
+import { firebaseAuth } from '@/lib/firebase-client';
+import { RejectionReason } from '@/pages/api/x/send-email';
+import { Label } from '@/components/ui/label';
+import { SelectGroup } from '@radix-ui/react-select';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
@@ -58,6 +57,9 @@ const DevReviewWordsPage = () => {
   const [currentEditingTargetWordIndex, setCurrentEditingTargetWordIndex] =
     useState<number>();
   const [sortedLevels, setSortedLevels] = useState<ILevel[]>([]);
+  const [rejectionReason, setRejectionReason] = useState<RejectionReason>(
+    'inapproriate-content'
+  );
   const { toast } = useToast();
 
   useEffect(() => {
@@ -319,6 +321,25 @@ const DevReviewWordsPage = () => {
         setCurrentEditingTabooWordIndex(undefined);
         setTabooWords(undefined);
         toast({ title: 'Level deleted successfully!' });
+        if (selectedLevel.authorEmail) {
+          try {
+            const token = await firebaseAuth.currentUser?.getIdToken();
+            await sendEmailX(
+              selectedLevel.authorEmail,
+              'reject',
+              rejectionReason,
+              token
+            );
+            toast({ title: 'Verification rejection email sent successfully!' });
+          } catch (error) {
+            console.error(error);
+            toast({
+              title:
+                'Failed to send verification rejection email: ' + error.message,
+              variant: 'destructive',
+            });
+          }
+        }
         await refetch();
       } catch (error) {
         console.error(error);
@@ -345,6 +366,20 @@ const DevReviewWordsPage = () => {
         copyLevel.isVerified = true;
         await verifyLevel(copyLevel.id);
         toast({ title: 'Level verified successfully!' });
+        if (copyLevel.authorEmail) {
+          try {
+            const token = await firebaseAuth.currentUser?.getIdToken();
+            await sendEmailX(copyLevel.authorEmail, 'verify', undefined, token);
+            toast({ title: 'Verification success email sent successfully!' });
+          } catch (error) {
+            console.error(error);
+            toast({
+              title:
+                'Failed to send verification success email: ' + error.message,
+              variant: 'destructive',
+            });
+          }
+        }
         setSelectedLevel(copyLevel);
         await refetch();
       } catch (error) {
@@ -665,6 +700,34 @@ const DevReviewWordsPage = () => {
         >
           REJECT
         </Button>
+      </div>
+      <div className='flex flex-row gap-2 items-center w-full px-8 mt-2'>
+        <Label htmlFor='reject-reason-select'>Rejection Reason</Label>
+        <Select
+          value={rejectionReason}
+          onValueChange={(value: RejectionReason) => {
+            setRejectionReason(value);
+          }}
+        >
+          <SelectTrigger id='reject-reason-select'>
+            <SelectValue placeholder='Choose a rejection reason' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Rejection Reasons</SelectLabel>
+              <SelectItem value='inapproriate-content'>
+                Inappropriate Content
+              </SelectItem>
+              <SelectItem value='ambiguous'>
+                Ambiguity and Lack of Clarity
+              </SelectItem>
+              <SelectItem value='duplicate'>Duplicate Topic</SelectItem>
+              <SelectItem value='insufficient-word-variety'>
+                Insufficient Word Variety
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </section>
   );
