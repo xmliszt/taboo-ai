@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import withMiddleware from '../../lib/middleware/middlewareWrapper';
+import withMiddleware from '../../lib/middleware/withMiddleware';
 import { IChat } from '../../lib/types/score.interface';
 
 const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {

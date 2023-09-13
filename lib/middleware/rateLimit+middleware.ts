@@ -34,6 +34,26 @@ const checkRateLimit = (
             return res.status(429).json({ error: 'Rate limit exceeded' });
           });
         break;
+      case /api\/send-email$/.test(req.url):
+        aiRateLimiter
+          .check(res, 10, ipAddress)
+          .then(() => {
+            next();
+          })
+          .catch(() => {
+            return res.status(429).json({ error: 'Rate limit exceeded' });
+          });
+        break;
+      case /api\/x\/send-email$/.test(req.url):
+        aiRateLimiter
+          .check(res, 10, ipAddress)
+          .then(() => {
+            next();
+          })
+          .catch(() => {
+            return res.status(429).json({ error: 'Rate limit exceeded' });
+          });
+        break;
       default:
         normalRateLimiter
           .check(res, 100, ipAddress)

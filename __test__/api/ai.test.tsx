@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import handler from '../../pages/api/ai';
 
-jest.mock('../../lib/middleware/middlewareWrapper', () => jest.fn((fn) => fn));
+jest.mock('../../lib/middleware/withMiddleware', () => jest.fn((fn) => fn));
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
