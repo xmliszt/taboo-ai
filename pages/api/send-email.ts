@@ -1,3 +1,4 @@
+import withMiddleware from '@/lib/middleware/withMiddleware';
 import sgMail from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -15,6 +16,9 @@ const sendGridEmailApiHandler = async (
   }
   if (req.method === 'POST') {
     const { nickname, email, message, subject, html } = req.body;
+    if (email === undefined) {
+      return res.status(400).json({ error: 'email is requried' });
+    }
     const msg = {
       to: TO_EMAIL,
       from: FROM_EMAIL,
@@ -38,4 +42,4 @@ const sendGridEmailApiHandler = async (
   }
 };
 
-export default sendGridEmailApiHandler;
+export default withMiddleware(sendGridEmailApiHandler);

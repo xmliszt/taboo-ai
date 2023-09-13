@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { log } from '../logger';
+import { checkAuth } from './auth+middleware';
 import checkOrigin from './cors+middleware';
 import checkRateLimit from './rateLimit+middleware';
 
@@ -8,11 +9,13 @@ import checkRateLimit from './rateLimit+middleware';
 const withMiddleware = (
   handler: (req: NextApiRequest, res: NextApiResponse) => Promise<any>
 ) => {
-  return (req: NextApiRequest, res: NextApiResponse) => {
+  return async (req: NextApiRequest, res: NextApiResponse) => {
     log(chalk.bold(`[${req.method}]`, chalk.yellow(req.url)));
-    checkRateLimit(req, res, () => {
-      checkOrigin(req, res, () => {
-        handler(req, res);
+    checkAuth(req, res, () => {
+      checkRateLimit(req, res, () => {
+        checkOrigin(req, res, () => {
+          handler(req, res);
+        });
       });
     });
   };

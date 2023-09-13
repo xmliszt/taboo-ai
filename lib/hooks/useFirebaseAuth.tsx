@@ -2,7 +2,7 @@
 
 import { AuthStatus } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
-import { firebaseAuth } from '@/firebase';
+import { firebaseAuth } from '@/lib/firebase-client';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { signInWithGoogle } from '../services/authService';

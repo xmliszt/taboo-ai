@@ -1,6 +1,6 @@
 'use client';
 
-import _ from 'lodash';
+import _, { zip } from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
 import { addLevel } from '@/lib/services/levelService';
@@ -55,7 +55,7 @@ const MAX_TARGET_WORDS_COUNT = 10;
 const MAX_TABOO_WORDS_COUNT = 10;
 const VALID_WORD_REGEX = /\s*(\w+[\s']?)+/;
 const INVALID_WORD_ERROR =
-  'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty.';
+  'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty. e.g.: invalid - "Mc-Donalds", valid - "McDonald\'s"';
 
 const AddLevelPage = () => {
   const { user, status } = useAuth();
@@ -302,15 +302,22 @@ const AddLevelPage = () => {
       return;
     }
     const invalidTargetIndexs: number[] = [];
+    const invalidTargetWords: string[] = [];
     // Check valid word
     for (let i = 0; i < targetWords.length; i++) {
       if (!validateInputEntry(targetWords[i]).isValid) {
         invalidTargetIndexs.push(i);
+        invalidTargetWords.push(targetWords[i]);
       }
     }
     if (invalidTargetIndexs.length > 0) {
+      const invalidItems = zip(invalidTargetIndexs, invalidTargetWords);
       setTargetWordsErrorMessage(
-        'Some target words input are not valid or empty. Please change them! ' +
+        `Some target words (${invalidItems.map((i) => {
+          return `[${(i[0] ?? 0) + 1}: ${
+            (i[1]?.length ?? 0) > 0 ? i[1] : '<empty>'
+          }]`;
+        })}) are not valid, or you have empty input. Please change them. ` +
           INVALID_WORD_ERROR
       );
       setTargetWordsErrorIndexs(invalidTargetIndexs);
@@ -321,7 +328,7 @@ const AddLevelPage = () => {
       _.uniq(targetWords.map(_.trim).map(_.toLower)).length < targetWords.length
     ) {
       setTargetWordsErrorMessage(
-        'Please remove duplicate in your target words!'
+        'Please remove duplicate in your target words.'
       );
       setTargetWordsErrorIndexs([]);
       return;
@@ -343,15 +350,22 @@ const AddLevelPage = () => {
       ] = `You need to create at least 5 taboo words for "${targetWords[forTargetIndex]}".`;
       errorIndexes[forTargetIndex] = [];
     } else {
-      const inValidIndexes = [];
+      const inValidIndexes: number[] = [];
+      const inValidTabooWords: string[] = [];
       for (let i = 0; i < tabooWords[forTargetIndex].length; i++) {
         if (!validateInputEntry(tabooWords[forTargetIndex][i]).isValid) {
           inValidIndexes.push(i);
+          inValidTabooWords.push(tabooWords[forTargetIndex][i]);
         }
       }
       if (inValidIndexes.length > 0) {
+        const invalidItems = zip(inValidIndexes, inValidTabooWords);
         messages[forTargetIndex] =
-          'Some taboo words input are not valid. Please change them! ' +
+          `Some taboo words (${invalidItems.map((i) => {
+            return `[${(i[0] ?? 0) + 1}: ${
+              (i[1]?.length ?? 0) > 0 ? i[1] : '<empty>'
+            }]`;
+          })}) are not valid, or you have empty input. Please change them. ` +
           INVALID_WORD_ERROR;
         errorIndexes[forTargetIndex] = inValidIndexes;
       } else {
