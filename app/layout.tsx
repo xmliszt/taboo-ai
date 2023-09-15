@@ -14,6 +14,7 @@ import { GlobalTooltipProvider } from '@/components/tooltip-provider';
 
 import './markdown.css';
 import './globals.css';
+import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -48,6 +49,7 @@ export default function RootLayout({
                 </>
               )}
               <AnalyticsWrapper />
+              <LoginErrorBoundary />
             </AuthProvider>
           </GlobalTooltipProvider>
           <Toaster />

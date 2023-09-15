@@ -14,16 +14,7 @@ import {
 } from '../ui/dropdown-menu';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../ui/alert-dialog';
-import { useState } from 'react';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 interface UserMenuItem {
   label: string;
@@ -34,11 +25,9 @@ interface UserMenuItem {
 }
 
 export function UserLoginPortal() {
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertHeader, setAlertHeader] = useState('');
   const pathname = usePathname();
   const router = useRouter();
-  const { user, status, setStatus, login, logout } = useAuth();
+  const { user, status, login, logout } = useAuth();
 
   const userMenuItems: UserMenuItem[] = [
     {
@@ -74,13 +63,8 @@ export function UserLoginPortal() {
       await login();
     } catch (error) {
       console.error(error);
-      setAlertHeader(error.message);
-      setAlertOpen(true);
+      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
     }
-  };
-
-  const handleCancel = () => {
-    setStatus && setStatus('unauthenticated');
   };
 
   const renderUserLoginComponent = () => {
@@ -143,33 +127,5 @@ export function UserLoginPortal() {
     );
   };
 
-  return (
-    <>
-      <AlertDialog
-        open={alertOpen}
-        onOpenChange={(open) => {
-          setAlertOpen(open);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{alertHeader}</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              autoFocus
-              onClick={() => {
-                setAlertOpen(false);
-                handleLogin();
-              }}
-            >
-              Try Again
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      {renderUserLoginComponent()}
-    </>
-  );
+  return renderUserLoginComponent();
 }
