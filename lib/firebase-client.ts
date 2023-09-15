@@ -21,4 +21,4 @@ const app = initializeApp(firebaseConfig);
 export const firestore = getFirestore(app);
 export const realtime = getDatabase(app);
 export const firebaseAuth = getAuth(app);
-getAnalytics(app);
+app.name && typeof window !== 'undefined' ? getAnalytics(app) : null;
