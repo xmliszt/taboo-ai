@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 interface HomePageProps {}
 
@@ -41,8 +42,13 @@ export default function HomePage(props: HomePageProps) {
   const signIn = async () => {
     setIsSignInPromptOpen(false);
     if (login) {
-      await login();
-      router.push('/add-level');
+      try {
+        await login();
+        router.push('/add-level');
+      } catch (error) {
+        console.error(error);
+        EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
+      }
     }
   };
 
