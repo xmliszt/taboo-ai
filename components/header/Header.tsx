@@ -21,6 +21,7 @@ import {
 } from '../ui/sheet';
 import { Separator } from '../ui/separator';
 import { ThemeToggle } from '../custom/theme-toggle';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 interface HeaderProps {
   title?: string;
@@ -61,6 +62,16 @@ const Header = ({
   const router = useRouter();
   const pathname = usePathname();
 
+  const handleLogin = async () => {
+    if (!login) return;
+    try {
+      await login();
+    } catch (error) {
+      console.error(error);
+      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
+    }
+  };
+
   const menuItems: MenuItem[] = useMemo<MenuItem[]>(
     () => [
       {
@@ -75,7 +86,7 @@ const Header = ({
           'Login to Taboo AI to enjoy more features! You can contribute more topics for others to play. Personal profile and flashcards are coming soon!',
         visible: user === undefined || status !== 'authenticated',
         highlight: true,
-        onClick: login,
+        onClick: handleLogin,
       },
       {
         title: 'Choose A Topic',
