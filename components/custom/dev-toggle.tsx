@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { cacheScore, getLevelCache } from '@/lib/cache';
 import { getRandomInt } from '@/lib/utilities';
 import { HASH } from '@/lib/hash';
 import { CONSTANTS } from '@/lib/constants';
@@ -17,6 +16,10 @@ import {
 } from '../ui/dropdown-menu';
 import IconButton from '../ui/icon-button';
 import { Bot } from 'lucide-react';
+import { AdminManager } from '@/lib/admin-manager';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import ILevel from '@/lib/types/level.interface';
+import { IDisplayScore } from '@/lib/types/score.interface';
 
 interface DevToggleProps {}
 
@@ -26,17 +29,27 @@ const DevToggle = (props: DevToggleProps) => {
   const { user, status } = useAuth();
   const router = useRouter();
   const path = usePathname();
+  const [level] = useLocalStorage<ILevel | null>(HASH.level, null);
+  const [_, setScores] = useLocalStorage<IDisplayScore[] | null>(
+    HASH.scores,
+    null
+  );
 
   useEffect(() => {
-    setDevOn(localStorage.getItem(HASH.dev) ? true : false);
-    const mode = localStorage.getItem('mode');
-    if (mode) {
-      setSelectedMode(Number(mode));
+    if (status === 'authenticated' && AdminManager.checkIsAdmin(user)) {
+      setDevOn(localStorage.getItem(HASH.dev) ? true : false);
+      const mode = localStorage.getItem('mode');
+      if (mode) {
+        setSelectedMode(Number(mode));
+      } else {
+        setSelectedMode(1);
+        localStorage.setItem('mode', '1');
+      }
     } else {
-      setSelectedMode(1);
-      localStorage.setItem('mode', '1');
+      localStorage.removeItem(HASH.dev);
+      localStorage.removeItem('mode');
     }
-  }, []);
+  }, [user, status]);
 
   const onDevToggle = (isChecked: boolean) => {
     if (isChecked) {
@@ -53,11 +66,11 @@ const DevToggle = (props: DevToggleProps) => {
   };
 
   const autoCompleteLevel = () => {
-    const level = getLevelCache();
     if (level) {
+      const savedScores: IDisplayScore[] = [];
       for (let i = 1; i <= CONSTANTS.numberOfQuestionsPerGame; i++) {
         const target = level.words[i - 1];
-        cacheScore({
+        savedScores.push({
           id: i,
           target: target,
           conversation: [
@@ -74,11 +87,12 @@ const DevToggle = (props: DevToggleProps) => {
           ],
         });
       }
+      setScores(savedScores);
     }
     router.push('/result');
   };
 
-  return user?.email === 'xmliszt@gmail.com' && status === 'authenticated' ? (
+  return status === 'authenticated' && AdminManager.checkIsAdmin(user) ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <IconButton tooltip='Open Dev Menu'>

@@ -1,7 +1,7 @@
 'use client';
 
 import DevToggle from '@/components/custom/dev-toggle';
-import { Coffee, PenSquare, Quote, View } from 'lucide-react';
+import { Coffee, PenSquare, Quote, ScrollText, View } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { useState } from 'react';
@@ -20,6 +20,10 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { AdminManager } from '@/lib/admin-manager';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { IDisplayScore } from '@/lib/types/score.interface';
+import { HASH } from '@/lib/hash';
 
 interface HomePageProps {}
 
@@ -30,6 +34,7 @@ export default function HomePage(props: HomePageProps) {
   const [isSignInPromptOpen, setIsSignInPromptOpen] = useState(false);
   const { user, status, login } = useAuth();
   const router = useRouter();
+  const [scores] = useLocalStorage<IDisplayScore[] | null>(HASH.scores, null);
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {
@@ -84,16 +89,24 @@ export default function HomePage(props: HomePageProps) {
             onClick={handleAddTopic}
             aria-label='Click to contribute a new topic to Taboo AI'
           />
-          {user?.email === 'xmliszt@gmail.com' &&
-            status === 'authenticated' && (
-              <HomeMenuButton
-                icon={<View size={20} />}
-                title='Review Topics & Words'
-                subtitle='This mode is only open for admin access. You can review and verify topics and worlds submitted.'
-                href='/x/review-words'
-                aria-label='Click to review topics as dev'
-              />
-            )}
+          {scores !== null && (
+            <HomeMenuButton
+              icon={<ScrollText size={20} />}
+              title='See my last result'
+              subtitle='We found your last played result is cached in the app. You can revisit it here!'
+              href='/result'
+              aria-label='Click to revisit last game results'
+            />
+          )}
+          {AdminManager.checkIsAdmin(user) && status === 'authenticated' && (
+            <HomeMenuButton
+              icon={<View size={20} />}
+              title='Review Topics & Words'
+              subtitle='This mode is only open for admin access. You can review and verify topics and worlds submitted.'
+              href='/x/review-words'
+              aria-label='Click to review topics as dev'
+            />
+          )}
         </section>
         <section className='mt-10 w-11/12'>
           <ContactMe />

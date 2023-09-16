@@ -148,6 +148,7 @@ export async function askAIForCreativeTopic(
       words: words,
       isVerified: true,
       popularity: 0,
+      isAIGenerated: true,
     };
   } else {
     return;

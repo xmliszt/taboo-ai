@@ -4,8 +4,12 @@ import {
   collection,
   deleteDoc,
   doc,
+  getCountFromServer,
+  getDoc,
   getDocs,
+  query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import moment from 'moment';
 import ILevel from '../types/level.interface';
@@ -52,6 +56,23 @@ export const addLevel = async ({
     createdAt,
     popularity: 0,
   });
+};
+
+export const isLevelExists = async (
+  topicName?: string,
+  authorEmail?: string
+): Promise<boolean> => {
+  if (!topicName || !authorEmail) {
+    return false;
+  }
+  const snapshot = await getCountFromServer(
+    query(
+      collection(firestore, 'levels'),
+      where('authorEmail', '==', authorEmail),
+      where('name', '==', topicName)
+    )
+  );
+  return snapshot.data().count > 0;
 };
 
 export const updateLevelTargetWords = async (

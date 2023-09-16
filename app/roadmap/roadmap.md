@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 16 Sep 2023 - V3.0.4
+
+- Convenient way to allow topic generated from AI Mode to be contributed by providing logged in user the option to submit the level.
+- Logged in user is able to view his/her last result from Home, Menu or User Menu. The last result is restored from browser cache, therefore, logging out and log back in, or switch user, or clear browser cache, will remove the saved result and unable to view.
+
 ### 13 Sep 2023 - V3.0.3
 
 - Add more sorting methods: sort by easiest or hardest level first.

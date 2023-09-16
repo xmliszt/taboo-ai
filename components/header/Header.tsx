@@ -22,6 +22,9 @@ import {
 import { Separator } from '../ui/separator';
 import { ThemeToggle } from '../custom/theme-toggle';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { HASH } from '@/lib/hash';
+import { IDisplayScore } from '@/lib/types/score.interface';
 
 interface HeaderProps {
   title?: string;
@@ -59,6 +62,7 @@ const Header = ({
   const { user, status, login } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [scores] = useLocalStorage<IDisplayScore[] | null>(HASH.scores, null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -103,6 +107,13 @@ const Header = ({
         href: '/add-level',
       },
       {
+        title: 'See my last result',
+        subtitle:
+          'We found your last played result is cached in the app. You can revisit it here!',
+        visible: scores !== null,
+        href: '/result',
+      },
+      {
         title: 'My Profile',
         subtitle:
           'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
@@ -142,7 +153,7 @@ const Header = ({
         href: '/roadmap',
       },
     ],
-    [user, status]
+    [user, status, scores, pathname]
   );
 
   useEffect(() => {

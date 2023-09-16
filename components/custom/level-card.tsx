@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { cacheLevel } from '../../lib/cache';
 import { getDifficulty } from '../../lib/utilities';
 import ILevel from '../../lib/types/level.interface';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
@@ -11,8 +10,8 @@ import { cn } from '@/lib/utils';
 import { isMobile } from 'react-device-detect';
 import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
-import IconButton from '../ui/icon-button';
-import { Heart } from 'lucide-react';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { HASH } from '@/lib/hash';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -21,7 +20,7 @@ interface LevelCardProps {
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
-
+  const [_, setLevel] = useLocalStorage<ILevel | null>(HASH.level, null);
   const goToLevel = () => {
     if (level) {
       updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
@@ -29,7 +28,7 @@ export function LevelCard({ level }: LevelCardProps) {
           console.error(error);
         }
       );
-      cacheLevel(level);
+      setLevel(level);
       return router.push(`/level`);
     } else {
       return router.push('/ai');

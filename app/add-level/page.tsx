@@ -3,23 +3,14 @@
 import _, { zip } from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
-import { addLevel } from '@/lib/services/levelService';
 import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
 import { useAuth } from '../../components/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import IconButton from '@/components/ui/icon-button';
-import { ChevronsUp, Info, Plus, SpellCheck, Trash, X } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Spinner } from '@/components/custom/spinner';
@@ -49,6 +40,7 @@ import { Switch } from '@/components/ui/switch';
 import { InfoButton } from '@/components/custom/info-button';
 import { Separator } from '@/components/ui/separator';
 import { updateUserFromUser } from '@/lib/services/userService';
+import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
@@ -85,7 +77,6 @@ const AddLevelPage = () => {
   const [tabooWordsErrorIndexs, setTabooWordsErrorIndexs] = useState<
     number[][]
   >([]);
-  const [isCreatingLevel, setisCreatingLevel] = useState(false);
   const [nickname, setNickname] = useState('');
 
   //ANCHOR - States for appeal
@@ -428,85 +419,6 @@ const AddLevelPage = () => {
       !isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(true);
     } else {
       isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(false);
-    }
-  };
-
-  const submitNewTopic = async () => {
-    setisCreatingLevel(true);
-    try {
-      await addLevel({
-        name: topicName,
-        difficulty: Number(difficultyLevel),
-        words: targetWords.map((w) => _.toLower(_.trim(w))),
-        author: nickname,
-        authorEmail: user?.email,
-        isNew: true,
-      });
-      user?.email &&
-        (await updateUserFromUser({
-          email: user.email,
-          nickname: nickname,
-        }));
-      if (!shouldUseAIForTabooWords)
-        for (let i = 0; i < tabooWords.length; i++) {
-          const wordList = tabooWords[i];
-          const targetWord = targetWords[i];
-          await addTabooWords(targetWord, wordList, false, user?.email);
-        }
-
-      await sendMyselfEmail();
-      reset();
-      toast({
-        title:
-          'Your topic has been submitted for review. The outcome of the submission will be notified via email.',
-      });
-    } catch (error) {
-      toast({
-        title: 'Sorry, we are unable to submit the topic at the moment!',
-        variant: 'destructive',
-      });
-      console.error(error);
-    } finally {
-      setisCreatingLevel(false);
-      setReviewSheetOpen(false);
-    }
-  };
-
-  const sendMyselfEmail = async () => {
-    if (user?.email) {
-      const email = user.email;
-      const name = nickname || 'anonymous';
-      try {
-        await sendEmail(
-          name,
-          email,
-          `${email} has submitted a new topic!`,
-          `Taboo AI New Topic Submission: ${email} has submitted a new topic!`,
-          `<article>
-        <h1>New Topic Submitted: <b>${topicName}</b></h1>
-        <div>
-            <p>Nickname: ${name}</p>
-            <p>Email: ${email}</p>
-            <p>Topic Name: <b>${topicName}</b></p>
-        </div>
-        <br/>
-        ${targetWords.map(
-          (w, i) => `
-          <hr/>
-          <h2>Target: ${w}</h2>
-          <h3>Difficulty Level: ${difficultyLevel}</h3>
-          ${
-            shouldUseAIForTabooWords
-              ? '<div>This user has opted in for AI to generate taboo words.</div>'
-              : tabooWords[i].map((tw) => `<div>${tw}</div>`)
-          }
-        `
-        )}
-        </article>`
-        );
-      } catch (error) {
-        console.error(error);
-      }
     }
   };
 
@@ -922,114 +834,31 @@ const AddLevelPage = () => {
         </CardContent>
       </Card>
       {isAllValid && (
-        <Sheet
-          open={reviewSheetOpen}
-          onOpenChange={(open) => {
-            setReviewSheetOpen(open);
-          }}
+        <Button
+          disabled={!user || !user.email}
+          className='animate-fade-in'
+          aria-label='click to review the topic'
+          onClick={onReviewTopic}
         >
-          <SheetTrigger asChild>
-            <Button
-              disabled={!user || !user.email}
-              className='animate-fade-in'
-              aria-label='click to review the topic'
-              onClick={onReviewTopic}
-            >
-              {user && user.email
-                ? 'Review Your Topic'
-                : 'You need to login to proceed'}
-            </Button>
-          </SheetTrigger>
-          <SheetContent
-            side='bottom'
-            className='leading-snug h-full overflow-y-auto'
-          >
-            <SheetHeader>
-              <SheetTitle className='flex flex-col gap-1 justify-center'>
-                Review Your Topic:{' '}
-                <b className='ml-2 text-2xl font-extrabold'>{topicName}</b>
-              </SheetTitle>
-            </SheetHeader>
-            <div className='flex flex-wrap gap-8 mt-4 justify-center'>
-              {targetWords.map((w, i) => (
-                <Card key={i} className='max-w-[300px]'>
-                  <CardHeader className='text-center text-2xl font-bold p-2'>
-                    <CardTitle className='bg-secondary py-4 rounded-lg shadow-md'>
-                      {_.startCase(_.trim(w))}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className='text-center mt-2'>
-                    {shouldUseAIForTabooWords ? (
-                      <p>
-                        You chose to use AI to generate the taboo words. Your
-                        taboo words will be ready once the submission passes the
-                        review.
-                      </p>
-                    ) : (
-                      <>
-                        <p className='text-red-400'>Taboo Words:</p>
-                        <div className='flex flex-wrap gap-4 mt-4'>
-                          {tabooWords[i]
-                            .filter((w) => w.length > 0)
-                            .map((tw, ti) => (
-                              <Badge key={ti}>{tw}</Badge>
-                            ))}
-                        </div>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            {user?.email && (
-              <div className='flex flex-col gap-2 my-4'>
-                <Label htmlFor='email-input'>Contributor email: </Label>
-                <Input disabled id='email-input' defaultValue={user.email} />
-              </div>
-            )}
-            <div className='flex flex-col gap-2 my-4'>
-              <Label htmlFor='nickname-input'>Nickname: </Label>
-              <Input
-                id='nickname-input'
-                value={nickname}
-                maxLength={20}
-                onChange={(e) => {
-                  setNickname(e.target.value);
-                }}
-                className={cn(
-                  _.trim(nickname).length <= 0
-                    ? '!border-red-500'
-                    : '!border-border'
-                )}
-              />
-              <p className='text-muted-foreground text-xs'>
-                Nickname will be displayed under the successfully contributed
-                topic and visible to all players.
-              </p>
-            </div>
-            <div className='flex justify-center'>
-              {isCreatingLevel ? (
-                <Button disabled>
-                  <Spinner />
-                </Button>
-              ) : (
-                <Button
-                  disabled={
-                    !user || !user.email || _.trim(nickname).length <= 0
-                  }
-                  className='mb-4'
-                  aria-label='click to submit the topic created'
-                  onClick={submitNewTopic}
-                >
-                  {user && user.email
-                    ? 'Submit Topic'
-                    : 'Please login to proceed'}
-                </Button>
-              )}
-            </div>
-          </SheetContent>
-        </Sheet>
+          {user && user.email
+            ? 'Review Your Topic'
+            : 'You need to login to proceed'}
+        </Button>
       )}
+      <TopicReviewSheet
+        user={user}
+        defaultNickname={nickname}
+        difficultyLevel={difficultyLevel}
+        open={reviewSheetOpen}
+        onOpenChange={(open) => {
+          setReviewSheetOpen(open);
+        }}
+        shouldUseAIForTabooWords={shouldUseAIForTabooWords}
+        topicName={topicName}
+        targetWords={targetWords}
+        tabooWords={tabooWords}
+        onTopicSubmitted={reset}
+      />
       <Dialog
         open={isAppealModalOpen}
         onOpenChange={(open) => {

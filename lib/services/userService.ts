@@ -49,3 +49,9 @@ export const signinUser = async (email: string) => {
     lastLoginAt: moment().format(DateUtils.formats.userLoginAt),
   });
 };
+
+export const updateUIDIfNotExist = async (email: string, uid: string) => {
+  await updateDoc(doc(firestore, 'users', email), {
+    uid: uid,
+  });
+};
