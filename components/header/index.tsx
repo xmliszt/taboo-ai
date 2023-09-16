@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { RouteManager, TabooPathname } from '@/lib/utils/routeUtils';
+import { RouteManager } from '@/lib/utils/routeUtils';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import HeaderLeftElements from './header-left-elements';
@@ -19,7 +19,7 @@ export interface HeaderProps {
   customBackHref?: string;
 }
 
-const Header = () => {
+export default function Header() {
   const [
     {
       title,
@@ -79,6 +79,4 @@ const Header = () => {
       />
     </header>
   );
-};
-
-export default Header;
+}

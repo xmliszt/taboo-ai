@@ -1,4 +1,4 @@
-import { HeaderProps } from '@/components/header/header';
+import { HeaderProps } from '@/components/header';
 
 export enum TabooPathname {
   HOME = '/',

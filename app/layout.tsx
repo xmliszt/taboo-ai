@@ -15,11 +15,11 @@ import { Toaster } from '@/components/ui/toaster';
 import SideMenu from '@/components/custom/side-menu';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
 import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
+import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
 
 import './markdown.css';
 import './globals.css';
-import Header from '@/components/header/header';
-import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
+import Header from '@/components/header';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
