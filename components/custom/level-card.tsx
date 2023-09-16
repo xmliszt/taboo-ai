@@ -7,7 +7,6 @@ import { DisplayUtils } from '@/lib/utils/displayUtils';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
-import { isMobile } from 'react-device-detect';
 import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
@@ -26,7 +25,7 @@ export function LevelCard({ level }: LevelCardProps) {
       updateLevelPopularity(level.id, (level.popularity ?? 0) + 1)
         .then(() => {
           setLevel(level);
-          return router.push(`/level`);
+          return router.push(`/level/${level.id}`);
         })
         .catch((error) => {
           console.error(error);

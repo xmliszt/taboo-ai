@@ -36,7 +36,7 @@ export default function AiPage(props: AiPageProps) {
             return setErrorMessage(CONSTANTS.errors.aiModeTopicTooFew);
           }
           setLevel(level);
-          router.push('/level');
+          router.push('/level/ai');
         } else {
           throw new Error(CONSTANTS.errors.overloaded);
         }
