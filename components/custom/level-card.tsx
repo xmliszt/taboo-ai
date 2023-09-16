@@ -1,18 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { cacheLevel } from '../../lib/cache';
 import { getDifficulty } from '../../lib/utilities';
 import ILevel from '../../lib/types/level.interface';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
-import { isMobile } from 'react-device-detect';
 import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
-import IconButton from '../ui/icon-button';
-import { Heart } from 'lucide-react';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -21,16 +17,14 @@ interface LevelCardProps {
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
-
   const goToLevel = () => {
     if (level) {
+      router.push(`/level/${level.id}`);
       updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
         (error) => {
           console.error(error);
         }
       );
-      cacheLevel(level);
-      return router.push(`/level`);
     } else {
       return router.push('/ai');
     }
@@ -48,9 +42,8 @@ export function LevelCard({ level }: LevelCardProps) {
         }
       }}
       className={cn(
-        !isMobile && 'md:!w-[200px] md:!min-h-[300px]',
         level ? '' : 'unicorn-color',
-        'w-full h-auto transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
+        'w-full h-auto md:w-[200px] md:min-h-[300px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
     >
       <CardHeader>

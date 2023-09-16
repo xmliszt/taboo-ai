@@ -1,0 +1,55 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
+
+interface ShareScoreDialogProps {
+  onSharePlainText: () => void;
+  onShareScreenshot: () => void;
+}
+
+export default function ShareScoreDialog({
+  onSharePlainText,
+  onShareScreenshot,
+}: ShareScoreDialogProps) {
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
+      setIsShareDialogOpen(true);
+    });
+    return () => {
+      EventManager.removeListener(CustomEventKey.SHARE_SCORE, listener);
+    };
+  }, []);
+
+  return (
+    <Dialog
+      key='share-1'
+      open={isShareDialogOpen}
+      onOpenChange={(open) => {
+        setIsShareDialogOpen(open);
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Share your scores!</DialogTitle>
+          <DialogDescription>
+            Choose how you want to share your scores...
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
+          <Button onClick={onSharePlainText}>Plain Text</Button>
+          <Button onClick={onShareScreenshot}>Screenshot</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

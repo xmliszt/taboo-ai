@@ -42,6 +42,7 @@ import { firebaseAuth } from '@/lib/firebase-client';
 import { RejectionReason } from '@/pages/api/x/send-email';
 import { Label } from '@/components/ui/label';
 import { SelectGroup } from '@radix-ui/react-select';
+import { AdminManager } from '@/lib/admin-manager';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
@@ -96,10 +97,7 @@ const DevReviewWordsPage = () => {
   }, [selectedLevelId]);
 
   useEffect(() => {
-    if (
-      status === 'unauthenticated' ||
-      (user && user.email !== 'xmliszt@gmail.com')
-    ) {
+    if (status === 'unauthenticated' || !AdminManager.checkIsAdmin(user)) {
       toast({
         title: 'You are not authorized to view this page!',
         variant: 'destructive',
@@ -421,11 +419,7 @@ const DevReviewWordsPage = () => {
     }
   };
 
-  if (
-    !user ||
-    status !== 'authenticated' ||
-    user.email !== 'xmliszt@gmail.com'
-  ) {
+  if (!user || status !== 'authenticated' || !AdminManager.checkIsAdmin(user)) {
     return (
       <section className='w-full h-full flex justify-center items-center'></section>
     );

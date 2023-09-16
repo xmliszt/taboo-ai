@@ -4,7 +4,6 @@ import { useState, FormEvent, ChangeEvent } from 'react';
 import { askAIForCreativeTopic } from '../../lib/services/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
-import { cacheLevel } from '../../lib/cache';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle } from '@/components/ui/alert';
@@ -12,6 +11,9 @@ import { PenTool, SpellCheck2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/custom/spinner';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import ILevel from '@/lib/types/level.interface';
+import { HASH } from '@/lib/hash';
 
 interface AiPageProps {}
 
@@ -20,6 +22,7 @@ export default function AiPage(props: AiPageProps) {
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { setItem: setLevel } = useLocalStorage<ILevel>(HASH.level);
   const router = useRouter();
 
   const submitForm = async (event: FormEvent) => {
@@ -32,8 +35,8 @@ export default function AiPage(props: AiPageProps) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
             return setErrorMessage(CONSTANTS.errors.aiModeTopicTooFew);
           }
-          cacheLevel(level);
-          router.push('/level');
+          setLevel(level);
+          router.push('/level/ai');
         } else {
           throw new Error(CONSTANTS.errors.overloaded);
         }

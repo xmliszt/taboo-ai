@@ -10,6 +10,7 @@ import {
   updateUserFromAuth,
   getUser,
   signinUser,
+  updateUIDIfNotExist,
 } from '../services/userService';
 import IUser from '../types/user.interface';
 
@@ -73,6 +74,8 @@ export function useFirebaseAuth() {
           if (user) {
             // existing user
             await signinUser(user.email);
+            user.uid === undefined &&
+              (await updateUIDIfNotExist(user.email, currentUser.uid));
             setUser(user);
             setStatus('authenticated');
             toast({ title: 'Welcome Back!' });

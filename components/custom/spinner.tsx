@@ -1,5 +1,9 @@
 import { ImSpinner2 } from 'react-icons/im';
 
-export function Spinner() {
-  return <ImSpinner2 className='animate-spin' size={32} />;
+interface SpinnerProps {
+  size?: number;
+}
+
+export function Spinner({ size = 32 }: SpinnerProps) {
+  return <ImSpinner2 className='animate-spin' size={size} />;
 }

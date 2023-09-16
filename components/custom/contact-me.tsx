@@ -53,6 +53,8 @@ const ContactMe = () => {
     if (user) {
       user.nickname && form.setValue('nickname', user.nickname);
       user.email && form.setValue('email', user.email);
+    } else {
+      form.reset();
     }
   }, [user]);
 

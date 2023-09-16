@@ -124,7 +124,7 @@ export default function LevelsPage() {
       >
         <LevelCard />
         {isFetchingLevels ? (
-          <Skeleton numberOfRows={6} />
+          <Skeleton numberOfRows={8} className='flex-grow' />
         ) : (
           sortedLevels.map((level, idx) => (
             <LevelCard key={idx} level={level} />

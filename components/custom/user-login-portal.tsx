@@ -1,7 +1,14 @@
 'use client';
 
 import { useAuth } from '@/components/auth-provider';
-import { Construction, LogIn, LogOut, PenTool, User } from 'lucide-react';
+import {
+  Construction,
+  LogIn,
+  LogOut,
+  PenTool,
+  ScrollText,
+  User,
+} from 'lucide-react';
 import { Spinner } from './spinner';
 import IconButton from '../ui/icon-button';
 import {
@@ -15,6 +22,11 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { toast } from '../ui/use-toast';
+import { IDisplayScore } from '@/lib/types/score.interface';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { HASH } from '@/lib/hash';
+import { useMemo } from 'react';
 
 interface UserMenuItem {
   label: string;
@@ -28,34 +40,56 @@ export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, status, login, logout } = useAuth();
+  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
 
-  const userMenuItems: UserMenuItem[] = [
-    {
-      label: 'Contribute A Topic',
-      icon: <PenTool />,
-      isVisible: pathname !== '/add-level',
-      onClick: () => {
-        router.push('/add-level');
+  const handleLogout = async () => {
+    try {
+      logout && (await logout());
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Sorry, we are unable to log you out. Please try again!',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const userMenuItems: UserMenuItem[] = useMemo(() => {
+    return [
+      {
+        label: 'Contribute A Topic',
+        icon: <PenTool />,
+        isVisible: pathname !== '/add-level',
+        onClick: () => {
+          router.push('/add-level');
+        },
       },
-    },
-    {
-      label: 'Profile',
-      icon: <User />,
-      isVisible: pathname !== '/profile',
-      isUpcoming: true,
-      onClick: () => {
-        router.push('/profile');
+      {
+        label: 'My Last Result',
+        icon: <ScrollText />,
+        isVisible:
+          scores !== undefined && scores.length > 0 && pathname !== '/result',
+        onClick: () => {
+          router.push('/result');
+        },
       },
-    },
-    {
-      label: 'Logout',
-      icon: <LogOut />,
-      isVisible: true,
-      onClick: () => {
-        logout && logout();
+      {
+        label: 'Profile',
+        icon: <User />,
+        isVisible: pathname !== '/profile',
+        isUpcoming: true,
+        onClick: () => {
+          router.push('/profile');
+        },
       },
-    },
-  ];
+      {
+        label: 'Logout',
+        icon: <LogOut />,
+        isVisible: true,
+        onClick: handleLogout,
+      },
+    ];
+  }, [pathname, scores]);
 
   const handleLogin = async () => {
     if (!login) return;

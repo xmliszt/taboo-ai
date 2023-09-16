@@ -1,19 +1,12 @@
 'use client';
 
 import copy from 'clipboard-copy';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ILevel from '../../lib/types/level.interface';
 import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
-import {
-  getScoresCache,
-  getLevelCache,
-  clearScores,
-  cacheScore,
-} from '../../lib/cache';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
 import { IHighlight } from '../../lib/types/highlight.interface';
-import { delayRouterPush } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
 import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
@@ -22,29 +15,34 @@ import { askAIForJudgingScore } from '../../lib/services/aiService';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Hand, MousePointerClick, Share } from 'lucide-react';
-import Header from '@/components/header/Header';
-import IconButton from '@/components/ui/icon-button';
+import { CircleOff, Hand, MousePointerClick, Share } from 'lucide-react';
 import { ScoreInfoButton } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { HASH } from '@/lib/hash';
 import { isMobile } from 'react-device-detect';
+import { useAuth } from '@/components/auth-provider';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
+import { isLevelExists } from '@/lib/services/levelService';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { Spinner } from '@/components/custom/spinner';
+import ShareScoreDialog from '@/components/custom/share-score-dialog';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 interface StatItem {
   title: string;
@@ -55,13 +53,23 @@ interface StatItem {
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
-  const [scores, setScores] = useState<IDisplayScore[]>([]);
-  const [level, setLevel] = useState<ILevel>();
+  const { user, status } = useAuth();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
   const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
+  const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
+  const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
+  const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
+  const [hasScoresLoaded, setHasScoresLoaded] = useState(false);
+  const { item: level } = useLocalStorage<ILevel>(HASH.level);
+  const {
+    item: scores,
+    setItem: setScores,
+    clearItem: clearScores,
+    loading: isFetchingCachedScores,
+  } = useLocalStorage<IDisplayScore[]>(HASH.scores);
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -71,9 +79,30 @@ export default function ResultPage(props: ResultPageProps) {
     return completion <= 0 ? 1 : completion;
   };
 
+  const checkIfEligibleForLevelSubmission = useCallback(async () => {
+    if (level) {
+      const exists = await isLevelExists(level.name, user?.email);
+      setHasTopicSubmitted(exists);
+      if (exists) {
+        toast({ title: 'You have already submitted this topic.' });
+        return;
+      }
+      if (level.isAIGenerated && status === 'authenticated') {
+        setContributionDialogOpen(true);
+      }
+    }
+  }, [level, user, status]);
+
   useEffect(() => {
-    checkUserStatus();
-  }, []);
+    if (!hasScoresLoaded && scores !== undefined) {
+      setHasScoresLoaded(true);
+      checkUserStatus();
+    }
+  }, [scores]);
+
+  useEffect(() => {
+    checkIfEligibleForLevelSubmission();
+  }, [checkIfEligibleForLevelSubmission]);
 
   const performAIJudging = async (
     retries: number,
@@ -95,14 +124,13 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const checkUserStatus = async () => {
-    const level = getLevelCache();
-    const scores = getScoresCache();
     if (scores && scores.length === CONSTANTS.numberOfQuestionsPerGame) {
       // AI judging
       setLoadingMessage(
         `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
       );
       setIsLoading(true);
+      const copyScores = [...scores];
       for (let i = 0; i < scores.length; i++) {
         const tempScores: IAIScore[] = [];
         const score = scores[i];
@@ -120,8 +148,8 @@ export default function ResultPage(props: ResultPageProps) {
             }]`
           );
         } else if (localStorage.getItem(HASH.dev) === '1') {
-          scores[i].ai_score = 50;
-          scores[i].ai_explanation = 'This is a test run.';
+          copyScores[i].ai_score = 50;
+          copyScores[i].ai_explanation = 'This is a test run.';
         } else {
           for (let t = 0; t < 3; t++) {
             await performAIJudging(5, target, userInput, (aiJudgeScore) => {
@@ -131,14 +159,14 @@ export default function ResultPage(props: ResultPageProps) {
             });
           }
           if (tempScores.length === 0) {
-            scores[i].ai_score = 50;
-            scores[i].ai_explanation =
+            copyScores[i].ai_score = 50;
+            copyScores[i].ai_explanation =
               'Our sincere apologies for a server hiccup that causes AI unable to generate the scores at the moment. We fully recognize that the average score of 50 you received does not appropriately represent your skills and efforts. We deeply regret any inconvenience or frustration this may have caused you. We are actively working to rectify the issue and prevent such occurrences in the future. Thank you for your understanding and patience as we resolve this matter.';
           } else {
             tempScores.sort((s1, s2) => (s2.score ?? 0) - (s1.score ?? 0));
             const bestScore = tempScores[0];
-            scores[i].ai_score = bestScore.score;
-            scores[i].ai_explanation = bestScore.explanation;
+            copyScores[i].ai_score = bestScore.score;
+            copyScores[i].ai_explanation = bestScore.explanation;
           }
           setLoadingMessage(
             `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
@@ -150,20 +178,26 @@ export default function ResultPage(props: ResultPageProps) {
       setIsLoading(false);
       setLoadingMessage('Loading...');
       clearScores();
-      scores.forEach((score) => cacheScore(score));
+      updateDisplayedScores(copyScores);
     }
+  };
 
-    if (!scores || !level) {
-      toast({
-        title:
-          'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-      });
-      delayRouterPush(router, '/');
-      return;
-    } else {
-      setLevel(level);
-      updateDisplayedScores(scores);
+  const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
+    let total = 0;
+    let totalScore = 0;
+    for (const score of displayScores) {
+      total += getCompletionSeconds(score.completion);
+      totalScore += calculateScore(score);
     }
+    totalScore = _.round(totalScore, 1);
+    displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
+    setTotal(total);
+    setTotalScore(totalScore);
+    setScores(displayScores);
+  };
+
+  const handleContributeAITopic = () => {
+    setIsTopicReviewSheetOpen(true);
   };
 
   const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
@@ -187,7 +221,6 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const generateShareText = (): string => {
-    const level = getLevelCache();
     const parts: string[] = [];
     if (totalScore > 0) {
       parts.push(
@@ -419,20 +452,6 @@ export default function ResultPage(props: ResultPageProps) {
     return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
   };
 
-  const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
-    let total = 0;
-    let totalScore = 0;
-    for (const score of displayScores) {
-      total += getCompletionSeconds(score.completion);
-      totalScore += calculateScore(score);
-    }
-    totalScore = _.round(totalScore, 1);
-    displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
-    setScores(displayScores);
-    setTotal(total);
-    setTotalScore(totalScore);
-  };
-
   const generateTopicName = (): string => {
     const topicName = _.startCase(level?.name) ?? 'Unknown';
     return topicName;
@@ -507,7 +526,8 @@ export default function ResultPage(props: ResultPageProps) {
     ];
   };
 
-  const generateMobileScoreStack = (scores: IDisplayScore[]) => {
+  const generateMobileScoreStack = () => {
+    if (!scores) return <></>;
     return scores.map((score) => (
       <AccordionItem
         key={`word-${score.id}`}
@@ -562,9 +582,9 @@ export default function ResultPage(props: ResultPageProps) {
               viewBox='0 0 24 24'
               fill='none'
               stroke='currentColor'
-              stroke-width='2'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
               className='lucide lucide-ligature'
             >
               <path d='M8 20V8c0-2.2 1.8-4 4-4 1.5 0 2.8.8 3.5 2' />
@@ -604,60 +624,133 @@ export default function ResultPage(props: ResultPageProps) {
               setExpandedValues(value);
             }}
           >
-            {generateMobileScoreStack(scores)}
+            {generateMobileScoreStack()}
           </Accordion>
         </div>
       </div>
     );
   };
 
+  if (!scores || scores.length <= 0) {
+    return (
+      <>
+        <div className='w-full h-full flex flex-col gap-2 justify-center items-center text-center'>
+          {isFetchingCachedScores ? (
+            <>
+              <Spinner size={50} />
+              <h1>Searching for cached result...</h1>
+            </>
+          ) : (
+            <>
+              <CircleOff size={56} className='animate-pulse' />
+              <h1>You have no cached result for display</h1>
+              <Button
+                onClick={() => {
+                  router.push('/levels');
+                }}
+              >
+                Browse Topics
+              </Button>
+            </>
+          )}
+        </div>
+      </>
+    );
+  }
+
   return (
-    <section className='relative'>
-      <Header
-        title='Game Results'
-        additionRightItems={[
-          <Dialog key='share-1'>
-            <DialogTrigger asChild>
-              <IconButton tooltip='Share your scores'>
-                <Share />
-              </IconButton>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Share your scores!</DialogTitle>
-                <DialogDescription>
-                  Choose how you want to share your scores...
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
-                <Button onClick={sharePlainText}>Plain Text</Button>
-                <Button onClick={shareScreenshot}>Screenshot</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>,
-        ]}
-      />
-      <LoadingMask
-        key='loading-mask'
-        isLoading={isLoading}
-        message={loadingMessage}
-      />
-      <section
-        className='!leading-screenshot pb-20 lg:pb-48 pt-4'
-        ref={screenshotRef}
-      >
-        {renderResults()}
-      </section>
-      <div className='fixed bottom-2 z-40 w-full text-center py-4'>
-        <Button
-          className='w-4/5 shadow-xl'
-          onClick={() => {
-            router.push('/level');
-          }}
+    <>
+      <section className='relative'>
+        <LoadingMask
+          key='loading-mask'
+          isLoading={isLoading}
+          message={loadingMessage}
+        />
+        <section
+          className='!leading-screenshot pb-24 lg:pb-48 pt-4'
+          ref={screenshotRef}
         >
-          Play This Topic Again
-        </Button>
+          {renderResults()}
+        </section>
+      </section>
+      <div className='fixed flex flex-col md:flex-row gap-2 items-center md:justify-center bottom-2 z-40 w-full py-4 px-4'>
+        {!hasTopicSubmitted && level?.isAIGenerated && (
+          <Button
+            className='w-4/5 shadow-xl'
+            onClick={() => {
+              if (!user || status !== 'authenticated') {
+                EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
+                  title: 'You need to login to contribute a topic to us.',
+                });
+              } else {
+                setIsTopicReviewSheetOpen(true);
+              }
+            }}
+          >
+            Submit This Topic To Us
+          </Button>
+        )}
+        {level && (
+          <Button
+            className='w-4/5 shadow-xl'
+            onClick={() => {
+              router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
+            }}
+          >
+            Play This Topic Again
+          </Button>
+        )}
       </div>
-    </section>
+      {user && level && !hasTopicSubmitted && (
+        <TopicReviewSheet
+          open={isTopicReviewSheetOpen}
+          onOpenChange={(open) => {
+            setIsTopicReviewSheetOpen(open);
+          }}
+          user={user}
+          defaultNickname={user.nickname ?? user.name ?? ''}
+          topicName={level.name}
+          difficultyLevel={String(level.difficulty)}
+          shouldUseAIForTabooWords={true}
+          targetWords={level.words}
+          onTopicSubmitted={() => {
+            setHasTopicSubmitted(true);
+          }}
+          isAIGenerated={level.isAIGenerated}
+        />
+      )}
+      <AlertDialog
+        open={contributionDialogOpen}
+        onOpenChange={(open) => {
+          setContributionDialogOpen(open);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Enjoy the game so far? Would you like to contribute this
+              AI-generated topic to us?
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setContributionDialogOpen(false);
+                setIsTopicReviewSheetOpen(false);
+              }}
+            >
+              I&apos;ll decide later
+            </AlertDialogCancel>
+            <AlertDialogAction autoFocus onClick={handleContributeAITopic}>
+              Sure why not
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <ShareScoreDialog
+        onSharePlainText={sharePlainText}
+        onShareScreenshot={shareScreenshot}
+      />
+    </>
   );
 }

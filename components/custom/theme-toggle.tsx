@@ -1,6 +1,6 @@
 'use client';
 
-import { Dot, MoonStar, Sun, SunMoon } from 'lucide-react';
+import { MoonStar, Sun, SunMoon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import IconButton from '../ui/icon-button';
 
