@@ -39,10 +39,16 @@ export default function SideMenu() {
   const router = useRouter();
 
   useEffect(() => {
-    EventManager.bindEvent(CustomEventKey.TOGGLE_MENU, ({ detail }) => {
-      const isOpen = detail as boolean;
-      setIsOpen(isOpen ?? false);
-    });
+    const listener = EventManager.bindEvent(
+      CustomEventKey.TOGGLE_MENU,
+      ({ detail }) => {
+        const isOpen = detail as boolean;
+        setIsOpen(isOpen ?? false);
+      }
+    );
+    return () => {
+      EventManager.removeListener(CustomEventKey.TOGGLE_MENU, listener);
+    };
   }, []);
 
   useEffect(() => {
@@ -66,6 +72,16 @@ export default function SideMenu() {
     } catch (error) {
       console.error(error);
       EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
+    }
+  };
+
+  const handleContributeTopic = () => {
+    if (user && status === 'authenticated') {
+      router.push('/add-level');
+    } else {
+      EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
+        title: 'You need to login to contribute a topic',
+      });
     }
   };
 
@@ -96,8 +112,8 @@ export default function SideMenu() {
         title: 'Contribute A Topic',
         subtitle:
           'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
-        visible: user !== undefined && status === 'authenticated',
-        href: '/add-level',
+        visible: true,
+        onClick: handleContributeTopic,
       },
       {
         title: 'See my last result',

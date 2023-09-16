@@ -1,30 +1,57 @@
+'use client';
+
 import { cn } from '@/lib/utils';
+import { RouteManager, TabooPathname } from '@/lib/utils/routeUtils';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import HeaderLeftElements from './header-left-elements';
 import HeaderRightElements from './header-right-elements';
 
-interface HeaderProps {
+export interface HeaderProps {
   title?: string;
   hideMenu?: boolean;
   hideUserMenu?: boolean;
   hideThemeToggle?: boolean;
+  hideDevToggle?: boolean;
+  hideShareScoreButton?: boolean;
   isTransparent?: boolean;
   hasBackButton?: boolean;
   customBackHref?: string;
-  additionLeftItems?: React.ReactElement[];
-  additionRightItems?: React.ReactElement[];
 }
 
-const Header = ({
-  title = '',
-  hideUserMenu = false,
-  isTransparent = false,
-  additionRightItems = [],
-  hideMenu = false,
-  hideThemeToggle = false,
-  hasBackButton = false,
-  customBackHref,
-  additionLeftItems = [],
-}: HeaderProps) => {
+const Header = () => {
+  const [
+    {
+      title,
+      hideUserMenu,
+      isTransparent,
+      hideMenu,
+      hideThemeToggle,
+      hideDevToggle,
+      hideShareScoreButton,
+      hasBackButton,
+      customBackHref,
+    },
+    setConfig,
+  ] = useState<HeaderProps>({
+    title: '',
+    hideUserMenu: false,
+    isTransparent: false,
+    hideMenu: false,
+    hideThemeToggle: false,
+    hideDevToggle: true,
+    hideShareScoreButton: true,
+    hasBackButton: false,
+  });
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname) {
+      const config = RouteManager.getHeaderPropsFromPath(pathname);
+      setConfig(config);
+    }
+  }, [pathname]);
+
   return (
     <header
       id='header-section'
@@ -36,9 +63,9 @@ const Header = ({
       <HeaderLeftElements
         hideMenu={hideMenu}
         hideThemeToggle={hideThemeToggle}
+        hideDevToggle={hideDevToggle}
         hasBackButton={hasBackButton}
         customBackHref={customBackHref}
-        additionLeftItems={additionLeftItems}
       />
       <h1
         data-testid='heading-rule-title'
@@ -48,7 +75,7 @@ const Header = ({
       </h1>
       <HeaderRightElements
         hideUserMenu={hideUserMenu}
-        additionRightItems={additionRightItems}
+        hideShareScoreButton={hideShareScoreButton}
       />
     </header>
   );

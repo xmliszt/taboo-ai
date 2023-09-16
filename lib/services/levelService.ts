@@ -60,7 +60,12 @@ export const addLevel = async ({
 
 export const getLevel = async (id: string): Promise<ILevel | undefined> => {
   const snapshot = await getDoc(doc(firestore, 'levels', id));
-  return snapshot.data() as ILevel;
+  const level = snapshot.data() as ILevel;
+  if (level) {
+    level.id = snapshot.id;
+    return level;
+  }
+  return undefined;
 };
 
 export const isLevelExists = async (

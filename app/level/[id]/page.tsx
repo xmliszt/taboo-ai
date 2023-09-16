@@ -7,6 +7,7 @@ import {
   useRef,
   ChangeEvent,
   useCallback,
+  useMemo,
 } from 'react';
 import Timer from '@/components/custom/timer';
 import {
@@ -81,7 +82,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     onTimeOver: () => {
       setIsCountdown(false);
       startTimer();
-      inputTextField.current?.focus();
     },
   });
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
@@ -96,6 +96,22 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const { setItem: setScores, clearItem: clearScores } = useLocalStorage<
     IDisplayScore[]
   >(HASH.scores);
+
+  const isInputDisable = useMemo(() => {
+    return (
+      !level ||
+      isLoading ||
+      isCountingdown ||
+      isGeneratingVariations ||
+      isSuccess
+    );
+  }, [level, isLoading, isCountingdown, isGeneratingVariations, isSuccess]);
+
+  useEffect(() => {
+    if (inputTextField.current) {
+      inputTextField.current.focus();
+    }
+  }, [inputTextField]);
 
   const fetchLevel = useCallback(async () => {
     const level = await getLevel(id);
@@ -537,7 +553,20 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   return (
     <section className='flex justify-center h-full'>
       {isCountingdown ? (
-        <div className='fixed z-50 top-1/2 w-full text-center text-5xl animate-bounce'>
+        <div
+          className={cn(
+            'fixed z-50 top-1/2 w-full text-center animate-bounce',
+            countdown.time === 0
+              ? 'text-6xl'
+              : countdown.time === 1
+              ? 'text-5xl'
+              : countdown.time === 2
+              ? 'text-4xl'
+              : countdown.time === 3
+              ? 'text-3xl'
+              : 'text-2xl'
+          )}
+        >
           {countdown.time === 0
             ? 'Start'
             : countdown.time === -1
@@ -647,14 +676,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
               </IconButton>
               <Input
                 id='user-input'
-                disabled={
-                  !level ||
-                  isLoading ||
-                  isCountingdown ||
-                  isGeneratingVariations ||
-                  isSuccess
-                }
+                disabled={isInputDisable}
                 ref={inputTextField}
+                autoFocus
                 placeholder={
                   isGeneratingVariations
                     ? 'Generating taboo words...'

@@ -1,4 +1,3 @@
-import Header from '@/components/header/header';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -6,10 +5,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <Header title='Review Topics & Words' />
-      {children}
-    </>
-  );
+  return children;
 }

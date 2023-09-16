@@ -18,6 +18,8 @@ import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
 
 import './markdown.css';
 import './globals.css';
+import Header from '@/components/header/header';
+import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -47,10 +49,14 @@ export default function RootLayout({
                 <Maintenance />
               ) : (
                 <>
+                  <Suspense>
+                    <Header />
+                  </Suspense>
                   <PWAInstaller>{children}</PWAInstaller>
                   <Suspense>
                     <SideMenu />
                   </Suspense>
+                  <LoginReminderDialog />
                   <FeaturePopup />
                 </>
               )}
