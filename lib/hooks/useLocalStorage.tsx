@@ -16,7 +16,12 @@ export const useLocalStorage = <S,>(key: string) => {
     setState(s);
   };
 
-  return { item: state, setItem };
+  const clearItem = () => {
+    localStorage.removeItem(key);
+    setState(undefined);
+  };
+
+  return { item: state, setItem, clearItem };
 };
 
 const parse = (value: string) => {
