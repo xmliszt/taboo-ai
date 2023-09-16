@@ -20,16 +20,17 @@ interface LevelCardProps {
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
-  const [_, setLevel] = useLocalStorage<ILevel | null>(HASH.level, null);
+  const { setItem: setLevel } = useLocalStorage<ILevel>(HASH.level);
   const goToLevel = () => {
     if (level) {
-      updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
-        (error) => {
+      updateLevelPopularity(level.id, (level.popularity ?? 0) + 1)
+        .then(() => {
+          setLevel(level);
+          return router.push(`/level`);
+        })
+        .catch((error) => {
           console.error(error);
-        }
-      );
-      setLevel(level);
-      return router.push(`/level`);
+        });
     } else {
       return router.push('/ai');
     }
@@ -47,9 +48,8 @@ export function LevelCard({ level }: LevelCardProps) {
         }
       }}
       className={cn(
-        !isMobile && 'md:!w-[200px] md:!min-h-[300px]',
         level ? '' : 'unicorn-color',
-        'w-full h-auto transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
+        'w-full h-auto md:w-[200px] md:min-h-[300px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
     >
       <CardHeader>

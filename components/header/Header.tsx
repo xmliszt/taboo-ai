@@ -62,7 +62,7 @@ const Header = ({
   const { user, status, login } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [scores] = useLocalStorage<IDisplayScore[] | null>(HASH.scores, null);
+  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -110,7 +110,7 @@ const Header = ({
         title: 'See my last result',
         subtitle:
           'We found your last played result is cached in the app. You can revisit it here!',
-        visible: scores !== null,
+        visible: scores !== undefined && scores.length > 0,
         href: '/result',
       },
       {

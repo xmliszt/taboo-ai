@@ -8,7 +8,6 @@ import { clearScores } from '../../lib/cache';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
 import { IHighlight } from '../../lib/types/highlight.interface';
-import { delayRouterPush } from '../../lib/utilities';
 import { useRouter } from 'next/navigation';
 import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
@@ -32,7 +31,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Hand, MousePointerClick, Share } from 'lucide-react';
+import { CircleOff, Hand, MousePointerClick, Share } from 'lucide-react';
 import Header from '@/components/header/Header';
 import IconButton from '@/components/ui/icon-button';
 import { ScoreInfoButton } from '@/components/custom/score-info-button';
@@ -74,10 +73,10 @@ export default function ResultPage(props: ResultPageProps) {
   const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
-  const [level] = useLocalStorage<ILevel | null>(HASH.level, null);
-  const [scores, setScores] = useLocalStorage<IDisplayScore[] | null>(
-    HASH.scores,
-    null
+  const [hasScoresLoaded, setHasScoresLoaded] = useState(false);
+  const { item: level } = useLocalStorage<ILevel>(HASH.level);
+  const { item: scores, setItem: setScores } = useLocalStorage<IDisplayScore[]>(
+    HASH.scores
   );
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
@@ -99,8 +98,11 @@ export default function ResultPage(props: ResultPageProps) {
   }, [level, user, status]);
 
   useEffect(() => {
-    checkUserStatus();
-  }, []);
+    if (!hasScoresLoaded && scores !== undefined) {
+      setHasScoresLoaded(true);
+      checkUserStatus();
+    }
+  }, [scores]);
 
   useEffect(() => {
     checkIfEligibleForLevelSubmission();
@@ -180,19 +182,22 @@ export default function ResultPage(props: ResultPageProps) {
       setIsLoading(false);
       setLoadingMessage('Loading...');
       clearScores();
-      setScores(copyScores);
+      updateDisplayedScores(copyScores);
     }
+  };
 
-    if (!scores || !level) {
-      toast({
-        title:
-          'Sorry! You do not have any saved game records. Try play some games before accessing the scores!',
-      });
-      delayRouterPush(router, '/');
-      return;
-    } else {
-      updateDisplayedScores(scores);
+  const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
+    let total = 0;
+    let totalScore = 0;
+    for (const score of displayScores) {
+      total += getCompletionSeconds(score.completion);
+      totalScore += calculateScore(score);
     }
+    totalScore = _.round(totalScore, 1);
+    displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
+    setTotal(total);
+    setTotalScore(totalScore);
+    setScores(displayScores);
   };
 
   const handleContributeAITopic = () => {
@@ -451,20 +456,6 @@ export default function ResultPage(props: ResultPageProps) {
     return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
   };
 
-  const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
-    let total = 0;
-    let totalScore = 0;
-    for (const score of displayScores) {
-      total += getCompletionSeconds(score.completion);
-      totalScore += calculateScore(score);
-    }
-    totalScore = _.round(totalScore, 1);
-    displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
-    setScores(displayScores);
-    setTotal(total);
-    setTotalScore(totalScore);
-  };
-
   const generateTopicName = (): string => {
     const topicName = _.startCase(level?.name) ?? 'Unknown';
     return topicName;
@@ -539,7 +530,7 @@ export default function ResultPage(props: ResultPageProps) {
     ];
   };
 
-  const generateMobileScoreStack = (scores: IDisplayScore[] | null) => {
+  const generateMobileScoreStack = () => {
     if (!scores) return <></>;
     return scores.map((score) => (
       <AccordionItem
@@ -595,9 +586,9 @@ export default function ResultPage(props: ResultPageProps) {
               viewBox='0 0 24 24'
               fill='none'
               stroke='currentColor'
-              stroke-width='2'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
               className='lucide lucide-ligature'
             >
               <path d='M8 20V8c0-2.2 1.8-4 4-4 1.5 0 2.8.8 3.5 2' />
@@ -637,52 +628,73 @@ export default function ResultPage(props: ResultPageProps) {
               setExpandedValues(value);
             }}
           >
-            {generateMobileScoreStack(scores)}
+            {generateMobileScoreStack()}
           </Accordion>
         </div>
       </div>
     );
   };
 
+  if (!scores || scores.length <= 0) {
+    return (
+      <>
+        <Header title='Game Results' />
+        <div className='w-full h-full flex flex-col gap-2 justify-center items-center'>
+          <CircleOff size={56} />
+          <h1>You have no cached result for display</h1>
+          <Button
+            onClick={() => {
+              router.push('/levels');
+            }}
+          >
+            Browse Topics
+          </Button>
+        </div>
+      </>
+    );
+  }
+
   return (
-    <section className='relative'>
-      <Header
-        title='Game Results'
-        additionRightItems={[
-          <Dialog key='share-1'>
-            <DialogTrigger asChild>
-              <IconButton tooltip='Share your scores'>
-                <Share />
-              </IconButton>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Share your scores!</DialogTitle>
-                <DialogDescription>
-                  Choose how you want to share your scores...
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
-                <Button onClick={sharePlainText}>Plain Text</Button>
-                <Button onClick={shareScreenshot}>Screenshot</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>,
-        ]}
-      />
-      <LoadingMask
-        key='loading-mask'
-        isLoading={isLoading}
-        message={loadingMessage}
-      />
-      <section
-        className='!leading-screenshot pb-24 lg:pb-48 pt-4'
-        ref={screenshotRef}
-      >
-        {renderResults()}
+    <>
+      <section className='relative'>
+        <Header
+          title='Game Results'
+          additionRightItems={[
+            <Dialog key='share-1'>
+              <DialogTrigger asChild>
+                <IconButton tooltip='Share your scores'>
+                  <Share />
+                </IconButton>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Share your scores!</DialogTitle>
+                  <DialogDescription>
+                    Choose how you want to share your scores...
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
+                  <Button onClick={sharePlainText}>Plain Text</Button>
+                  <Button onClick={shareScreenshot}>Screenshot</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>,
+          ]}
+        />
+        <LoadingMask
+          key='loading-mask'
+          isLoading={isLoading}
+          message={loadingMessage}
+        />
+        <section
+          className='!leading-screenshot pb-24 lg:pb-48 pt-4'
+          ref={screenshotRef}
+        >
+          {renderResults()}
+        </section>
       </section>
       <div className='fixed flex flex-col md:flex-row gap-2 items-center md:justify-center bottom-2 z-40 w-full py-4 px-4'>
-        {!hasTopicSubmitted && (
+        {!hasTopicSubmitted && level?.isAIGenerated && (
           <Button
             className='w-4/5 shadow-xl'
             onClick={() => {
@@ -704,6 +716,24 @@ export default function ResultPage(props: ResultPageProps) {
           Play This Topic Again
         </Button>
       </div>
+      {user && level && !hasTopicSubmitted && (
+        <TopicReviewSheet
+          open={isTopicReviewSheetOpen}
+          onOpenChange={(open) => {
+            setIsTopicReviewSheetOpen(open);
+          }}
+          user={user}
+          defaultNickname={user.nickname ?? ''}
+          topicName={level.name}
+          difficultyLevel={String(level.difficulty)}
+          shouldUseAIForTabooWords={true}
+          targetWords={level.words}
+          onTopicSubmitted={() => {
+            setHasTopicSubmitted(true);
+          }}
+          isAIGenerated={level.isAIGenerated}
+        />
+      )}
       <AlertDialog
         open={contributionDialogOpen}
         onOpenChange={(open) => {
@@ -764,24 +794,6 @@ export default function ResultPage(props: ResultPageProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      {user && level && !hasTopicSubmitted && (
-        <TopicReviewSheet
-          open={isTopicReviewSheetOpen}
-          onOpenChange={(open) => {
-            setIsTopicReviewSheetOpen(open);
-          }}
-          user={user}
-          defaultNickname={user.nickname ?? ''}
-          topicName={level.name}
-          difficultyLevel={String(level.difficulty)}
-          shouldUseAIForTabooWords={true}
-          targetWords={level.words}
-          onTopicSubmitted={() => {
-            setHasTopicSubmitted(true);
-          }}
-          isAIGenerated={level.isAIGenerated}
-        />
-      )}
-    </section>
+    </>
   );
 }

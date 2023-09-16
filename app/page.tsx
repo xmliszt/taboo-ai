@@ -34,7 +34,7 @@ export default function HomePage(props: HomePageProps) {
   const [isSignInPromptOpen, setIsSignInPromptOpen] = useState(false);
   const { user, status, login } = useAuth();
   const router = useRouter();
-  const [scores] = useLocalStorage<IDisplayScore[] | null>(HASH.scores, null);
+  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {
@@ -89,7 +89,7 @@ export default function HomePage(props: HomePageProps) {
             onClick={handleAddTopic}
             aria-label='Click to contribute a new topic to Taboo AI'
           />
-          {scores !== null && (
+          {scores !== undefined && scores.length > 0 && (
             <HomeMenuButton
               icon={<ScrollText size={20} />}
               title='See my last result'

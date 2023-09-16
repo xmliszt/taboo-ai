@@ -41,7 +41,7 @@ export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, status, login, logout } = useAuth();
-  const [scores] = useLocalStorage<IDisplayScore[] | null>(HASH.scores, null);
+  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
 
   const handleLogout = async () => {
     try {
@@ -70,7 +70,8 @@ export function UserLoginPortal() {
       {
         label: 'My Last Result',
         icon: <ScrollText />,
-        isVisible: scores !== null && pathname !== '/result',
+        isVisible:
+          scores !== undefined && scores.length > 0 && pathname !== '/result',
         onClick: () => {
           router.push('/result');
         },
