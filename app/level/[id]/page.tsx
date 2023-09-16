@@ -1,6 +1,13 @@
 'use client';
 
-import { FormEvent, useState, useEffect, useRef, ChangeEvent } from 'react';
+import {
+  FormEvent,
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  useCallback,
+} from 'react';
 import Timer from '@/components/custom/timer';
 import {
   askAIForQueryResponse,
@@ -29,11 +36,16 @@ import { Label } from '@/components/ui/label';
 import { IChat, IDisplayScore } from '@/lib/types/score.interface';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import ILevel from '@/lib/types/level.interface';
+import { Skeleton } from '@/components/custom/skeleton';
+import { getLevel } from '@/lib/services/levelService';
 
-interface LevelPageProps {}
+interface LevelPageProps {
+  params: { id: string };
+}
 
-export default function LevelPage(props: LevelPageProps) {
+export default function LevelPage({ params: { id } }: LevelPageProps) {
   //SECTION - States
+  const [level, setLevel] = useState<ILevel>();
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
@@ -52,7 +64,13 @@ export default function LevelPage(props: LevelPageProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(5);
-  const { time, start, pause, reset, status } = useTimer({
+  const {
+    time,
+    start: startTimer,
+    pause: pauseTimer,
+    reset: resetTimer,
+    status: timerStatus,
+  } = useTimer({
     initialTime: 0,
     timerType: 'INCREMENTAL',
   });
@@ -62,7 +80,7 @@ export default function LevelPage(props: LevelPageProps) {
     timerType: 'DECREMENTAL',
     onTimeOver: () => {
       setIsCountdown(false);
-      start();
+      startTimer();
       inputTextField.current?.focus();
     },
   });
@@ -72,15 +90,51 @@ export default function LevelPage(props: LevelPageProps) {
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { item: level } = useLocalStorage<ILevel>(HASH.level);
   const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
+  const { item: cachedLevel, setItem: addLevelToLocalStorage } =
+    useLocalStorage<ILevel>(HASH.level);
   const { setItem: setScores, clearItem: clearScores } = useLocalStorage<
     IDisplayScore[]
   >(HASH.scores);
 
+  const fetchLevel = useCallback(async () => {
+    const level = await getLevel(id);
+    if (level) {
+      setLevel(level);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (id === 'ai') {
+      setLevel(cachedLevel);
+    } else {
+      fetchLevel();
+    }
+  }, [fetchLevel, cachedLevel]);
+
   useEffect(() => {
     setScores(savedScores);
   }, [savedScores]);
+
+  //SECTION - When level fetched, we start the game
+  useEffect(() => {
+    if (level) {
+      resetTimer();
+      clearScores();
+      id !== 'ai' && addLevelToLocalStorage(level); // update local storage level if not ai mode
+      setDifficulty(level.difficulty);
+      const words = level.words.map((word) => formatStringForDisplay(word));
+      setWords(words);
+      const _target = generateNewTarget(words);
+      setTarget(_target);
+      setCurrentProgress(1);
+      setIsSuccess(false);
+      setResponseText(
+        'Think about your prompt while we generate the Taboo words.'
+      );
+    }
+  }, [level]);
+  //!SECTION
 
   //!SECTION
   const generateNewTarget = (words: string[]): string => {
@@ -201,7 +255,7 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - Fetch Response
   const fetchResponse = async (prompt: IChat) => {
     setIsLoading(true);
-    pause();
+    pauseTimer();
     // * Make sure response fade out completely!
     setTimeout(async () => {
       try {
@@ -226,7 +280,7 @@ export default function LevelPage(props: LevelPageProps) {
             { role: 'error', content: CONSTANTS.errors.overloaded },
           ]);
           setIsLoading(false);
-          start();
+          startTimer();
           return;
         } else {
           setConversation([
@@ -247,7 +301,7 @@ export default function LevelPage(props: LevelPageProps) {
           { role: 'error', content: CONSTANTS.errors.overloaded },
         ]);
         setIsLoading(false);
-        start();
+        startTimer();
       }
     }, 1000);
   };
@@ -255,7 +309,7 @@ export default function LevelPage(props: LevelPageProps) {
 
   //SECTION - Next Question
   const nextQuestion = async () => {
-    pause();
+    pauseTimer();
     const copySavedScores = [...savedScores];
     copySavedScores.push({
       id: currentProgress,
@@ -353,25 +407,6 @@ export default function LevelPage(props: LevelPageProps) {
   }, [target]);
   //!SECTION
 
-  //SECTION - At the start of the game
-  useEffect(() => {
-    clearScores();
-    if (level) {
-      reset();
-      setDifficulty(level.difficulty);
-      const words = level.words.map((word) => formatStringForDisplay(word));
-      setWords(words);
-      const _target = generateNewTarget(words);
-      setTarget(_target);
-      setCurrentProgress(1);
-      setIsSuccess(false);
-      setResponseText(
-        'Think about your prompt while we generate the Taboo words.'
-      );
-    }
-  }, [level]);
-  //!SECTION
-
   //SECTION - When progress changed
   useEffect(() => {
     const isLastRound =
@@ -393,7 +428,7 @@ export default function LevelPage(props: LevelPageProps) {
   //SECITON - Timer control
   useEffect(() => {
     if (isCountingdown) {
-      reset();
+      resetTimer();
     }
   }, [isCountingdown]);
   //!SECTION
@@ -427,8 +462,8 @@ export default function LevelPage(props: LevelPageProps) {
       isLoading ||
       isGeneratingVariations ||
       isLoading
-        ? pause()
-        : start();
+        ? pauseTimer()
+        : startTimer();
     }
   }, [highlights]);
   //!SECTION
@@ -488,12 +523,20 @@ export default function LevelPage(props: LevelPageProps) {
     );
   };
 
+  if (!level) {
+    return (
+      <section className='flex justify-center h-full pt-20 px-4'>
+        <h1 className='fixed z-20 top-3 w-full flex justify-center'>
+          <div className='rounded-lg shadow-lg px-3 py-1 w-fit'>Taboo AI</div>
+        </h1>
+        <Skeleton numberOfRows={10} />
+      </section>
+    );
+  }
+
   return (
     <section className='flex justify-center h-full'>
-      <h1 className='fixed z-20 top-3 w-full flex justify-center'>
-        <div className='rounded-lg shadow-lg px-3 py-1 w-fit'>Taboo AI</div>
-      </h1>
-      {isCountingdown && (
+      {isCountingdown ? (
         <div className='fixed z-50 top-1/2 w-full text-center text-5xl animate-bounce'>
           {countdown.time === 0
             ? 'Start'
@@ -501,11 +544,17 @@ export default function LevelPage(props: LevelPageProps) {
             ? ''
             : countdown.time}
         </div>
+      ) : isGeneratingVariations ? (
+        <div className='fixed z-50 top-1/2 w-full text-center text-3xl animate-bounce'>
+          {renderWaitingMessageForVariations()}
+        </div>
+      ) : (
+        <></>
       )}
       <Timer
         className='fixed top-3 right-3 z-50 shadow-lg'
         time={time}
-        status={status}
+        status={timerStatus}
       />
       <section className='flex flex-col gap-4 text-center h-full w-full pt-20'>
         <div className='flex-grow w-full flex flex-col gap-4 px-4 pb-4 overflow-y-scroll scrollbar-hide'>
@@ -523,6 +572,15 @@ export default function LevelPage(props: LevelPageProps) {
                 generateHighlightedMessage(prompt.content)
               ) : prompt.role === 'error' ? (
                 <span className='text-slate-400'>{prompt.content}</span>
+              ) : prompt.role === 'assistant' ? (
+                prompt.content.split('').map((c, i) => (
+                  <span
+                    key={`ai-prompt-character-${i}`}
+                    className={`animate-pulse animation-delay-${i * 100}`}
+                  >
+                    {c}
+                  </span>
+                ))
               ) : (
                 `${prompt.content}`
               )}
@@ -550,6 +608,7 @@ export default function LevelPage(props: LevelPageProps) {
                 tooltip='Clear input'
                 aria-label='Clear input button'
                 disabled={
+                  !level ||
                   isLoading ||
                   isCountingdown ||
                   isGeneratingVariations ||
@@ -567,6 +626,7 @@ export default function LevelPage(props: LevelPageProps) {
               <Input
                 id='user-input'
                 disabled={
+                  !level ||
                   isLoading ||
                   isCountingdown ||
                   isGeneratingVariations ||
@@ -596,6 +656,7 @@ export default function LevelPage(props: LevelPageProps) {
                 data-style='none'
                 tooltip='Submit'
                 disabled={
+                  !level ||
                   isGeneratingVariations ||
                   isCountingdown ||
                   isEmptyInput ||
