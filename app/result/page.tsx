@@ -4,7 +4,6 @@ import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ILevel from '../../lib/types/level.interface';
 import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
-import { clearScores } from '../../lib/cache';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
 import { IHighlight } from '../../lib/types/highlight.interface';
@@ -75,9 +74,11 @@ export default function ResultPage(props: ResultPageProps) {
   const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
   const [hasScoresLoaded, setHasScoresLoaded] = useState(false);
   const { item: level } = useLocalStorage<ILevel>(HASH.level);
-  const { item: scores, setItem: setScores } = useLocalStorage<IDisplayScore[]>(
-    HASH.scores
-  );
+  const {
+    item: scores,
+    setItem: setScores,
+    clearItem: clearScores,
+  } = useLocalStorage<IDisplayScore[]>(HASH.scores);
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -91,7 +92,11 @@ export default function ResultPage(props: ResultPageProps) {
     if (level) {
       const exists = await isLevelExists(level.name, user?.email);
       setHasTopicSubmitted(exists);
-      if (level.isAIGenerated && status === 'authenticated' && !exists) {
+      if (exists) {
+        toast({ title: 'You have already submitted this topic.' });
+        return;
+      }
+      if (level.isAIGenerated && status === 'authenticated') {
         setContributionDialogOpen(true);
       }
     }
@@ -639,7 +644,7 @@ export default function ResultPage(props: ResultPageProps) {
     return (
       <>
         <Header title='Game Results' />
-        <div className='w-full h-full flex flex-col gap-2 justify-center items-center'>
+        <div className='w-full h-full flex flex-col gap-2 justify-center items-center text-center'>
           <CircleOff size={56} />
           <h1>You have no cached result for display</h1>
           <Button
@@ -700,8 +705,9 @@ export default function ResultPage(props: ResultPageProps) {
             onClick={() => {
               if (!user || status !== 'authenticated') {
                 setIsLoginDialogOpen(true);
+              } else {
+                setIsTopicReviewSheetOpen(true);
               }
-              setIsTopicReviewSheetOpen(true);
             }}
           >
             Submit This Topic To Us

@@ -220,7 +220,7 @@ const Header = ({
                         key={item.title}
                         id={`menu-${idx}`}
                         className={cn(
-                          item.highlight ? 'animate-pulse' : '',
+                          item.highlight ? 'border-green-500' : '',
                           pathname === item.href
                             ? 'border-4 border-primary font-bold'
                             : '',
@@ -228,7 +228,7 @@ const Header = ({
                           'hover:shadow-lg hover:cursor-pointer hover:scale-105 transition-all ease-in-out'
                         )}
                         onClick={(e) => {
-                          if (item.isUpcoming) {
+                          if (item.isUpcoming || item.href === pathname) {
                             return;
                           }
                           setMenuOpen(false);

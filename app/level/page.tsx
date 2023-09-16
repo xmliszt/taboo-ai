@@ -10,7 +10,6 @@ import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '@/lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { clearScores } from '@/lib/cache';
 import { IHighlight } from '@/lib/types/highlight.interface';
 import {
   formatStringForDisplay,
@@ -75,7 +74,9 @@ export default function LevelPage(props: LevelPageProps) {
   const { toast } = useToast();
   const { item: level } = useLocalStorage<ILevel>(HASH.level);
   const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
-  const { setItem: setScores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
+  const { setItem: setScores, clearItem: clearScores } = useLocalStorage<
+    IDisplayScore[]
+  >(HASH.scores);
 
   useEffect(() => {
     setScores(savedScores);

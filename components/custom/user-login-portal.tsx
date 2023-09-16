@@ -23,7 +23,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { toast } from '../ui/use-toast';
-import { clearLevel, clearScores } from '@/lib/cache';
 import { IDisplayScore } from '@/lib/types/score.interface';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import { HASH } from '@/lib/hash';
@@ -46,8 +45,6 @@ export function UserLoginPortal() {
   const handleLogout = async () => {
     try {
       logout && (await logout());
-      clearLevel();
-      clearScores();
     } catch (error) {
       console.error(error);
       toast({

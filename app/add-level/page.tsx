@@ -77,7 +77,6 @@ const AddLevelPage = () => {
   const [tabooWordsErrorIndexs, setTabooWordsErrorIndexs] = useState<
     number[][]
   >([]);
-  const [nickname, setNickname] = useState('');
 
   //ANCHOR - States for appeal
   const [selectedWordForAppeal, setselectedWordForAppeal] = useState('');
@@ -99,12 +98,6 @@ const AddLevelPage = () => {
       router.push('/');
     }
   }, [status]);
-
-  useEffect(() => {
-    if (user) {
-      setNickname(user.nickname ?? user.name ?? '');
-    }
-  }, [user]);
 
   useEffect(() => {
     validateTargetWords();
@@ -846,7 +839,7 @@ const AddLevelPage = () => {
       )}
       <TopicReviewSheet
         user={user}
-        defaultNickname={nickname}
+        defaultNickname={user.nickname ?? user.name ?? ''}
         difficultyLevel={difficultyLevel}
         open={reviewSheetOpen}
         onOpenChange={(open) => {

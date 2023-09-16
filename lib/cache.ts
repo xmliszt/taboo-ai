@@ -1,4 +1,3 @@
-import { IDisplayScore } from './types/score.interface';
 import { HASH } from './hash';
 
 //ANCHOR - Level
