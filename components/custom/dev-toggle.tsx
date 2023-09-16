@@ -178,7 +178,7 @@ const DevToggle = (props: DevToggleProps) => {
               </div>
             </fieldset>
             <Button
-              disabled={path !== '/level' && path !== '/daily-challenge'}
+              disabled={!/^\/level\/.+$/.test(path ?? '')}
               onClick={autoCompleteLevel}
             >
               auto complete

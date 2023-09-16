@@ -1,20 +1,23 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
-import { Lora } from 'next/font/google';
-import { AnalyticsWrapper } from '../components/analytics-wrapper';
-import FeaturePopup from '../components/custom/feature-popup';
-import Maintenance from '../components/custom/maintenance';
 import { Metadata } from 'next';
-import { _meta } from '../lib/metadata';
-import PWAInstaller from '../components/custom/pwa-installer';
+import { Suspense } from 'react';
 import Script from 'next/script';
-import { AuthProvider } from '../components/auth-provider';
+import { Lora } from 'next/font/google';
+
+import { _meta } from '@/lib/metadata';
+import { AnalyticsWrapper } from '@/components/analytics-wrapper';
+import FeaturePopup from '@/components/custom/feature-popup';
+import Maintenance from '@/components/custom/maintenance';
+import PWAInstaller from '@/components/custom/pwa-installer';
+import { AuthProvider } from '@/components/auth-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import SideMenu from '@/components/custom/side-menu';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
+import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
 
 import './markdown.css';
 import './globals.css';
-import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -45,6 +48,9 @@ export default function RootLayout({
               ) : (
                 <>
                   <PWAInstaller>{children}</PWAInstaller>
+                  <Suspense>
+                    <SideMenu />
+                  </Suspense>
                   <FeaturePopup />
                 </>
               )}

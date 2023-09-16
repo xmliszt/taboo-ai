@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CircleOff, Hand, MousePointerClick, Share } from 'lucide-react';
-import Header from '@/components/header/Header';
+import Header from '@/components/header/header';
 import IconButton from '@/components/ui/icon-button';
 import { ScoreInfoButton } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
@@ -52,6 +52,7 @@ import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import { isLevelExists } from '@/lib/services/levelService';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { Spinner } from '@/components/custom/spinner';
 
 interface StatItem {
   title: string;
@@ -78,6 +79,7 @@ export default function ResultPage(props: ResultPageProps) {
     item: scores,
     setItem: setScores,
     clearItem: clearScores,
+    loading: isFetchingCachedScores,
   } = useLocalStorage<IDisplayScore[]>(HASH.scores);
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
@@ -645,15 +647,24 @@ export default function ResultPage(props: ResultPageProps) {
       <>
         <Header title='Game Results' />
         <div className='w-full h-full flex flex-col gap-2 justify-center items-center text-center'>
-          <CircleOff size={56} />
-          <h1>You have no cached result for display</h1>
-          <Button
-            onClick={() => {
-              router.push('/levels');
-            }}
-          >
-            Browse Topics
-          </Button>
+          {isFetchingCachedScores ? (
+            <>
+              <Spinner size={50} />
+              <h1>Searching for cached result...</h1>
+            </>
+          ) : (
+            <>
+              <CircleOff size={56} className='animate-pulse' />
+              <h1>You have no cached result for display</h1>
+              <Button
+                onClick={() => {
+                  router.push('/levels');
+                }}
+              >
+                Browse Topics
+              </Button>
+            </>
+          )}
         </div>
       </>
     );
@@ -713,14 +724,16 @@ export default function ResultPage(props: ResultPageProps) {
             Submit This Topic To Us
           </Button>
         )}
-        <Button
-          className='w-4/5 shadow-xl'
-          onClick={() => {
-            router.push('/level');
-          }}
-        >
-          Play This Topic Again
-        </Button>
+        {level && (
+          <Button
+            className='w-4/5 shadow-xl'
+            onClick={() => {
+              router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
+            }}
+          >
+            Play This Topic Again
+          </Button>
+        )}
       </div>
       {user && level && !hasTopicSubmitted && (
         <TopicReviewSheet
@@ -729,7 +742,7 @@ export default function ResultPage(props: ResultPageProps) {
             setIsTopicReviewSheetOpen(open);
           }}
           user={user}
-          defaultNickname={user.nickname ?? ''}
+          defaultNickname={user.nickname ?? user.name ?? ''}
           topicName={level.name}
           difficultyLevel={String(level.difficulty)}
           shouldUseAIForTabooWords={true}

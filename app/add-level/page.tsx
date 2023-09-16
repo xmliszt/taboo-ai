@@ -3,7 +3,7 @@
 import _, { zip } from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
-import { addTabooWords, getTabooWords } from '@/lib/services/wordService';
+import { getTabooWords } from '@/lib/services/wordService';
 import { useAuth } from '../../components/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';

@@ -9,7 +9,7 @@ import { BsDiscord } from 'react-icons/bs';
 import ContactMe from '../components/custom/contact-me';
 import SocialLinkButton from '../components/custom/social-link-button';
 import { useAuth } from '../components/auth-provider';
-import Header from '@/components/header/Header';
+import Header from '@/components/header/header';
 import { HomeMenuButton } from '@/components/custom/home-menu-button';
 import {
   Dialog,

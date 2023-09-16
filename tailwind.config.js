@@ -74,6 +74,12 @@ module.exports = {
         'carousell-10': 'moveIn 20s linear infinite',
         'fade-inout-first-loop': 'fadeInOut 10s ease-in-out infinite',
         'fade-inout-delay-loop': 'fadeInOut 10s ease-in-out 5s infinite',
+        'small-bounce-delay-1-loop':
+          'smallBounce 300ms alternate infinite cubic-bezier(.2, .65, .6, 1)',
+        'small-bounce-delay-2-loop':
+          'smallBounce 300ms alternate 100ms infinite cubic-bezier(.2, .65, .6, 1)',
+        'small-bounce-delay-3-loop':
+          'smallBounce 300ms alternate 200ms infinite cubic-bezier(.2, .65, .6, 1)',
       },
       keyframes: {
         'accordion-down': {
@@ -107,6 +113,10 @@ module.exports = {
           '50%': { opacity: 100 },
           '53%': { opacity: 0 },
           '100%': { opacity: 0 },
+        },
+        smallBounce: {
+          from: { transform: 'translateY(0px)' },
+          to: { transform: 'translateY(-5px)' },
         },
       },
     },

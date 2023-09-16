@@ -1,5 +1,6 @@
 export enum CustomEventKey {
   LOGIN_ERROR = 'login-error-event',
+  TOGGLE_MENU = 'toggle-menu-event',
 }
 
 export class EventManager {

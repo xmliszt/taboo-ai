@@ -107,7 +107,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   useEffect(() => {
     if (id === 'ai') {
       setLevel(cachedLevel);
-    } else {
+    } else if (level === undefined) {
       fetchLevel();
     }
   }, [fetchLevel, cachedLevel]);
@@ -569,18 +569,40 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
             >
               {prompt.role === 'assistant' &&
               idx === conversation.length - 1 ? (
-                generateHighlightedMessage(prompt.content)
+                prompt.content === '...' ? (
+                  <span className='flex flex-row gap-1 items-center'>
+                    {'...'.split('').map((c, i) =>
+                      i === 0 ? (
+                        <span
+                          key={`ai-prompt-character-${i}`}
+                          className={`animate-small-bounce-delay-1-loop`}
+                        >
+                          {c}
+                        </span>
+                      ) : i === 1 ? (
+                        <span
+                          key={`ai-prompt-character-${i}`}
+                          className={`animate-small-bounce-delay-2-loop`}
+                        >
+                          {c}
+                        </span>
+                      ) : i === 2 ? (
+                        <span
+                          key={`ai-prompt-character-${i}`}
+                          className={`animate-small-bounce-delay-3-loop`}
+                        >
+                          {c}
+                        </span>
+                      ) : (
+                        ''
+                      )
+                    )}
+                  </span>
+                ) : (
+                  generateHighlightedMessage(prompt.content)
+                )
               ) : prompt.role === 'error' ? (
                 <span className='text-slate-400'>{prompt.content}</span>
-              ) : prompt.role === 'assistant' ? (
-                prompt.content.split('').map((c, i) => (
-                  <span
-                    key={`ai-prompt-character-${i}`}
-                    className={`animate-pulse animation-delay-${i * 100}`}
-                  >
-                    {c}
-                  </span>
-                ))
               ) : (
                 `${prompt.content}`
               )}

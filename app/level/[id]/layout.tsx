@@ -1,5 +1,5 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import Header from '@/components/header/Header';
+import Header from '@/components/header/header';
 import DevToggle from '@/components/custom/dev-toggle';
 import { getAllLevels, getLevel } from '@/lib/services/levelService';
 
