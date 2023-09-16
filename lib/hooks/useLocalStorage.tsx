@@ -1,10 +1,9 @@
-import React, { useDebugValue, useEffect, useState } from 'react';
+'use client';
 
-export const useLocalStorage = <S,>(
-  key: string,
-  initialState?: S | (() => S)
-): [S, React.Dispatch<React.SetStateAction<S>>] => {
-  const [state, setState] = useState<S>(initialState as S);
+import { useDebugValue, useEffect, useState } from 'react';
+
+export const useLocalStorage = <S,>(key: string) => {
+  const [state, setState] = useState<S>();
   useDebugValue(state);
 
   useEffect(() => {
@@ -12,11 +11,12 @@ export const useLocalStorage = <S,>(
     if (item) setState(parse(item));
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
-  }, [state]);
+  const setItem = (s: S) => {
+    localStorage.setItem(key, JSON.stringify(s));
+    setState(s);
+  };
 
-  return [state, setState];
+  return { item: state, setItem };
 };
 
 const parse = (value: string) => {

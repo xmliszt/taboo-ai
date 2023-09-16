@@ -22,7 +22,7 @@ export default function AiPage(props: AiPageProps) {
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [_, setLevel] = useLocalStorage<ILevel | null>(HASH.level, null);
+  const { setItem: setLevel } = useLocalStorage<ILevel>(HASH.level);
   const router = useRouter();
 
   const submitForm = async (event: FormEvent) => {

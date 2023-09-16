@@ -660,7 +660,6 @@ const AddLevelPage = () => {
                   type='single'
                   collapsible
                   onValueChange={(value) => {
-                    console.log(value);
                     setExpandedAccItem(value);
                     const expandedIndex = Number(value);
                     if (expandedIndex < 0) {

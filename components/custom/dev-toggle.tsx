@@ -29,11 +29,8 @@ const DevToggle = (props: DevToggleProps) => {
   const { user, status } = useAuth();
   const router = useRouter();
   const path = usePathname();
-  const [level] = useLocalStorage<ILevel | null>(HASH.level, null);
-  const [_, setScores] = useLocalStorage<IDisplayScore[] | null>(
-    HASH.scores,
-    null
-  );
+  const { item: level } = useLocalStorage<ILevel>(HASH.level);
+  const { setItem: setScores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
 
   useEffect(() => {
     if (status === 'authenticated' && AdminManager.checkIsAdmin(user)) {

@@ -73,12 +73,9 @@ export default function LevelPage(props: LevelPageProps) {
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const [level] = useLocalStorage<ILevel | null>(HASH.level, null);
+  const { item: level } = useLocalStorage<ILevel>(HASH.level);
   const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
-  const [scores, setScores] = useLocalStorage<IDisplayScore[] | null>(
-    HASH.scores,
-    null
-  );
+  const { setItem: setScores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
 
   useEffect(() => {
     setScores(savedScores);
@@ -358,7 +355,7 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - At the start of the game
   useEffect(() => {
     clearScores();
-    if (level !== null) {
+    if (level) {
       reset();
       setDifficulty(level.difficulty);
       const words = level.words.map((word) => formatStringForDisplay(word));
@@ -370,8 +367,6 @@ export default function LevelPage(props: LevelPageProps) {
       setResponseText(
         'Think about your prompt while we generate the Taboo words.'
       );
-    } else {
-      throw Error('No level is chosen');
     }
   }, [level]);
   //!SECTION
