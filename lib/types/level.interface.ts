@@ -9,4 +9,5 @@ export default interface ILevel {
   createdAt?: string;
   popularity?: number;
   authorEmail?: string;
+  isAIGenerated?: boolean;
 }

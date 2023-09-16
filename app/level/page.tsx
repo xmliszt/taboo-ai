@@ -10,7 +10,7 @@ import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '@/lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { cacheScore, clearScores, getLevelCache } from '@/lib/cache';
+import { clearScores } from '@/lib/cache';
 import { IHighlight } from '@/lib/types/highlight.interface';
 import {
   formatStringForDisplay,
@@ -27,8 +27,9 @@ import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { IChat } from '@/lib/types/score.interface';
-import DevToggle from '@/components/custom/dev-toggle';
+import { IChat, IDisplayScore } from '@/lib/types/score.interface';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import ILevel from '@/lib/types/level.interface';
 
 interface LevelPageProps {}
 
@@ -72,6 +73,16 @@ export default function LevelPage(props: LevelPageProps) {
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const [level] = useLocalStorage<ILevel | null>(HASH.level, null);
+  const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
+  const [scores, setScores] = useLocalStorage<IDisplayScore[] | null>(
+    HASH.scores,
+    null
+  );
+
+  useEffect(() => {
+    setScores(savedScores);
+  }, [savedScores]);
 
   //!SECTION
   const generateNewTarget = (words: string[]): string => {
@@ -247,7 +258,8 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - Next Question
   const nextQuestion = async () => {
     pause();
-    cacheScore({
+    const copySavedScores = [...savedScores];
+    copySavedScores.push({
       id: currentProgress,
       target: target ?? '',
       conversation: conversation,
@@ -255,6 +267,7 @@ export default function LevelPage(props: LevelPageProps) {
       completion: time,
       responseHighlights: highlights,
     });
+    setSavedScores(copySavedScores);
     setIsSuccess(true);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
       toast({
@@ -345,7 +358,6 @@ export default function LevelPage(props: LevelPageProps) {
   //SECTION - At the start of the game
   useEffect(() => {
     clearScores();
-    const level = getLevelCache();
     if (level !== null) {
       reset();
       setDifficulty(level.difficulty);
@@ -361,7 +373,7 @@ export default function LevelPage(props: LevelPageProps) {
     } else {
       throw Error('No level is chosen');
     }
-  }, []);
+  }, [level]);
   //!SECTION
 
   //SECTION - When progress changed
