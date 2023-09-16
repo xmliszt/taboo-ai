@@ -7,6 +7,7 @@ import {
   useRef,
   ChangeEvent,
   useCallback,
+  useMemo,
 } from 'react';
 import Timer from '@/components/custom/timer';
 import {
@@ -81,7 +82,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     onTimeOver: () => {
       setIsCountdown(false);
       startTimer();
-      inputTextField.current?.focus();
     },
   });
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
@@ -97,6 +97,22 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     IDisplayScore[]
   >(HASH.scores);
 
+  const isInputDisable = useMemo(() => {
+    return (
+      !level ||
+      isLoading ||
+      isCountingdown ||
+      isGeneratingVariations ||
+      isSuccess
+    );
+  }, [level, isLoading, isCountingdown, isGeneratingVariations, isSuccess]);
+
+  useEffect(() => {
+    if (inputTextField.current) {
+      inputTextField.current.focus();
+    }
+  }, [inputTextField]);
+
   const fetchLevel = useCallback(async () => {
     const level = await getLevel(id);
     if (level) {
@@ -107,7 +123,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   useEffect(() => {
     if (id === 'ai') {
       setLevel(cachedLevel);
-    } else {
+    } else if (level === undefined) {
       fetchLevel();
     }
   }, [fetchLevel, cachedLevel]);
@@ -537,7 +553,20 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   return (
     <section className='flex justify-center h-full'>
       {isCountingdown ? (
-        <div className='fixed z-50 top-1/2 w-full text-center text-5xl animate-bounce'>
+        <div
+          className={cn(
+            'fixed z-50 top-1/2 w-full text-center animate-bounce',
+            countdown.time === 0
+              ? 'text-6xl'
+              : countdown.time === 1
+              ? 'text-5xl'
+              : countdown.time === 2
+              ? 'text-4xl'
+              : countdown.time === 3
+              ? 'text-3xl'
+              : 'text-2xl'
+          )}
+        >
           {countdown.time === 0
             ? 'Start'
             : countdown.time === -1
@@ -569,18 +598,40 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
             >
               {prompt.role === 'assistant' &&
               idx === conversation.length - 1 ? (
-                generateHighlightedMessage(prompt.content)
+                prompt.content === '...' ? (
+                  <span className='flex flex-row gap-1 items-center'>
+                    {'...'.split('').map((c, i) =>
+                      i === 0 ? (
+                        <span
+                          key={`ai-prompt-character-${i}`}
+                          className={`animate-small-bounce-delay-1-loop`}
+                        >
+                          {c}
+                        </span>
+                      ) : i === 1 ? (
+                        <span
+                          key={`ai-prompt-character-${i}`}
+                          className={`animate-small-bounce-delay-2-loop`}
+                        >
+                          {c}
+                        </span>
+                      ) : i === 2 ? (
+                        <span
+                          key={`ai-prompt-character-${i}`}
+                          className={`animate-small-bounce-delay-3-loop`}
+                        >
+                          {c}
+                        </span>
+                      ) : (
+                        ''
+                      )
+                    )}
+                  </span>
+                ) : (
+                  generateHighlightedMessage(prompt.content)
+                )
               ) : prompt.role === 'error' ? (
                 <span className='text-slate-400'>{prompt.content}</span>
-              ) : prompt.role === 'assistant' ? (
-                prompt.content.split('').map((c, i) => (
-                  <span
-                    key={`ai-prompt-character-${i}`}
-                    className={`animate-pulse animation-delay-${i * 100}`}
-                  >
-                    {c}
-                  </span>
-                ))
               ) : (
                 `${prompt.content}`
               )}
@@ -625,14 +676,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
               </IconButton>
               <Input
                 id='user-input'
-                disabled={
-                  !level ||
-                  isLoading ||
-                  isCountingdown ||
-                  isGeneratingVariations ||
-                  isSuccess
-                }
+                disabled={isInputDisable}
                 ref={inputTextField}
+                autoFocus
                 placeholder={
                   isGeneratingVariations
                     ? 'Generating taboo words...'

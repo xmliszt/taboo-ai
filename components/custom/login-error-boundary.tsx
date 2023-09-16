@@ -19,11 +19,17 @@ export function LoginErrorBoundary() {
   const [alertHeader, setAlertHeader] = useState('');
 
   useEffect(() => {
-    EventManager.bindEvent(CustomEventKey.LOGIN_ERROR, ({ detail }) => {
-      console.log(detail);
-      setAlertHeader(detail);
-      setAlertOpen(true);
-    });
+    const listener = EventManager.bindEvent(
+      CustomEventKey.LOGIN_ERROR,
+      ({ detail }) => {
+        console.log(detail);
+        setAlertHeader(detail);
+        setAlertOpen(true);
+      }
+    );
+    return () => {
+      EventManager.removeListener(CustomEventKey.LOGIN_ERROR, listener);
+    };
   }, []);
 
   const handleLogin = async () => {

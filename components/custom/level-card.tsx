@@ -9,8 +9,6 @@ import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-import { HASH } from '@/lib/hash';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -19,17 +17,14 @@ interface LevelCardProps {
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
-  const { setItem: setLevel } = useLocalStorage<ILevel>(HASH.level);
   const goToLevel = () => {
     if (level) {
-      updateLevelPopularity(level.id, (level.popularity ?? 0) + 1)
-        .then(() => {
-          setLevel(level);
-          return router.push(`/level/${level.id}`);
-        })
-        .catch((error) => {
+      router.push(`/level/${level.id}`);
+      updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
+        (error) => {
           console.error(error);
-        });
+        }
+      );
     } else {
       return router.push('/ai');
     }

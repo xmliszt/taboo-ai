@@ -1,24 +1,13 @@
 'use client';
 
-import DevToggle from '@/components/custom/dev-toggle';
 import { Coffee, PenSquare, Quote, ScrollText, View } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { useState } from 'react';
 import { BsDiscord } from 'react-icons/bs';
 import ContactMe from '../components/custom/contact-me';
 import SocialLinkButton from '../components/custom/social-link-button';
 import { useAuth } from '../components/auth-provider';
-import Header from '@/components/header/Header';
 import { HomeMenuButton } from '@/components/custom/home-menu-button';
-import {
-  Dialog,
-  DialogHeader,
-  DialogFooter,
-  DialogContent,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { AdminManager } from '@/lib/admin-manager';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
@@ -31,8 +20,7 @@ const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
-  const [isSignInPromptOpen, setIsSignInPromptOpen] = useState(false);
-  const { user, status, login } = useAuth();
+  const { user, status } = useAuth();
   const router = useRouter();
   const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
 
@@ -40,29 +28,15 @@ export default function HomePage(props: HomePageProps) {
     if (status === 'authenticated') {
       router.push('/add-level');
     } else {
-      setIsSignInPromptOpen(true);
-    }
-  };
-
-  const signIn = async () => {
-    setIsSignInPromptOpen(false);
-    if (login) {
-      try {
-        await login();
-        router.push('/add-level');
-      } catch (error) {
-        console.error(error);
-        EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
-      }
+      EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
+        title: 'You need to login to contribute a topic',
+        redirectHref: '/add-level',
+      });
     }
   };
 
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
-      <Header
-        isTransparent
-        additionLeftItems={[<DevToggle key='dev-toggle' />]}
-      />
       <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex flex-col justify-center items-center overflow-y-scroll scrollbar-hide w-screen gap-2 pt-24 lg:pt-24 pb-4'>
         <div className='w-full relative'>
@@ -134,24 +108,6 @@ export default function HomePage(props: HomePageProps) {
           has more details.
         </p>
       </section>
-
-      <Dialog
-        open={isSignInPromptOpen}
-        onOpenChange={(open) => {
-          setIsSignInPromptOpen(open);
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className='leading-snug'>
-              You need to sign in to contribute a topic!
-            </DialogTitle>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={signIn}>Sign In Here</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </main>
   );
 }

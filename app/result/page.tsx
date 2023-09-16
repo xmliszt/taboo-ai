@@ -15,15 +15,6 @@ import { askAIForJudgingScore } from '../../lib/services/aiService';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -31,8 +22,6 @@ import {
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CircleOff, Hand, MousePointerClick, Share } from 'lucide-react';
-import Header from '@/components/header/Header';
-import IconButton from '@/components/ui/icon-button';
 import { ScoreInfoButton } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
@@ -50,8 +39,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import { isLevelExists } from '@/lib/services/levelService';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { Spinner } from '@/components/custom/spinner';
+import ShareScoreDialog from '@/components/custom/share-score-dialog';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 interface StatItem {
   title: string;
@@ -62,7 +53,7 @@ interface StatItem {
 interface ResultPageProps {}
 
 export default function ResultPage(props: ResultPageProps) {
-  const { user, status, login } = useAuth();
+  const { user, status } = useAuth();
   const [total, setTotal] = useState<number>(0);
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -70,7 +61,6 @@ export default function ResultPage(props: ResultPageProps) {
   const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
-  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
   const [hasScoresLoaded, setHasScoresLoaded] = useState(false);
   const { item: level } = useLocalStorage<ILevel>(HASH.level);
@@ -78,6 +68,7 @@ export default function ResultPage(props: ResultPageProps) {
     item: scores,
     setItem: setScores,
     clearItem: clearScores,
+    loading: isFetchingCachedScores,
   } = useLocalStorage<IDisplayScore[]>(HASH.scores);
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
@@ -643,17 +634,25 @@ export default function ResultPage(props: ResultPageProps) {
   if (!scores || scores.length <= 0) {
     return (
       <>
-        <Header title='Game Results' />
         <div className='w-full h-full flex flex-col gap-2 justify-center items-center text-center'>
-          <CircleOff size={56} />
-          <h1>You have no cached result for display</h1>
-          <Button
-            onClick={() => {
-              router.push('/levels');
-            }}
-          >
-            Browse Topics
-          </Button>
+          {isFetchingCachedScores ? (
+            <>
+              <Spinner size={50} />
+              <h1>Searching for cached result...</h1>
+            </>
+          ) : (
+            <>
+              <CircleOff size={56} className='animate-pulse' />
+              <h1>You have no cached result for display</h1>
+              <Button
+                onClick={() => {
+                  router.push('/levels');
+                }}
+              >
+                Browse Topics
+              </Button>
+            </>
+          )}
         </div>
       </>
     );
@@ -662,30 +661,6 @@ export default function ResultPage(props: ResultPageProps) {
   return (
     <>
       <section className='relative'>
-        <Header
-          title='Game Results'
-          additionRightItems={[
-            <Dialog key='share-1'>
-              <DialogTrigger asChild>
-                <IconButton tooltip='Share your scores'>
-                  <Share />
-                </IconButton>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Share your scores!</DialogTitle>
-                  <DialogDescription>
-                    Choose how you want to share your scores...
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
-                  <Button onClick={sharePlainText}>Plain Text</Button>
-                  <Button onClick={shareScreenshot}>Screenshot</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>,
-          ]}
-        />
         <LoadingMask
           key='loading-mask'
           isLoading={isLoading}
@@ -704,7 +679,9 @@ export default function ResultPage(props: ResultPageProps) {
             className='w-4/5 shadow-xl'
             onClick={() => {
               if (!user || status !== 'authenticated') {
-                setIsLoginDialogOpen(true);
+                EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
+                  title: 'You need to login to contribute a topic to us.',
+                });
               } else {
                 setIsTopicReviewSheetOpen(true);
               }
@@ -713,14 +690,16 @@ export default function ResultPage(props: ResultPageProps) {
             Submit This Topic To Us
           </Button>
         )}
-        <Button
-          className='w-4/5 shadow-xl'
-          onClick={() => {
-            router.push('/level');
-          }}
-        >
-          Play This Topic Again
-        </Button>
+        {level && (
+          <Button
+            className='w-4/5 shadow-xl'
+            onClick={() => {
+              router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
+            }}
+          >
+            Play This Topic Again
+          </Button>
+        )}
       </div>
       {user && level && !hasTopicSubmitted && (
         <TopicReviewSheet
@@ -729,7 +708,7 @@ export default function ResultPage(props: ResultPageProps) {
             setIsTopicReviewSheetOpen(open);
           }}
           user={user}
-          defaultNickname={user.nickname ?? ''}
+          defaultNickname={user.nickname ?? user.name ?? ''}
           topicName={level.name}
           difficultyLevel={String(level.difficulty)}
           shouldUseAIForTabooWords={true}
@@ -768,38 +747,10 @@ export default function ResultPage(props: ResultPageProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <AlertDialog
-        open={isLoginDialogOpen}
-        onOpenChange={(open) => {
-          setIsLoginDialogOpen(open);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              You need to login to contribute a topic to us
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              autoFocus
-              onClick={async () => {
-                try {
-                  login && (await login());
-                } catch (error) {
-                  EventManager.fireEvent(
-                    CustomEventKey.LOGIN_ERROR,
-                    error.message
-                  );
-                }
-              }}
-            >
-              Login
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ShareScoreDialog
+        onSharePlainText={sharePlainText}
+        onShareScreenshot={shareScreenshot}
+      />
     </>
   );
 }
