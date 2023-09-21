@@ -38,7 +38,6 @@ export default function LoginReminderDialog() {
       }
     );
     return () => {
-      console.log('removed reminder listener');
       EventManager.removeListener(CustomEventKey.LOGIN_REMINDER, listener);
     };
   }, []);
