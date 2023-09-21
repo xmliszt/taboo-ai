@@ -14,7 +14,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import SideMenu from '@/components/custom/side-menu';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
-import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
+import { LoginErrorDialog } from '@/components/custom/login-error-dialog';
 import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
 
 import './markdown.css';
@@ -59,12 +59,12 @@ export default function RootLayout({
                       <SideMenu />
                     </Suspense>
                     <PWAInstaller />
+                    <LoginErrorDialog />
                     <LoginReminderDialog />
                     <FeaturePopup />
                   </>
                 )}
                 <AnalyticsWrapper />
-                <LoginErrorBoundary />
               </AuthProvider>
             </GlobalTooltipProvider>
             <Toaster />

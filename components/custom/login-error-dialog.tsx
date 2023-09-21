@@ -12,19 +12,32 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth-provider';
+import { useRouter } from 'next/navigation';
 
-export function LoginErrorBoundary() {
+interface LoginErrorEventProps {
+  error: string;
+  redirectHref?: string;
+}
+
+export function LoginErrorDialog() {
+  const router = useRouter();
   const { setStatus, login } = useAuth();
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertHeader, setAlertHeader] = useState('');
+  const [redirectHref, setRedirectHref] = useState<string>();
 
   useEffect(() => {
     const listener = EventManager.bindEvent(
       CustomEventKey.LOGIN_ERROR,
-      ({ detail }) => {
-        console.log(detail);
-        setAlertHeader(detail);
+      ({
+        detail: { error, redirectHref },
+      }: {
+        detail: LoginErrorEventProps;
+      }) => {
+        console.log(error);
+        setAlertHeader(error);
         setAlertOpen(true);
+        setRedirectHref(redirectHref);
       }
     );
     return () => {
@@ -35,6 +48,7 @@ export function LoginErrorBoundary() {
   const handleLogin = async () => {
     try {
       login && (await login());
+      redirectHref && router.push(redirectHref);
     } catch (error) {
       console.error(error);
       setStatus && setStatus('unauthenticated');
