@@ -17,9 +17,10 @@ import {
 import IconButton from '../ui/icon-button';
 import { Bot } from 'lucide-react';
 import { AdminManager } from '@/lib/admin-manager';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-import ILevel from '@/lib/types/level.interface';
 import { IDisplayScore } from '@/lib/types/score.interface';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
+import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
+import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
 
 interface DevToggleProps {}
 
@@ -29,8 +30,8 @@ const DevToggle = (props: DevToggleProps) => {
   const { user, status } = useAuth();
   const router = useRouter();
   const path = usePathname();
-  const { item: level } = useLocalStorage<ILevel>(HASH.level);
-  const { setItem: setScores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
+  const level = useAppSelector(selectLevelStorage);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (status === 'authenticated' && AdminManager.checkIsAdmin(user)) {
@@ -84,7 +85,7 @@ const DevToggle = (props: DevToggleProps) => {
           ],
         });
       }
-      setScores(savedScores);
+      dispatch(setScoresStorage(savedScores));
     }
     router.push('/result');
   };

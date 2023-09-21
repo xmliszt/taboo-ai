@@ -38,7 +38,6 @@ export default function LoginReminderDialog() {
       }
     );
     return () => {
-      console.log('removed reminder listener');
       EventManager.removeListener(CustomEventKey.LOGIN_REMINDER, listener);
     };
   }, []);
@@ -48,7 +47,10 @@ export default function LoginReminderDialog() {
       login && (await login());
       redirectHref && router.push(redirectHref);
     } catch (error) {
-      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
+      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, {
+        error: error.message,
+        redirectHref,
+      });
     }
   };
 

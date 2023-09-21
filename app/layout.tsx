@@ -14,12 +14,13 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import SideMenu from '@/components/custom/side-menu';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
-import { LoginErrorBoundary } from '@/components/custom/login-error-boundary';
+import { LoginErrorDialog } from '@/components/custom/login-error-dialog';
 import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
 
 import './markdown.css';
 import './globals.css';
 import Header from '@/components/header';
+import ReduxProvider from '@/lib/redux/provider';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -42,30 +43,33 @@ export default function RootLayout({
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
       <body className={`${font.className} scrollbar-hide`}>
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-          <GlobalTooltipProvider delayDuration={300}>
-            <AuthProvider>
-              {maintenanceMode ? (
-                <Maintenance />
-              ) : (
-                <>
-                  <Suspense>
-                    <Header />
-                  </Suspense>
-                  <PWAInstaller>{children}</PWAInstaller>
-                  <Suspense>
-                    <SideMenu />
-                  </Suspense>
-                  <LoginReminderDialog />
-                  <FeaturePopup />
-                </>
-              )}
-              <AnalyticsWrapper />
-              <LoginErrorBoundary />
-            </AuthProvider>
-          </GlobalTooltipProvider>
-          <Toaster />
-        </ThemeProvider>
+        <ReduxProvider>
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+            <GlobalTooltipProvider delayDuration={300}>
+              <AuthProvider>
+                {maintenanceMode ? (
+                  <Maintenance />
+                ) : (
+                  <>
+                    <Suspense>
+                      <Header />
+                    </Suspense>
+                    {children}
+                    <Suspense>
+                      <SideMenu />
+                    </Suspense>
+                    <PWAInstaller />
+                    <LoginErrorDialog />
+                    <LoginReminderDialog />
+                    <FeaturePopup />
+                  </>
+                )}
+                <AnalyticsWrapper />
+              </AuthProvider>
+            </GlobalTooltipProvider>
+            <Toaster />
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

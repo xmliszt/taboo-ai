@@ -35,10 +35,12 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
 import { IChat, IDisplayScore } from '@/lib/types/score.interface';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import ILevel from '@/lib/types/level.interface';
 import { Skeleton } from '@/components/custom/skeleton';
 import { getLevel } from '@/lib/services/levelService';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
+import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
+import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
 
 interface LevelPageProps {
   params: { id: string };
@@ -91,11 +93,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
-  const { item: cachedLevel, setItem: addLevelToLocalStorage } =
-    useLocalStorage<ILevel>(HASH.level);
-  const { setItem: setScores, clearItem: clearScores } = useLocalStorage<
-    IDisplayScore[]
-  >(HASH.scores);
+  const cachedLevel = useAppSelector(selectLevelStorage);
+  const dispatch = useAppDispatch();
 
   const isInputDisable = useMemo(() => {
     return (
@@ -129,15 +128,14 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   }, [fetchLevel, cachedLevel]);
 
   useEffect(() => {
-    setScores(savedScores);
+    dispatch(setScoresStorage(savedScores));
   }, [savedScores]);
 
   //SECTION - When level fetched, we start the game
   useEffect(() => {
     if (level) {
       resetTimer();
-      clearScores();
-      id !== 'ai' && addLevelToLocalStorage(level); // update local storage level if not ai mode
+      dispatch(setScoresStorage(undefined));
       setDifficulty(level.difficulty);
       const words = level.words.map((word) => formatStringForDisplay(word));
       setWords(words);

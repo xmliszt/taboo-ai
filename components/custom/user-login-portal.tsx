@@ -23,10 +23,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { toast } from '../ui/use-toast';
-import { IDisplayScore } from '@/lib/types/score.interface';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-import { HASH } from '@/lib/hash';
 import { useMemo } from 'react';
+import { useAppSelector } from '@/lib/redux/hook';
+import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 
 interface UserMenuItem {
   label: string;
@@ -40,7 +39,7 @@ export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, status, login, logout } = useAuth();
-  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
+  const scores = useAppSelector(selectScoreStorage);
 
   const handleLogout = async () => {
     try {

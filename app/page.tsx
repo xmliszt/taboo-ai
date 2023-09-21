@@ -10,9 +10,8 @@ import { useAuth } from '../components/auth-provider';
 import { HomeMenuButton } from '@/components/custom/home-menu-button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { AdminManager } from '@/lib/admin-manager';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-import { IDisplayScore } from '@/lib/types/score.interface';
-import { HASH } from '@/lib/hash';
+import { useAppSelector } from '@/lib/redux/hook';
+import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 
 interface HomePageProps {}
 
@@ -22,7 +21,7 @@ const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 export default function HomePage(props: HomePageProps) {
   const { user, status } = useAuth();
   const router = useRouter();
-  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
+  const scores = useAppSelector(selectScoreStorage);
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {

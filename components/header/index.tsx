@@ -1,5 +1,6 @@
 'use client';
 
+import useInitializeStoragePersistent from '@/lib/hooks/useInitializeStoragePersistent';
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
 import { usePathname } from 'next/navigation';
@@ -20,6 +21,7 @@ export interface HeaderProps {
 }
 
 export default function Header() {
+  useInitializeStoragePersistent();
   const [
     {
       title,
