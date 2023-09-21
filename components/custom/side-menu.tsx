@@ -63,7 +63,7 @@ export default function SideMenu() {
       `menu-${currentSelectedIndex}`
     );
     currentSelectedElement?.scrollIntoView({ behavior: 'smooth' });
-  }, [isFocused]);
+  }, [isFocused, pathname]);
 
   const handleLogin = async () => {
     if (!login) return;
