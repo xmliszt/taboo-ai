@@ -9,6 +9,8 @@ import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
+import { useAppDispatch } from '@/lib/redux/hook';
+import { setLevelStorage } from '@/lib/redux/features/levelStorageSlice';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -17,8 +19,10 @@ interface LevelCardProps {
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
+  const dispatch = useAppDispatch();
   const goToLevel = () => {
     if (level) {
+      dispatch(setLevelStorage(level));
       router.push(`/level/${level.id}`);
       updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
         (error) => {

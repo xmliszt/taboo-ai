@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 22 Sep 2023 - V3.0.5
+
+- Side menu will restore locations for "Contribute A Topic" and "See Your Result".
+- Minor bug fixes.
+
 ### 16 Sep 2023 - V3.0.4
 
 - Convenient way to allow topic generated from AI Mode to be contributed by providing logged in user the option to submit the level.

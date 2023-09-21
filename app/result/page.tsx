@@ -2,7 +2,6 @@
 
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import ILevel from '../../lib/types/level.interface';
 import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
@@ -21,8 +20,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CircleOff, Hand, MousePointerClick, Share } from 'lucide-react';
-import { ScoreInfoButton } from '@/components/custom/score-info-button';
+import { Hand, MousePointerClick } from 'lucide-react';
+import {
+  ScoreInfoButton,
+  ScoreInfoDialog,
+} from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { HASH } from '@/lib/hash';
@@ -39,10 +41,15 @@ import {
 } from '@/components/ui/alert-dialog';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import { isLevelExists } from '@/lib/services/levelService';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-import { Spinner } from '@/components/custom/spinner';
 import ShareScoreDialog from '@/components/custom/share-score-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
+import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
+import {
+  selectScoreStorage,
+  setScoresStorage,
+} from '@/lib/redux/features/scoreStorageSlice';
+import { Skeleton } from '@/components/custom/skeleton';
 
 interface StatItem {
   title: string;
@@ -62,14 +69,9 @@ export default function ResultPage(props: ResultPageProps) {
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
   const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
-  const [hasScoresLoaded, setHasScoresLoaded] = useState(false);
-  const { item: level } = useLocalStorage<ILevel>(HASH.level);
-  const {
-    item: scores,
-    setItem: setScores,
-    clearItem: clearScores,
-    loading: isFetchingCachedScores,
-  } = useLocalStorage<IDisplayScore[]>(HASH.scores);
+  const level = useAppSelector(selectLevelStorage);
+  const scores = useAppSelector(selectScoreStorage);
+  const dispatch = useAppDispatch();
   const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -94,9 +96,19 @@ export default function ResultPage(props: ResultPageProps) {
   }, [level, user, status]);
 
   useEffect(() => {
-    if (!hasScoresLoaded && scores !== undefined) {
-      setHasScoresLoaded(true);
-      checkUserStatus();
+    if (scores !== undefined) {
+      if (
+        scores.some(
+          (s) => s.ai_score === undefined || s.ai_explanation === undefined
+        )
+      ) {
+        checkUserStatus();
+      } else {
+        const displayScores = JSON.parse(
+          JSON.stringify(scores)
+        ) as IDisplayScore[];
+        displayScores && updateDisplayedScores(displayScores);
+      }
     }
   }, [scores]);
 
@@ -130,7 +142,8 @@ export default function ResultPage(props: ResultPageProps) {
         `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
       );
       setIsLoading(true);
-      const copyScores = [...scores];
+      const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
+      if (!copyScores) return;
       for (let i = 0; i < scores.length; i++) {
         const tempScores: IAIScore[] = [];
         const score = scores[i];
@@ -177,7 +190,7 @@ export default function ResultPage(props: ResultPageProps) {
       }
       setIsLoading(false);
       setLoadingMessage('Loading...');
-      clearScores();
+      dispatch(setScoresStorage(copyScores));
       updateDisplayedScores(copyScores);
     }
   };
@@ -193,7 +206,6 @@ export default function ResultPage(props: ResultPageProps) {
     displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
     setTotal(total);
     setTotalScore(totalScore);
-    setScores(displayScores);
   };
 
   const handleContributeAITopic = () => {
@@ -553,7 +565,6 @@ export default function ResultPage(props: ResultPageProps) {
               </div>
             </div>
             <div className='flex flex-row items-center'>
-              <ScoreInfoButton />
               <span className='font-extrabold leading-snug' key={uniqueId()}>
                 Score: {calculateScore(score)}
               </span>
@@ -571,7 +582,7 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const renderResults = () => {
-    return (
+    return scores && scores.length > 0 ? (
       <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
         <Alert className='shadow-lg text-xl'>
           <AlertTitle className='flex flex-row gap-2 items-center'>
@@ -599,7 +610,7 @@ export default function ResultPage(props: ResultPageProps) {
             <div className='flex flex-row justify-between'>
               <span>Total Score:</span>
               <div className='flex flex-row items-center'>
-                <ScoreInfoButton />
+                <ScoreInfoButton asChild />
                 <span className='font-bold'>{_.round(totalScore, 1)}</span>
               </div>
             </div>
@@ -628,35 +639,12 @@ export default function ResultPage(props: ResultPageProps) {
           </Accordion>
         </div>
       </div>
+    ) : (
+      <div className='w-full mt-20 px-4'>
+        <Skeleton numberOfRows={10} />
+      </div>
     );
   };
-
-  if (!scores || scores.length <= 0) {
-    return (
-      <>
-        <div className='w-full h-full flex flex-col gap-2 justify-center items-center text-center'>
-          {isFetchingCachedScores ? (
-            <>
-              <Spinner size={50} />
-              <h1>Searching for cached result...</h1>
-            </>
-          ) : (
-            <>
-              <CircleOff size={56} className='animate-pulse' />
-              <h1>You have no cached result for display</h1>
-              <Button
-                onClick={() => {
-                  router.push('/levels');
-                }}
-              >
-                Browse Topics
-              </Button>
-            </>
-          )}
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -681,6 +669,7 @@ export default function ResultPage(props: ResultPageProps) {
               if (!user || status !== 'authenticated') {
                 EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
                   title: 'You need to login to contribute a topic to us.',
+                  redirectHref: '/add-level',
                 });
               } else {
                 setIsTopicReviewSheetOpen(true);
@@ -751,6 +740,7 @@ export default function ResultPage(props: ResultPageProps) {
         onSharePlainText={sharePlainText}
         onShareScreenshot={shareScreenshot}
       />
+      <ScoreInfoDialog />
     </>
   );
 }

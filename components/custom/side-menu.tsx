@@ -14,26 +14,26 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '../auth-provider';
-import { IDisplayScore } from '@/lib/types/score.interface';
-import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-import { HASH } from '@/lib/hash';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import Link from 'next/link';
+import { useAppSelector } from '@/lib/redux/hook';
+import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 
 interface MenuItem {
+  path: string; // unique identifer of each item, default should use the pathname, but not necessarily must be route path (for those non-routable items)
   title: string;
   subtitle: string;
   visible: boolean;
   isUpcoming?: boolean;
   highlight?: boolean;
-  href?: string;
-  onClick?: MouseEventHandler;
+  href?: string; // Convenient way for router push, if defined, router will push to this route
+  onClick?: MouseEventHandler; // Additional handling when the item gets clicked, more customization
 }
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const { item: scores } = useLocalStorage<IDisplayScore[]>(HASH.scores);
+  const scores = useAppSelector(selectScoreStorage);
   const { user, status, login } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function SideMenu() {
     }
     const currentSelectedIndex = Math.max(
       0,
-      menuItems.findIndex((item) => item.href === pathname)
+      menuItems.findIndex((item) => item.path === pathname)
     );
     const currentSelectedElement = document.getElementById(
       `menu-${currentSelectedIndex}`
@@ -81,6 +81,7 @@ export default function SideMenu() {
     } else {
       EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
         title: 'You need to login to contribute a topic',
+        redirectHref: '/add-level',
       });
     }
   };
@@ -88,12 +89,14 @@ export default function SideMenu() {
   const menuItems: MenuItem[] = useMemo<MenuItem[]>(
     () => [
       {
+        path: '/',
         title: 'Home',
         subtitle: 'Go back to home page',
         visible: pathname !== '/',
         href: '/',
       },
       {
+        path: 'login',
         title: 'Login',
         subtitle:
           'Login to Taboo AI to enjoy more features! You can contribute more topics for others to play. Personal profile and flashcards are coming soon!',
@@ -102,6 +105,7 @@ export default function SideMenu() {
         onClick: handleLogin,
       },
       {
+        path: '/levels',
         title: 'Choose A Topic',
         subtitle:
           'Start playing Taboo AI by choosing any of the listed topic as you like. Can\'t find the topic you are looking for? Give "AI Mode" a try!',
@@ -109,6 +113,7 @@ export default function SideMenu() {
         href: '/levels',
       },
       {
+        path: '/add-level',
         title: 'Contribute A Topic',
         subtitle:
           'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
@@ -116,6 +121,7 @@ export default function SideMenu() {
         onClick: handleContributeTopic,
       },
       {
+        path: '/result',
         title: 'See my last result',
         subtitle:
           'We found your last played result is cached in the app. You can revisit it here!',
@@ -123,6 +129,7 @@ export default function SideMenu() {
         href: '/result',
       },
       {
+        path: '/profile',
         title: 'My Profile',
         subtitle:
           'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
@@ -131,17 +138,20 @@ export default function SideMenu() {
         href: '/profile',
       },
       {
+        path: 'separator',
         title: 'separator',
         subtitle: '',
         visible: true,
       },
       {
+        path: '/rule',
         title: 'Rules of Taboo AI',
         subtitle: 'Find out about how to play Taboo AI here!',
         visible: true,
         href: '/rule',
       },
       {
+        path: '/pwa',
         title: 'Install Taboo AI',
         subtitle:
           'Taboo AI is available to install on your device as a PWA(Progressive Web App)!',
@@ -149,12 +159,14 @@ export default function SideMenu() {
         href: '/pwa',
       },
       {
+        path: '/whatsnew',
         title: 'Latest Features',
         subtitle: "Take a look at Taboo AI's latest features!",
         visible: true,
         href: '/whatsnew',
       },
       {
+        path: '/roadmap',
         title: 'Project Roadmap',
         subtitle:
           'Taboo AI has come a long way so far. Join me together to review the exciting journey!',
@@ -200,7 +212,7 @@ export default function SideMenu() {
                   id={`menu-${idx}`}
                   className={cn(
                     item.highlight ? 'border-green-500' : '',
-                    pathname === item.href
+                    pathname === item.path
                       ? 'border-4 border-primary font-bold'
                       : '',
                     item.isUpcoming && 'opacity-20',
