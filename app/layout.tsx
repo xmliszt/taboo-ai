@@ -27,7 +27,13 @@ const font = Lora({
   fallback: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
 });
 
-export const metadata: Metadata = _meta;
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = _meta;
+  metadata.alternates = {
+    canonical: '/',
+  };
+  return metadata;
+}
 
 export default function RootLayout({
   children,

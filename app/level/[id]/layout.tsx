@@ -8,6 +8,9 @@ export async function generateMetadata(
   const level = await getLevel(id);
   return {
     title: level?.name ?? 'Level',
+    alternates: {
+      canonical: `/level/${id}`,
+    },
   };
 }
 
