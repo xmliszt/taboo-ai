@@ -14,6 +14,13 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth-provider';
+import { LoginErrorEventProps } from './login-error-dialog';
+
+export interface LoginReminderProps {
+  title: string;
+  message?: string;
+  redirectHref?: string;
+}
 
 export default function LoginReminderDialog() {
   const { login } = useAuth();
@@ -29,7 +36,7 @@ export default function LoginReminderDialog() {
       ({
         detail: { title, message, redirectHref },
       }: {
-        detail: { title: string; message?: string; redirectHref?: string };
+        detail: LoginReminderProps;
       }) => {
         setTitle(title);
         setMessage(message);
@@ -47,7 +54,7 @@ export default function LoginReminderDialog() {
       login && (await login());
       redirectHref && router.push(redirectHref);
     } catch (error) {
-      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, {
+      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
         error: error.message,
         redirectHref,
       });

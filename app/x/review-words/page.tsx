@@ -2,8 +2,8 @@
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
-import ILevel from '@/lib/types/level.interface';
-import IWord from '@/lib/types/word.interface';
+import ILevel from '@/lib/types/level.type';
+import IWord from '@/lib/types/word.type';
 import { useLevels } from '@/lib/hooks/useLevels';
 import {
   addTabooWords,

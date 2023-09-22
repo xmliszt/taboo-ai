@@ -12,7 +12,7 @@ import {
   where,
 } from 'firebase/firestore';
 import moment from 'moment';
-import ILevel from '../types/level.interface';
+import ILevel from '../types/level.type';
 import { DateUtils } from '../utils/dateUtils';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {

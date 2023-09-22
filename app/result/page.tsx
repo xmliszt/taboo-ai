@@ -2,10 +2,10 @@
 
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { IAIScore, IDisplayScore } from '../../lib/types/score.interface';
+import { IAIScore, IDisplayScore } from '../../lib/types/score.type';
 import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
-import { IHighlight } from '../../lib/types/highlight.interface';
+import { IHighlight } from '../../lib/types/highlight.type';
 import { useRouter } from 'next/navigation';
 import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
@@ -50,6 +50,7 @@ import {
   setScoresStorage,
 } from '@/lib/redux/features/scoreStorageSlice';
 import { Skeleton } from '@/components/custom/skeleton';
+import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 
 interface StatItem {
   title: string;
@@ -667,10 +668,13 @@ export default function ResultPage(props: ResultPageProps) {
             className='w-4/5 shadow-xl'
             onClick={() => {
               if (!user || status !== 'authenticated') {
-                EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
-                  title: 'You need to login to contribute a topic to us.',
-                  redirectHref: '/add-level',
-                });
+                EventManager.fireEvent<LoginReminderProps>(
+                  CustomEventKey.LOGIN_REMINDER,
+                  {
+                    title: 'You need to login to contribute a topic to us.',
+                    redirectHref: '/add-level',
+                  }
+                );
               } else {
                 setIsTopicReviewSheetOpen(true);
               }

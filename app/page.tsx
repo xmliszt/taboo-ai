@@ -12,6 +12,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { AdminManager } from '@/lib/admin-manager';
 import { useAppSelector } from '@/lib/redux/hook';
 import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 
 interface HomePageProps {}
 
@@ -27,10 +28,13 @@ export default function HomePage(props: HomePageProps) {
     if (status === 'authenticated') {
       router.push('/add-level');
     } else {
-      EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
-        title: 'You need to login to contribute a topic',
-        redirectHref: '/add-level',
-      });
+      EventManager.fireEvent<LoginReminderProps>(
+        CustomEventKey.LOGIN_REMINDER,
+        {
+          title: 'You need to login to contribute a topic',
+          redirectHref: '/add-level',
+        }
+      );
     }
   };
 

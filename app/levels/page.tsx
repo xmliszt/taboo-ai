@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import ILevel from '@/lib/types/level.interface';
+import ILevel from '@/lib/types/level.type';
 import { LevelUtils, SortType } from '@/lib/utils/levelUtils';
 interface SortItem {
   value: SortType;

@@ -18,7 +18,7 @@ import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '@/lib/constants';
 import { useTimer } from 'use-timer';
 import { useRouter } from 'next/navigation';
-import { IHighlight } from '@/lib/types/highlight.interface';
+import { IHighlight } from '@/lib/types/highlight.type';
 import {
   formatStringForDisplay,
   getMockResponse,
@@ -26,7 +26,7 @@ import {
 } from '@/lib/utilities';
 import { HASH } from '@/lib/hash';
 import { getTabooWords } from '@/lib/services/wordService';
-import IWord from '@/lib/types/word.interface';
+import IWord from '@/lib/types/word.type';
 import { useToast } from '@/components/ui/use-toast';
 import { SendHorizonal, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -34,8 +34,8 @@ import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { IChat, IDisplayScore } from '@/lib/types/score.interface';
-import ILevel from '@/lib/types/level.interface';
+import { IChat, IDisplayScore } from '@/lib/types/score.type';
+import ILevel from '@/lib/types/level.type';
 import { Skeleton } from '@/components/custom/skeleton';
 import { getLevel } from '@/lib/services/levelService';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';

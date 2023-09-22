@@ -1,9 +1,9 @@
-import ILevel from '../types/level.interface';
+import ILevel from '../types/level.type';
 import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '../constants';
 import { formatResponseTextIntoArray } from '../utilities';
-import { IAIScore, IChat } from '../types/score.interface';
-import IWord from '../types/word.interface';
+import { IAIScore, IChat } from '../types/score.type';
+import IWord from '../types/word.type';
 import moment from 'moment';
 import { DateUtils } from '../utils/dateUtils';
 
