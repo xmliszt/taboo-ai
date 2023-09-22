@@ -1,4 +1,4 @@
-import { IHighlight } from './highlight.interface';
+import { IHighlight } from './highlight.type';
 
 // {id} {word} {your question} {ai response} {completion time in seconds} {the higlights for word matches}
 export interface IDisplayScore {

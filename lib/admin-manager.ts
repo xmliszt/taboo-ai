@@ -1,4 +1,4 @@
-import IUser from './types/user.interface';
+import IUser from './types/user.type';
 
 export class AdminManager {
   private static whitelistedUIDs = ['BnlcfMNIvrf2XCxY73O5KXmYNkI3'];

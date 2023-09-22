@@ -1,7 +1,7 @@
 'use client';
 
 import { useFirebaseAuth } from '@/lib/hooks/useFirebaseAuth';
-import IUser from '@/lib/types/user.interface';
+import IUser from '@/lib/types/user.type';
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 
 interface AuthProviderProps {

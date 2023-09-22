@@ -2,7 +2,7 @@ import { firestore } from '@/lib/firebase-client';
 import { User } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import moment from 'moment';
-import IUser from '../types/user.interface';
+import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
 
 export const getUser = async (

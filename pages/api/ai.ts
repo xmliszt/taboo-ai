@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import withMiddleware from '../../lib/middleware/withMiddleware';
-import { IChat } from '../../lib/types/score.interface';
+import { IChat } from '../../lib/types/score.type';
 
 const aiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = process.env.OPENAI_API;

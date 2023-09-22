@@ -4,8 +4,8 @@ import { HASH } from '@/lib/hash';
 import { setLevelStorage } from '@/lib/redux/features/levelStorageSlice';
 import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { useAppDispatch } from '@/lib/redux/hook';
-import ILevel from '@/lib/types/level.interface';
-import { IDisplayScore } from '@/lib/types/score.interface';
+import ILevel from '@/lib/types/level.type';
+import { IDisplayScore } from '@/lib/types/score.type';
 import { useEffect } from 'react';
 
 /// This provider handles the initial loads of persistent states into Redux store
