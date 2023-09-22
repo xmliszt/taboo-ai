@@ -69,12 +69,12 @@ export default function Header() {
         hasBackButton={hasBackButton}
         customBackHref={customBackHref}
       />
-      <h1
+      <div
         data-testid='heading-rule-title'
-        className='absolute -z-10 left-0 w-full text-center text-xl'
+        className='absolute -z-10 left-0 w-full text-center text-lg'
       >
         {title}
-      </h1>
+      </div>
       <HeaderRightElements
         hideUserMenu={hideUserMenu}
         hideShareScoreButton={hideShareScoreButton}

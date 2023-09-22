@@ -5,6 +5,7 @@ export const _meta: Metadata = {
     default: 'Taboo AI: Play Taboo with AI',
     template: 'Taboo AI | %s',
   },
+  metadataBase: new URL('https://taboo-ai.vercel.app'),
   description:
     'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
   applicationName: 'Taboo AI: Play Taboo Game with AI',
@@ -23,9 +24,6 @@ export const _meta: Metadata = {
   ],
   authors: [{ name: 'Li Yuxuan', url: 'https://xmliszt.github.io/' }],
   creator: 'Li Yuxuan',
-  alternates: {
-    canonical: 'https://taboo-ai.vercel.app/',
-  },
   category: 'technology',
   openGraph: {
     title: 'Online Game of Taboo, against AI',
