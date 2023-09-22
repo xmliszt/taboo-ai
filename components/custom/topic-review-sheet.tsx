@@ -8,7 +8,7 @@ import { Spinner } from './spinner';
 import { DialogProps } from '@radix-ui/react-dialog';
 import _ from 'lodash';
 import { useState } from 'react';
-import IUser from '@/lib/types/user.interface';
+import IUser from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
 import { addLevel, isLevelExists } from '@/lib/services/levelService';
 import { sendEmail } from '@/lib/services/emailService';

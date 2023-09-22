@@ -2,7 +2,7 @@
 
 import _ from 'lodash';
 import { useCallback, useDeferredValue, useEffect, useState } from 'react';
-import ILevel from '@/lib/types/level.interface';
+import ILevel from '@/lib/types/level.type';
 import { getAllLevels } from '../services/levelService';
 import { useToast } from '@/components/ui/use-toast';
 

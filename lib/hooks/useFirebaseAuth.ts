@@ -12,7 +12,7 @@ import {
   signinUser,
   updateUIDIfNotExist,
 } from '../services/userService';
-import IUser from '../types/user.interface';
+import IUser from '../types/user.type';
 
 const TIMEOUT = 60000; // seconds
 

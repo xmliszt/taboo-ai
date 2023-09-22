@@ -26,6 +26,7 @@ import { toast } from '../ui/use-toast';
 import { useMemo } from 'react';
 import { useAppSelector } from '@/lib/redux/hook';
 import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { LoginErrorEventProps } from './login-error-dialog';
 
 interface UserMenuItem {
   label: string;
@@ -96,7 +97,9 @@ export function UserLoginPortal() {
       await login();
     } catch (error) {
       console.error(error);
-      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
+      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
+        error: error.message,
+      });
     }
   };
 

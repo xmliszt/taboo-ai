@@ -9,7 +9,7 @@ export function MenuButton() {
     <IconButton
       tooltip='Open Menu'
       onClick={() => {
-        EventManager.fireEvent(CustomEventKey.TOGGLE_MENU, true);
+        EventManager.fireEvent<boolean>(CustomEventKey.TOGGLE_MENU, true);
       }}
     >
       <Menu />

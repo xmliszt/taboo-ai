@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
-import ILevel from '../types/level.interface';
+import ILevel from '../types/level.type';
 import { DateUtils } from './dateUtils';
 
 export type SortType =

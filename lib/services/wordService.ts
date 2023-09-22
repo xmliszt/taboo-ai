@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 import _ from 'lodash';
 import moment from 'moment';
-import IWord from '../types/word.interface';
+import IWord from '../types/word.type';
 import { DateUtils } from '../utils/dateUtils';
 
 export const isTargetWordExists = async (

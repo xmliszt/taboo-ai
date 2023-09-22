@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { getDifficulty } from '../../lib/utilities';
-import ILevel from '../../lib/types/level.interface';
+import ILevel from '../../lib/types/level.type';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';

@@ -18,6 +18,8 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import Link from 'next/link';
 import { useAppSelector } from '@/lib/redux/hook';
 import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { LoginErrorEventProps } from './login-error-dialog';
+import { LoginReminderProps } from './login-reminder-dialog';
 
 interface MenuItem {
   path: string; // unique identifer of each item, default should use the pathname, but not necessarily must be route path (for those non-routable items)
@@ -41,7 +43,7 @@ export default function SideMenu() {
   useEffect(() => {
     const listener = EventManager.bindEvent(
       CustomEventKey.TOGGLE_MENU,
-      ({ detail }) => {
+      ({ detail }: { detail: boolean }) => {
         const isOpen = detail as boolean;
         setIsOpen(isOpen ?? false);
       }
@@ -71,7 +73,9 @@ export default function SideMenu() {
       await login();
     } catch (error) {
       console.error(error);
-      EventManager.fireEvent(CustomEventKey.LOGIN_ERROR, error.message);
+      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
+        error: error.message,
+      });
     }
   };
 
@@ -79,10 +83,13 @@ export default function SideMenu() {
     if (user && status === 'authenticated') {
       router.push('/add-level');
     } else {
-      EventManager.fireEvent(CustomEventKey.LOGIN_REMINDER, {
-        title: 'You need to login to contribute a topic',
-        redirectHref: '/add-level',
-      });
+      EventManager.fireEvent<LoginReminderProps>(
+        CustomEventKey.LOGIN_REMINDER,
+        {
+          title: 'You need to login to contribute a topic',
+          redirectHref: '/add-level',
+        }
+      );
     }
   };
 

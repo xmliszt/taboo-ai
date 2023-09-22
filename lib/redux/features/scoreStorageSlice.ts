@@ -1,5 +1,5 @@
 import { HASH } from '@/lib/hash';
-import { IDisplayScore } from '@/lib/types/score.interface';
+import { IDisplayScore } from '@/lib/types/score.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 

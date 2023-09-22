@@ -7,19 +7,19 @@ export enum CustomEventKey {
 }
 
 export class EventManager {
-  static fireEvent(
+  static fireEvent<T>(
     eventKey: CustomEventKey,
-    detail: any | undefined = undefined
+    detail: T | undefined = undefined
   ) {
     window.dispatchEvent(new CustomEvent(eventKey, { detail: detail }));
   }
 
-  static bindEvent(
+  static bindEvent<T>(
     eventKey: CustomEventKey,
-    listener: (event: CustomEvent) => void
+    listener: (event: CustomEvent<T>) => void
   ): (event: Event) => void {
     const bindedListener = (event: Event) => {
-      const customEvent = event as CustomEvent;
+      const customEvent = event as CustomEvent<T>;
       listener(customEvent);
     };
     window.addEventListener(eventKey, bindedListener);

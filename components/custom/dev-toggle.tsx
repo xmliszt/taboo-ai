@@ -17,7 +17,7 @@ import {
 import IconButton from '../ui/icon-button';
 import { Bot } from 'lucide-react';
 import { AdminManager } from '@/lib/admin-manager';
-import { IDisplayScore } from '@/lib/types/score.interface';
+import { IDisplayScore } from '@/lib/types/score.type';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
 import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
 import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';

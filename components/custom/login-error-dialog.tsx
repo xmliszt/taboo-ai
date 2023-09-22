@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../auth-provider';
 import { useRouter } from 'next/navigation';
 
-interface LoginErrorEventProps {
+export interface LoginErrorEventProps {
   error: string;
   redirectHref?: string;
 }

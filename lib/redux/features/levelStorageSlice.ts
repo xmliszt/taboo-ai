@@ -1,5 +1,5 @@
 import { HASH } from '@/lib/hash';
-import ILevel from '@/lib/types/level.interface';
+import ILevel from '@/lib/types/level.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
