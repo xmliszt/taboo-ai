@@ -2,13 +2,13 @@ import { Metadata } from 'next';
 
 export const _meta: Metadata = {
   title: {
-    default: 'Taboo AI: Play Taboo with AI',
+    default: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     template: 'Taboo AI | %s',
   },
   metadataBase: new URL('https://taboo-ai.vercel.app'),
   description:
     'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
-  applicationName: 'Taboo AI: Play Taboo Game with AI',
+  applicationName: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
   keywords: [
     'AI',
     'Wordplay game',
@@ -26,7 +26,7 @@ export const _meta: Metadata = {
   creator: 'Li Yuxuan',
   category: 'technology',
   openGraph: {
-    title: 'Online Game of Taboo, against AI',
+    title: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     description:
       'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
     url: 'https://taboo-ai.vercel.app/',
@@ -36,7 +36,7 @@ export const _meta: Metadata = {
         url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
         width: 800,
         height: 600,
-        alt: 'Online Game of Taboo, against AI',
+        alt: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
       },
     ],
     locale: 'en_US',
@@ -56,7 +56,7 @@ export const _meta: Metadata = {
   manifest: '/manifest.json',
   twitter: {
     card: 'summary_large_image',
-    title: 'Online Game of Taboo, against AI',
+    title: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     description:
       'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
     siteId: '1704579643',
@@ -72,7 +72,7 @@ export const _meta: Metadata = {
     initialScale: 1,
   },
   appleWebApp: {
-    title: 'Online Game of Taboo, against AI',
+    title: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     statusBarStyle: 'black-translucent',
     startupImage: [
       'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0.png?raw=true',

@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/ai',
   },
+  openGraph: {
+    url: 'https://taboo-ai.vercel.app/ai',
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

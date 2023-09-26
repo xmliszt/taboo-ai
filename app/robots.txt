@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /x/
+
+Sitemap: https://taboo-ai.vercel.app/sitemap.xml

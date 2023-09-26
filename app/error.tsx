@@ -16,9 +16,9 @@ export default function Error({
 
   return (
     <div className='w-full h-screen flex flex-col justify-center items-center gap-10 bg-card'>
-      <div className='flex flex-col justify-center gap-4'>
+      <div className='flex flex-col justify-center gap-4 px-10'>
         <h1 className='text-primary text-center'>Something went wrong!</h1>
-        <h4 className='text-muted'>[{error.message}]</h4>
+        <h4 className='text-muted leading-snug'>[{error.message}]</h4>
       </div>
 
       <Button

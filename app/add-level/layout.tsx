@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/add-level',
   },
+  openGraph: {
+    url: 'https://taboo-ai.vercel.app/add-level',
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
