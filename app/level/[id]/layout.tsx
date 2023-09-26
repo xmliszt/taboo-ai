@@ -11,6 +11,9 @@ export async function generateMetadata(
     alternates: {
       canonical: `/level/${id}`,
     },
+    openGraph: {
+      url: 'https://taboo-ai.vercel.app/level/' + id,
+    },
   };
 }
 

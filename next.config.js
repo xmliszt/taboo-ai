@@ -29,6 +29,7 @@ const nextConfig = {
       'i.ibb.co',
       'media.giphy.com',
       'github.com',
+      'aibrb.com',
     ],
     formats: ['image/webp'],
   },

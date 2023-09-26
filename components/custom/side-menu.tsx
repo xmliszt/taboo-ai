@@ -274,6 +274,16 @@ export default function SideMenu() {
             <p>
               <Link href='/cookie-policy'>Cookie Policy</Link>
             </p>
+            <p>
+              <Link
+                href='/sitemap'
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                Sitemap
+              </Link>
+            </p>
           </article>
         </div>
       </SheetContent>

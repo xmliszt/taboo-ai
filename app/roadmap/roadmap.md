@@ -2,6 +2,13 @@
 
 ## Release Notes (V3.0)
 
+### 27 Sep 2023 - V3.0.6
+
+- Sitemap page
+- Add feature badge for "AIBRB.com"
+- Add view counter on home page
+- Bug fixes
+
 ### 22 Sep 2023 - V3.0.5
 
 - Side menu will restore locations for "Contribute A Topic" and "See Your Result".

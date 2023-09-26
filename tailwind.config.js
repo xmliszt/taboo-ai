@@ -72,6 +72,7 @@ module.exports = {
         'carousell-14': 'moveIn 34s linear infinite',
         'carousell-12': 'moveIn 32s linear infinite',
         'carousell-10': 'moveIn 20s linear infinite',
+        'fade-inout': 'fadeInOut 1.5s ease-in-out',
         'fade-inout-first-loop': 'fadeInOut 10s ease-in-out infinite',
         'fade-inout-delay-loop': 'fadeInOut 10s ease-in-out 5s infinite',
         'small-bounce-delay-1-loop':

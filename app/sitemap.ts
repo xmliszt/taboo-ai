@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/add-level',
     '/privacy',
     '/cookie-policy',
+    '/sitemap',
   ];
   const levels = await getAllLevels();
   const staticSites = staticRoutes.map((route) => {
