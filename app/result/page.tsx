@@ -672,7 +672,6 @@ export default function ResultPage(props: ResultPageProps) {
                   CustomEventKey.LOGIN_REMINDER,
                   {
                     title: 'You need to login to contribute a topic to us.',
-                    redirectHref: '/add-level',
                   }
                 );
               } else {
