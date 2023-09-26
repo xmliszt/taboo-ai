@@ -20,7 +20,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Hand, MousePointerClick } from 'lucide-react';
+import { CircleSlash, Hand, MousePointerClick } from 'lucide-react';
 import {
   ScoreInfoButton,
   ScoreInfoDialog,
@@ -261,11 +261,19 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const sharePlainText = () => {
+    if (!scores) {
+      toast({ title: 'You have no scores to share' });
+      return;
+    }
     const text = generateShareText();
     performNavigatorShare(text);
   };
 
   const shareScreenshot = () => {
+    if (!scores) {
+      toast({ title: 'You have no scores to share' });
+      return;
+    }
     if (screenshotRef.current) {
       html2canvas(screenshotRef.current, {
         scale: 2,
@@ -641,8 +649,9 @@ export default function ResultPage(props: ResultPageProps) {
         </div>
       </div>
     ) : (
-      <div className='w-full mt-20 px-4'>
-        <Skeleton numberOfRows={10} />
+      <div className='animate-pulse w-full mt-40 px-4 flex flex-col gap-6 justify-center items-center'>
+        <CircleSlash size={56} />
+        <h2 className='text-2xl font-bold'>You have no results</h2>
       </div>
     );
   };

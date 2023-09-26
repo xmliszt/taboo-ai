@@ -13,6 +13,7 @@ export enum TabooPathname {
   RULE = '/rule',
   WHATSNEW = '/whatsnew',
   X_REVIEW_WORDS = '/x/review-words',
+  SITEMAP = '/sitemap',
 }
 
 export class RouteManager {
@@ -74,6 +75,10 @@ export class RouteManager {
       case TabooPathname.X_REVIEW_WORDS === route:
         return {
           title: 'Review Topics & Words',
+        };
+      case TabooPathname.SITEMAP === route:
+        return {
+          title: 'Sitemap',
         };
       default:
         return {
