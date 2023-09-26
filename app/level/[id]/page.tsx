@@ -39,7 +39,10 @@ import ILevel from '@/lib/types/level.type';
 import { Skeleton } from '@/components/custom/skeleton';
 import { getLevel } from '@/lib/services/levelService';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
-import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
+import {
+  selectLevelStorage,
+  setLevelStorage,
+} from '@/lib/redux/features/levelStorageSlice';
 import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
 
 interface LevelPageProps {
@@ -116,6 +119,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     const level = await getLevel(id);
     if (level) {
       setLevel(level);
+      dispatch(setLevelStorage(level));
     }
   }, [id]);
 
