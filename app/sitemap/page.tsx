@@ -1,5 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { getAllLevels } from '@/lib/services/levelService';
+import { RouteManager } from '@/lib/utils/routeUtils';
 import Link from 'next/link';
 
 interface SitemapRoute {
@@ -18,7 +19,7 @@ export default async function SitemapPage() {
     { title: 'Contribute A Topic', href: '/add-level' },
     { title: 'Your Results', href: '/result' },
   ];
-  const baseUrl = 'https://taboo-ai.vercel.app';
+  const baseUrl = RouteManager.baseUrl;
   const informations: SitemapRoute[] = [
     { title: 'Rules', href: '/rule' },
     { title: 'How to install Taboo AI?', href: '/pwa' },

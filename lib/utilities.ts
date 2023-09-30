@@ -3,26 +3,9 @@ import crypto from 'crypto';
 import { IHighlight } from './types/highlight.type';
 import { IDisplayScore } from './types/score.type';
 import { NextApiRequest } from 'next';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 import IWord from './types/word.type';
 import moment from 'moment';
 import { DateUtils } from './utils/dateUtils';
-
-interface DelayRouterPushProps {
-  delay?: number;
-  completion?: () => void;
-}
-
-export function delayRouterPush(
-  router: AppRouterInstance,
-  destination: string,
-  configuration?: DelayRouterPushProps
-) {
-  setTimeout(() => {
-    router.push(destination);
-    configuration?.completion && configuration.completion();
-  }, configuration?.delay ?? 1000);
-}
 
 export function getIp(req: NextApiRequest): string | undefined {
   let ip: string | undefined;
