@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 30 Sep 2023 - V3.0.7
+
+- Dynamic sitemap endpoint for other file type
+- Upgrade nextjs to 13.5
+
 ### 27 Sep 2023 - V3.0.6
 
 - Sitemap page
