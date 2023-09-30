@@ -83,14 +83,15 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
-    if (level) {
+    console.log(level);
+    if (level && level.isAIGenerated) {
       const exists = await isLevelExists(level.name, user?.email);
       setHasTopicSubmitted(exists);
       if (exists) {
         toast({ title: 'You have already submitted this topic.' });
         return;
       }
-      if (level.isAIGenerated && status === 'authenticated') {
+      if (status === 'authenticated') {
         setContributionDialogOpen(true);
       }
     }
