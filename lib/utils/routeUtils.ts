@@ -6,6 +6,7 @@ export enum TabooPathname {
   ADD_LEVEL = '/add-level',
   BUY_ME_COFFEE = '/buymecoffee',
   LEVEL = '/level',
+  AI_LEVEL = '/level/ai',
   LEVELS = '/levels',
   PWA = '/pwa',
   RESULT = '/result',
@@ -17,6 +18,12 @@ export enum TabooPathname {
 }
 
 export class RouteManager {
+  static baseUrl = process.env.SITE_URL ?? 'https://taboo-ai.vercel.app';
+
+  static getStaticRoutes = (): string[] => {
+    return Object.values(TabooPathname).map((p) => this.baseUrl + p);
+  };
+
   static getHeaderPropsFromPath(route: string): HeaderProps {
     switch (true) {
       case TabooPathname.HOME === route:
