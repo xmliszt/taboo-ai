@@ -4,13 +4,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
-const TO_EMAIL = process.env.SENDGRID_TO_EMAIL;
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
 
 const sendGridEmailApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
+  const TO_EMAIL = process.env.SENDGRID_TO_EMAIL;
+  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
   if (TO_EMAIL === undefined || FROM_EMAIL === undefined) {
     return res.status(500).json({ error: 'Error sending email' });
   }
