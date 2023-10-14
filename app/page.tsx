@@ -2,8 +2,8 @@
 
 import {
   ArrowUp,
-  ArrowUpAZ,
   Coffee,
+  Github,
   PenSquare,
   Quote,
   ScrollText,
@@ -133,6 +133,12 @@ export default function HomePage(props: HomePageProps) {
             content='Join Discord!'
             icon={<BsDiscord />}
             href='https://discord.gg/dgqs29CHC2'
+            newTab={true}
+          />
+          <SocialLinkButton
+            content='Open Source'
+            icon={<Github />}
+            href='https://github.com/xmliszt/Taboo-AI'
             newTab={true}
           />
         </div>

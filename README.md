@@ -13,3 +13,9 @@ Visit https://taboo-ai.vercel.app/
 ![Feature 03](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%203.png?raw=true)
 
 ![Feature 04](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%204.png?raw=true)
+
+# Contribute
+
+Taboo AI is an open-source project. To contribute, simply fork the project into your own repository. Look at the **Issues** to find out what else can be done. Or raise your own issues. Once you are done, simply submit a pull request!
+
+Thank you for your contribution to make Taboo AI a better platform for English learning!
