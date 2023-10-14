@@ -5,7 +5,6 @@ import { NextApiResponse } from 'next';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
 
 export type RejectionReason =
   | 'inapproriate-content'
@@ -13,14 +12,13 @@ export type RejectionReason =
   | 'duplicate'
   | 'insufficient-word-variety';
 
-const sendExternalEmailVerificationSuccess = async (toEmail: string) => {
-  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
-  if (!FROM_EMAIL) {
-    throw Error('No sender email address in environment!');
-  }
+const sendExternalEmailVerificationSuccess = async (
+  toEmail: string,
+  fromEmail: string
+) => {
   const msg = {
     to: toEmail,
-    from: FROM_EMAIL,
+    from: fromEmail,
     subject: 'Congratulations! Your Taboo AI Contribution is Now Live 🎉',
     html: `<article>
       <h1>Congratulations! Your Taboo AI Contribution is Now Live 🎉</h1>
@@ -40,12 +38,9 @@ const sendExternalEmailVerificationSuccess = async (toEmail: string) => {
 
 const sendExternalEmailVerificationRejection = async (
   toEmail: string,
+  fromEmail: string,
   reason: RejectionReason
 ) => {
-  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
-  if (!FROM_EMAIL) {
-    throw Error('No sender email address in environment!');
-  }
   let reasonString = '';
   let reasonContent = '';
   switch (reason) {
@@ -72,7 +67,7 @@ const sendExternalEmailVerificationRejection = async (
   }
   const msg = {
     to: toEmail,
-    from: FROM_EMAIL,
+    from: fromEmail,
     subject: "Hi! Let's Elevate Your Topics! Resubmit Your Taboo AI Entry 🚀",
     html: `<article>
       <h1>Hi! Let&apos;s Elevate Your Topics! Resubmit Your Taboo AI Entry 🚀</h1>
@@ -112,6 +107,7 @@ const sendGridEmailApiHandler = async (
   req: AuthNextAPIRequest,
   res: NextApiResponse
 ) => {
+  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
   if (req.uid !== 'BnlcfMNIvrf2XCxY73O5KXmYNkI3') {
     return res.status(401).json({ error: 'You are not authorized' });
   }
@@ -127,12 +123,12 @@ const sendGridEmailApiHandler = async (
       req.body;
     try {
       if (type === 'verify') {
-        await sendExternalEmailVerificationSuccess(to);
+        await sendExternalEmailVerificationSuccess(to, FROM_EMAIL);
         res.status(200).json({
           message: 'Email is sent successfully!',
         });
       } else if (type === 'reject' && reason !== undefined) {
-        await sendExternalEmailVerificationRejection(to, reason);
+        await sendExternalEmailVerificationRejection(to, FROM_EMAIL, reason);
         res.status(200).json({
           message: 'Email is sent successfully!',
         });

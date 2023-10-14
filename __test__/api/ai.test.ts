@@ -12,7 +12,7 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-describe('/api/ai 200', () => {
+describe('/api/ai', () => {
   const mockReq = {} as NextApiRequest;
   const mockRes = {} as NextApiResponse;
   beforeEach(() => {

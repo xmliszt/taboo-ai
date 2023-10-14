@@ -16,7 +16,6 @@
     "javascriptreact",
     "typescriptreact"
   ],
-  "[xml]": {
-    "editor.defaultFormatter": "SimonSiefke.prettier-vscode"
-  }
+  "coverage-gutters.showGutterCoverage": true,
+  "coverage-gutters.showLineCoverage": true,
 }

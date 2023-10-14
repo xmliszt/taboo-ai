@@ -39,6 +39,10 @@ export default async function SitemapPage() {
       href: 'https://img.shields.io/badge/-My%20Facebook-black?logo=facebook',
     },
     {
+      title: 'Taboo AI GitHub Repository',
+      href: 'https://github.com/xmliszt/Taboo-AI',
+    },
+    {
       title: 'Check out Easy Next',
       href: 'https://www.npmjs.com/package/easy-next',
     },
