@@ -284,6 +284,12 @@ export default function SideMenu() {
                 Sitemap
               </Link>
             </p>
+            <p>
+              <i>Taboo AI is an open-source project. Feel free to </i>
+              <Link href='https://github.com/xmliszt/Taboo-AI' target='_blank'>
+                contribute on GitHub.
+              </Link>{' '}
+            </p>
           </article>
         </div>
       </SheetContent>

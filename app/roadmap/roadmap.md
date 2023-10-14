@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 14 Oct 2023 - V3.0.8
+
+- Minor bug fixes.
+- Added GitHub open source repo link.
+
 ### 30 Sep 2023 - V3.0.7
 
 - Dynamic sitemap endpoint for other file type
