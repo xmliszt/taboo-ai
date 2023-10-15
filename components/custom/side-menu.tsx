@@ -64,7 +64,10 @@ export default function SideMenu() {
     const currentSelectedElement = document.getElementById(
       `menu-${currentSelectedIndex}`
     );
-    currentSelectedElement?.scrollIntoView({ behavior: 'smooth' });
+    currentSelectedElement?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
   }, [isFocused, pathname]);
 
   const handleLogin = async () => {
