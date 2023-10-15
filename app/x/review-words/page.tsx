@@ -43,6 +43,15 @@ import { RejectionReason } from '@/pages/api/x/send-email';
 import { Label } from '@/components/ui/label';
 import { SelectGroup } from '@radix-ui/react-select';
 import { AdminManager } from '@/lib/admin-manager';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
@@ -61,6 +70,7 @@ const DevReviewWordsPage = () => {
   const [rejectionReason, setRejectionReason] = useState<RejectionReason>(
     'inapproriate-content'
   );
+  const [rejectConfirmationOpen, setRejectConfirmationOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -689,7 +699,9 @@ const DevReviewWordsPage = () => {
         <Button
           disabled={!isPageInteractive}
           className='flex-grow'
-          onClick={rejectLevel}
+          onClick={() => {
+            setRejectConfirmationOpen(true);
+          }}
           variant='destructive'
         >
           REJECT
@@ -723,6 +735,24 @@ const DevReviewWordsPage = () => {
           </SelectContent>
         </Select>
       </div>
+      <AlertDialog
+        open={rejectConfirmationOpen}
+        onOpenChange={(open) => setRejectConfirmationOpen(open)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure to reject this entry?
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction onClick={rejectLevel}>
+              Proceed to reject
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };
