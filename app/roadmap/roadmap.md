@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 19 Oct 2023 - V3.0.9
+
+- Fix level loaded multiple times, causing target word to flicker.
+- Update PWA manifest
+
 ### 14 Oct 2023 - V3.0.8
 
 - Minor bug fixes.
