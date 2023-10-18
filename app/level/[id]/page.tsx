@@ -98,6 +98,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
   const cachedLevel = useAppSelector(selectLevelStorage);
   const dispatch = useAppDispatch();
+  const [isFetchingLevel, setIsFetchingLevel] = useState(false);
 
   const isInputDisable = useMemo(() => {
     return (
@@ -115,21 +116,25 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     }
   }, [inputTextField]);
 
-  const fetchLevel = useCallback(async () => {
-    const level = await getLevel(id);
+  const fetchLevel = async (id: string) => {
     if (level) {
-      setLevel(level);
-      dispatch(setLevelStorage(level));
+      return;
     }
-  }, [id]);
+    setIsFetchingLevel(true);
+    const _level = await getLevel(id);
+    if (_level && level === undefined) {
+      setLevel(_level);
+      dispatch(setLevelStorage(_level));
+    }
+  };
 
   useEffect(() => {
     if (id === 'ai') {
       setLevel(cachedLevel);
-    } else if (level === undefined) {
-      fetchLevel();
+    } else if (!isFetchingLevel) {
+      fetchLevel(id);
     }
-  }, [fetchLevel, cachedLevel]);
+  }, [id, cachedLevel, isFetchingLevel]);
 
   useEffect(() => {
     dispatch(setScoresStorage(savedScores));
