@@ -4,10 +4,10 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Taboo AI: Play Taboo Game with AI",
+  "name": "Taboo AI: Ignite Learning Through Play 🚀🎮",
   "short_name": "Taboo AI",
-  "description": "Unleash your wordplay skills and master English with Taboo AI! Have fun learning. Join now!",
-  "categories": ["technology", "education", "game", "trivia", "AI", "ChatGPT"],
+  "description": "Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.",
+  "categories": ["technology", "education", "game", "trivia", "AI", "ChatGPT", "English", "vocabulary"],
   "icons": [
     {
       "src": "/16x16.png",
@@ -36,14 +36,14 @@
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Online Game of Taboo, against AI."
+      "label": "Taboo AI: Ignite Learning Through Play 🚀🎮"
     },
     {
       "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Online Game of Taboo, against AI."
+      "label": "Taboo AI: Ignite Learning Through Play 🚀🎮"
     },
     {
       "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%201.png?raw=true",
