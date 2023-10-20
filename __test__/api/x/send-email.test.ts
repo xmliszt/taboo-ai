@@ -56,6 +56,7 @@ describe('/x/send-email', () => {
 
   it('should return success 200 when type is "verify"', async () => {
     mockReq.body = {
+      topic: 'test',
       type: 'verify',
       to: 'somebody@mail.com',
     };

@@ -13,15 +13,16 @@ export type RejectionReason =
   | 'insufficient-word-variety';
 
 const sendExternalEmailVerificationSuccess = async (
+  topicName: string,
   toEmail: string,
   fromEmail: string
 ) => {
   const msg = {
     to: toEmail,
     from: fromEmail,
-    subject: 'Congratulations! Your Taboo AI Contribution is Now Live 🎉',
+    subject: `Congratulations! Your Topic Submitted: "${topicName}" is Now Live 🎉`,
     html: `<article>
-      <h1>Congratulations! Your Taboo AI Contribution is Now Live 🎉</h1>
+      <h1>Congratulations! Your Topic Submitted: "${topicName}" is Now Live 🎉</h1>
       <p>Your creativity has hit the mark, and we&apos;re delighted to inform you that your topic contribution has been accepted for Taboo AI. 🌟🎉</p>
       <p>Your unique topic, with its cleverly crafted target words and well-thought-out taboo words, has been added to our collection, and players worldwide can now enjoy the challenges you&apos;ve created. We applaud your contribution and believe your topic will add a fantastic twist to the Taboo AI experience.</p>
       <p>Thank you for being part of our growing community and for sharing your passion for wordplay with us. Your involvement has made Taboo AI even more vibrant and engaging. 🌍💬</p>
@@ -116,14 +117,19 @@ const sendGridEmailApiHandler = async (
   }
   if (req.method === 'POST') {
     const {
+      topic,
       type,
       to,
       reason,
-    }: { type: 'verify' | 'reject'; to: string; reason?: RejectionReason } =
-      req.body;
+    }: {
+      topic: string;
+      type: 'verify' | 'reject';
+      to: string;
+      reason?: RejectionReason;
+    } = req.body;
     try {
       if (type === 'verify') {
-        await sendExternalEmailVerificationSuccess(to, FROM_EMAIL);
+        await sendExternalEmailVerificationSuccess(topic, to, FROM_EMAIL);
         res.status(200).json({
           message: 'Email is sent successfully!',
         });
