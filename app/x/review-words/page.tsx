@@ -333,6 +333,7 @@ const DevReviewWordsPage = () => {
           try {
             const token = await firebaseAuth.currentUser?.getIdToken();
             await sendEmailX(
+              selectedLevel.name ?? 'unknown',
               selectedLevel.authorEmail,
               'reject',
               rejectionReason,
@@ -366,6 +367,29 @@ const DevReviewWordsPage = () => {
     }
   };
 
+  const resendVerifyEmail = async (level: ILevel | undefined = undefined) => {
+    const copyLevel = level ?? { ...selectedLevel };
+    if (copyLevel.authorEmail) {
+      try {
+        const token = await firebaseAuth.currentUser?.getIdToken();
+        await sendEmailX(
+          copyLevel.name ?? 'unknown',
+          copyLevel.authorEmail,
+          'verify',
+          undefined,
+          token
+        );
+        toast({ title: 'Verification success email sent successfully!' });
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: 'Failed to send verification success email: ' + error.message,
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
   const setVerifyLevel = async () => {
     if (selectedLevel) {
       try {
@@ -374,20 +398,7 @@ const DevReviewWordsPage = () => {
         copyLevel.isVerified = true;
         await verifyLevel(copyLevel.id);
         toast({ title: 'Level verified successfully!' });
-        if (copyLevel.authorEmail) {
-          try {
-            const token = await firebaseAuth.currentUser?.getIdToken();
-            await sendEmailX(copyLevel.authorEmail, 'verify', undefined, token);
-            toast({ title: 'Verification success email sent successfully!' });
-          } catch (error) {
-            console.error(error);
-            toast({
-              title:
-                'Failed to send verification success email: ' + error.message,
-              variant: 'destructive',
-            });
-          }
-        }
+        resendVerifyEmail(copyLevel);
         setSelectedLevel(copyLevel);
         await refetch();
       } catch (error) {
@@ -444,7 +455,11 @@ const DevReviewWordsPage = () => {
         <Badge>
           {selectedLevel?.author ? `by: ${selectedLevel.author}` : 'No Author'}
         </Badge>
+        <Badge>Difficulty: {selectedLevel?.difficulty}</Badge>
         {selectedLevel?.isNew && <Badge>NEW</Badge>}
+      </div>
+      <div className='flex flex-wrap gap-2 justify-center p-2'>
+        <div>From: {selectedLevel?.authorEmail}</div>
       </div>
       <div className='w-full px-8'>
         <Select
@@ -687,13 +702,23 @@ const DevReviewWordsPage = () => {
         >
           SET NOT NEW
         </Button>
-        {!selectedLevel?.isVerified && (
+        {!selectedLevel?.isVerified ? (
           <Button
             disabled={!isPageInteractive}
             className='flex-grow'
             onClick={setVerifyLevel}
           >
             VERIFY
+          </Button>
+        ) : (
+          <Button
+            disabled={!isPageInteractive}
+            className='flex-grow'
+            onClick={() => {
+              resendVerifyEmail();
+            }}
+          >
+            Resend Verify Email
           </Button>
         )}
         <Button
