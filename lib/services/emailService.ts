@@ -53,6 +53,7 @@ export const sendEmail = async (
 };
 
 export const sendEmailX = async (
+  topic: string,
   to: string,
   type: 'reject' | 'verify',
   reason?: RejectionReason,
@@ -60,6 +61,7 @@ export const sendEmailX = async (
 ) => {
   const url = `/api/x/send-email`;
   return await request<{
+    topic: string;
     type: 'verify' | 'reject';
     to: string;
     reason?: RejectionReason;
@@ -67,6 +69,7 @@ export const sendEmailX = async (
     url,
     'POST',
     {
+      topic,
       type,
       to,
       reason,
