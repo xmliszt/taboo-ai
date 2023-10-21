@@ -39,6 +39,14 @@ export default async function SitemapPage() {
       href: 'https://img.shields.io/badge/-My%20Facebook-black?logo=facebook',
     },
     {
+      title: 'Taboo AI Newsletter',
+      href: 'https://liyuxuan.substack.com/embed',
+    },
+    {
+      title: 'Taboo AI Discord Server',
+      href: 'https://discord.gg/dgqs29CHC2',
+    },
+    {
       title: 'Taboo AI GitHub Repository',
       href: 'https://github.com/xmliszt/Taboo-AI',
     },

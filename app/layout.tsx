@@ -21,10 +21,12 @@ import './markdown.css';
 import './globals.css';
 import Header from '@/components/header';
 import ReduxProvider from '@/lib/redux/provider';
+import { NewsletterSignupDialog } from '@/components/custom/newletter-signup-dialog';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
   fallback: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+  variable: '--font_family_ui',
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -68,6 +70,7 @@ export default function RootLayout({
                     <LoginErrorDialog />
                     <LoginReminderDialog />
                     <FeaturePopup />
+                    <NewsletterSignupDialog />
                   </>
                 )}
                 <AnalyticsWrapper />
