@@ -27,6 +27,7 @@ import { useMemo } from 'react';
 import { useAppSelector } from '@/lib/redux/hook';
 import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { LoginErrorEventProps } from './login-error-dialog';
+import { CONSTANTS } from '@/lib/constants';
 
 interface UserMenuItem {
   label: string;
@@ -68,7 +69,9 @@ export function UserLoginPortal() {
         label: 'My Last Result',
         icon: <ScrollText />,
         isVisible:
-          scores !== undefined && scores.length > 0 && pathname !== '/result',
+          scores !== undefined &&
+          scores.length === CONSTANTS.numberOfQuestionsPerGame &&
+          pathname !== '/result',
         onClick: () => {
           router.push('/result');
         },
