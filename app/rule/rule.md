@@ -7,7 +7,7 @@ Get ready to experience the most innovative twist on Taboo yet with **Taboo AI**
 ```
 1. To get started, simply select a category of words to play with or let the AI generate custom topics for you in AI MODE.
 
-2. Then, jump right into the game by providing the AI a clue to help it guess the target word. Take note that the scoring system takes into account both the quality of the clue as well as the time taken to pass each stage. Therefore, you need to try to balance your speed with the quality of your clues.
+2. Then, jump right into the game by providing the AI a clue to help it guess the target word. One game has 3 rounds. 3 target guess words will be given. Take note that the scoring system takes into account both the quality of the clue as well as the time taken to pass each stage. Therefore, you need to try to balance your speed with the quality of your clues.
 
 3. Last but not least, pay attention to the difficulty level and adjust your clue quality accordingly to maximise your score. The higher the difficulty level, the more weight assigned to the quality of the clue instead of speed.
 ```
