@@ -20,6 +20,7 @@ import { useAppSelector } from '@/lib/redux/hook';
 import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { LoginErrorEventProps } from './login-error-dialog';
 import { LoginReminderProps } from './login-reminder-dialog';
+import { CONSTANTS } from '@/lib/constants';
 
 interface MenuItem {
   path: string; // unique identifer of each item, default should use the pathname, but not necessarily must be route path (for those non-routable items)
@@ -135,7 +136,9 @@ export default function SideMenu() {
         title: 'See my last result',
         subtitle:
           'We found your last played result is cached in the app. You can revisit it here!',
-        visible: scores !== undefined && scores.length > 0,
+        visible:
+          scores !== undefined &&
+          scores.length === CONSTANTS.numberOfQuestionsPerGame,
         href: '/result',
       },
       {

@@ -24,6 +24,7 @@ import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import { useAppStats } from '@/lib/hooks/useAppStats';
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useRef, useState } from 'react';
+import { CONSTANTS } from '@/lib/constants';
 
 interface HomePageProps {}
 
@@ -101,15 +102,16 @@ export default function HomePage(props: HomePageProps) {
             onClick={handleAddTopic}
             aria-label='Click to contribute a new topic to Taboo AI'
           />
-          {scores !== undefined && scores.length > 0 && (
-            <HomeMenuButton
-              icon={<ScrollText size={20} />}
-              title='See my last result'
-              subtitle='We found your last played result is cached in the app. You can revisit it here!'
-              href='/result'
-              aria-label='Click to revisit last game results'
-            />
-          )}
+          {scores !== undefined &&
+            scores.length === CONSTANTS.numberOfQuestionsPerGame && (
+              <HomeMenuButton
+                icon={<ScrollText size={20} />}
+                title='See my last result'
+                subtitle='We found your last played result is cached in the app. You can revisit it here!'
+                href='/result'
+                aria-label='Click to revisit last game results'
+              />
+            )}
           {AdminManager.checkIsAdmin(user) && status === 'authenticated' && (
             <HomeMenuButton
               icon={<View size={20} />}
@@ -125,7 +127,7 @@ export default function HomePage(props: HomePageProps) {
         </section>
         <div className='my-6 w-11/12 flex flex-col gap-4 relative'>
           <div className='absolute top-4 left-0 flex flex-row justify-center items-center w-full px-4'>
-            <span className='font-semibold text-lg text-center'>
+            <span className='font-semibold text-lg text-center text-black'>
               Subscribe to receive the latest updates about Taboo AI, and many
               more about EdTech! 🚀
             </span>

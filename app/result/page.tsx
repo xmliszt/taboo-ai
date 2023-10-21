@@ -110,7 +110,10 @@ export default function ResultPage(props: ResultPageProps) {
   }, []);
 
   useEffect(() => {
-    if (scores !== undefined) {
+    if (
+      scores !== undefined &&
+      scores.length === CONSTANTS.numberOfQuestionsPerGame
+    ) {
       if (
         scores.some(
           (s) => s.ai_score === undefined || s.ai_explanation === undefined
@@ -607,7 +610,8 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const generateMobileScoreStack = () => {
-    if (!scores) return <></>;
+    if (!scores || scores.length < CONSTANTS.numberOfQuestionsPerGame)
+      return <></>;
     return scores.map((score) => (
       <AccordionItem
         key={`word-${score.id}`}
@@ -650,7 +654,7 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const renderResults = () => {
-    return scores && scores.length > 0 ? (
+    return scores && scores.length === CONSTANTS.numberOfQuestionsPerGame ? (
       <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
         <Alert className='shadow-lg text-xl'>
           <AlertTitle className='flex flex-row gap-2 items-center'>
@@ -756,16 +760,18 @@ export default function ResultPage(props: ResultPageProps) {
             Submit This Topic To Us
           </Button>
         )}
-        {level && (
-          <Button
-            className='w-4/5 shadow-xl'
-            onClick={() => {
-              router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
-            }}
-          >
-            Play This Topic Again
-          </Button>
-        )}
+        {level &&
+          scores &&
+          scores.length === CONSTANTS.numberOfQuestionsPerGame && (
+            <Button
+              className='w-4/5 shadow-xl'
+              onClick={() => {
+                router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
+              }}
+            >
+              Play This Topic Again
+            </Button>
+          )}
       </div>
       {user && level && !hasTopicSubmitted && (
         <TopicReviewSheet
@@ -846,7 +852,7 @@ export default function ResultPage(props: ResultPageProps) {
               </p>
             </div>
             <Separator />
-            {scores && scores.length > 0 && (
+            {scores && scores.length === CONSTANTS.numberOfQuestionsPerGame && (
               <div className='flex flex-col gap-2'>
                 {scores.map((score) => (
                   <div
