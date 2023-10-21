@@ -2,6 +2,12 @@
 
 ## Release Notes (V3.0)
 
+### 21 Oct 2023 - V3.0.10
+
+- Better sharing of result with Taboo AI Share Card!
+- Result improved with star ratings. Better visualization of how the player performed.
+- Include newsletter link to subscribe from SubStack.
+
 ### 19 Oct 2023 - V3.0.9
 
 - Fix level loaded multiple times, causing target word to flicker.

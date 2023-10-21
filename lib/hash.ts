@@ -9,5 +9,6 @@ export const HASH = {
   scores: getHash('scores'),
   dev: getHash('dev'),
   hasReadFeaturePopup: getHash('has-read-feature-popup'),
+  hasReadNewsletterPopup: getHash('has-read-newsletter-popup'),
   hasReadTips: getHash('has-read-tips'),
 };

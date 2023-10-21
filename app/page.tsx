@@ -123,6 +123,22 @@ export default function HomePage(props: HomePageProps) {
         <section className='mt-10 w-11/12'>
           <ContactMe />
         </section>
+        <div className='my-6 w-11/12 flex flex-col gap-4 relative'>
+          <div className='absolute top-4 left-0 flex flex-row justify-center items-center w-full px-4'>
+            <span className='font-semibold text-lg text-center'>
+              Subscribe to receive the latest updates about Taboo AI, and many
+              more about EdTech! 🚀
+            </span>
+          </div>
+          <iframe
+            src='https://liyuxuan.substack.com/embed'
+            width='100%'
+            height='550'
+            style={{ fontFamily: 'lora' }}
+            className='border-[1px] rounded-lg bg-card text-card-foreground w-full shadow-lg'
+            scrolling='no'
+          ></iframe>
+        </div>
         <div className='px-4 my-2 w-full flex flex-col lg:flex-row gap-2 justify-center'>
           <SocialLinkButton
             content='Buy Me Coffee'

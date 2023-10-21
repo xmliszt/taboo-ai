@@ -49,12 +49,13 @@ import {
   selectScoreStorage,
   setScoresStorage,
 } from '@/lib/redux/features/scoreStorageSlice';
-import { Skeleton } from '@/components/custom/skeleton';
 import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
+import { StarRatingBar } from '@/components/custom/star-rating-bar';
+import { Separator } from '@/components/ui/separator';
 
 interface StatItem {
   title: string;
-  content: string;
+  content: React.ReactElement;
   highlights?: IHighlight[];
 }
 
@@ -73,10 +74,12 @@ export default function ResultPage(props: ResultPageProps) {
   const level = useAppSelector(selectLevelStorage);
   const scores = useAppSelector(selectScoreStorage);
   const dispatch = useAppDispatch();
-  const screenshotRef = useRef<HTMLTableElement>(null);
   const router = useRouter();
   const { toast } = useToast();
   const { resolvedTheme } = useTheme();
+  const [isShareCardOpen, setIsShareCardOpen] = useState(false);
+  const screenshotRef = useRef<HTMLDivElement>(null);
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   const getCompletionSeconds = (completion: number): number => {
     return completion <= 0 ? 1 : completion;
@@ -96,6 +99,15 @@ export default function ResultPage(props: ResultPageProps) {
       }
     }
   }, [level, user, status]);
+
+  useEffect(() => {
+    const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
+      setIsShareCardOpen(true);
+    });
+    return () => {
+      EventManager.removeListener(CustomEventKey.SHARE_SCORE, listener);
+    };
+  }, []);
 
   useEffect(() => {
     if (scores !== undefined) {
@@ -261,36 +273,63 @@ export default function ResultPage(props: ResultPageProps) {
     return parts.join(' ');
   };
 
-  const sharePlainText = () => {
-    if (!scores) {
-      toast({ title: 'You have no scores to share' });
-      return;
-    }
-    const text = generateShareText();
-    performNavigatorShare(text);
-  };
+  // const sharePlainText = () => {
+  //   if (!scores) {
+  //     toast({ title: 'You have no scores to share' });
+  //     return;
+  //   }
+  //   const text = generateShareText();
+  //   performNavigatorShare(text);
+  // };
 
-  const shareScreenshot = () => {
-    if (!scores) {
-      toast({ title: 'You have no scores to share' });
-      return;
-    }
-    if (screenshotRef.current) {
-      html2canvas(screenshotRef.current, {
+  const generateShareCardImage = () => {
+    setIsShareCardOpen(false);
+    if (shareCardRef.current) {
+      html2canvas(shareCardRef.current, {
         scale: 2,
-        backgroundColor: resolvedTheme === 'light' ? '#ffffff' : '#000000',
-        height: screenshotRef.current.scrollHeight,
+        backgroundColor: 'transparent',
+        height: shareCardRef.current.scrollHeight,
       }).then((canvas) => {
-        const text = generateShareText();
         const href = canvas
           .toDataURL('image/png')
           .replace('image/png', 'image/octet-stream');
         const downloadName = `taboo-ai-scores-${moment().format(
           'DDMMYYYYHHmmss'
         )}.png`;
-        performNavigatorShare(text, href, downloadName);
+        performNavigatorShare('', href, downloadName);
       });
     }
+  };
+
+  // const shareScreenshot = () => {
+  //   if (!scores) {
+  //     toast({ title: 'You have no scores to share' });
+  //     return;
+  //   }
+  //   if (screenshotRef.current) {
+  //     html2canvas(screenshotRef.current, {
+  //       scale: 2,
+  //       backgroundColor: resolvedTheme === 'light' ? '#ffffff' : '#000000',
+  //       height: screenshotRef.current.scrollHeight,
+  //     }).then((canvas) => {
+  //       const text = generateShareText();
+  //       const href = canvas
+  //         .toDataURL('image/png')
+  //         .replace('image/png', 'image/octet-stream');
+  //       const downloadName = `taboo-ai-scores-${moment().format(
+  //         'DDMMYYYYHHmmss'
+  //       )}.png`;
+  //       performNavigatorShare(text, href, downloadName);
+  //     });
+  //   }
+  // };
+
+  const shareCard = () => {
+    if (!scores) {
+      toast({ title: 'You have no scores to share' });
+      return;
+    }
+    setIsShareCardOpen(true);
   };
 
   const performNavigatorShare = (
@@ -434,7 +473,7 @@ export default function ResultPage(props: ResultPageProps) {
   const generateMobileStatsRow = (
     rowID: number,
     title: string,
-    content: string
+    content: React.ReactElement
   ) => {
     return (
       <div key={`${title}-${rowID}`} className='px-3 py-1 leading-snug'>
@@ -516,34 +555,53 @@ export default function ResultPage(props: ResultPageProps) {
       : null;
     return [
       {
-        title: 'Total Time Taken',
-        content: `${getCompletionSeconds(score.completion)} seconds`,
+        title: 'Ratings',
+        content: (
+          <StarRatingBar
+            className='inline-flex'
+            rating={(calculateScore(score) * 5) / 100}
+            maxRating={5}
+            size={15}
+          />
+        ),
       },
       {
         title: 'Total Score',
-        content: calculateScore(score).toString(),
+        content: <span>{calculateScore(score).toString()}</span>,
+      },
+      {
+        title: 'Total Time Taken',
+        content: (
+          <span>{`${getCompletionSeconds(score.completion)} seconds`}</span>
+        ),
       },
       {
         title: `Time Score (${(timeMultipler ?? 0) * 100}%)`,
-        content: `${calculateTimeScore(
-          score
-        ).toString()} x ${timeMultipler} = ${_.round(
-          calculateTimeScore(score) * (timeMultipler ?? 0),
-          1
-        )}`,
+        content: (
+          <span>{`${calculateTimeScore(score).toString()} x ${
+            (timeMultipler ?? 0) * 100
+          }% = ${_.round(
+            calculateTimeScore(score) * (timeMultipler ?? 0),
+            1
+          )}`}</span>
+        ),
       },
       {
         title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
-        content: `${(
-          score.ai_score ?? 50
-        ).toString()} x ${promptMultiplier} = ${_.round(
-          (score.ai_score ?? 50) * (promptMultiplier ?? 0),
-          1
-        )}`,
+        content: (
+          <span>{`${(score.ai_score ?? 50).toString()} x ${
+            (promptMultiplier ?? 0) * 100
+          }% = ${_.round(
+            (score.ai_score ?? 50) * (promptMultiplier ?? 0),
+            1
+          )}`}</span>
+        ),
       },
       {
         title: 'AI Explanation',
-        content: score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail,
+        content: (
+          <span>{score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail}</span>
+        ),
       },
     ];
   };
@@ -576,7 +634,7 @@ export default function ResultPage(props: ResultPageProps) {
             </div>
             <div className='flex flex-row items-center'>
               <span className='font-extrabold leading-snug' key={uniqueId()}>
-                Score: {calculateScore(score)}
+                {calculateScore(score)}/{100}
               </span>
             </div>
           </div>
@@ -618,13 +676,6 @@ export default function ResultPage(props: ResultPageProps) {
           </AlertTitle>
           <AlertDescription className='mt-4 text-lg'>
             <div className='flex flex-row justify-between'>
-              <span>Total Score:</span>
-              <div className='flex flex-row items-center'>
-                <ScoreInfoButton asChild />
-                <span className='font-bold'>{_.round(totalScore, 1)}</span>
-              </div>
-            </div>
-            <div className='flex flex-row justify-between'>
               <span>Difficulty:</span>
               <span className='font-bold'>
                 {level?.difficulty ?? 1}{' '}
@@ -634,6 +685,19 @@ export default function ResultPage(props: ResultPageProps) {
             <div className='flex flex-row justify-between'>
               <span>Total Time Taken: </span>
               <span className='font-bold'>{total} seconds</span>
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span>Total Score:</span>
+              <div className='flex flex-row items-center'>
+                <ScoreInfoButton asChild />
+                <span className='font-bold'>
+                  {_.round(totalScore, 1)} / 300
+                </span>
+              </div>
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span>Overall Ratings: </span>
+              <StarRatingBar rating={(totalScore * 6) / 300} maxRating={6} />
             </div>
           </AlertDescription>
         </Alert>
@@ -749,11 +813,76 @@ export default function ResultPage(props: ResultPageProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <ShareScoreDialog
-        onSharePlainText={sharePlainText}
-        onShareScreenshot={shareScreenshot}
-      />
       <ScoreInfoDialog />
+
+      <AlertDialog
+        open={isShareCardOpen}
+        onOpenChange={(open) => setIsShareCardOpen(open)}
+      >
+        <AlertDialogContent className='p-0 !rounded-none !bg-transparent !border-none !shadow-none flex justify-center items-center w-11/12'>
+          <div
+            ref={shareCardRef}
+            className={cn(
+              isMobile ? 'w-full' : 'w-[500px]',
+              'flex flex-col gap-3 rounded-lg bg-card text-card-foreground p-6 shadow-lg border-[1px] border-card-border'
+            )}
+          >
+            <AlertDialogTitle>
+              <div className='flex flex-row justify-between items-center'>
+                <h2 className='text-xl italic'>
+                  Topic: <b>{level?.name}</b>
+                </h2>
+                <StarRatingBar
+                  size={25}
+                  rating={(totalScore * 6) / 300}
+                  maxRating={6}
+                />
+              </div>
+            </AlertDialogTitle>
+            <div className='mt-4 leading-snug'>
+              <p>
+                Hey! I scored a total of <b>{totalScore}</b> out of 300 in Taboo
+                AI!
+              </p>
+            </div>
+            <Separator />
+            {scores && scores.length > 0 && (
+              <div className='flex flex-col gap-2'>
+                {scores.map((score) => (
+                  <div
+                    key={score.id}
+                    className='flex flex-row gap-4 items-center w-full justify-between'
+                  >
+                    <b>{score.target}</b>
+                    <StarRatingBar
+                      rating={(calculateScore(score) * 5) / 100}
+                      maxRating={5}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className='mt-6 w-full text-xl text-right italic font-bold'>
+              Taboo AI
+            </div>
+          </div>
+
+          <div className='absolute -bottom-16 w-full flex flex-row gap-4'>
+            <Button className='w-full' onClick={generateShareCardImage}>
+              Share
+            </Button>
+            <Button
+              className='w-full border-[1px] border-card-foreground'
+              variant='secondary'
+              onClick={() => {
+                setIsShareCardOpen(false);
+              }}
+            >
+              Dismiss
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

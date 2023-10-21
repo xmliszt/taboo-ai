@@ -86,7 +86,7 @@ export function LevelCard({ level }: LevelCardProps) {
             {level?.words && (
               <Badge
                 variant='outline'
-                className='bg-secondary text-secondary-foreground'
+                className='bg-secondary text-secondary-foreground border-primary'
               >
                 {level.words.length} words
               </Badge>

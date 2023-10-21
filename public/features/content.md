@@ -38,6 +38,15 @@ Finding your preferred topics has never been easier. **Sort by various criteria*
 
 Everything you need is right at your fingertips. Navigate through **a comprehensive menu** (top left corner of the screen!) that covers every functionality Taboo AI has to offer. 🎮
 
+## **Share Your High Scores! 🚀**
+
+![3](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3010-0.jpg?raw=true)
+![4](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3010-2.png?raw=true)
+
+Want to show off your English talents? You can easily share your amazing results with your friends and the community at the Results page. Your clues are scored and rated and Taboo AI will generate a beautiful sharing card for your convenience!
+
+---
+
 Embark on an epic wordplay journey with **Taboo AI Version 3.0**. It's not just a game; it's an experience like never before! Don't miss out—dive in today and unlock a world of endless fun and learning.
 
 Remember, every conversation holds a secret. Can you trick the AI into saying the 'Taboo Word'? Happy gaming! 🤩

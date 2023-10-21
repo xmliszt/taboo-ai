@@ -288,6 +288,11 @@ export default function SideMenu() {
               </Link>
             </p>
             <p>
+              <Link href='https://liyuxuan.substack.com/embed'>
+                EdTech Solutions Newletters
+              </Link>
+            </p>
+            <p>
               <i>Taboo AI is an open-source project. Feel free to </i>
               <Link href='https://github.com/xmliszt/Taboo-AI' target='_blank'>
                 contribute on GitHub.
