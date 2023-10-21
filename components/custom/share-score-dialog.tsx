@@ -13,11 +13,13 @@ import { Button } from '../ui/button';
 interface ShareScoreDialogProps {
   onSharePlainText: () => void;
   onShareScreenshot: () => void;
+  onShareCard: () => void;
 }
 
 export default function ShareScoreDialog({
   onSharePlainText,
   onShareScreenshot,
+  onShareCard,
 }: ShareScoreDialogProps) {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
@@ -46,8 +48,30 @@ export default function ShareScoreDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
-          <Button onClick={onSharePlainText}>Plain Text</Button>
-          <Button onClick={onShareScreenshot}>Screenshot</Button>
+          <Button
+            onClick={() => {
+              setIsShareDialogOpen(false);
+              onShareCard();
+            }}
+          >
+            Share Card
+          </Button>
+          <Button
+            onClick={() => {
+              setIsShareDialogOpen(false);
+              onSharePlainText();
+            }}
+          >
+            Plain Text
+          </Button>
+          <Button
+            onClick={() => {
+              setIsShareDialogOpen(false);
+              onShareScreenshot();
+            }}
+          >
+            Screenshot
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
