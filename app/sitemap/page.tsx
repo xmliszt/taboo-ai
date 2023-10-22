@@ -40,7 +40,7 @@ export default async function SitemapPage() {
     },
     {
       title: 'Taboo AI Newsletter',
-      href: 'https://liyuxuan.substack.com/embed',
+      href: 'https://liyuxuan.substack.com',
     },
     {
       title: 'Taboo AI Discord Server',
