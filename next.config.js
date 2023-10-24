@@ -20,6 +20,7 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: true,
   images: {
+    dangerouslyAllowSVG: true,
     domains: [
       'media.theresanaiforthat.com',
       'api.producthunt.com',
