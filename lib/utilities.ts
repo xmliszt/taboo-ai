@@ -6,6 +6,7 @@ import { NextApiRequest } from 'next';
 import IWord from './types/word.type';
 import moment from 'moment';
 import { DateUtils } from './utils/dateUtils';
+import html2canvas from 'html2canvas';
 
 export function getIp(req: NextApiRequest): string | undefined {
   let ip: string | undefined;
@@ -201,4 +202,93 @@ export const getDifficulty = (
     s += ` (${difficulty})`;
   }
   return s;
+};
+
+export const getDifficultyMultipliers = (
+  difficulty: number
+): { timeMultipler: number; promptMultiplier: number } => {
+  switch (difficulty) {
+    case 1:
+      return { timeMultipler: 0.4, promptMultiplier: 0.6 };
+    case 2:
+      return { timeMultipler: 0.3, promptMultiplier: 0.7 };
+    case 3:
+      return { timeMultipler: 0.2, promptMultiplier: 0.8 };
+    default:
+      return { timeMultipler: 0.5, promptMultiplier: 0.5 };
+  }
+};
+
+export const getDisplayedTopicName = (name?: string): string => {
+  return _.startCase(name) ?? 'Unknown';
+};
+
+export const getCompletionSeconds = (completion: number): number => {
+  return completion <= 0 ? 1 : completion;
+};
+
+export const getCalculatedScore = (score: IDisplayScore): number => {
+  const difficulty = score.difficulty;
+  const multipliers = getDifficultyMultipliers(difficulty);
+  const timeScore = calculateTimeScore(score) * multipliers.timeMultipler;
+  const aiScore = (score.ai_score ?? 50) * multipliers.promptMultiplier;
+  return _.round(timeScore + aiScore, 1);
+};
+
+export const calculateTimeScore = (score: IDisplayScore): number => {
+  const scoreCompletionSeconds = getCompletionSeconds(score.completion);
+  return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
+};
+
+export const b64toBlob = (
+  b64Data: string,
+  contentType = '',
+  sliceSize = 512
+) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
+type ShareResult = {
+  href: string;
+  downloadName: string;
+};
+export const shareImage = (source: HTMLDivElement): Promise<ShareResult> => {
+  return new Promise<ShareResult>((res, rej) => {
+    html2canvas(source, {
+      scale: 2,
+      backgroundColor: 'transparent',
+      height: source.scrollHeight,
+    })
+      .then((canvas) => {
+        const href = canvas
+          .toDataURL('image/png')
+          .replace('image/png', 'image/octet-stream');
+        const downloadName = `taboo-ai-scores-${moment().format(
+          'DDMMYYYYHHmmss'
+        )}.png`;
+        res({
+          href,
+          downloadName,
+        });
+      })
+      .catch((err) => {
+        rej(err);
+      });
+  });
 };

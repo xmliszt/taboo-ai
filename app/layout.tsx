@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { Metadata } from 'next';
-import { Suspense } from 'react';
 import Script from 'next/script';
 import { Lora } from 'next/font/google';
 
@@ -59,13 +58,9 @@ export default function RootLayout({
                   <Maintenance />
                 ) : (
                   <>
-                    <Suspense>
-                      <Header />
-                    </Suspense>
+                    <Header />
                     {children}
-                    <Suspense>
-                      <SideMenu />
-                    </Suspense>
+                    <SideMenu />
                     <PWAInstaller />
                     <LoginErrorDialog />
                     <LoginReminderDialog />
