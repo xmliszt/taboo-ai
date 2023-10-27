@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import ContactMe from '../components/custom/contact-me';
+import ContactMe from '../components/custom/home/contact-me';
 import PageCounter from '@/components/custom/home/page-counter';
 import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array';
 import HomeSocialLinkButtonArray from '@/components/custom/home/home-social-link-button-array';
