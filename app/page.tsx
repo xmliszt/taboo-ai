@@ -1,52 +1,13 @@
-'use client';
-
-import {
-  Coffee,
-  Github,
-  PenSquare,
-  Quote,
-  ScrollText,
-  View,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { BsDiscord } from 'react-icons/bs';
 import ContactMe from '../components/custom/contact-me';
-import SocialLinkButton from '../components/custom/social-link-button';
-import { useAuth } from '../components/auth-provider';
-import { HomeMenuButton } from '@/components/custom/home-menu-button';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { AdminManager } from '@/lib/admin-manager';
-import { useAppSelector } from '@/lib/redux/hook';
-import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
-import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
-import { CONSTANTS } from '@/lib/constants';
 import PageCounter from '@/components/custom/home/page-counter';
-
-interface HomePageProps {}
+import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array';
+import HomeSocialLinkButtonArray from '@/components/custom/home/home-social-link-button-array';
 
 const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
-export default function HomePage(props: HomePageProps) {
-  const { user, status } = useAuth();
-  const router = useRouter();
-  const scores = useAppSelector(selectScoreStorage);
-
-  const handleAddTopic = () => {
-    if (status === 'authenticated') {
-      router.push('/add-level');
-    } else {
-      EventManager.fireEvent<LoginReminderProps>(
-        CustomEventKey.LOGIN_REMINDER,
-        {
-          title: 'You need to login to contribute a topic',
-          redirectHref: '/add-level',
-        }
-      );
-    }
-  };
-
+export default function HomePage() {
   return (
     <main className='h-full w-full overflow-auto scrollbar-hide'>
       <Script id='pwa-script' src='/js/pwa.js' />
@@ -63,41 +24,7 @@ export default function HomePage(props: HomePageProps) {
           </span>
         </div>
         <PageCounter />
-        <section className='mt-4 mb-2 flex-col flex gap-4 mx-4 max-w-[400px]'>
-          <HomeMenuButton
-            icon={<Quote size={20} />}
-            title='Choose A Topic'
-            subtitle='Start playing Taboo AI by choosing one topic that you like.'
-            aria-label='Click to choose a topic to start playing'
-            href='/levels'
-          />
-          <HomeMenuButton
-            icon={<PenSquare size={20} />}
-            title='Contribute New Topics'
-            subtitle='Be a contributor! Your creative topic will be played by all Taboo AI players around the world!'
-            onClick={handleAddTopic}
-            aria-label='Click to contribute a new topic to Taboo AI'
-          />
-          {scores !== undefined &&
-            scores.length === CONSTANTS.numberOfQuestionsPerGame && (
-              <HomeMenuButton
-                icon={<ScrollText size={20} />}
-                title='See my last result'
-                subtitle='We found your last played result is cached in the app. You can revisit it here!'
-                href='/result'
-                aria-label='Click to revisit last game results'
-              />
-            )}
-          {AdminManager.checkIsAdmin(user) && status === 'authenticated' && (
-            <HomeMenuButton
-              icon={<View size={20} />}
-              title='Review Topics & Words'
-              subtitle='This mode is only open for admin access. You can review and verify topics and worlds submitted.'
-              href='/x/review-words'
-              aria-label='Click to review topics as dev'
-            />
-          )}
-        </section>
+        <HomeMenuButtonArray />
         <section className='mt-10 w-11/12'>
           <ContactMe />
         </section>
@@ -117,26 +44,8 @@ export default function HomePage(props: HomePageProps) {
             scrolling='no'
           ></iframe>
         </div>
-        <div className='px-4 my-2 w-full flex flex-col lg:flex-row gap-2 justify-center'>
-          <SocialLinkButton
-            content='Buy Me Coffee'
-            icon={<Coffee />}
-            href='/buymecoffee'
-          />
-          <SocialLinkButton
-            content='Join Discord!'
-            icon={<BsDiscord />}
-            href='https://discord.gg/dgqs29CHC2'
-            newTab={true}
-          />
-          <SocialLinkButton
-            content='Open Source'
-            icon={<Github />}
-            href='https://github.com/xmliszt/Taboo-AI'
-            newTab={true}
-          />
-        </div>
-        <p className='px-4 my-2 w-full text-primary text-xs leading-tight text-center'>
+        <HomeSocialLinkButtonArray />
+        <p className='px-4 my-2 w-full text-primary text-xs leading-tight text-left'>
           We improve our products and advertising by using Microsoft Clarity to
           see how you use our website. By using our site, you agree that we and
           Microsoft can collect and use this data. Our{' '}
