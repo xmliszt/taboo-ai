@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  ArrowUp,
   Coffee,
   Github,
   PenSquare,
@@ -21,10 +20,8 @@ import { AdminManager } from '@/lib/admin-manager';
 import { useAppSelector } from '@/lib/redux/hook';
 import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
-import { useAppStats } from '@/lib/hooks/useAppStats';
-import { Badge } from '@/components/ui/badge';
-import { useEffect, useRef, useState } from 'react';
 import { CONSTANTS } from '@/lib/constants';
+import PageCounter from '@/components/custom/home/page-counter';
 
 interface HomePageProps {}
 
@@ -32,22 +29,9 @@ const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage(props: HomePageProps) {
-  const { stats } = useAppStats();
   const { user, status } = useAuth();
   const router = useRouter();
   const scores = useAppSelector(selectScoreStorage);
-  const pageViewRef = useRef<number>(0);
-  const [isViewsIncreasing, setIsViewsIncreasing] = useState(false);
-
-  useEffect(() => {
-    if (stats && !isViewsIncreasing && stats.views > pageViewRef.current) {
-      setIsViewsIncreasing(true);
-      setTimeout(() => {
-        setIsViewsIncreasing(false);
-      }, 1000);
-      pageViewRef.current = stats.views;
-    }
-  }, [stats, isViewsIncreasing, pageViewRef]);
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {
@@ -78,15 +62,7 @@ export default function HomePage(props: HomePageProps) {
             {versionNumber}
           </span>
         </div>
-        <div className='flex flex-row gap-4 items-center relative'>
-          {isViewsIncreasing && (
-            <ArrowUp
-              size={16}
-              className='absolute -right-4 -top-1 animate-ping-once'
-            />
-          )}
-          <Badge>Total Views: {stats?.views}</Badge>
-        </div>
+        <PageCounter />
         <section className='mt-4 mb-2 flex-col flex gap-4 mx-4 max-w-[400px]'>
           <HomeMenuButton
             icon={<Quote size={20} />}
