@@ -1,7 +1,7 @@
-import { ThemeToggle } from '../custom/theme-toggle';
 import { BackButton } from '../custom/back-button';
 import { MenuButton } from '../custom/menu-button';
 import DevToggle from '../custom/dev-toggle';
+import ThemeToggle from '../custom/theme-toggle';
 
 interface HeaderLeftElementsProps {
   hideMenu?: boolean;

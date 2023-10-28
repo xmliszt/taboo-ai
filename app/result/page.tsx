@@ -3,13 +3,11 @@
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { IAIScore, IDisplayScore } from '../../lib/types/score.type';
-import html2canvas from 'html2canvas';
 import _, { uniqueId } from 'lodash';
 import { IHighlight } from '../../lib/types/highlight.type';
 import { useRouter } from 'next/navigation';
 import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
-import moment from 'moment';
 import { askAIForJudgingScore } from '../../lib/services/aiService';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -19,29 +17,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CircleSlash, Hand, MousePointerClick } from 'lucide-react';
-import {
-  ScoreInfoButton,
-  ScoreInfoDialog,
-} from '@/components/custom/score-info-button';
+import { ScoreInfoDialog } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
-import { useTheme } from 'next-themes';
 import { HASH } from '@/lib/hash';
 import { isMobile } from 'react-device-detect';
 import { useAuth } from '@/components/auth-provider';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import { isLevelExists } from '@/lib/services/levelService';
-import ShareScoreDialog from '@/components/custom/share-score-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
 import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
@@ -51,7 +34,17 @@ import {
 } from '@/lib/redux/features/scoreStorageSlice';
 import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import { StarRatingBar } from '@/components/custom/star-rating-bar';
-import { Separator } from '@/components/ui/separator';
+import {
+  b64toBlob,
+  calculateTimeScore,
+  getCalculatedScore,
+  getCompletionSeconds,
+  getDifficultyMultipliers,
+  shareImage,
+} from '@/lib/utilities';
+import ResultsSummaryCard from '@/components/custom/results/results-summary-card';
+import { ResultsShareAlertDialog } from '@/components/custom/results/results-share-alert-dialog';
+import ResutlsContributionAlertDialog from '@/components/custom/results/results-contribution-alert-dialog';
 
 interface StatItem {
   title: string;
@@ -59,12 +52,8 @@ interface StatItem {
   highlights?: IHighlight[];
 }
 
-interface ResultPageProps {}
-
-export default function ResultPage(props: ResultPageProps) {
+export default function ResultPage() {
   const { user, status } = useAuth();
-  const [total, setTotal] = useState<number>(0);
-  const [totalScore, setTotalScore] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
   const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
@@ -76,17 +65,14 @@ export default function ResultPage(props: ResultPageProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { toast } = useToast();
-  const { resolvedTheme } = useTheme();
   const [isShareCardOpen, setIsShareCardOpen] = useState(false);
   const screenshotRef = useRef<HTMLDivElement>(null);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
-  const getCompletionSeconds = (completion: number): number => {
-    return completion <= 0 ? 1 : completion;
-  };
+  let total = 0;
+  let totalScore = 0;
 
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
-    console.log(level);
     if (level && level.isAIGenerated) {
       const exists = await isLevelExists(level.name, user?.email);
       setHasTopicSubmitted(exists);
@@ -108,26 +94,6 @@ export default function ResultPage(props: ResultPageProps) {
       EventManager.removeListener(CustomEventKey.SHARE_SCORE, listener);
     };
   }, []);
-
-  useEffect(() => {
-    if (
-      scores !== undefined &&
-      scores.length === CONSTANTS.numberOfQuestionsPerGame
-    ) {
-      if (
-        scores.some(
-          (s) => s.ai_score === undefined || s.ai_explanation === undefined
-        )
-      ) {
-        checkUserStatus();
-      } else {
-        const displayScores = JSON.parse(
-          JSON.stringify(scores)
-        ) as IDisplayScore[];
-        displayScores && updateDisplayedScores(displayScores);
-      }
-    }
-  }, [scores]);
 
   useEffect(() => {
     checkIfEligibleForLevelSubmission();
@@ -213,126 +179,48 @@ export default function ResultPage(props: ResultPageProps) {
   };
 
   const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
-    let total = 0;
-    let totalScore = 0;
-    for (const score of displayScores) {
+    const copiedScores = JSON.parse(
+      JSON.stringify(displayScores)
+    ) as IDisplayScore[];
+    total = 0;
+    totalScore = 0;
+    for (const score of copiedScores) {
       total += getCompletionSeconds(score.completion);
-      totalScore += calculateScore(score);
+      totalScore += getCalculatedScore(score);
     }
     totalScore = _.round(totalScore, 1);
-    displayScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
-    setTotal(total);
-    setTotalScore(totalScore);
+    copiedScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
   };
 
-  const handleContributeAITopic = () => {
-    setIsTopicReviewSheetOpen(true);
-  };
-
-  const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-    const byteCharacters = atob(b64Data);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-  };
-
-  const generateShareText = (): string => {
-    const parts: string[] = [];
-    if (totalScore > 0) {
-      parts.push(
-        `I scored a total of ${totalScore} in https://taboo-ai.vercel.app/ !`
-      );
-    }
-    const topic = generateTopicName();
-    if (topic) {
-      parts.push(`The topic of this game is: ${topic}.`);
-    }
-    if (level?.difficulty) {
-      const difficultyString = getDifficulty(level?.difficulty);
-      parts.push(`The difficulty level of this game is: ${difficultyString}.`);
-    }
-    if (parts.length > 0) {
-      parts.push(
-        `Join me to explore different topics and have fun playing the game of Taboo against AI!`
-      );
+  if (
+    scores !== undefined &&
+    scores.length === CONSTANTS.numberOfQuestionsPerGame
+  ) {
+    if (
+      scores.some(
+        (s) => s.ai_score === undefined || s.ai_explanation === undefined
+      )
+    ) {
+      checkUserStatus();
     } else {
-      parts.push(
-        `I completed a round of game in https://taboo-ai.vercel.app/ ! Join me to explore different topics and have fun playing the game of Taboo against AI!`
-      );
+      scores && updateDisplayedScores(scores);
     }
-    return parts.join(' ');
-  };
+  }
 
-  // const sharePlainText = () => {
-  //   if (!scores) {
-  //     toast({ title: 'You have no scores to share' });
-  //     return;
-  //   }
-  //   const text = generateShareText();
-  //   performNavigatorShare(text);
-  // };
-
-  const generateShareCardImage = () => {
-    setIsShareCardOpen(false);
-    if (shareCardRef.current) {
-      html2canvas(shareCardRef.current, {
-        scale: 2,
-        backgroundColor: 'transparent',
-        height: shareCardRef.current.scrollHeight,
-      }).then((canvas) => {
-        const href = canvas
-          .toDataURL('image/png')
-          .replace('image/png', 'image/octet-stream');
-        const downloadName = `taboo-ai-scores-${moment().format(
-          'DDMMYYYYHHmmss'
-        )}.png`;
-        performNavigatorShare('', href, downloadName);
+  const generateShareCardImage = async () => {
+    if (!shareCardRef.current) return;
+    try {
+      setIsShareCardOpen(false);
+      const shareResult = await shareImage(shareCardRef.current);
+      performNavigatorShare('', shareResult.href, shareResult.downloadName);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title:
+          'Sorry, we are unable to perform sharing at the moment. Please try again later.',
+        variant: 'destructive',
       });
     }
-  };
-
-  // const shareScreenshot = () => {
-  //   if (!scores) {
-  //     toast({ title: 'You have no scores to share' });
-  //     return;
-  //   }
-  //   if (screenshotRef.current) {
-  //     html2canvas(screenshotRef.current, {
-  //       scale: 2,
-  //       backgroundColor: resolvedTheme === 'light' ? '#ffffff' : '#000000',
-  //       height: screenshotRef.current.scrollHeight,
-  //     }).then((canvas) => {
-  //       const text = generateShareText();
-  //       const href = canvas
-  //         .toDataURL('image/png')
-  //         .replace('image/png', 'image/octet-stream');
-  //       const downloadName = `taboo-ai-scores-${moment().format(
-  //         'DDMMYYYYHHmmss'
-  //       )}.png`;
-  //       performNavigatorShare(text, href, downloadName);
-  //     });
-  //   }
-  // };
-
-  const shareCard = () => {
-    if (!scores) {
-      toast({ title: 'You have no scores to share' });
-      return;
-    }
-    setIsShareCardOpen(true);
   };
 
   const performNavigatorShare = (
@@ -360,8 +248,8 @@ export default function ResultPage(props: ResultPageProps) {
           })
           .then(() => console.log('Shared'))
           .catch((error) => {
-            console.log('Error sharing:', error);
             link.click();
+            throw error;
           });
       } else {
         link.click();
@@ -381,7 +269,9 @@ export default function ResultPage(props: ResultPageProps) {
             console.log('Shared');
             return;
           })
-          .catch(console.error);
+          .catch((error) => {
+            throw error;
+          });
       }
       copy(title)
         .then(() => {
@@ -390,26 +280,8 @@ export default function ResultPage(props: ResultPageProps) {
           });
         })
         .catch((error) => {
-          console.error(error);
-          toast({
-            title:
-              'Sorry, we are unable to generate the sharing content at the moment. Please try again later.',
-            variant: 'destructive',
-          });
+          throw error;
         });
-    }
-  };
-
-  const getDifficulty = (difficulty: number): string => {
-    switch (difficulty) {
-      case 1:
-        return 'Easy';
-      case 2:
-        return 'Medium';
-      case 3:
-        return 'Hard';
-      default:
-        return 'Unknown';
     }
   };
 
@@ -488,39 +360,6 @@ export default function ResultPage(props: ResultPageProps) {
     );
   };
 
-  const getDifficultyMultipliers = (
-    difficulty: number
-  ): { timeMultipler: number; promptMultiplier: number } => {
-    switch (difficulty) {
-      case 1:
-        return { timeMultipler: 0.4, promptMultiplier: 0.6 };
-      case 2:
-        return { timeMultipler: 0.3, promptMultiplier: 0.7 };
-      case 3:
-        return { timeMultipler: 0.2, promptMultiplier: 0.8 };
-      default:
-        return { timeMultipler: 0.5, promptMultiplier: 0.5 };
-    }
-  };
-
-  const calculateScore = (score: IDisplayScore): number => {
-    const difficulty = score.difficulty;
-    const multipliers = getDifficultyMultipliers(difficulty);
-    const timeScore = calculateTimeScore(score) * multipliers.timeMultipler;
-    const aiScore = (score.ai_score ?? 50) * multipliers.promptMultiplier;
-    return _.round(timeScore + aiScore, 1);
-  };
-
-  const calculateTimeScore = (score: IDisplayScore): number => {
-    const scoreCompletionSeconds = getCompletionSeconds(score.completion);
-    return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
-  };
-
-  const generateTopicName = (): string => {
-    const topicName = _.startCase(level?.name) ?? 'Unknown';
-    return topicName;
-  };
-
   const generateConversation = (score: IDisplayScore): React.ReactElement => {
     return (
       <div className='w-full flex flex-col gap-4 bg-secondary text-secondary-foreground p-4'>
@@ -562,7 +401,7 @@ export default function ResultPage(props: ResultPageProps) {
         content: (
           <StarRatingBar
             className='inline-flex'
-            rating={(calculateScore(score) * 5) / 100}
+            rating={(getCalculatedScore(score) * 5) / 100}
             maxRating={5}
             size={15}
           />
@@ -570,7 +409,7 @@ export default function ResultPage(props: ResultPageProps) {
       },
       {
         title: 'Total Score',
-        content: <span>{calculateScore(score).toString()}</span>,
+        content: <span>{getCalculatedScore(score).toString()}</span>,
       },
       {
         title: 'Total Time Taken',
@@ -638,7 +477,7 @@ export default function ResultPage(props: ResultPageProps) {
             </div>
             <div className='flex flex-row items-center'>
               <span className='font-extrabold leading-snug' key={uniqueId()}>
-                {calculateScore(score)}/{100}
+                {getCalculatedScore(score)}/{100}
               </span>
             </div>
           </div>
@@ -656,55 +495,14 @@ export default function ResultPage(props: ResultPageProps) {
   const renderResults = () => {
     return scores && scores.length === CONSTANTS.numberOfQuestionsPerGame ? (
       <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
-        <Alert className='shadow-lg text-xl'>
-          <AlertTitle className='flex flex-row gap-2 items-center'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='24'
-              height='24'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              className='lucide lucide-ligature'
-            >
-              <path d='M8 20V8c0-2.2 1.8-4 4-4 1.5 0 2.8.8 3.5 2' />
-              <path d='M6 12h4' />
-              <path d='M14 12h2v8' />
-              <path d='M6 20h4' />
-              <path d='M14 20h4' />
-            </svg>
-            Topic: {generateTopicName()}
-          </AlertTitle>
-          <AlertDescription className='mt-4 text-lg'>
-            <div className='flex flex-row justify-between'>
-              <span>Difficulty:</span>
-              <span className='font-bold'>
-                {level?.difficulty ?? 1}{' '}
-                <span>({getDifficulty(level?.difficulty ?? 1)})</span>
-              </span>
-            </div>
-            <div className='flex flex-row justify-between'>
-              <span>Total Time Taken: </span>
-              <span className='font-bold'>{total} seconds</span>
-            </div>
-            <div className='flex flex-row justify-between'>
-              <span>Total Score:</span>
-              <div className='flex flex-row items-center'>
-                <ScoreInfoButton asChild />
-                <span className='font-bold'>
-                  {_.round(totalScore, 1)} / 300
-                </span>
-              </div>
-            </div>
-            <div className='flex flex-row justify-between'>
-              <span>Overall Ratings: </span>
-              <StarRatingBar rating={(totalScore * 6) / 300} maxRating={6} />
-            </div>
-          </AlertDescription>
-        </Alert>
+        {level && (
+          <ResultsSummaryCard
+            total={total}
+            totalScore={totalScore}
+            topicName={level.name}
+            difficulty={level.difficulty}
+          />
+        )}
         <div>
           <Accordion
             type='multiple'
@@ -773,6 +571,36 @@ export default function ResultPage(props: ResultPageProps) {
             </Button>
           )}
       </div>
+
+      <ResutlsContributionAlertDialog
+        open={contributionDialogOpen}
+        onOpenChange={(open) => {
+          setContributionDialogOpen(open);
+        }}
+        onTopicReviewSheetOpenChange={(open) => {
+          setIsTopicReviewSheetOpen(open);
+        }}
+      />
+      <ScoreInfoDialog />
+      {level && scores && (
+        <ResultsShareAlertDialog
+          ref={shareCardRef}
+          isOpen={isShareCardOpen}
+          onOpenChange={(open) => {
+            setIsShareCardOpen(open);
+          }}
+          totalScore={totalScore}
+          topicName={level.name}
+          scores={scores.map((score) => {
+            return {
+              key: `${score.id}-${score.target}`,
+              target: score.target,
+              calculatedScore: getCalculatedScore(score),
+            };
+          })}
+          onGenerateShareCardImage={generateShareCardImage}
+        />
+      )}
       {user && level && !hasTopicSubmitted && (
         <TopicReviewSheet
           open={isTopicReviewSheetOpen}
@@ -791,104 +619,6 @@ export default function ResultPage(props: ResultPageProps) {
           isAIGenerated={level.isAIGenerated}
         />
       )}
-      <AlertDialog
-        open={contributionDialogOpen}
-        onOpenChange={(open) => {
-          setContributionDialogOpen(open);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Enjoy the game so far? Would you like to contribute this
-              AI-generated topic to us?
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => {
-                setContributionDialogOpen(false);
-                setIsTopicReviewSheetOpen(false);
-              }}
-            >
-              I&apos;ll decide later
-            </AlertDialogCancel>
-            <AlertDialogAction autoFocus onClick={handleContributeAITopic}>
-              Sure why not
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <ScoreInfoDialog />
-
-      <AlertDialog
-        open={isShareCardOpen}
-        onOpenChange={(open) => setIsShareCardOpen(open)}
-      >
-        <AlertDialogContent className='p-0 !rounded-none !bg-transparent !border-none !shadow-none flex justify-center items-center w-11/12'>
-          <div
-            ref={shareCardRef}
-            className={cn(
-              isMobile ? 'w-full' : 'w-[500px]',
-              'flex flex-col gap-3 rounded-lg bg-card text-card-foreground p-6 shadow-lg border-[1px] border-card-border'
-            )}
-          >
-            <AlertDialogTitle>
-              <div className='flex flex-row justify-between items-center'>
-                <h2 className='text-xl italic'>
-                  Topic: <b>{level?.name}</b>
-                </h2>
-                <StarRatingBar
-                  size={25}
-                  rating={(totalScore * 6) / 300}
-                  maxRating={6}
-                />
-              </div>
-            </AlertDialogTitle>
-            <div className='mt-4 leading-snug'>
-              <p>
-                Hey! I scored a total of <b>{totalScore}</b> out of 300 in Taboo
-                AI!
-              </p>
-            </div>
-            <Separator />
-            {scores && scores.length === CONSTANTS.numberOfQuestionsPerGame && (
-              <div className='flex flex-col gap-2'>
-                {scores.map((score) => (
-                  <div
-                    key={score.id}
-                    className='flex flex-row gap-4 items-center w-full justify-between'
-                  >
-                    <b>{score.target}</b>
-                    <StarRatingBar
-                      rating={(calculateScore(score) * 5) / 100}
-                      maxRating={5}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className='mt-6 w-full text-xl text-right italic font-bold'>
-              Taboo AI
-            </div>
-          </div>
-
-          <div className='absolute -bottom-16 w-full flex flex-row gap-4'>
-            <Button className='w-full' onClick={generateShareCardImage}>
-              Share
-            </Button>
-            <Button
-              className='w-full border-[1px] border-card-foreground'
-              variant='secondary'
-              onClick={() => {
-                setIsShareCardOpen(false);
-              }}
-            >
-              Dismiss
-            </Button>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

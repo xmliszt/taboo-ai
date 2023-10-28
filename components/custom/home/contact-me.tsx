@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
 import ProductHuntBadge from '@/public/images/producthunt.svg';
-import { useToast } from '../ui/use-toast';
-import { Card, CardContent, CardHeader } from '../ui/card';
+import { useToast } from '../../ui/use-toast';
+import { Card, CardContent, CardHeader } from '../../ui/card';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -14,14 +14,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { Textarea } from '../ui/textarea';
-import { Spinner } from './spinner';
+} from '../../ui/form';
+import { Input } from '../../ui/input';
+import { Button } from '../../ui/button';
+import { Textarea } from '../../ui/textarea';
+import { Spinner } from '../spinner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAuth } from '../auth-provider';
+import { useAuth } from '../../auth-provider';
 import { updateUserFromUser } from '@/lib/services/userService';
 
 const contactFormSchema = z.object({
@@ -138,6 +138,18 @@ const ContactMe = () => {
             <div className='w-full flex flex-col lg:flex-row gap-4 items-center'>
               <a
                 className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
+                href='https://www.producthunt.com/posts/taboo-ai-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai&#0045;2'
+                target='_blank'
+              >
+                <Image
+                  src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=421599&theme=neutral'
+                  alt='Taboo&#0032;AI - Taboo&#0032;AI&#0032;V3&#0046;0&#0032;&#0124;&#0032;English&#0032;Learning&#0032;with&#0032;AI&#0032;reimagined&#0032;🚀 | Product Hunt'
+                  width='240'
+                  height='50'
+                />
+              </a>
+              <a
+                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
                 href='https://theresanaiforthat.com/ai/taboo-ai/?ref=embed'
                 target='_blank'
                 rel='noreferrer'
@@ -149,19 +161,7 @@ const ContactMe = () => {
                   src='https://media.theresanaiforthat.com/featured4.png'
                 />
               </a>
-              <a
-                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
-                href='https://www.producthunt.com/products/taboo-ai?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
-                target='_blank'
-                rel='noreferrer'
-              >
-                <Image
-                  alt='Taboo&#0046;AI - Taboo&#0046;AI&#0032;&#0045;&#0032;The&#0032;Ultimate&#0032;Wordplay&#0032;Challenge&#0032;against&#0032;AI | Product Hunt'
-                  width='240'
-                  height='50'
-                  src={ProductHuntBadge}
-                />
-              </a>
+
               <a
                 className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
                 href='https://aibrb.com/taboo-ai-a-cutting-edge-ai-powered-game-for-language-learning-and-fun/'
