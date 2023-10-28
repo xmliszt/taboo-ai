@@ -1,10 +1,8 @@
-'use client';
-
-import { MoonStar, Sun, SunMoon } from 'lucide-react';
+import { MoonStar, Sun, MonitorSmartphone } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import IconButton from '../ui/icon-button';
 
-export function ThemeToggle() {
+export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const getToolTip = (theme: string | undefined): string => {
@@ -44,7 +42,7 @@ export function ThemeToggle() {
       ) : theme === 'dark' ? (
         <MoonStar />
       ) : (
-        <SunMoon />
+        <MonitorSmartphone />
       )}
     </IconButton>
   );

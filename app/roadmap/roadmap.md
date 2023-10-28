@@ -2,6 +2,12 @@
 
 ## Release Notes (V3.0)
 
+### 28 Oct 2023 - V3.0.11
+
+- Patches for minor bug fixes.
+- More intuitive icon for "follow system theme" toggle.
+- Refactoring.
+
 ### 21 Oct 2023 - V3.0.10
 
 - Better sharing of result with Taboo AI Share Card!

@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { sendEmail } from '@/lib/services/emailService';
 import ProductHuntBadge from '@/public/images/producthunt.svg';
-import { useToast } from '../ui/use-toast';
-import { Card, CardContent, CardHeader } from '../ui/card';
+import { useToast } from '../../ui/use-toast';
+import { Card, CardContent, CardHeader } from '../../ui/card';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -14,14 +14,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { Textarea } from '../ui/textarea';
-import { Spinner } from './spinner';
+} from '../../ui/form';
+import { Input } from '../../ui/input';
+import { Button } from '../../ui/button';
+import { Textarea } from '../../ui/textarea';
+import { Spinner } from '../spinner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAuth } from '../auth-provider';
+import { useAuth } from '../../auth-provider';
 import { updateUserFromUser } from '@/lib/services/userService';
 
 const contactFormSchema = z.object({
