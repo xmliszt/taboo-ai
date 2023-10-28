@@ -10,13 +10,13 @@ export default function ResultsSummaryCard({
   topicName,
   difficulty,
 }: {
-  total: number;
-  totalScore: number;
+  total: number | undefined;
+  totalScore: number | undefined;
   topicName: string;
   difficulty: number;
 }) {
-  const rating = (totalScore * 6) / 300;
-  const roundedTotalScore = _.round(totalScore, 1);
+  const rating = totalScore ? (totalScore * 6) / 300 : undefined;
+  const roundedTotalScore = totalScore ? _.round(totalScore, 1) : undefined;
   const displayTopicName = getDisplayedTopicName(topicName);
   const difficultyName = getDifficulty(difficulty, false);
 
@@ -40,12 +40,20 @@ export default function ResultsSummaryCard({
           <span>Total Score:</span>
           <div className='flex flex-row items-center'>
             <ScoreInfoButton asChild />
-            <span className='font-bold'>{roundedTotalScore} / 300</span>
+            {roundedTotalScore ? (
+              <span className='font-bold'>{roundedTotalScore} / 300</span>
+            ) : (
+              <span className='font-bold'>N/A</span>
+            )}
           </div>
         </div>
         <div className='flex flex-row justify-between'>
           <span>Overall Ratings: </span>
-          <StarRatingBar rating={rating} maxRating={6} />
+          {rating ? (
+            <StarRatingBar rating={rating} maxRating={6} />
+          ) : (
+            <span className='font-bold'>N/A</span>
+          )}
         </div>
       </CardContent>
     </Card>
