@@ -37,7 +37,10 @@ import { Label } from '@/components/ui/label';
 import { IChat, IDisplayScore } from '@/lib/types/score.type';
 import ILevel from '@/lib/types/level.type';
 import { Skeleton } from '@/components/custom/skeleton';
-import { getLevel } from '@/lib/services/levelService';
+import {
+  getLevel,
+  incrementLevelPopularity,
+} from '@/lib/services/levelService';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
 import {
   selectLevelStorage,
@@ -124,6 +127,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     const _level = await getLevel(id);
     if (_level && level === undefined) {
       setLevel(_level);
+      incrementLevelPopularity(_level.id);
       dispatch(setLevelStorage(_level));
     }
   };
