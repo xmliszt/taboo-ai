@@ -7,6 +7,7 @@ import {
   getCountFromServer,
   getDoc,
   getDocs,
+  increment,
   query,
   updateDoc,
   where,
@@ -107,6 +108,6 @@ export const verifyLevel = async (id: string): Promise<void> => {
   await updateDoc(doc(firestore, 'levels', id), { isVerified: true });
 };
 
-export const updateLevelPopularity = async (id: string, popularity: number) => {
-  await updateDoc(doc(firestore, 'levels', id), { popularity: popularity });
+export const incrementLevelPopularity = async (id: string) => {
+  await updateDoc(doc(firestore, 'levels', id), { popularity: increment(1) });
 };

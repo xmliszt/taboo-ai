@@ -231,7 +231,7 @@ export const getCalculatedScore = (score: IDisplayScore): number => {
   const difficulty = score.difficulty;
   const multipliers = getDifficultyMultipliers(difficulty);
   const timeScore = calculateTimeScore(score) * multipliers.timeMultipler;
-  const aiScore = (score.ai_score ?? 50) * multipliers.promptMultiplier;
+  const aiScore = (score.ai_score ?? 0) * multipliers.promptMultiplier;
   return _.round(timeScore + aiScore, 1);
 };
 

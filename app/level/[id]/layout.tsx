@@ -18,10 +18,13 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-  const levels = await getAllLevels();
-  return levels.map((level) => ({ id: level.id }));
+  return (await getAllLevels()).map((level) => ({ id: level.id }));
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

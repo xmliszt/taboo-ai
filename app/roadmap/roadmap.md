@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 28 Oct 2023 - V3.0.12
+
+- Fix issue where total time taken not showing if scores not judged completely.
+- Increase Google auth browser persistence level to local instead of session.
+
 ### 28 Oct 2023 - V3.0.11
 
 - Patches for minor bug fixes.

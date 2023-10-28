@@ -7,7 +7,6 @@ import { DisplayUtils } from '@/lib/utils/displayUtils';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
-import { updateLevelPopularity } from '@/lib/services/levelService';
 import { useState } from 'react';
 import { useAppDispatch } from '@/lib/redux/hook';
 import { setLevelStorage } from '@/lib/redux/features/levelStorageSlice';
@@ -24,11 +23,6 @@ export function LevelCard({ level }: LevelCardProps) {
     if (level) {
       dispatch(setLevelStorage(level));
       router.push(`/level/${level.id}`);
-      updateLevelPopularity(level.id, (level.popularity ?? 0) + 1).catch(
-        (error) => {
-          console.error(error);
-        }
-      );
     } else {
       return router.push('/ai');
     }

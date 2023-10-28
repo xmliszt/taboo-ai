@@ -3,7 +3,7 @@
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { IAIScore, IDisplayScore } from '../../lib/types/score.type';
-import _, { uniqueId } from 'lodash';
+import _ from 'lodash';
 import { IHighlight } from '../../lib/types/highlight.type';
 import { useRouter } from 'next/navigation';
 import LoadingMask from '../../components/custom/loading-mask';
@@ -17,7 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { CircleSlash, Hand, MousePointerClick } from 'lucide-react';
+import { CircleSlash, Hand, MousePointerClick, RefreshCcw } from 'lucide-react';
 import { ScoreInfoDialog } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
 import { HASH } from '@/lib/hash';
@@ -45,6 +45,9 @@ import {
 import ResultsSummaryCard from '@/components/custom/results/results-summary-card';
 import { ResultsShareAlertDialog } from '@/components/custom/results/results-share-alert-dialog';
 import ResutlsContributionAlertDialog from '@/components/custom/results/results-contribution-alert-dialog';
+import { Spinner } from '@/components/custom/spinner';
+import { store } from '@/lib/redux/store';
+import IconButton from '@/components/ui/icon-button';
 
 interface StatItem {
   title: string;
@@ -66,11 +69,12 @@ export default function ResultPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isShareCardOpen, setIsShareCardOpen] = useState(false);
+  const [isScoring, setIsScoring] = useState(false);
   const screenshotRef = useRef<HTMLDivElement>(null);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
-  let total = 0;
-  let totalScore = 0;
+  let totalTimeTaken: number | undefined = 0;
+  let totalScore: number | undefined = 0;
 
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
     if (level && level.isAIGenerated) {
@@ -87,7 +91,19 @@ export default function ResultPage() {
   }, [level, user, status]);
 
   useEffect(() => {
+    checkUserStatus();
     const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
+      const scores = store.getState().scoreStorageReducer.scores;
+      if (
+        scores?.length !== CONSTANTS.numberOfQuestionsPerGame ||
+        scores.some((score) => score.ai_score === undefined)
+      ) {
+        toast({
+          title:
+            'Sorry we are not able to share your scores because they are incomplete.',
+        });
+        return;
+      }
       setIsShareCardOpen(true);
     });
     return () => {
@@ -102,18 +118,29 @@ export default function ResultPage() {
   const performAIJudging = async (
     retries: number,
     target: string,
-    userInput: string,
-    completion: (aiScore: IAIScore) => void
-  ) => {
+    userInput: string
+  ): Promise<IAIScore> => {
+    if (localStorage.getItem(HASH.dev) === '1') {
+      const devMode = localStorage.getItem('mode') ?? '1';
+      switch (devMode) {
+        case '1':
+        case '2':
+          return { score: 50, explanation: 'This is a test run.' };
+        case '3':
+        case '4':
+          return { score: undefined, explanation: undefined };
+        default:
+          return { score: 50, explanation: 'This is a test run.' };
+      }
+    }
     try {
-      const score = await askAIForJudgingScore(target, userInput);
-      completion(score);
+      return await askAIForJudgingScore(target, userInput);
     } catch (error) {
       console.error(error);
       if (retries > 0) {
-        performAIJudging(retries - 1, target, userInput, completion);
+        return performAIJudging(retries - 1, target, userInput);
       } else {
-        completion({ score: undefined, explanation: undefined });
+        return { score: undefined, explanation: undefined };
       }
     }
   };
@@ -143,22 +170,14 @@ export default function ResultPage() {
               scores.length
             }]`
           );
-        } else if (localStorage.getItem(HASH.dev) === '1') {
-          copyScores[i].ai_score = 50;
-          copyScores[i].ai_explanation = 'This is a test run.';
         } else {
           for (let t = 0; t < 3; t++) {
-            await performAIJudging(5, target, userInput, (aiJudgeScore) => {
-              aiJudgeScore.explanation !== undefined &&
-                aiJudgeScore.score !== undefined &&
-                tempScores.push(aiJudgeScore);
-            });
+            const aiJudgeScore = await performAIJudging(5, target, userInput);
+            aiJudgeScore.explanation !== undefined &&
+              aiJudgeScore.score !== undefined &&
+              tempScores.push(aiJudgeScore);
           }
-          if (tempScores.length === 0) {
-            copyScores[i].ai_score = 50;
-            copyScores[i].ai_explanation =
-              'Our sincere apologies for a server hiccup that causes AI unable to generate the scores at the moment. We fully recognize that the average score of 50 you received does not appropriately represent your skills and efforts. We deeply regret any inconvenience or frustration this may have caused you. We are actively working to rectify the issue and prevent such occurrences in the future. Thank you for your understanding and patience as we resolve this matter.';
-          } else {
+          if (tempScores.length > 0) {
             tempScores.sort((s1, s2) => (s2.score ?? 0) - (s1.score ?? 0));
             const bestScore = tempScores[0];
             copyScores[i].ai_score = bestScore.score;
@@ -174,37 +193,79 @@ export default function ResultPage() {
       setIsLoading(false);
       setLoadingMessage('Loading...');
       dispatch(setScoresStorage(copyScores));
-      updateDisplayedScores(copyScores);
+      updateTotalTimeTakenAndTotalScores(copyScores);
     }
   };
 
-  const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
-    const copiedScores = JSON.parse(
-      JSON.stringify(displayScores)
-    ) as IDisplayScore[];
-    total = 0;
+  const retryScoring = async (scoreId: number) => {
+    if (!scores) return;
+    const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
+    if (!copyScores) return;
+    const score = copyScores.find((score) => score.id === scoreId);
+    if (!score) return;
+    const userInput = score.conversation
+      .filter((chat) => chat.role === 'user')
+      .map((chat) => chat.content)
+      .join(' | ');
+    const target = score.target;
+    const aiScore = score.ai_score;
+    const aiExplanation = score.ai_explanation;
+    if (aiScore !== undefined && aiExplanation !== undefined) {
+      toast({
+        title: 'This score has already been judged.',
+        variant: 'destructive',
+      });
+    } else {
+      let aiJudgeScore: IAIScore = {
+        score: 50,
+        explanation: 'This is a test run, re-scored by the user.',
+      };
+      setIsScoring(true);
+      aiJudgeScore = await performAIJudging(5, target, userInput);
+      setIsScoring(false);
+      if (aiJudgeScore.explanation !== undefined) {
+        score.ai_score = aiJudgeScore.score;
+        score.ai_explanation = aiJudgeScore.explanation;
+        dispatch(setScoresStorage([...copyScores]));
+        updateTotalTimeTakenAndTotalScores(copyScores);
+        toast({
+          title: 'Score has been updated.',
+        });
+      } else {
+        toast({
+          title: 'Sorry, we are unable to judge your score at the moment.',
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
+  const updateTotalTimeTakenAndTotalScores = (
+    displayScores: IDisplayScore[]
+  ) => {
+    // Update total time taken
+    totalTimeTaken = 0;
+    for (const score of displayScores) {
+      totalTimeTaken += getCompletionSeconds(score.completion);
+    }
+    if (displayScores.some((s) => s.ai_score === undefined)) {
+      totalScore = undefined;
+      return;
+    }
+
+    // Update total score if possible
     totalScore = 0;
-    for (const score of copiedScores) {
-      total += getCompletionSeconds(score.completion);
+    for (const score of displayScores) {
       totalScore += getCalculatedScore(score);
     }
     totalScore = _.round(totalScore, 1);
-    copiedScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
   };
 
   if (
     scores !== undefined &&
     scores.length === CONSTANTS.numberOfQuestionsPerGame
   ) {
-    if (
-      scores.some(
-        (s) => s.ai_score === undefined || s.ai_explanation === undefined
-      )
-    ) {
-      checkUserStatus();
-    } else {
-      scores && updateDisplayedScores(scores);
-    }
+    updateTotalTimeTakenAndTotalScores(scores);
   }
 
   const generateShareCardImage = async () => {
@@ -228,6 +289,14 @@ export default function ResultPage() {
     imageLink?: string,
     imageName?: string
   ) => {
+    if (totalScore === undefined) {
+      toast({
+        title:
+          'Sorry we are not able to share your scores because they are incomplete.',
+        variant: 'destructive',
+      });
+      return;
+    }
     const link = document.createElement('a');
     if (imageLink && imageName) {
       link.href = imageLink;
@@ -286,23 +355,22 @@ export default function ResultPage() {
   };
 
   const generateHighlightedMessage = (
+    idx: number,
     content: string,
     highlights: IHighlight[]
   ): React.ReactElement[] => {
     let parts: JSX.Element[] = [];
     if (highlights.length > 0) {
       parts = applyHighlightsToMessage(
+        idx,
         content,
         highlights,
-        (normal) => {
-          return <span key={uniqueId()}>{normal}</span>;
+        (key, normal) => {
+          return <span key={key}>{normal}</span>;
         },
-        (highlight) => {
+        (key, highlight) => {
           return (
-            <span
-              key={uniqueId()}
-              className='bg-green-400 px-1 rounded-lg text-black'
-            >
+            <span key={key} className='bg-green-400 px-1 rounded-lg text-black'>
               {highlight}
             </span>
           );
@@ -313,13 +381,15 @@ export default function ResultPage() {
   };
 
   const applyHighlightsToMessage = (
+    idx: number,
     message: string,
     highlights: IHighlight[],
-    onNormalMessagePart: (s: string) => JSX.Element,
-    onHighlightMessagePart: (s: string) => JSX.Element
+    onNormalMessagePart: (key: string, s: string) => JSX.Element,
+    onHighlightMessagePart: (key: string, s: string) => JSX.Element
   ): JSX.Element[] => {
     let parts = [];
-    if (highlights.length === 0) parts = [<span key={message}>{message}</span>];
+    if (highlights.length === 0)
+      parts = [<span key={`message-${idx}`}>{message}</span>];
     else {
       let startIndex = 0;
       let endIndex = 0;
@@ -330,31 +400,40 @@ export default function ResultPage() {
         }
         // Normal part
         parts.push(
-          onNormalMessagePart(message.substring(startIndex, endIndex))
+          onNormalMessagePart(
+            `normal-message-${startIndex}-${endIndex}-${idx}`,
+            message.substring(startIndex, endIndex)
+          )
         );
         startIndex = endIndex;
         endIndex = highlight.end;
         // Highlighted part
         parts.push(
-          onHighlightMessagePart(message.substring(startIndex, endIndex))
+          onHighlightMessagePart(
+            `highlight-message-${startIndex}-${endIndex}-${idx}`,
+            message.substring(startIndex, endIndex)
+          )
         );
         startIndex = endIndex;
       }
-      parts.push(onNormalMessagePart(message.substring(endIndex)));
+      parts.push(
+        onNormalMessagePart(
+          `normal-message-${endIndex}-${idx}`,
+          message.substring(endIndex)
+        )
+      );
     }
     return parts;
   };
 
   const generateMobileStatsRow = (
-    rowID: number,
+    key: string,
     title: string,
     content: React.ReactElement
   ) => {
     return (
-      <div key={`${title}-${rowID}`} className='px-3 py-1 leading-snug'>
-        <span key={uniqueId()} className='font-extrabold text-primary'>
-          {title}:{' '}
-        </span>
+      <div key={key} className='px-3 py-1 leading-snug'>
+        <span className='font-extrabold text-primary'>{title}: </span>
         {content}
       </div>
     );
@@ -362,10 +441,13 @@ export default function ResultPage() {
 
   const generateConversation = (score: IDisplayScore): React.ReactElement => {
     return (
-      <div className='w-full flex flex-col gap-4 bg-secondary text-secondary-foreground p-4'>
+      <div
+        key={`accordion-content-conversation-${score.id}`}
+        className='w-full flex flex-col gap-4 bg-secondary text-secondary-foreground p-4'
+      >
         {score.conversation.map((chat, idx) => (
           <p
-            key={`chat-bubble-${idx}`}
+            key={`accordion-content-chat-bubble-${score.id}-${idx}`}
             className={cn(
               chat.role === 'user'
                 ? 'chat-bubble-right'
@@ -376,7 +458,11 @@ export default function ResultPage() {
           >
             {chat.role === 'assistant' &&
             idx === score.conversation.length - 1 ? (
-              generateHighlightedMessage(chat.content, score.responseHighlights)
+              generateHighlightedMessage(
+                idx,
+                chat.content,
+                score.responseHighlights
+              )
             ) : chat.role === 'error' ? (
               <span className='text-slate-400'>{chat.content}</span>
             ) : (
@@ -409,7 +495,11 @@ export default function ResultPage() {
       },
       {
         title: 'Total Score',
-        content: <span>{getCalculatedScore(score).toString()}</span>,
+        content: score.ai_score ? (
+          <span>{getCalculatedScore(score).toString()}</span>
+        ) : (
+          <span>N/A</span>
+        ),
       },
       {
         title: 'Total Time Taken',
@@ -430,19 +520,40 @@ export default function ResultPage() {
       },
       {
         title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
-        content: (
-          <span>{`${(score.ai_score ?? 50).toString()} x ${
+        content: score.ai_score ? (
+          <span>{`${score.ai_score.toString()} x ${
             (promptMultiplier ?? 0) * 100
-          }% = ${_.round(
-            (score.ai_score ?? 50) * (promptMultiplier ?? 0),
-            1
-          )}`}</span>
+          }% = ${_.round(score.ai_score * (promptMultiplier ?? 0), 1)}`}</span>
+        ) : (
+          <Button
+            className='ml-4'
+            size='sm'
+            variant='outline'
+            onClick={() => {
+              retryScoring(score.id);
+            }}
+            disabled={isScoring}
+          >
+            {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
+          </Button>
         ),
       },
       {
         title: 'AI Explanation',
-        content: (
+        content: score.ai_explanation ? (
           <span>{score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail}</span>
+        ) : (
+          <Button
+            className='ml-4'
+            size='sm'
+            variant='outline'
+            onClick={() => {
+              retryScoring(score.id);
+            }}
+            disabled={isScoring}
+          >
+            {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
+          </Button>
         ),
       },
     ];
@@ -451,16 +562,16 @@ export default function ResultPage() {
   const generateMobileScoreStack = () => {
     if (!scores || scores.length < CONSTANTS.numberOfQuestionsPerGame)
       return <></>;
-    return scores.map((score) => (
+    return scores.map((score, idx) => (
       <AccordionItem
         key={`word-${score.id}`}
         value={`word-${score.id}`}
         className='pb-1'
       >
-        <AccordionTrigger>
+        <AccordionTrigger key={`accordion-trigger-${score.id}`}>
           <div className='w-full text-primary flex flex-row gap-2 items-center justify-between'>
             <div className='flex flex-row flex-grow items-center gap-2 justify-between'>
-              <span className='text-left' key={uniqueId()}>
+              <span className='text-left leading-snug'>
                 {_.startCase(score.target)}
               </span>
               <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1'>
@@ -476,16 +587,38 @@ export default function ResultPage() {
               </div>
             </div>
             <div className='flex flex-row items-center'>
-              <span className='font-extrabold leading-snug' key={uniqueId()}>
-                {getCalculatedScore(score)}/{100}
-              </span>
+              {score.ai_score ? (
+                <span className='font-extrabold leading-snug' key={score.id}>
+                  {getCalculatedScore(score)}/{100}
+                </span>
+              ) : (
+                <IconButton
+                  aria-label='Re-Score'
+                  tooltip='Re-Score'
+                  size='sm'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    retryScoring(score.id);
+                  }}
+                  disabled={isScoring}
+                >
+                  {isScoring ? <Spinner /> : <RefreshCcw />}
+                </IconButton>
+              )}
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent className='bg-secondary rounded-lg'>
+        <AccordionContent
+          key={`accordion-content-${score.id}`}
+          className='bg-secondary rounded-lg'
+        >
           {generateConversation(score)}
-          {generateStatsItems(score).map((item) => {
-            return generateMobileStatsRow(score.id, item.title, item.content);
+          {generateStatsItems(score).map((item, idx) => {
+            return generateMobileStatsRow(
+              `accordion-mobile-stats-row-${score.id}-${idx}`,
+              item.title,
+              item.content
+            );
           })}
         </AccordionContent>
       </AccordionItem>
@@ -497,7 +630,7 @@ export default function ResultPage() {
       <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
         {level && (
           <ResultsSummaryCard
-            total={total}
+            total={totalTimeTaken}
             totalScore={totalScore}
             topicName={level.name}
             difficulty={level.difficulty}
