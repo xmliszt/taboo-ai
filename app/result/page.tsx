@@ -73,7 +73,7 @@ export default function ResultPage() {
   const screenshotRef = useRef<HTMLDivElement>(null);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
-  let total: number | undefined = 0;
+  let totalTimeTaken: number | undefined = 0;
   let totalScore: number | undefined = 0;
 
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
@@ -120,6 +120,19 @@ export default function ResultPage() {
     target: string,
     userInput: string
   ): Promise<IAIScore> => {
+    if (localStorage.getItem(HASH.dev) === '1') {
+      const devMode = localStorage.getItem('mode') ?? '1';
+      switch (devMode) {
+        case '1':
+        case '2':
+          return { score: 50, explanation: 'This is a test run.' };
+        case '3':
+        case '4':
+          return { score: undefined, explanation: undefined };
+        default:
+          return { score: 50, explanation: 'This is a test run.' };
+      }
+    }
     try {
       return await askAIForJudgingScore(target, userInput);
     } catch (error) {
@@ -157,10 +170,6 @@ export default function ResultPage() {
               scores.length
             }]`
           );
-        } else if (localStorage.getItem(HASH.dev) === '1') {
-          copyScores[i].ai_score = i === 0 ? undefined : 50;
-          copyScores[i].ai_explanation =
-            i === 0 ? undefined : 'This is a test run.';
         } else {
           for (let t = 0; t < 3; t++) {
             const aiJudgeScore = await performAIJudging(5, target, userInput);
@@ -184,7 +193,7 @@ export default function ResultPage() {
       setIsLoading(false);
       setLoadingMessage('Loading...');
       dispatch(setScoresStorage(copyScores));
-      updateDisplayedScores(copyScores);
+      updateTotalTimeTakenAndTotalScores(copyScores);
     }
   };
 
@@ -211,16 +220,14 @@ export default function ResultPage() {
         score: 50,
         explanation: 'This is a test run, re-scored by the user.',
       };
-      if (localStorage.getItem(HASH.dev) !== '1') {
-        setIsScoring(true);
-        aiJudgeScore = await performAIJudging(5, target, userInput);
-        setIsScoring(false);
-      }
+      setIsScoring(true);
+      aiJudgeScore = await performAIJudging(5, target, userInput);
+      setIsScoring(false);
       if (aiJudgeScore.explanation !== undefined) {
         score.ai_score = aiJudgeScore.score;
         score.ai_explanation = aiJudgeScore.explanation;
         dispatch(setScoresStorage([...copyScores]));
-        updateDisplayedScores(copyScores);
+        updateTotalTimeTakenAndTotalScores(copyScores);
         toast({
           title: 'Score has been updated.',
         });
@@ -233,30 +240,32 @@ export default function ResultPage() {
     }
   };
 
-  const updateDisplayedScores = (displayScores: IDisplayScore[]) => {
+  const updateTotalTimeTakenAndTotalScores = (
+    displayScores: IDisplayScore[]
+  ) => {
+    // Update total time taken
+    totalTimeTaken = 0;
+    for (const score of displayScores) {
+      totalTimeTaken += getCompletionSeconds(score.completion);
+    }
     if (displayScores.some((s) => s.ai_score === undefined)) {
-      total = undefined;
       totalScore = undefined;
       return;
     }
-    const copiedScores = JSON.parse(
-      JSON.stringify(displayScores)
-    ) as IDisplayScore[];
-    total = 0;
+
+    // Update total score if possible
     totalScore = 0;
-    for (const score of copiedScores) {
-      total += getCompletionSeconds(score.completion);
+    for (const score of displayScores) {
       totalScore += getCalculatedScore(score);
     }
     totalScore = _.round(totalScore, 1);
-    copiedScores.sort((scoreA, scoreB) => scoreA.id - scoreB.id);
   };
 
   if (
     scores !== undefined &&
     scores.length === CONSTANTS.numberOfQuestionsPerGame
   ) {
-    updateDisplayedScores(scores);
+    updateTotalTimeTakenAndTotalScores(scores);
   }
 
   const generateShareCardImage = async () => {
@@ -621,7 +630,7 @@ export default function ResultPage() {
       <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
         {level && (
           <ResultsSummaryCard
-            total={total}
+            total={totalTimeTaken}
             totalScore={totalScore}
             topicName={level.name}
             difficulty={level.difficulty}

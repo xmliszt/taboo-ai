@@ -1,13 +1,13 @@
 import { firebaseAuth } from '@/lib/firebase-client';
 import {
-  browserSessionPersistence,
+  browserLocalPersistence,
   GoogleAuthProvider,
   setPersistence,
   signInWithPopup,
 } from 'firebase/auth';
 
 export const signInWithGoogle = async () => {
-  await setPersistence(firebaseAuth, browserSessionPersistence);
+  await setPersistence(firebaseAuth, browserLocalPersistence);
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({
     prompt: 'select_account',

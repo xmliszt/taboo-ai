@@ -15,7 +15,11 @@ export const scoreStorageSlice = createSlice({
       state,
       actions: PayloadAction<IDisplayScore[] | undefined>
     ) => {
-      state.scores = actions.payload; // update state
+      const newScores = actions.payload;
+      if (newScores) {
+        newScores.sort((a, b) => a.id - b.id);
+      }
+      state.scores = newScores; // update state
       if (actions.payload && actions.payload.length > 0) {
         localStorage.setItem(HASH.scores, JSON.stringify(actions.payload));
       } else {
