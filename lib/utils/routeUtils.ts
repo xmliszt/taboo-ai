@@ -5,7 +5,6 @@ export enum TabooPathname {
   AI_MODE = '/ai',
   ADD_LEVEL = '/add-level',
   BUY_ME_COFFEE = '/buymecoffee',
-  LEVEL = '/level',
   AI_LEVEL = '/level/ai',
   LEVELS = '/levels',
   PWA = '/pwa',
@@ -45,7 +44,7 @@ export class RouteManager {
         return {
           isTransparent: true,
         };
-      case `/${route.split('/')[1]}` === TabooPathname.LEVEL:
+      case `/${route.split('/')[1]}` === '/level':
         return {
           title: 'Taboo AI',
           hasBackButton: true,

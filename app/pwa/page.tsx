@@ -1,12 +1,8 @@
 import ReactMarkdown from 'react-markdown';
 import content from './content.md';
-import SocialLinkButton from '../../components/custom/social-link-button';
-import { SiDiscord } from 'react-icons/si';
 import InstallButton from '@/components/custom/install-button';
 
-interface InstallPWAProps {}
-
-export default async function InstallPWAPage(props: InstallPWAProps) {
+export default async function InstallPWAPage() {
   return (
     <section className='flex flex-col items-center'>
       <article
