@@ -14,6 +14,7 @@ export enum TabooPathname {
   WHATSNEW = '/whatsnew',
   X_REVIEW_WORDS = '/x/review-words',
   SITEMAP = '/sitemap',
+  PROFILE = '/profile',
 }
 
 export class RouteManager {
@@ -86,6 +87,12 @@ export class RouteManager {
       case TabooPathname.SITEMAP === route:
         return {
           title: 'Sitemap',
+        };
+      case TabooPathname.PROFILE === route:
+        return {
+          title: 'My Profile',
+          hideMenu: true,
+          hasBackButton: true,
         };
       default:
         return {

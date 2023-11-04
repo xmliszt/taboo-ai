@@ -16,11 +16,11 @@ export default function Error({
 
   return (
     <div className='w-full h-screen flex flex-col justify-center items-center gap-10 bg-card'>
-      <div className='flex flex-col justify-center gap-4 px-10'>
+      <div className='w-full backdrop:flex flex-col justify-center gap-4 px-10'>
         <h1 className='text-primary text-center animate-pulse'>
           S̷̛̲͌̚o̷̻̳̣̐̚m̸̮̔̂́ė̷̪ţ̷̤̤̂̿h̶̘͈́ͅi̷͍̪͝n̶̛̬͉̰g̴̡͆̃̃ ̴̻̑͘͜͝W̶̥͉̏̉͝e̷̮̅ͅn̶̝̠͎̊t̸̛͎ ̵̙̻̊Ẁ̸̜͖͆͜r̷̹̘͎͒̈́o̶͚̓̄̚ṉ̴̱̅̍͑g̸͇̮͘ͅ
         </h1>
-        <h4 className='mt-4 text-primary italic font-extralight leading-snug border-red-500 border-[1px] rounded-lg px-6 py-4 shadow-lg'>
+        <h4 className='mt-10 text-primary italic font-extralight leading-snug border-red-500 border-[1px] rounded-lg px-6 py-4 shadow-lg whitespace-normal break-words'>
           {error.message}
         </h4>
       </div>
