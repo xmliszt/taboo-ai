@@ -80,7 +80,6 @@ export function UserLoginPortal() {
         label: 'Profile',
         icon: <User />,
         isVisible: pathname !== '/profile',
-        isUpcoming: true,
         onClick: () => {
           router.push('/profile');
         },

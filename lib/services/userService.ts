@@ -1,6 +1,6 @@
 import { firestore } from '@/lib/firebase-client';
 import { User } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import moment from 'moment';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
@@ -54,4 +54,8 @@ export const updateUIDIfNotExist = async (email: string, uid: string) => {
   await updateDoc(doc(firestore, 'users', email), {
     uid: uid,
   });
+};
+
+export const deleteUserFromFirebase = async (email: string) => {
+  await deleteDoc(doc(firestore, 'users', email));
 };

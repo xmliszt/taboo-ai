@@ -6,13 +6,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '../ui/sheet';
-import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Separator } from '../ui/separator';
 import { isMobile } from 'react-device-detect';
-import { Construction } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../auth-provider';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import Link from 'next/link';
@@ -21,17 +18,7 @@ import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { LoginErrorEventProps } from './login-error-dialog';
 import { LoginReminderProps } from './login-reminder-dialog';
 import { CONSTANTS } from '@/lib/constants';
-
-interface MenuItem {
-  path: string; // unique identifer of each item, default should use the pathname, but not necessarily must be route path (for those non-routable items)
-  title: string;
-  subtitle: string;
-  visible: boolean;
-  isUpcoming?: boolean;
-  highlight?: boolean;
-  href?: string; // Convenient way for router push, if defined, router will push to this route
-  onClick?: MouseEventHandler; // Additional handling when the item gets clicked, more customization
-}
+import AccessLinkCard, { MenuItem } from './common/access-link-card';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -147,7 +134,6 @@ export default function SideMenu() {
         subtitle:
           'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
         visible: user !== undefined && status === 'authenticated',
-        isUpcoming: true,
         href: '/profile',
       },
       {
@@ -220,36 +206,14 @@ export default function SideMenu() {
               <Separator key={`sep-${idx}`} />
             ) : (
               item.visible && (
-                <Card
-                  key={item.title}
-                  id={`menu-${idx}`}
-                  className={cn(
-                    item.highlight ? 'border-green-500' : '',
-                    pathname === item.path
-                      ? 'border-4 border-primary font-bold'
-                      : '',
-                    item.isUpcoming && 'opacity-20',
-                    'hover:shadow-lg hover:cursor-pointer hover:scale-105 transition-all ease-in-out'
-                  )}
-                  onClick={(e) => {
-                    if (item.isUpcoming || item.href === pathname) {
-                      return;
-                    }
+                <AccessLinkCard
+                  key={`menu-${item.path}`}
+                  idx={idx}
+                  item={item}
+                  onClick={() => {
                     setIsOpen(false);
-                    item.onClick && item.onClick(e);
-                    item.href && router.push(item.href);
                   }}
-                >
-                  <CardHeader>
-                    {item.isUpcoming === true && <Construction />}
-                    <CardTitle>{item.title}</CardTitle>
-                    <CardDescription>
-                      {item.isUpcoming
-                        ? 'Taboo AI is still developing this feature for you. Stay tuned for more updates!'
-                        : item.subtitle}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+                />
               )
             )
           )}
