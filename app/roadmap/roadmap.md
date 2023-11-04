@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 04 Nov 2023 - V3.0.13
+
+- Open profile page for user to edit nickname and delete account.
+- More features are still in development.
+
 ### 28 Oct 2023 - V3.0.12
 
 - Fix issue where total time taken not showing if scores not judged completely.

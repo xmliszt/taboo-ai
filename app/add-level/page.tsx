@@ -39,7 +39,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { InfoButton } from '@/components/custom/info-button';
 import { Separator } from '@/components/ui/separator';
-import { updateUserFromUser } from '@/lib/services/userService';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 
 const CHARACTER_LIMIT = 50;

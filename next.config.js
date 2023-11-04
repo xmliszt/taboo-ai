@@ -28,6 +28,7 @@ const nextConfig = {
       'media.giphy.com',
       'github.com',
       'aibrb.com',
+      'lh3.googleusercontent.com',
     ],
     formats: ['image/webp'],
   },
