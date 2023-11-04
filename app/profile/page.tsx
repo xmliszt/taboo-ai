@@ -121,12 +121,14 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <AccessLinkCard
-        idx={1}
-        item={seeMyLastResultMenuItem}
-        className='w-full max-w-[500px]'
-        icon={<ScrollText />}
-      />
+      {seeMyLastResultMenuItem.visible && (
+        <AccessLinkCard
+          idx={1}
+          item={seeMyLastResultMenuItem}
+          className='w-full max-w-[500px]'
+          icon={<ScrollText />}
+        />
+      )}
 
       <ConstructionBlock
         title='Game Statistics is coming soon!'
