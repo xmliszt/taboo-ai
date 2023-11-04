@@ -44,7 +44,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       toast({
-        title: 'You need to sign in to contribute a topic',
+        title: 'You need to sign in to view your profile.',
       });
       router.push('/');
       return;
