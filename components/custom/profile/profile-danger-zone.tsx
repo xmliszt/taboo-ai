@@ -22,6 +22,7 @@ import { deleteUser, getAuth } from 'firebase/auth';
 import { useToast } from '@/components/ui/use-toast';
 import { Spinner } from '../spinner';
 import { deleteUserFromFirebase } from '@/lib/services/userService';
+import { useRouter } from 'next/navigation';
 
 const auth = getAuth();
 
@@ -30,6 +31,7 @@ export default function ProfileDangerZone({
 }: {
   className?: string;
 }) {
+  const router = useRouter();
   const { toast } = useToast();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -41,6 +43,8 @@ export default function ProfileDangerZone({
       setIsDeleting(true);
       user.email && (await deleteUserFromFirebase(user.email));
       await deleteUser(user);
+      toast({ title: 'Your account has been deleted.' });
+      router.push('/');
     } catch (error) {
       console.error(error);
       toast({
