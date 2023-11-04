@@ -138,11 +138,11 @@ const ContactMe = () => {
             <div className='w-full flex flex-col lg:flex-row gap-4 items-center'>
               <a
                 className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
-                href='https://www.producthunt.com/posts/taboo-ai-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai&#0045;2'
+                href='https://www.producthunt.com/posts/taboo-ai-v3-0?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai&#0045;v3&#0045;0'
                 target='_blank'
               >
                 <Image
-                  src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=421599&theme=neutral'
+                  src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=423490&theme=neutral'
                   alt='Taboo&#0032;AI - Taboo&#0032;AI&#0032;V3&#0046;0&#0032;&#0124;&#0032;English&#0032;Learning&#0032;with&#0032;AI&#0032;reimagined&#0032;🚀 | Product Hunt'
                   width='240'
                   height='50'
