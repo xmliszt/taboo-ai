@@ -1,4 +1,4 @@
-# 🚀 Ignite Your English Learning with Taboo AI** 🚀
+# 🚀 Ignite Your English Learning with Taboo AI 🚀
 
 ![Taboo AI Poster](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true)
 
