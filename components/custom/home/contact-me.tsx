@@ -135,15 +135,27 @@ const ContactMe = () => {
               </form>
             </Form>
 
-            <div className='w-full flex flex-col lg:flex-row gap-4 items-center'>
+            <div className='w-full flex flex-row flex-wrap gap-4 justify-center'>
               <a
                 className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
-                href='https://www.producthunt.com/posts/taboo-ai-v3-0?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai&#0045;v3&#0045;0'
+                href='https://www.producthunt.com/posts/taboo-ai?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
                 target='_blank'
               >
                 <Image
-                  src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=423490&theme=neutral'
-                  alt='Taboo&#0032;AI - Taboo&#0032;AI&#0032;V3&#0046;0&#0032;&#0124;&#0032;English&#0032;Learning&#0032;with&#0032;AI&#0032;reimagined&#0032;🚀 | Product Hunt'
+                  src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=387037&theme=light'
+                  alt='Taboo&#0032;AI - Ignite&#0032;English&#0032;learning&#0032;in&#0032;game&#0032;of&#0032;Taboo&#0044;&#0032;with&#0032;AI | Product Hunt'
+                  width='240'
+                  height='50'
+                />
+              </a>
+              <a
+                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
+                href='https://www.producthunt.com/posts/taboo-ai?utm_source=badge-top-post-topic-badge&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
+                target='_blank'
+              >
+                <Image
+                  src='https://api.producthunt.com/widgets/embed-image/v1/top-post-topic-badge.svg?post_id=387037&theme=light&period=weekly&topic_id=204'
+                  alt='Taboo&#0032;AI - Ignite&#0032;English&#0032;learning&#0032;in&#0032;game&#0032;of&#0032;Taboo&#0044;&#0032;with&#0032;AI | Product Hunt'
                   width='240'
                   height='50'
                 />

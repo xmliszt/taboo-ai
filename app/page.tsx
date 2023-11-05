@@ -28,13 +28,14 @@ export default function HomePage() {
         <section className='mt-10 w-11/12'>
           <ContactMe />
         </section>
-        <div className='my-6 w-11/12 flex flex-col gap-4 relative'>
-          <div className='absolute top-4 left-0 flex flex-row justify-center items-center w-full px-4'>
-            <span className='font-semibold text-lg text-center text-black'>
-              Subscribe to receive the latest updates about Taboo AI, and many
-              more about EdTech! 🚀
-            </span>
-          </div>
+        <div className='w-11/12 mt-6 flex flex-col px-4 text-base text-center text-black'>
+          <span className='font-bold'>👇🏻 Subscribe👇🏻</span>
+          <p>
+            Receive the latest updates about Taboo AI, and many more about
+            EdTech! 🚀
+          </p>
+        </div>
+        <div className='mb-6 w-11/12 flex flex-col gap-4 relative'>
           <iframe
             src='https://liyuxuan.substack.com/embed'
             width='100%'
