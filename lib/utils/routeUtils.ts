@@ -2,6 +2,7 @@ import { HeaderProps } from '@/components/header';
 
 export enum TabooPathname {
   HOME = '/',
+  ABOUT = '/about',
   AI_MODE = '/ai',
   ADD_LEVEL = '/add-level',
   BUY_ME_COFFEE = '/buymecoffee',
@@ -77,6 +78,10 @@ export class RouteManager {
           isTransparent: true,
         };
       case TabooPathname.WHATSNEW === route:
+        return {
+          isTransparent: true,
+        };
+      case TabooPathname.ABOUT === route:
         return {
           isTransparent: true,
         };

@@ -37,6 +37,7 @@ import { StarRatingBar } from '@/components/custom/star-rating-bar';
 import {
   b64toBlob,
   calculateTimeScore,
+  createConversationFeedForAIJudge,
   getCalculatedScore,
   getCompletionSeconds,
   getDifficultyMultipliers,
@@ -146,7 +147,11 @@ export default function ResultPage() {
   };
 
   const checkUserStatus = async () => {
-    if (scores && scores.length === CONSTANTS.numberOfQuestionsPerGame) {
+    if (
+      scores &&
+      scores.length === CONSTANTS.numberOfQuestionsPerGame &&
+      !isLoading
+    ) {
       // AI judging
       setLoadingMessage(
         `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
@@ -155,12 +160,8 @@ export default function ResultPage() {
       const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
       if (!copyScores) return;
       for (let i = 0; i < scores.length; i++) {
-        const tempScores: IAIScore[] = [];
         const score = scores[i];
-        const userInput = score.conversation
-          .filter((chat) => chat.role === 'user')
-          .map((chat) => chat.content)
-          .join(' | ');
+        const userInput = createConversationFeedForAIJudge(score.conversation);
         const target = score.target;
         const aiScore = score.ai_score;
         const aiExplanation = score.ai_explanation;
@@ -171,18 +172,9 @@ export default function ResultPage() {
             }]`
           );
         } else {
-          for (let t = 0; t < 3; t++) {
-            const aiJudgeScore = await performAIJudging(5, target, userInput);
-            aiJudgeScore.explanation !== undefined &&
-              aiJudgeScore.score !== undefined &&
-              tempScores.push(aiJudgeScore);
-          }
-          if (tempScores.length > 0) {
-            tempScores.sort((s1, s2) => (s2.score ?? 0) - (s1.score ?? 0));
-            const bestScore = tempScores[0];
-            copyScores[i].ai_score = bestScore.score;
-            copyScores[i].ai_explanation = bestScore.explanation;
-          }
+          const aiJudgeScore = await performAIJudging(5, target, userInput);
+          copyScores[i].ai_score = aiJudgeScore.score;
+          copyScores[i].ai_explanation = aiJudgeScore.explanation;
           setLoadingMessage(
             `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
               scores.length
@@ -203,10 +195,7 @@ export default function ResultPage() {
     if (!copyScores) return;
     const score = copyScores.find((score) => score.id === scoreId);
     if (!score) return;
-    const userInput = score.conversation
-      .filter((chat) => chat.role === 'user')
-      .map((chat) => chat.content)
-      .join(' | ');
+    const userInput = createConversationFeedForAIJudge(score.conversation);
     const target = score.target;
     const aiScore = score.ai_score;
     const aiExplanation = score.ai_explanation;
@@ -495,11 +484,12 @@ export default function ResultPage() {
       },
       {
         title: 'Total Score',
-        content: score.ai_score ? (
-          <span>{getCalculatedScore(score).toString()}</span>
-        ) : (
-          <span>N/A</span>
-        ),
+        content:
+          score.ai_score !== undefined ? (
+            <span>{getCalculatedScore(score).toString()}</span>
+          ) : (
+            <span>N/A</span>
+          ),
       },
       {
         title: 'Total Time Taken',
@@ -520,23 +510,27 @@ export default function ResultPage() {
       },
       {
         title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
-        content: score.ai_score ? (
-          <span>{`${score.ai_score.toString()} x ${
-            (promptMultiplier ?? 0) * 100
-          }% = ${_.round(score.ai_score * (promptMultiplier ?? 0), 1)}`}</span>
-        ) : (
-          <Button
-            className='ml-4'
-            size='sm'
-            variant='outline'
-            onClick={() => {
-              retryScoring(score.id);
-            }}
-            disabled={isScoring}
-          >
-            {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
-          </Button>
-        ),
+        content:
+          score.ai_score !== undefined ? (
+            <span>{`${score.ai_score.toString()} x ${
+              (promptMultiplier ?? 0) * 100
+            }% = ${_.round(
+              score.ai_score * (promptMultiplier ?? 0),
+              1
+            )}`}</span>
+          ) : (
+            <Button
+              className='ml-4'
+              size='sm'
+              variant='outline'
+              onClick={() => {
+                retryScoring(score.id);
+              }}
+              disabled={isScoring}
+            >
+              {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
+            </Button>
+          ),
       },
       {
         title: 'AI Explanation',
@@ -587,7 +581,7 @@ export default function ResultPage() {
               </div>
             </div>
             <div className='flex flex-row items-center'>
-              {score.ai_score ? (
+              {score.ai_score !== undefined ? (
                 <span className='font-extrabold leading-snug' key={score.id}>
                   {getCalculatedScore(score)}/{100}
                 </span>

@@ -143,6 +143,13 @@ export default function SideMenu() {
         visible: true,
       },
       {
+        path: '/about',
+        title: 'About Taboo AI',
+        subtitle: 'New to Taboo AI? Here is all you need to know!',
+        visible: true,
+        href: '/about',
+      },
+      {
         path: '/rule',
         title: 'Rules of Taboo AI',
         subtitle: 'Find out about how to play Taboo AI here!',
