@@ -1,52 +1,17 @@
-# 🚀 Dive into the New Feature-Packed **Taboo AI Version 3.0!** 🚀
+# 🚀 v3.0.14: Taboo AI just got even smarter! 🚀
 
-Get ready for an exhilarating experience with the all-new **Taboo AI Version 3.0**! We've rolled out some incredible changes to take your gameplay to the next level:
+![0](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/smart-judge.png?raw=true)
 
-## **Revamped UI/UX**
+Ladies and gentlemen, I would like to share with you this exciting news! Taboo AI has just gotten smarter when **providing evaluation to your clues** in the Results Page. After you finish a game, you will be directed to the Results Page where the AI will perform a round of assessment on the quality of your clues. To better facilitate English learners, I have boost the performance of AI judge to **not only providing you a score with its reasoning, but also providing you feedbacks on how you can improve on your clues**. 
 
-![1](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v300-1.png?raw=true)
+![1](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/smart-judge-2.png?raw=true)
 
-Say hello to a **sleek and intuitive interface** that makes navigating Taboo AI a breeze. Experience the charm of **classic typography** brought to life! Our new design invokes a sense of nostalgia while providing a seamless and intuitive experience. Enjoy a seamless and engaging experience from start to finish.
+For example, if you are using incorrect grammar or sentence structure, the AI will notify you and provide a suggested example for you to follow and learn from the mistakes!
 
-## **Dark/Light Mode**
+![2](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/smart-judge-3.png?raw=true)
 
-Tailor your gaming environment to suit your style. Whether you prefer a **dark** or **light** backdrop, Taboo AI now supports both modes for your convenience.
-
-## **Dynamic Gameplay - Conversation**
-
-![3](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v300-3.jpg?raw=true)
-
-Engage in "**conversation mode**" with the AI, turning your sessions into dynamic exchanges. No more one-question-one-answer routines. **Keep the conversation flowing** while cleverly coaxing out the 'taboo word'. 💬
-
-## **Detailed Results**
-
-![4](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v300-4.jpg?raw=true)
-
-The results page now offers **comprehensive logs** of your conversations. **Save and share** your entire gaming session with friends to relive those memorable moments. 📊
-
-## **User Login and Authentication**
-
-For those eager to contribute topics, now you can! Securely **log in with your Google account** (we will add in more platforms support in the later release!) and share your creative ideas with the Taboo AI community. 🔐
-
-## **Enhanced Topic Selection**
-
-Finding your preferred topics has never been easier. **Sort by various criteria**, and see which topics are **most popular**. Discover what fellow players are diving into! 📚
-
-## **Streamlined Menu**
-
-![2](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v300-2.png?raw=true)
-
-Everything you need is right at your fingertips. Navigate through **a comprehensive menu** (top left corner of the screen!) that covers every functionality Taboo AI has to offer. 🎮
-
-## **Share Your High Scores! 🚀**
-
-![3](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3010-0.jpg?raw=true)
-![4](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3010-2.png?raw=true)
-
-Want to show off your English talents? You can easily share your amazing results with your friends and the community at the Results page. Your clues are scored and rated and Taboo AI will generate a beautiful sharing card for your convenience!
+And if you are trying to cheat your way through, oops! The AI now is smart enough to capture that and will give you a score of 0 with no mercy 😈
 
 ---
 
-Embark on an epic wordplay journey with **Taboo AI Version 3.0**. It's not just a game; it's an experience like never before! Don't miss out—dive in today and unlock a world of endless fun and learning.
-
-Remember, every conversation holds a secret. Can you trick the AI into saying the 'Taboo Word'? Happy gaming! 🤩
+So let's play fair and play smart ⭐️ I hope this feedback loop will enable learners to improve on their English further by taking the advise from intelligent AI. So try it out yourself and see how high you can score! 🌟💯

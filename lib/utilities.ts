@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import crypto from 'crypto';
 import { IHighlight } from './types/highlight.type';
-import { IDisplayScore } from './types/score.type';
+import { IChat, IDisplayScore } from './types/score.type';
 import { NextApiRequest } from 'next';
 import IWord from './types/word.type';
 import moment from 'moment';
@@ -291,4 +291,11 @@ export const shareImage = (source: HTMLDivElement): Promise<ShareResult> => {
         rej(err);
       });
   });
+};
+
+export const createConversationFeedForAIJudge = (conversation: IChat[]) => {
+  return conversation
+    .filter((chat) => chat.role !== 'error' && chat.role !== 'system')
+    .map((chat) => `${chat.role === 'user' ? 'P' : 'G'}:${chat.content}`)
+    .join('||');
 };
