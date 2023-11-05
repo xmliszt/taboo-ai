@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 05 Nov 2023 - V3.0.14
+
+- Smart AI score evaluation
+- New page /about for quick introdution to Taboo AI
+
 ### 04 Nov 2023 - V3.0.13
 
 - Open profile page for user to edit nickname and delete account.

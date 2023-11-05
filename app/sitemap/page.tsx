@@ -22,6 +22,7 @@ export default async function SitemapPage() {
   ];
   const baseUrl = RouteManager.baseUrl;
   const informations: SitemapRoute[] = [
+    { title: 'About', href: '/about' },
     { title: 'Rules', href: '/rule' },
     { title: 'How to install Taboo AI?', href: '/pwa' },
     { title: 'Latest Features', href: '/whatsnew' },
