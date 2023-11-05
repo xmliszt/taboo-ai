@@ -261,6 +261,11 @@ article > p {
   }
 }
 
+input,
+textarea {
+  @apply transition-all ease-in-out;
+}
+
 .unicorn-color {
   @apply animate-unicorn-flow;
 }
