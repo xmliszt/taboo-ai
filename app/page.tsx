@@ -28,7 +28,7 @@ export default function HomePage() {
         <section className='mt-10 w-11/12'>
           <ContactMe />
         </section>
-        <div className='w-11/12 mt-6 flex flex-col px-4 text-base text-center text-black'>
+        <div className='w-11/12 mt-6 flex flex-col px-4 text-base text-center text-foreground'>
           <span className='font-bold'>👇🏻 Subscribe👇🏻</span>
           <p>
             Receive the latest updates about Taboo AI, and many more about
