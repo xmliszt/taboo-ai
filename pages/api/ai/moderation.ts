@@ -23,7 +23,7 @@ const aiJudgeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             Authorization: 'Bearer ' + apiKey,
           },
           body: JSON.stringify({
-            model: 'gpt-4',
+            model: 'gpt-4-1106-preview',
             messages: [
               {
                 role: 'system',
