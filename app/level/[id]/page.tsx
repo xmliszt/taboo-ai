@@ -6,7 +6,6 @@ import {
   useEffect,
   useRef,
   ChangeEvent,
-  useCallback,
   useMemo,
 } from 'react';
 import Timer from '@/components/custom/timer';
@@ -47,10 +46,14 @@ import {
   setLevelStorage,
 } from '@/lib/redux/features/levelStorageSlice';
 import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { useAuth } from '@/components/auth-provider';
+import { incrementGameAttemptedCount } from '@/lib/services/userService';
 
 interface LevelPageProps {
   params: { id: string };
 }
+
+let hasIncrementedGameAttemptedCount = false;
 
 export default function LevelPage({ params: { id } }: LevelPageProps) {
   //SECTION - States
@@ -102,6 +105,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const cachedLevel = useAppSelector(selectLevelStorage);
   const dispatch = useAppDispatch();
   const [isFetchingLevel, setIsFetchingLevel] = useState(false);
+  const { user, status } = useAuth();
 
   const isInputDisable = useMemo(() => {
     return (
@@ -112,6 +116,17 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       isSuccess
     );
   }, [level, isLoading, isCountingdown, isGeneratingVariations, isSuccess]);
+
+  useEffect(() => {
+    if (
+      !hasIncrementedGameAttemptedCount &&
+      user &&
+      status === 'authenticated'
+    ) {
+      hasIncrementedGameAttemptedCount = true;
+      incrementGameAttemptedCount(user.email);
+    }
+  }, [user, status]);
 
   useEffect(() => {
     if (inputTextField.current) {
@@ -144,7 +159,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     dispatch(setScoresStorage(savedScores));
   }, [savedScores]);
 
-  //SECTION - When level fetched, we start the game
+  // SECTION - When level fetched, we start the game
   useEffect(() => {
     if (level) {
       resetTimer();
@@ -161,9 +176,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       );
     }
   }, [level]);
-  //!SECTION
+  // !SECTION
 
-  //!SECTION
+  // !SECTION
   const generateNewTarget = (words: string[]): string => {
     if (words.length === 0) {
       words = pickedWords;
@@ -251,15 +266,15 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     return highlights;
   };
 
-  //SECTION - On Input Changed
+  // SECTION - On Input Changed
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setResponseText('');
     setUserInput(event.target.value);
     setIsEmptyInput(event.target.value.length <= 0);
   };
-  //!SECTION
+  // !SECTION
 
-  //SECTION - On Input submitted
+  // SECTION - On Input submitted
   const onFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     setResponseText('');
@@ -268,7 +283,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setUserInput('');
     }
   };
-  //!SECTION
+  // !SECTION
 
   useEffect(() => {
     const lastPrompt = conversation[conversation.length - 1];
@@ -279,7 +294,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     document.getElementById('chat-end')?.scrollIntoView({ behavior: 'smooth' });
   }, [conversation]);
 
-  //SECTION - Fetch Response
+  // SECTION - Fetch Response
   const fetchResponse = async (prompt: IChat) => {
     setIsLoading(true);
     pauseTimer();
@@ -332,9 +347,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       }
     }, 1000);
   };
-  //!SECTION
+  // !SECTION
 
-  //SECTION - Next Question
+  // SECTION - Next Question
   const nextQuestion = async () => {
     pauseTimer();
     const copySavedScores = [...savedScores];
@@ -356,7 +371,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
   };
-  //!SECTION
+  // !SECTION
 
   const generateVariationsForTarget = async (
     retries: number,
@@ -409,7 +424,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     setIsCountdown(true);
   };
 
-  //SECTION - When target changed
+  // SECTION - When target changed
   useEffect(() => {
     if (target) {
       setVariations([target]);
@@ -432,9 +447,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       });
     }
   }, [target]);
-  //!SECTION
+  // !SECTION
 
-  //SECTION - When progress changed
+  // SECTION - When progress changed
   useEffect(() => {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
@@ -450,33 +465,33 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setIsSuccess(false);
     }
   }, [currentProgress]);
-  //!SECTION
+  // !SECTION
 
-  //SECITON - Timer control
+  // SECITON - Timer control
   useEffect(() => {
     if (isCountingdown) {
       resetTimer();
     }
   }, [isCountingdown]);
-  //!SECTION
+  // !SECTION
 
-  //SECTION -  Compute highlight match
+  // SECTION -  Compute highlight match
   useEffect(() => {
     if (target) {
       const highlights = generateHighlights(responseText, true);
       setHighlights(highlights);
     }
   }, [responseText]);
-  //!SECTION
+  // !SECTION
 
-  //SECTION - Compute user input validation match
+  // SECTION - Compute user input validation match
   useEffect(() => {
     // TODO: Generate highlights for user input not used, but call this function to update matched taboo words state. This side effect not good, pending improvement
-    const _ = generateHighlights(userInput, false);
+    generateHighlights(userInput, false);
   }, [userInput]);
-  //!SECTION
+  // !SECTION
 
-  //SECTION - When highlights updated
+  // SECTION - When highlights updated
   useEffect(() => {
     if (highlights.length > 0) {
       toast({ title: "That's a hit! Good job!" });
@@ -493,9 +508,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         : startTimer();
     }
   }, [highlights]);
-  //!SECTION
+  // !SECTION
 
-  //SECTION - User input validation condition
+  // SECTION - User input validation condition
   useEffect(() => {
     if (userInputMatchedTabooWords.length > 0) {
       setUserInputError(
@@ -505,7 +520,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setUserInputError(undefined);
     }
   }, [userInputMatchedTabooWords]);
-  //!SECTION
+  // !SECTION
 
   const generateHighlightedMessage = (message: string): JSX.Element[] => {
     let parts = [];

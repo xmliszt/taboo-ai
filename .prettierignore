@@ -26,3 +26,6 @@ robots.txt
 
 **/LICENSE
 **/*.png
+
+ui-debug.log
+.firebaserc
