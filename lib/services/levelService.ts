@@ -1,11 +1,5 @@
 import { firestore, realtime } from '@/lib/firebase-client';
-import {
-  ref,
-  update,
-  increment as realtimeIncrement,
-  get,
-  child,
-} from 'firebase/database';
+import { ref, update, get, child } from 'firebase/database';
 import {
   addDoc,
   collection,
@@ -178,7 +172,6 @@ export const updateRealtimeDBLevelRecord = async (
   const prevTopScore = currentRecord.val()?.topScore ?? -Infinity;
   const prevTopScorer = currentRecord.val()?.topScorer ?? undefined;
   const updates = {
-    attempts: realtimeIncrement(1),
     topScore: Math.max(prevTopScore, score),
     topScorer: prevTopScore > score ? prevTopScorer : scorer.email,
   };
