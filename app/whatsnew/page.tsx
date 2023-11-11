@@ -3,9 +3,7 @@ import content from '../../public/features/content.md';
 import SocialLinkButton from '../../components/custom/social-link-button';
 import { SiDiscord } from 'react-icons/si';
 
-interface WhatsNewPageProps {}
-
-export default async function WhatsNewPage(props: WhatsNewPageProps) {
+export default async function WhatsNewPage() {
   return (
     <section className='flex flex-col items-center'>
       <article

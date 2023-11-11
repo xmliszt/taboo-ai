@@ -23,7 +23,6 @@ import {
   getMockResponse,
   getMockVariations,
 } from '@/lib/utilities';
-import { HASH } from '@/lib/hash';
 import { getTabooWords } from '@/lib/services/wordService';
 import IWord from '@/lib/types/word.type';
 import { useToast } from '@/components/ui/use-toast';
@@ -33,21 +32,27 @@ import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { IChat, IDisplayScore } from '@/lib/types/score.type';
+import { IChat, IScore } from '@/lib/types/score.type';
 import ILevel from '@/lib/types/level.type';
 import { Skeleton } from '@/components/custom/skeleton';
 import {
   getLevel,
   incrementLevelPopularity,
 } from '@/lib/services/levelService';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
-import {
-  selectLevelStorage,
-  setLevelStorage,
-} from '@/lib/redux/features/levelStorageSlice';
-import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { useAuth } from '@/components/auth-provider';
 import { incrementGameAttemptedCount } from '@/lib/services/userService';
+import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
+import IGame from '@/lib/types/game.type';
+import { getHash, HASH } from '@/lib/hash';
+import {
+  aggregateTotalScore,
+  aggregateTotalTimeTaken,
+} from '@/lib/utils/gameUtils';
+import {
+  getPersistence,
+  removePersistence,
+  setPersistence,
+} from '@/lib/persistence/persistence';
 
 interface LevelPageProps {
   params: { id: string };
@@ -57,11 +62,10 @@ let hasIncrementedGameAttemptedCount = false;
 
 export default function LevelPage({ params: { id } }: LevelPageProps) {
   //SECTION - States
-  const [level, setLevel] = useState<ILevel>();
+  const [level, setLevel] = useState<ILevel | null>(null);
   const [userInput, setUserInput] = useState<string>('');
   const [responseText, setResponseText] = useState<string>('');
   const [words, setWords] = useState<string[]>([]);
-  const [difficulty, setDifficulty] = useState<number>(0);
   const [target, setTarget] = useState<string | null>(null);
   const [variations, setVariations] = useState<string[]>([]);
   const [isGeneratingVariations, setIsGeneratingVariations] =
@@ -101,9 +105,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const inputTextField = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
-  const cachedLevel = useAppSelector(selectLevelStorage);
-  const dispatch = useAppDispatch();
+  const [savedScores, setSavedScores] = useState<IScore[]>([]);
   const [isFetchingLevel, setIsFetchingLevel] = useState(false);
   const { user, status } = useAuth();
 
@@ -135,50 +137,40 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   }, [inputTextField]);
 
   const fetchLevel = async (id: string) => {
-    if (level) {
-      return;
-    }
+    if (level) return;
     setIsFetchingLevel(true);
-    const _level = await getLevel(id);
-    if (_level && level === undefined) {
-      setLevel(_level);
-      incrementLevelPopularity(_level.id);
-      dispatch(setLevelStorage(_level));
+    const fetchedLevel = await getLevel(id);
+    if (fetchedLevel) {
+      setLevel(fetchedLevel);
+      incrementLevelPopularity(fetchedLevel.id);
+      setPersistence(HASH.level, fetchedLevel);
+      startGame(fetchedLevel);
     }
   };
 
   useEffect(() => {
     if (id === 'ai') {
+      const cachedLevel = getPersistence<ILevel>(HASH.level);
       setLevel(cachedLevel);
     } else if (!isFetchingLevel) {
       fetchLevel(id);
     }
-  }, [id, cachedLevel, isFetchingLevel]);
+  }, [id, isFetchingLevel]);
 
-  useEffect(() => {
-    dispatch(setScoresStorage(savedScores));
-  }, [savedScores]);
+  const startGame = (level: ILevel) => {
+    resetTimer();
+    removePersistence(HASH.game);
+    const words = level.words.map((word) => formatStringForDisplay(word));
+    setWords(words);
+    const _target = generateNewTarget(words);
+    setTarget(_target);
+    setCurrentProgress(1);
+    setIsSuccess(false);
+    setResponseText(
+      'Think about your prompt while we generate the Taboo words.'
+    );
+  };
 
-  // SECTION - When level fetched, we start the game
-  useEffect(() => {
-    if (level) {
-      resetTimer();
-      dispatch(setScoresStorage(undefined));
-      setDifficulty(level.difficulty);
-      const words = level.words.map((word) => formatStringForDisplay(word));
-      setWords(words);
-      const _target = generateNewTarget(words);
-      setTarget(_target);
-      setCurrentProgress(1);
-      setIsSuccess(false);
-      setResponseText(
-        'Think about your prompt while we generate the Taboo words.'
-      );
-    }
-  }, [level]);
-  // !SECTION
-
-  // !SECTION
   const generateNewTarget = (words: string[]): string => {
     if (words.length === 0) {
       words = pickedWords;
@@ -302,11 +294,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     setTimeout(async () => {
       try {
         let responseText: string | undefined;
-        if (localStorage.getItem(HASH.dev) === '1') {
-          responseText = await getMockResponse(
-            target ?? '',
-            localStorage.getItem('mode') ?? '1'
-          );
+        if (isDevMode()) {
+          responseText = await getMockResponse(target ?? '', getDevMode());
         } else {
           const filteredPrompts = conversation.filter(
             (p) => p.role !== 'error'
@@ -357,7 +346,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       id: currentProgress,
       target: target ?? '',
       conversation: conversation,
-      difficulty: difficulty,
       completion: time,
       responseHighlights: highlights,
     });
@@ -379,7 +367,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     callback: (variations?: IWord) => void
   ) => {
     setRetryCount(retries);
-    if (localStorage.getItem(HASH.dev)) {
+    if (isDevMode()) {
       getMockVariations(target, true)
         .then((variations) => {
           callback(variations);
@@ -454,6 +442,20 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
+      // Game Finsihed. Save game to cache
+      const completedAt = new Date();
+      const game: IGame = {
+        id: getHash(
+          `${user?.email ?? 'guest'}-${level?.id}-${completedAt.toISOString()}`
+        ),
+        levelId: level?.id ?? '',
+        totalScore: aggregateTotalScore(savedScores),
+        totalDuration: aggregateTotalTimeTaken(savedScores),
+        difficulty: level?.difficulty ?? 1,
+        finishedAt: completedAt,
+        scores: savedScores,
+      };
+      setPersistence(HASH.game, game);
       router.push('/result');
     } else if (currentProgress === 1) {
       return;
@@ -565,7 +567,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     );
   };
 
-  if (!level) {
+  if (level == null) {
     return (
       <section className='flex justify-center h-full pt-20 px-4'>
         <h1 className='fixed z-20 top-3 w-full flex justify-center'>

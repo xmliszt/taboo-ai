@@ -23,11 +23,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { toast } from '../ui/use-toast';
-import { useMemo } from 'react';
-import { useAppSelector } from '@/lib/redux/hook';
-import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { useEffect, useMemo, useState } from 'react';
 import { LoginErrorEventProps } from './login-error-dialog';
-import { CONSTANTS } from '@/lib/constants';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+import IGame from '@/lib/types/game.type';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import { HASH } from '@/lib/hash';
 
 interface UserMenuItem {
   label: string;
@@ -41,7 +42,13 @@ export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, status, login, logout } = useAuth();
-  const scores = useAppSelector(selectScoreStorage);
+  const [game, setGame] = useState<IGame | null>(null);
+
+  useEffect(() => {
+    const game = getPersistence<IGame>(HASH.game);
+    setGame(game);
+    bindPersistence<IGame>(HASH.game, setGame);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -68,10 +75,7 @@ export function UserLoginPortal() {
       {
         label: 'My Last Result',
         icon: <ScrollText />,
-        isVisible:
-          scores !== undefined &&
-          scores.length === CONSTANTS.numberOfQuestionsPerGame &&
-          pathname !== '/result',
+        isVisible: isGameFinished(game) && pathname !== '/result',
         onClick: () => {
           router.push('/result');
         },
@@ -91,7 +95,7 @@ export function UserLoginPortal() {
         onClick: handleLogout,
       },
     ];
-  }, [pathname, scores]);
+  }, [pathname, game]);
 
   const handleLogin = async () => {
     if (!login) return;

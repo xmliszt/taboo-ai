@@ -2,7 +2,7 @@
 
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { IAIScore, IDisplayScore } from '../../lib/types/score.type';
+import { IAIScore, IScore } from '../../lib/types/score.type';
 import _ from 'lodash';
 import { IHighlight } from '../../lib/types/highlight.type';
 import { useRouter } from 'next/navigation';
@@ -20,26 +20,21 @@ import {
 import { CircleSlash, Hand, MousePointerClick, RefreshCcw } from 'lucide-react';
 import { ScoreInfoDialog } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
-import { HASH } from '@/lib/hash';
 import { isMobile } from 'react-device-detect';
 import { useAuth } from '@/components/auth-provider';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
-import { isLevelExists } from '@/lib/services/levelService';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
-import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
 import {
-  selectScoreStorage,
-  setScoresStorage,
-} from '@/lib/redux/features/scoreStorageSlice';
+  getLevel,
+  isLevelExists,
+  updateRealtimeDBLevelRecord,
+  uploadPlayedLevelForUser,
+} from '@/lib/services/levelService';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import { StarRatingBar } from '@/components/custom/star-rating-bar';
 import {
   b64toBlob,
-  calculateTimeScore,
   createConversationFeedForAIJudge,
-  getCalculatedScore,
-  getCompletionSeconds,
   getDifficultyMultipliers,
   shareImage,
 } from '@/lib/utilities';
@@ -47,8 +42,27 @@ import ResultsSummaryCard from '@/components/custom/results/results-summary-card
 import { ResultsShareAlertDialog } from '@/components/custom/results/results-share-alert-dialog';
 import ResutlsContributionAlertDialog from '@/components/custom/results/results-contribution-alert-dialog';
 import { Spinner } from '@/components/custom/spinner';
-import { store } from '@/lib/redux/store';
 import IconButton from '@/components/ui/icon-button';
+import {
+  aggregateTotalScore,
+  calculateTimeScore,
+  getCalculatedScore,
+  getCompletionSeconds,
+  isGameAIJudged,
+  isGameFinished,
+} from '@/lib/utils/gameUtils';
+import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
+import { useSearchParams } from 'next/navigation';
+import {
+  fetchGameForUser,
+  recordCompletedGameForUser,
+} from '@/lib/services/gameService';
+import ResultsUploadAlert from '@/components/custom/results/results-upload-alert';
+import IGame from '@/lib/types/game.type';
+import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
+import { HASH } from '@/lib/hash';
+import ILevel from '@/lib/types/level.type';
+import { Skeleton } from '@/components/custom/skeleton';
 
 interface StatItem {
   title: string;
@@ -56,27 +70,57 @@ interface StatItem {
   highlights?: IHighlight[];
 }
 
+let gameExistedInCloud = false;
+
 export default function ResultPage() {
   const { user, status } = useAuth();
+  const searchParams = useSearchParams();
+  const gameID = searchParams?.get('id') ?? null;
+
+  const [game, setGame] = useState<IGame | null>(null);
+  const [level, setLevel] = useState<ILevel | null>(null);
+  const [isCheckingOnline, setIsCheckingOnline] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
+  const [isGameUploading, setIsGameUploading] = useState(false);
+  const [isUploadFailed, setIsUploadFailed] = useState(false);
   const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
   const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
-  const level = useAppSelector(selectLevelStorage);
-  const scores = useAppSelector(selectScoreStorage);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { toast } = useToast();
   const [isShareCardOpen, setIsShareCardOpen] = useState(false);
   const [isScoring, setIsScoring] = useState(false);
+
   const screenshotRef = useRef<HTMLDivElement>(null);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
-  let totalTimeTaken: number | undefined = 0;
-  let totalScore: number | undefined = 0;
+  const router = useRouter();
+  const { toast } = useToast();
 
+  // First render: get level from storage and set the state for render
+  useEffect(() => {
+    const level = getPersistence<ILevel>(HASH.level);
+    setLevel(level);
+  }, []);
+
+  // First render: bind the SHARE_SCORE event listener
+  useEffect(() => {
+    const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
+      if (!isGameFinished(game)) {
+        toast({
+          title:
+            'Sorry we are not able to share your scores because they are incomplete.',
+        });
+        return;
+      }
+      setIsShareCardOpen(true);
+    });
+    return () => {
+      EventManager.removeListener(CustomEventKey.SHARE_SCORE, listener);
+    };
+  }, [game]);
+
+  // First render: check if level is AI and user logged in, prompt for topic submission if yes
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
     if (level && level.isAIGenerated) {
       const exists = await isLevelExists(level.name, user?.email);
@@ -92,38 +136,94 @@ export default function ResultPage() {
   }, [level, user, status]);
 
   useEffect(() => {
-    checkUserStatus();
-    const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
-      const scores = store.getState().scoreStorageReducer.scores;
-      if (
-        scores?.length !== CONSTANTS.numberOfQuestionsPerGame ||
-        scores.some((score) => score.ai_score === undefined)
-      ) {
-        toast({
-          title:
-            'Sorry we are not able to share your scores because they are incomplete.',
-        });
-        return;
-      }
-      setIsShareCardOpen(true);
-    });
-    return () => {
-      EventManager.removeListener(CustomEventKey.SHARE_SCORE, listener);
-    };
-  }, []);
-
-  useEffect(() => {
     checkIfEligibleForLevelSubmission();
   }, [checkIfEligibleForLevelSubmission]);
+
+  // First render: wait until user auth is loaded
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (status === 'authenticated' && gameID) {
+      checkOnlineGame();
+    } else {
+      checkCachedGame();
+    }
+  }, [status]);
+
+  const checkOnlineGame = async () => {
+    try {
+      setIsCheckingOnline(true);
+      const game = await fetchGameForUser(user?.email, gameID);
+      if (!game) {
+        toast({ title: 'Sorry, it seems like this result does not exist.' });
+        gameExistedInCloud = false;
+        checkCachedGame();
+        return;
+      }
+      const level = await getLevel(game.levelId);
+      if (level) {
+        gameExistedInCloud = true;
+        setGame(game);
+        setLevel(level);
+      } else {
+        gameExistedInCloud = false;
+        checkCachedGame();
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Sorry, we are unable to load your result at this moment.',
+        variant: 'destructive',
+      });
+      gameExistedInCloud = false;
+      checkCachedGame();
+    } finally {
+      setIsCheckingOnline(false);
+    }
+  };
+
+  const tryUploadGameToCloud = async () => {
+    if (
+      level === null ||
+      user === undefined ||
+      game === null ||
+      !isGameFinished(game) ||
+      gameExistedInCloud
+    )
+      return;
+    try {
+      setIsGameUploading(true);
+      await recordCompletedGameForUser(user.email, level.id, game);
+      await uploadPlayedLevelForUser(
+        user.email,
+        level,
+        game.finishedAt,
+        game.totalScore
+      );
+      await updateRealtimeDBLevelRecord(level.id, user, game.totalScore);
+      setIsUploadFailed(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Sorry, we are unable to upload your game at this moment.',
+      });
+      setIsUploadFailed(true);
+    } finally {
+      setIsGameUploading(false);
+    }
+  };
+
+  // When game object changed
+  useEffect(() => {
+    if (isGameFinished(game)) tryUploadGameToCloud();
+  }, [game]);
 
   const performAIJudging = async (
     retries: number,
     target: string,
     userInput: string
   ): Promise<IAIScore> => {
-    if (localStorage.getItem(HASH.dev) === '1') {
-      const devMode = localStorage.getItem('mode') ?? '1';
-      switch (devMode) {
+    if (isDevMode()) {
+      switch (getDevMode()) {
         case '1':
         case '2':
           return { score: 50, explanation: 'This is a test run.' };
@@ -146,59 +246,65 @@ export default function ResultPage() {
     }
   };
 
-  const checkUserStatus = async () => {
-    if (
-      scores &&
-      scores.length === CONSTANTS.numberOfQuestionsPerGame &&
-      !isLoading
-    ) {
+  const checkCachedGame = async () => {
+    const game = getPersistence<IGame>(HASH.game);
+    setGame(game);
+    if (!game || !level) return;
+    if (!isGameAIJudged(game) && !isLoading) {
       // AI judging
       setLoadingMessage(
-        `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
+        `Stay tuned! Taboo AI is evaluating your performance... [0/${game.scores.length}]`
       );
       setIsLoading(true);
-      const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
+      const copyScores = JSON.parse(JSON.stringify(game.scores)) as IScore[];
       if (!copyScores) return;
-      for (let i = 0; i < scores.length; i++) {
-        const score = scores[i];
+      for (let i = 0; i < game.scores.length; i++) {
+        const score = game.scores[i];
         const userInput = createConversationFeedForAIJudge(score.conversation);
         const target = score.target;
-        const aiScore = score.ai_score;
-        const aiExplanation = score.ai_explanation;
+        const aiScore = score.aiScore;
+        const aiExplanation = score.aiExplanation;
         if (aiScore !== undefined && aiExplanation !== undefined) {
           setLoadingMessage(
             `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
-              scores.length
+              game.scores.length
             }]`
           );
         } else {
           const aiJudgeScore = await performAIJudging(5, target, userInput);
-          copyScores[i].ai_score = aiJudgeScore.score;
-          copyScores[i].ai_explanation = aiJudgeScore.explanation;
+          copyScores[i].aiScore = aiJudgeScore.score;
+          copyScores[i].aiExplanation = aiJudgeScore.explanation;
           setLoadingMessage(
             `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
-              scores.length
+              game.scores.length
             }]`
           );
         }
       }
+      const copyGame = JSON.parse(JSON.stringify(game)) as IGame;
+      copyScores.sort((a, b) => a.id - b.id);
+      copyGame.scores = copyScores;
+      copyGame.totalScore = aggregateTotalScore(
+        copyScores,
+        copyGame.difficulty
+      );
       setIsLoading(false);
       setLoadingMessage('Loading...');
-      dispatch(setScoresStorage(copyScores));
-      updateTotalTimeTakenAndTotalScores(copyScores);
+      setGame(copyGame);
+      setPersistence(HASH.game, copyGame);
     }
   };
 
   const retryScoring = async (scoreId: number) => {
-    if (!scores) return;
-    const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
+    if (!game) return;
+    const copyScores = JSON.parse(JSON.stringify(game.scores)) as IScore[];
     if (!copyScores) return;
     const score = copyScores.find((score) => score.id === scoreId);
     if (!score) return;
     const userInput = createConversationFeedForAIJudge(score.conversation);
     const target = score.target;
-    const aiScore = score.ai_score;
-    const aiExplanation = score.ai_explanation;
+    const aiScore = score.aiScore;
+    const aiExplanation = score.aiExplanation;
     if (aiScore !== undefined && aiExplanation !== undefined) {
       toast({
         title: 'This score has already been judged.',
@@ -213,10 +319,12 @@ export default function ResultPage() {
       aiJudgeScore = await performAIJudging(5, target, userInput);
       setIsScoring(false);
       if (aiJudgeScore.explanation !== undefined) {
-        score.ai_score = aiJudgeScore.score;
-        score.ai_explanation = aiJudgeScore.explanation;
-        dispatch(setScoresStorage([...copyScores]));
-        updateTotalTimeTakenAndTotalScores(copyScores);
+        score.aiScore = aiJudgeScore.score;
+        score.aiExplanation = aiJudgeScore.explanation;
+        const copyGame = JSON.parse(JSON.stringify(game));
+        copyGame.scores = copyScores;
+        setGame(copyGame);
+        setPersistence(HASH.game, copyGame);
         toast({
           title: 'Score has been updated.',
         });
@@ -228,34 +336,6 @@ export default function ResultPage() {
       }
     }
   };
-
-  const updateTotalTimeTakenAndTotalScores = (
-    displayScores: IDisplayScore[]
-  ) => {
-    // Update total time taken
-    totalTimeTaken = 0;
-    for (const score of displayScores) {
-      totalTimeTaken += getCompletionSeconds(score.completion);
-    }
-    if (displayScores.some((s) => s.ai_score === undefined)) {
-      totalScore = undefined;
-      return;
-    }
-
-    // Update total score if possible
-    totalScore = 0;
-    for (const score of displayScores) {
-      totalScore += getCalculatedScore(score);
-    }
-    totalScore = _.round(totalScore, 1);
-  };
-
-  if (
-    scores !== undefined &&
-    scores.length === CONSTANTS.numberOfQuestionsPerGame
-  ) {
-    updateTotalTimeTakenAndTotalScores(scores);
-  }
 
   const generateShareCardImage = async () => {
     if (!shareCardRef.current) return;
@@ -278,7 +358,7 @@ export default function ResultPage() {
     imageLink?: string,
     imageName?: string
   ) => {
-    if (totalScore === undefined) {
+    if (!game || !isGameFinished(game)) {
       toast({
         title:
           'Sorry we are not able to share your scores because they are incomplete.',
@@ -318,8 +398,8 @@ export default function ResultPage() {
         navigator
           .share({
             title:
-              totalScore > 0
-                ? `I scored ${totalScore} in Taboo AI!`
+              game.totalScore > 0
+                ? `I scored ${game.totalScore} in Taboo AI!`
                 : 'Look at my results at Taboo AI!',
             text: title,
           })
@@ -428,7 +508,7 @@ export default function ResultPage() {
     );
   };
 
-  const generateConversation = (score: IDisplayScore): React.ReactElement => {
+  const generateConversation = (score: IScore): React.ReactElement => {
     return (
       <div
         key={`accordion-content-conversation-${score.id}`}
@@ -463,7 +543,10 @@ export default function ResultPage() {
     );
   };
 
-  const generateStatsItems = (score: IDisplayScore): StatItem[] => {
+  const generateStatsItems = (
+    score: IScore,
+    difficulty: number
+  ): StatItem[] => {
     const timeMultipler = level
       ? getDifficultyMultipliers(level.difficulty).timeMultipler
       : null;
@@ -476,7 +559,7 @@ export default function ResultPage() {
         content: (
           <StarRatingBar
             className='inline-flex'
-            rating={(getCalculatedScore(score) * 5) / 100}
+            rating={(getCalculatedScore(score, difficulty) * 5) / 100}
             maxRating={5}
             size={15}
           />
@@ -485,8 +568,8 @@ export default function ResultPage() {
       {
         title: 'Total Score',
         content:
-          score.ai_score !== undefined ? (
-            <span>{getCalculatedScore(score).toString()}</span>
+          score.aiScore !== undefined ? (
+            <span>{getCalculatedScore(score, difficulty).toString()}</span>
           ) : (
             <span>N/A</span>
           ),
@@ -511,13 +594,10 @@ export default function ResultPage() {
       {
         title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
         content:
-          score.ai_score !== undefined ? (
-            <span>{`${score.ai_score.toString()} x ${
+          score.aiScore !== undefined ? (
+            <span>{`${score.aiScore.toString()} x ${
               (promptMultiplier ?? 0) * 100
-            }% = ${_.round(
-              score.ai_score * (promptMultiplier ?? 0),
-              1
-            )}`}</span>
+            }% = ${_.round(score.aiScore * (promptMultiplier ?? 0), 1)}`}</span>
           ) : (
             <Button
               className='ml-4'
@@ -534,8 +614,8 @@ export default function ResultPage() {
       },
       {
         title: 'AI Explanation',
-        content: score.ai_explanation ? (
-          <span>{score.ai_explanation ?? CONSTANTS.errors.aiJudgeFail}</span>
+        content: score.aiExplanation ? (
+          <span>{score.aiExplanation ?? CONSTANTS.errors.aiJudgeFail}</span>
         ) : (
           <Button
             className='ml-4'
@@ -554,9 +634,8 @@ export default function ResultPage() {
   };
 
   const generateMobileScoreStack = () => {
-    if (!scores || scores.length < CONSTANTS.numberOfQuestionsPerGame)
-      return <></>;
-    return scores.map((score, idx) => (
+    if (!game || !isGameFinished(game)) return <></>;
+    return game.scores.map((score) => (
       <AccordionItem
         key={`word-${score.id}`}
         value={`word-${score.id}`}
@@ -568,7 +647,7 @@ export default function ResultPage() {
               <span className='text-left leading-snug'>
                 {_.startCase(score.target)}
               </span>
-              <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1'>
+              <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1 whitespace-nowrap'>
                 {isMobile ? (
                   <Hand size={15} />
                 ) : (
@@ -581,9 +660,9 @@ export default function ResultPage() {
               </div>
             </div>
             <div className='flex flex-row items-center'>
-              {score.ai_score !== undefined ? (
+              {score.aiScore !== undefined ? (
                 <span className='font-extrabold leading-snug' key={score.id}>
-                  {getCalculatedScore(score)}/{100}
+                  {getCalculatedScore(score, game.difficulty)}/{100}
                 </span>
               ) : (
                 <IconButton
@@ -607,7 +686,7 @@ export default function ResultPage() {
           className='bg-secondary rounded-lg'
         >
           {generateConversation(score)}
-          {generateStatsItems(score).map((item, idx) => {
+          {generateStatsItems(score, game.difficulty).map((item, idx) => {
             return generateMobileStatsRow(
               `accordion-mobile-stats-row-${score.id}-${idx}`,
               item.title,
@@ -620,12 +699,18 @@ export default function ResultPage() {
   };
 
   const renderResults = () => {
-    return scores && scores.length === CONSTANTS.numberOfQuestionsPerGame ? (
+    return game && isGameFinished(game) ? (
       <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
+        {isUploadFailed && (
+          <ResultsUploadAlert
+            isUploading={isGameUploading}
+            retryUpload={tryUploadGameToCloud}
+          />
+        )}
         {level && (
           <ResultsSummaryCard
-            total={totalTimeTaken}
-            totalScore={totalScore}
+            total={game.totalDuration}
+            totalScore={game.totalScore}
             topicName={level.name}
             difficulty={level.difficulty}
           />
@@ -642,6 +727,8 @@ export default function ResultPage() {
           </Accordion>
         </div>
       </div>
+    ) : status === 'loading' || isCheckingOnline ? (
+      <Skeleton className='w-full pt-20 px-4' hasHeaderRow numberOfRows={10} />
     ) : (
       <div className='animate-pulse w-full mt-40 px-4 flex flex-col gap-6 justify-center items-center'>
         <CircleSlash size={56} />
@@ -685,18 +772,16 @@ export default function ResultPage() {
             Submit This Topic To Us
           </Button>
         )}
-        {level &&
-          scores &&
-          scores.length === CONSTANTS.numberOfQuestionsPerGame && (
-            <Button
-              className='w-4/5 shadow-xl'
-              onClick={() => {
-                router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
-              }}
-            >
-              Play This Topic Again
-            </Button>
-          )}
+        {level && game && isGameFinished(game) && (
+          <Button
+            className='w-4/5 shadow-xl'
+            onClick={() => {
+              router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
+            }}
+          >
+            Play This Topic Again
+          </Button>
+        )}
       </div>
 
       <ResutlsContributionAlertDialog
@@ -709,20 +794,20 @@ export default function ResultPage() {
         }}
       />
       <ScoreInfoDialog />
-      {level && scores && (
+      {level && game && isGameFinished(game) && (
         <ResultsShareAlertDialog
           ref={shareCardRef}
           isOpen={isShareCardOpen}
           onOpenChange={(open) => {
             setIsShareCardOpen(open);
           }}
-          totalScore={totalScore}
+          totalScore={game.totalScore}
           topicName={level.name}
-          scores={scores.map((score) => {
+          scores={game.scores.map((score) => {
             return {
               key: `${score.id}-${score.target}`,
               target: score.target,
-              calculatedScore: getCalculatedScore(score),
+              calculatedScore: getCalculatedScore(score, game.difficulty),
             };
           })}
           onGenerateShareCardImage={generateShareCardImage}

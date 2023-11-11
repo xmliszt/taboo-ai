@@ -15,9 +15,10 @@ import AccessLinkCard, {
   MenuItem,
 } from '@/components/custom/common/access-link-card';
 import { CONSTANTS } from '@/lib/constants';
-import { useAppSelector } from '@/lib/redux/hook';
-import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { ScrollText } from 'lucide-react';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import IGame from '@/lib/types/game.type';
+import { HASH } from '@/lib/hash';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -26,8 +27,15 @@ export default function ProfilePage() {
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
   const [isNicknameUpdating, setIsNicknameUpdating] = useState(false);
+  const [game, setGame] = useState<IGame | null>(null);
   const oldNickname = useRef<string>('');
-  const scores = useAppSelector(selectScoreStorage);
+
+  useEffect(() => {
+    const game = getPersistence<IGame>(HASH.game);
+    setGame(game);
+    bindPersistence<IGame>(HASH.game, setGame);
+  }, []);
+
   const seeMyLastResultMenuItem: MenuItem = useMemo(() => {
     return {
       path: '/result',
@@ -35,11 +43,11 @@ export default function ProfilePage() {
       subtitle:
         'We found your last played result is cached in the app. You can revisit it here!',
       visible:
-        scores !== undefined &&
-        scores.length === CONSTANTS.numberOfQuestionsPerGame,
+        game != null &&
+        game.scores.length === CONSTANTS.numberOfQuestionsPerGame,
       href: '/result',
     };
-  }, [scores]);
+  }, [game]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {

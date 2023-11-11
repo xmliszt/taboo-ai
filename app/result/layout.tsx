@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Your Results',
   alternates: {
-    canonical: '/result',
+    canonical: `/result`,
   },
   openGraph: {
     url: 'https://taboo-ai.vercel.app/result',
