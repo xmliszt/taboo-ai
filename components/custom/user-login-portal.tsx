@@ -75,7 +75,10 @@ export function UserLoginPortal() {
       {
         label: 'My Last Result',
         icon: <ScrollText />,
-        isVisible: isGameFinished(game) && pathname !== '/result',
+        isVisible:
+          status != 'authenticated' &&
+          isGameFinished(game) &&
+          pathname !== '/result',
         onClick: () => {
           router.push('/result');
         },

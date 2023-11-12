@@ -38,6 +38,22 @@ export const aggregateTotalTimeTaken = (scores: IScore[]): number => {
   }, 0);
 };
 
+export const getOverallRating = (
+  totalScore: number,
+  starCounts = 6,
+  maxScore = 300
+): number => {
+  return (totalScore * starCounts) / maxScore;
+};
+
+export const getIndividualRating = (
+  score: number,
+  starCounts = 5,
+  maxScore = 100
+): number => {
+  return (score * starCounts) / maxScore;
+};
+
 /**
  * Check if the given game object is completed (finished).
  * To consider as finished, the game object must have all the attributes present,

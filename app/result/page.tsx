@@ -48,6 +48,7 @@ import {
   calculateTimeScore,
   getCalculatedScore,
   getCompletionSeconds,
+  getIndividualRating,
   isGameAIJudged,
   isGameFinished,
 } from '@/lib/utils/gameUtils';
@@ -55,7 +56,7 @@ import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import { useSearchParams } from 'next/navigation';
 import {
   fetchGameForUser,
-  recordCompletedGameForUser,
+  uploadCompletedGameForUser,
 } from '@/lib/services/gameService';
 import ResultsUploadAlert from '@/components/custom/results/results-upload-alert';
 import IGame from '@/lib/types/game.type';
@@ -96,12 +97,6 @@ export default function ResultPage() {
 
   const router = useRouter();
   const { toast } = useToast();
-
-  // First render: get level from storage and set the state for render
-  useEffect(() => {
-    const level = getPersistence<ILevel>(HASH.level);
-    setLevel(level);
-  }, []);
 
   // First render: bind the SHARE_SCORE event listener
   useEffect(() => {
@@ -192,7 +187,7 @@ export default function ResultPage() {
       return;
     try {
       setIsGameUploading(true);
-      await recordCompletedGameForUser(user.email, level.id, game);
+      await uploadCompletedGameForUser(user.email, level.id, game);
       await uploadPlayedLevelForUser(
         user.email,
         level,
@@ -247,8 +242,10 @@ export default function ResultPage() {
   };
 
   const checkCachedGame = async () => {
+    const level = getPersistence<ILevel>(HASH.level);
     const game = getPersistence<IGame>(HASH.game);
     setGame(game);
+    setLevel(level);
     if (!game || !level) return;
     if (!isGameAIJudged(game) && !isLoading) {
       // AI judging
@@ -559,7 +556,7 @@ export default function ResultPage() {
         content: (
           <StarRatingBar
             className='inline-flex'
-            rating={(getCalculatedScore(score, difficulty) * 5) / 100}
+            rating={getIndividualRating(getCalculatedScore(score, difficulty))}
             maxRating={5}
             size={15}
           />

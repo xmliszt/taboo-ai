@@ -96,8 +96,6 @@ export class RouteManager {
       case TabooPathname.PROFILE === route:
         return {
           title: 'My Profile',
-          hideMenu: true,
-          hasBackButton: true,
         };
       default:
         return {

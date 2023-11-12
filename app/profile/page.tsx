@@ -3,7 +3,7 @@
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { updateUserFromUser } from '@/lib/services/userService';
 import { isMobile } from 'react-device-detect';
@@ -11,14 +11,7 @@ import { Spinner } from '@/components/custom/spinner';
 import { useRouter } from 'next/navigation';
 import ConstructionBlock from '@/components/custom/common/construction-block';
 import ProfileDangerZone from '@/components/custom/profile/profile-danger-zone';
-import AccessLinkCard, {
-  MenuItem,
-} from '@/components/custom/common/access-link-card';
-import { CONSTANTS } from '@/lib/constants';
-import { ScrollText } from 'lucide-react';
-import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import IGame from '@/lib/types/game.type';
-import { HASH } from '@/lib/hash';
+import ProfileRecentGamesScrollView from '@/components/custom/profile/profile-recent-games-scroll-view';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -27,27 +20,7 @@ export default function ProfilePage() {
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
   const [isNicknameUpdating, setIsNicknameUpdating] = useState(false);
-  const [game, setGame] = useState<IGame | null>(null);
   const oldNickname = useRef<string>('');
-
-  useEffect(() => {
-    const game = getPersistence<IGame>(HASH.game);
-    setGame(game);
-    bindPersistence<IGame>(HASH.game, setGame);
-  }, []);
-
-  const seeMyLastResultMenuItem: MenuItem = useMemo(() => {
-    return {
-      path: '/result',
-      title: 'See my last result',
-      subtitle:
-        'We found your last played result is cached in the app. You can revisit it here!',
-      visible:
-        game != null &&
-        game.scores.length === CONSTANTS.numberOfQuestionsPerGame,
-      href: '/result',
-    };
-  }, [game]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -129,14 +102,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {seeMyLastResultMenuItem.visible && (
-        <AccessLinkCard
-          idx={1}
-          item={seeMyLastResultMenuItem}
-          className='w-full max-w-[500px]'
-          icon={<ScrollText />}
-        />
-      )}
+      {user && <ProfileRecentGamesScrollView user={user} />}
 
       <ConstructionBlock
         title='Game Statistics is coming soon!'
