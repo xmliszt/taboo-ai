@@ -1,6 +1,7 @@
 import { firestore, realtime } from '@/lib/firebase-client';
 import { ref, update, get, child } from 'firebase/database';
 import {
+  DocumentReference,
   addDoc,
   collection,
   deleteDoc,
@@ -18,6 +19,7 @@ import moment from 'moment';
 import ILevel from '../types/level.type';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
+import ILevelStats from '../types/levelStats.type';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {
   const snapshot = await getDocs(collection(firestore, 'levels'));
@@ -176,4 +178,74 @@ export const updateRealtimeDBLevelRecord = async (
     topScorer: prevTopScore > score ? prevTopScorer : scorer.email,
   };
   await update(child(ref(realtime, 'levelStats'), levelID), updates);
+};
+
+/**
+ * Get the statistical data for levels played by the user
+ * @param {string} email: the user email
+ * @returns {Promise<ILevelStats>} the level statistical data for the user
+ */
+export const getLevelStatistics = async (
+  email: string
+): Promise<ILevelStats> => {
+  const snapshot = await getDocs(
+    collection(firestore, 'users', email, 'levels')
+  );
+  const levelRefs: {
+    ref: DocumentReference;
+    score: number;
+    attempts: number;
+  }[] = [];
+  snapshot.forEach((result) => {
+    levelRefs.push({
+      ref: result.data().ref,
+      score: result.data().bestScore as number,
+      attempts: result.data().attempts as number,
+    });
+  });
+  if (levelRefs.length === 0)
+    return {
+      bestPerformingLevel: undefined,
+      mostFrequentlyPlayedLevel: undefined,
+    };
+  const levels: {
+    id: string;
+    name: string;
+    difficulty: number;
+    score: number;
+    attempts: number;
+  }[] = [];
+  for (const levelRef of levelRefs) {
+    const levelSnapshot = await getDoc(levelRef.ref);
+    const level = levelSnapshot.data() as ILevel;
+    level.id = levelSnapshot.id;
+    levels.push({
+      id: levelSnapshot.id,
+      name: level.name,
+      difficulty: level.difficulty,
+      score: levelRef.score,
+      attempts: levelRef.attempts,
+    });
+  }
+  // Get the best performing level
+  const bestPerformingLevel = levels.reduce((prev, current) => {
+    return prev.score > current.score ? prev : current;
+  });
+  const mostFrequentlyPlayedLevel = levels.reduce((prev, current) => {
+    return prev.attempts > current.attempts ? prev : current;
+  });
+  return {
+    bestPerformingLevel: {
+      id: bestPerformingLevel.id,
+      name: bestPerformingLevel.name,
+      difficulty: bestPerformingLevel.difficulty,
+      score: bestPerformingLevel.score,
+    },
+    mostFrequentlyPlayedLevel: {
+      id: mostFrequentlyPlayedLevel.id,
+      name: mostFrequentlyPlayedLevel.name,
+      difficulty: mostFrequentlyPlayedLevel.difficulty,
+      attempts: mostFrequentlyPlayedLevel.attempts,
+    },
+  };
 };

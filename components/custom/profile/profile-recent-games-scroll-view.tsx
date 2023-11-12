@@ -26,6 +26,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '../skeleton';
 import { StarRatingBar } from '../star-rating-bar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { isMobile, isTablet } from 'react-device-detect';
+import { Button } from '@/components/ui/button';
 
 type RecentGame = {
   id: string;
@@ -118,65 +125,80 @@ export default function ProfileRecentGamesScrollView({
           />
         </IconButton>
       </div>
-      <div className='w-full overflow-x-auto flex flex-row gap-4 p-4 justify-start items-center rounded-lg border leading-snug'>
+      <span className='text-muted-foreground italic mb-2'> Most Recent 5</span>
+      <div className='w-full overflow-x-auto flex flex-row gap-4 p-4 justify-start rounded-lg border leading-snug'>
         {isLoading ? (
           <Skeleton className='w-full h-[350px]' numberOfRows={12} />
         ) : (
           recentGames.map((game) => (
-            <Card
-              key={game.id}
-              className='max-w-[200px] min-w-[200px] w-[200px] h-[350px] border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg'
-              onClick={() => {
-                goToResult(game.id);
-              }}
-            >
-              <CardHeader>
-                <CardTitle
-                  className={
-                    game.id == 'play-more'
-                      ? 'text-center text-border'
-                      : 'text-left text-card-foreground'
-                  }
+            <Tooltip key={game.id}>
+              <TooltipTrigger>
+                <Card
+                  className='text-left max-w-[200px] min-w-[200px] h-full border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg'
+                  onClick={() => {
+                    goToResult(game.id);
+                  }}
                 >
-                  {game.topicName}
-                </CardTitle>
-                <CardDescription>
-                  {game.id == 'play-more' ? '' : game.finishedAt}
-                </CardDescription>
-              </CardHeader>
-              {game.id == 'play-more' ? (
-                <div className='flex justify-center items-center mt-16'>
-                  <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
-                </div>
-              ) : (
-                <CardContent className='flex flex-col gap-3'>
-                  <div className='flex flex-col'>
-                    <span className='italic text-muted-foreground'>
-                      Diffculty:{' '}
-                    </span>
-                    <span className='font-bold'>{game.difficultyString}</span>
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='italic text-muted-foreground'>
-                      Total Time Taken:{' '}
-                    </span>
-                    <span className='font-bold'>{game.totalDuration}</span>
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='italic text-muted-foreground'>
-                      Total Score:
-                    </span>
-                    <span className='font-bold'>{game.totalScore}</span>
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='italic text-muted-foreground'>
-                      Overall Ratings:{' '}
-                    </span>
-                    <StarRatingBar rating={game.totalRating} maxRating={6} />
-                  </div>
-                </CardContent>
-              )}
-            </Card>
+                  <CardHeader>
+                    <CardTitle
+                      className={
+                        game.id == 'play-more'
+                          ? 'text-center text-border'
+                          : 'text-left text-card-foreground'
+                      }
+                    >
+                      {game.topicName}
+                    </CardTitle>
+                    <CardDescription>
+                      {game.id == 'play-more' ? '' : game.finishedAt}
+                    </CardDescription>
+                  </CardHeader>
+                  {game.id == 'play-more' ? (
+                    <CardContent className='flex justify-center items-center mt-16'>
+                      <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
+                    </CardContent>
+                  ) : (
+                    <CardContent className='flex flex-col gap-3'>
+                      <div className='flex flex-col'>
+                        <span className='italic text-muted-foreground'>
+                          Diffculty:{' '}
+                        </span>
+                        <span className='font-bold'>
+                          {game.difficultyString}
+                        </span>
+                      </div>
+                      <div className='flex flex-col'>
+                        <span className='italic text-muted-foreground'>
+                          Total Time Taken:{' '}
+                        </span>
+                        <span className='font-bold'>{game.totalDuration}</span>
+                      </div>
+                      <div className='flex flex-col'>
+                        <span className='italic text-muted-foreground'>
+                          Total Score:
+                        </span>
+                        <span className='font-bold'>{game.totalScore}</span>
+                      </div>
+                      <div className='flex flex-col'>
+                        <span className='italic text-muted-foreground'>
+                          Overall Ratings:{' '}
+                        </span>
+                        <StarRatingBar
+                          rating={game.totalRating}
+                          maxRating={6}
+                        />
+                      </div>
+                      {(isMobile || isTablet) && (
+                        <Button variant='secondary'>View Results</Button>
+                      )}
+                    </CardContent>
+                  )}
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                {game.id == 'play-more' ? 'Play More Topics' : 'View Results'}
+              </TooltipContent>
+            </Tooltip>
           ))
         )}
       </div>

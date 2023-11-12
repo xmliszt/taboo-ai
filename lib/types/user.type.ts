@@ -9,4 +9,5 @@ export default interface IUser {
   gameAttemptedCount?: number;
   gamePlayedCount?: number;
   levelPlayedCount?: number;
+  isNicknamePublic?: boolean;
 }

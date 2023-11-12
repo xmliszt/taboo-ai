@@ -20,7 +20,7 @@ import {
 import { CircleSlash, Hand, MousePointerClick, RefreshCcw } from 'lucide-react';
 import { ScoreInfoDialog } from '@/components/custom/score-info-button';
 import { cn } from '@/lib/utils';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isTablet } from 'react-device-detect';
 import { useAuth } from '@/components/auth-provider';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import {
@@ -645,12 +645,12 @@ export default function ResultPage() {
                 {_.startCase(score.target)}
               </span>
               <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1 whitespace-nowrap'>
-                {isMobile ? (
+                {isMobile || isTablet ? (
                   <Hand size={15} />
                 ) : (
                   <MousePointerClick size={15} />
                 )}{' '}
-                {isMobile ? 'Tap' : 'Click'} to{' '}
+                {isMobile || isTablet ? 'Tap' : 'Click'} to{' '}
                 {expandedValues.includes(`word-${score.id}`)
                   ? 'fold'
                   : 'expand'}
