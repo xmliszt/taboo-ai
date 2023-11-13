@@ -449,7 +449,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
           `${user?.email ?? 'guest'}-${level?.id}-${completedAt.toISOString()}`
         ),
         levelId: level?.id ?? '',
-        totalScore: aggregateTotalScore(savedScores),
+        totalScore: aggregateTotalScore(savedScores, level?.difficulty ?? 1),
         totalDuration: aggregateTotalTimeTaken(savedScores),
         difficulty: level?.difficulty ?? 1,
         finishedAt: completedAt,

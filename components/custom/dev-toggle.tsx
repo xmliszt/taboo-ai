@@ -83,7 +83,6 @@ const DevToggle = () => {
             { role: 'user', content: 'Sample user input: ' + target },
             { role: 'assistant', content: 'Sample response: ' + target },
           ],
-          difficulty: level.difficulty,
           completion: getRandomInt(1, 100),
           responseHighlights: [
             {
@@ -98,7 +97,7 @@ const DevToggle = () => {
       const game: IGame = {
         id: getHash(`admin-${level.id}-${completedAt.toISOString()}`),
         levelId: level.id,
-        totalScore: aggregateTotalScore(savedScores),
+        totalScore: aggregateTotalScore(savedScores, level.difficulty),
         totalDuration: aggregateTotalTimeTaken(savedScores),
         difficulty: level.difficulty,
         finishedAt: completedAt,

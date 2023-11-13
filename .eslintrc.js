@@ -31,4 +31,5 @@ module.exports = {
     'prefer-promise-reject-errors': 'off',
     'new-cap': 'off',
   },
+  ignorePatterns: ['components/ui/*.ts', 'components/ui/*.tsx'],
 };
