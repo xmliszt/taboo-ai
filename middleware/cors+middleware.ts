@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 const allowedOrigins = [
   /taboo-ai\.vercel\.app$/,
@@ -9,36 +9,37 @@ const allowedOrigins = [
 ];
 
 const checkOrigin = (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  next: () => void
-) => {
-  const origin = req.headers.origin;
-  const host = req.headers.host;
+  request: NextRequest,
+  response: NextResponse
+): { status: number; message: string } | undefined => {
+  const origin = request.headers.get('origin');
+  const host = request.headers.get('host');
   if (
     origin &&
     allowedOrigins.some((allowedOrigin) => allowedOrigin.test(origin))
   ) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    // set response header
+    response.headers.set('Access-Control-Allow-Origin', origin);
   } else if (
     !origin &&
     host &&
     allowedOrigins.some((allowedOrigin) => allowedOrigin.test(host))
   ) {
-    res.setHeader('Access-Control-Allow-Origin', host);
+    response.headers.set('Access-Control-Allow-Origin', host);
   } else {
-    res.status(403).json({ message: 'Forbidden' });
-    return;
+    return {
+      status: 403,
+      message: 'Forbidden',
+    };
   }
-  res.setHeader(
+  response.headers.set(
     'Access-Control-Allow-Methods',
     'GET, POST, OPTIONS, PUT, DELETE'
   );
-  res.setHeader(
+  response.headers.set(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   );
-  next();
 };
 
 export default checkOrigin;

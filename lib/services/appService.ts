@@ -5,7 +5,7 @@ import {
   ref,
   update,
 } from 'firebase/database';
-import { realtime } from '../firebase-client';
+import { realtime } from '../../firebase/firebase-client';
 
 export const listenToAppStats = (
   onSnapshotUpdated: (snapshot: DataSnapshot) => unknown

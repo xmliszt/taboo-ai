@@ -1,4 +1,4 @@
-import { firebaseAuth } from '@/lib/firebase-client';
+import { firebaseAuth } from '@/firebase/firebase-client';
 import {
   browserLocalPersistence,
   GoogleAuthProvider,

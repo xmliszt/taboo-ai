@@ -2,27 +2,10 @@ import _ from 'lodash';
 import crypto from 'crypto';
 import { IHighlight } from './types/highlight.type';
 import { IChat, IDisplayScore } from './types/score.type';
-import { NextApiRequest } from 'next';
 import IWord from './types/word.type';
 import moment from 'moment';
 import { DateUtils } from './utils/dateUtils';
 import html2canvas from 'html2canvas';
-
-export function getIp(req: NextApiRequest): string | undefined {
-  let ip: string | undefined;
-  if (req.headers['x-forwarded-for']) {
-    if (req.headers['x-forwarded-for'] as string[]) {
-      ip = req.headers['x-forwarded-for'][0];
-    } else if (req.headers['x-forwarded-for'] as string) {
-      ip = (req.headers['x-forwarded-for'] as string).split(',')[0];
-    }
-  } else if (req.headers['x-real-ip']) {
-    ip = req.socket.remoteAddress;
-  } else {
-    ip = req.socket.remoteAddress;
-  }
-  return ip;
-}
 
 export function generateHashedString(...items: string[]): string {
   const stringToHash = items.join('_');

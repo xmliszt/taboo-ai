@@ -1,4 +1,4 @@
-import { firestore } from '@/lib/firebase-client';
+import { firestore } from '@/firebase/firebase-client';
 import { User } from 'firebase/auth';
 import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import moment from 'moment';

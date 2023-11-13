@@ -1,4 +1,5 @@
-import { RejectionReason } from '@/pages/api/x/send-email';
+import { RejectionReason } from '@/app/api/x/mail/route';
+
 interface ErrorResponse {
   error: string;
   details?: any;
@@ -36,7 +37,7 @@ export const sendEmail = async (
   subject?: string,
   html?: string
 ) => {
-  const url = `/api/send-email`;
+  const url = `/api/mail`;
   return await request<{
     nickname: string;
     fromEmail: string;
@@ -59,7 +60,7 @@ export const sendEmailX = async (
   reason?: RejectionReason,
   token?: string
 ) => {
-  const url = `/api/x/send-email`;
+  const url = `/api/x/mail`;
   return await request<{
     topic: string;
     type: 'verify' | 'reject';
