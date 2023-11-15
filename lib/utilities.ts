@@ -112,7 +112,8 @@ export const formatResponseTextIntoArray = (
 
 export const getMockResponse = async (
   target: string,
-  mode: string
+  mode: string,
+  duration = 1000
 ): Promise<string | undefined> => {
   return new Promise<string | undefined>((res, rej) => {
     setTimeout(() => {
@@ -132,7 +133,7 @@ export const getMockResponse = async (
         default:
           res(`The target response is: ${target}.`);
       }
-    }, 2000);
+    }, duration);
   });
 };
 
@@ -274,11 +275,4 @@ export const shareImage = (source: HTMLDivElement): Promise<ShareResult> => {
         rej(err);
       });
   });
-};
-
-export const createConversationFeedForAIJudge = (conversation: IChat[]) => {
-  return conversation
-    .filter((chat) => chat.role !== 'error' && chat.role !== 'system')
-    .map((chat) => `${chat.role === 'user' ? 'P' : 'G'}:${chat.content}`)
-    .join('||');
 };

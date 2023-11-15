@@ -1,14 +1,13 @@
 'use client';
 
+import _ from 'lodash';
 import copy from 'clipboard-copy';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { IAIScore, IDisplayScore } from '../../lib/types/score.type';
-import _ from 'lodash';
+import { IDisplayScore } from '../../lib/types/score.type';
 import { IHighlight } from '../../lib/types/highlight.type';
 import { useRouter } from 'next/navigation';
 import LoadingMask from '../../components/custom/loading-mask';
 import { CONSTANTS } from '../../lib/constants';
-import { askAIForJudgingScore } from '../../lib/services/aiService';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,7 +36,6 @@ import { StarRatingBar } from '@/components/custom/star-rating-bar';
 import {
   b64toBlob,
   calculateTimeScore,
-  createConversationFeedForAIJudge,
   getCalculatedScore,
   getCompletionSeconds,
   getDifficultyMultipliers,
@@ -49,6 +47,11 @@ import ResutlsContributionAlertDialog from '@/components/custom/results/results-
 import { Spinner } from '@/components/custom/spinner';
 import { store } from '@/lib/redux/store';
 import IconButton from '@/components/ui/icon-button';
+import {
+  checkRunStatusAndCallActionIfNeeded,
+  completeEvaluation,
+  startNewEvaluation,
+} from '@/lib/services/aiService';
 
 interface StatItem {
   title: string;
@@ -57,25 +60,40 @@ interface StatItem {
 }
 
 export default function ResultPage() {
+  const router = useRouter();
+  const { toast } = useToast();
   const { user, status } = useAuth();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
   const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
   const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
-  const level = useAppSelector(selectLevelStorage);
-  const scores = useAppSelector(selectScoreStorage);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { toast } = useToast();
   const [isShareCardOpen, setIsShareCardOpen] = useState(false);
   const [isScoring, setIsScoring] = useState(false);
+  const [scores, setScores] = useState<IDisplayScore[]>([]);
+
+  const level = useAppSelector(selectLevelStorage);
+  const dispatch = useAppDispatch();
+
   const screenshotRef = useRef<HTMLDivElement>(null);
   const shareCardRef = useRef<HTMLDivElement>(null);
+  const startedEvaluation = useRef<boolean>(false);
 
   let totalTimeTaken: number | undefined = 0;
   let totalScore: number | undefined = 0;
+
+  useEffect(() => {
+    const cachedScores = JSON.parse(
+      localStorage.getItem(HASH.scores) ?? ''
+    ) as IDisplayScore[];
+    setScores(cachedScores);
+    if (!startedEvaluation.current) {
+      startEvaluation(cachedScores);
+      startedEvaluation.current = true;
+    }
+  }, []);
 
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
     if (level && level.isAIGenerated) {
@@ -92,7 +110,6 @@ export default function ResultPage() {
   }, [level, user, status]);
 
   useEffect(() => {
-    checkUserStatus();
     const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
       const scores = store.getState().scoreStorageReducer.scores;
       if (
@@ -116,117 +133,117 @@ export default function ResultPage() {
     checkIfEligibleForLevelSubmission();
   }, [checkIfEligibleForLevelSubmission]);
 
-  const performAIJudging = async (
-    retries: number,
-    target: string,
-    userInput: string
-  ): Promise<IAIScore> => {
+  const startEvaluation = async (scores: IDisplayScore[]) => {
+    if (!scores) return;
+    setIsLoading(true);
+    for (let i = 0; i < scores.length; i++) {
+      await evaluateForScore(i, scores);
+    }
+    setIsLoading(false);
+  };
+
+  const evaluateForScore = async (idx: number, scores: IDisplayScore[]) => {
+    setIsScoring(true);
+    setLoadingMessage(
+      `Stay tuned! Taboo AI is evaluating your performance... [${idx + 1}/${
+        scores.length
+      }]`
+    );
+    const score = scores[idx];
+    const aiScore = score.ai_score;
+    const aiExplanation = score.ai_explanation;
     if (localStorage.getItem(HASH.dev) === '1') {
       const devMode = localStorage.getItem('mode') ?? '1';
+      let aiMockScore: number | undefined;
+      let aiMockReasoning: string | undefined;
       switch (devMode) {
         case '1':
         case '2':
-          return { score: 50, explanation: 'This is a test run.' };
+          aiMockScore = _.random(0, 100);
+          aiMockReasoning = 'This is a test run.';
+          break;
         case '3':
         case '4':
-          return { score: undefined, explanation: undefined };
+          aiMockScore = undefined;
+          aiMockReasoning = undefined;
+          break;
         default:
-          return { score: 50, explanation: 'This is a test run.' };
+          aiMockScore = _.random(0, 100);
+          aiMockReasoning = 'This is a test run.';
       }
-    }
-    try {
-      return await askAIForJudgingScore(target, userInput);
-    } catch (error) {
-      console.error(error);
-      if (retries > 0) {
-        return performAIJudging(retries - 1, target, userInput);
-      } else {
-        return { score: undefined, explanation: undefined };
-      }
-    }
-  };
-
-  const checkUserStatus = async () => {
-    if (
-      scores &&
-      scores.length === CONSTANTS.numberOfQuestionsPerGame &&
-      !isLoading
-    ) {
-      // AI judging
-      setLoadingMessage(
-        `Stay tuned! Taboo AI is evaluating your performance... [0/${scores.length}]`
-      );
-      setIsLoading(true);
       const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
-      if (!copyScores) return;
-      for (let i = 0; i < scores.length; i++) {
-        const score = scores[i];
-        const userInput = createConversationFeedForAIJudge(score.conversation);
-        const target = score.target;
-        const aiScore = score.ai_score;
-        const aiExplanation = score.ai_explanation;
-        if (aiScore !== undefined && aiExplanation !== undefined) {
-          setLoadingMessage(
-            `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
-              scores.length
-            }]`
-          );
-        } else {
-          const aiJudgeScore = await performAIJudging(5, target, userInput);
-          copyScores[i].ai_score = aiJudgeScore.score;
-          copyScores[i].ai_explanation = aiJudgeScore.explanation;
-          setLoadingMessage(
-            `Stay tuned! Taboo AI is evaluating your performance... [${i + 1}/${
-              scores.length
-            }]`
-          );
-        }
-      }
-      setIsLoading(false);
-      setLoadingMessage('Loading...');
+      copyScores[idx].ai_score = aiMockScore;
+      copyScores[idx].ai_explanation = aiMockReasoning;
       dispatch(setScoresStorage(copyScores));
       updateTotalTimeTakenAndTotalScores(copyScores);
-    }
-  };
-
-  const retryScoring = async (scoreId: number) => {
-    if (!scores) return;
-    const copyScores = JSON.parse(JSON.stringify(scores)) as IDisplayScore[];
-    if (!copyScores) return;
-    const score = copyScores.find((score) => score.id === scoreId);
-    if (!score) return;
-    const userInput = createConversationFeedForAIJudge(score.conversation);
-    const target = score.target;
-    const aiScore = score.ai_score;
-    const aiExplanation = score.ai_explanation;
-    if (aiScore !== undefined && aiExplanation !== undefined) {
-      toast({
-        title: 'This score has already been judged.',
-        variant: 'destructive',
-      });
-    } else {
-      let aiJudgeScore: IAIScore = {
-        score: 50,
-        explanation: 'This is a test run, re-scored by the user.',
-      };
-      setIsScoring(true);
-      aiJudgeScore = await performAIJudging(5, target, userInput);
       setIsScoring(false);
-      if (aiJudgeScore.explanation !== undefined) {
-        score.ai_score = aiJudgeScore.score;
-        score.ai_explanation = aiJudgeScore.explanation;
-        dispatch(setScoresStorage([...copyScores]));
-        updateTotalTimeTakenAndTotalScores(copyScores);
-        toast({
-          title: 'Score has been updated.',
+      return;
+    }
+    if (aiScore === undefined || aiExplanation === undefined) {
+      // Start the AI Evaluation
+      try {
+        const { runId, threadId } = await startNewEvaluation({
+          target: score.target,
+          taboos: score.taboos,
+          conversation: score.conversation,
         });
-      } else {
+        await checkEvaluationStatus(runId, threadId, idx);
+      } catch (error) {
+        console.error(error);
         toast({
-          title: 'Sorry, we are unable to judge your score at the moment.',
+          title:
+            'Sorry, we are unable to evaluate your performance at the moment. Please try again later.',
           variant: 'destructive',
         });
       }
     }
+    setIsScoring(false);
+  };
+
+  const checkEvaluationStatus = async (
+    run_id: string,
+    thread_id: string,
+    score_idx: number
+  ) => {
+    const { status, requiredAction } =
+      await checkRunStatusAndCallActionIfNeeded(run_id, thread_id);
+    if (requiredAction && status === 'requires_action') {
+      const callObject = requiredAction.submit_tool_outputs.tool_calls[0];
+      const call_id = callObject.id;
+      const function_name = callObject.function.name;
+      const function_args = JSON.parse(callObject.function.arguments);
+      if (function_name == 'provide_feedbacks') {
+        const copyScores = JSON.parse(
+          JSON.stringify(scores)
+        ) as IDisplayScore[];
+        copyScores[score_idx].ai_score = function_args.score;
+        copyScores[score_idx].ai_explanation = function_args.reasoning;
+        setScores(copyScores);
+        dispatch(setScoresStorage(copyScores));
+        updateTotalTimeTakenAndTotalScores(copyScores);
+      }
+      completeEvaluation(run_id, thread_id, [
+        {
+          call_id: call_id,
+          output: '{"success": true}',
+        },
+      ]);
+      return;
+    } else if (
+      status === 'failed' ||
+      status === 'completed' ||
+      status === 'cancelled' ||
+      status === 'expired'
+    ) {
+      return;
+    }
+    // Check again
+    await checkEvaluationStatus(run_id, thread_id, score_idx);
+  };
+
+  const retryScoring = async (scoreId: number) => {
+    if (!scores) return;
+    await evaluateForScore(scoreId - 1, scores);
   };
 
   const updateTotalTimeTakenAndTotalScores = (
@@ -531,6 +548,10 @@ export default function ResultPage() {
               {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
             </Button>
           ),
+      },
+      {
+        title: 'Taboo Words',
+        content: <span>{score.taboos.join(', ')}</span>,
       },
       {
         title: 'AI Explanation',

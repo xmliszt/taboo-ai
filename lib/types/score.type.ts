@@ -4,6 +4,7 @@ import { IHighlight } from './highlight.type';
 export interface IDisplayScore {
   id: number;
   target: string;
+  taboos: string[];
   conversation: IChat[];
   difficulty: number;
   completion: number;

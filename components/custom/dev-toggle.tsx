@@ -71,6 +71,7 @@ const DevToggle = (props: DevToggleProps) => {
         savedScores.push({
           id: i,
           target: target,
+          taboos: [],
           conversation: [
             { role: 'user', content: 'Sample user input: ' + target },
             { role: 'assistant', content: 'Sample response: ' + target },

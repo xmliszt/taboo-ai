@@ -6,13 +6,15 @@ import {
   useEffect,
   useRef,
   ChangeEvent,
-  useCallback,
   useMemo,
 } from 'react';
 import Timer from '@/components/custom/timer';
 import {
-  askAIForQueryResponse,
   askAITabooWordsForTarget,
+  checkRunStatusAndCallActionIfNeeded,
+  continueConversation,
+  getMessagesFromThread,
+  startNewConversation,
 } from '@/lib/services/aiService';
 import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '@/lib/constants';
@@ -47,32 +49,50 @@ import {
   setLevelStorage,
 } from '@/lib/redux/features/levelStorageSlice';
 import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { MessageContentText } from 'openai/resources/beta/threads/messages/messages';
+import {
+  generateHighlights,
+  getMatchedTabooWords,
+} from '@/lib/utils/levelUtils';
 
 interface LevelPageProps {
   params: { id: string };
 }
 
+// The current run_id cached in the page.
+let run_id = '';
+
+// The current thread_id cached in the page.
+let thread_id = '';
+
+// The words for this topic
+let words: string[] = [];
+
+// The picked words for this topic
+const pickedWords: string[] = [];
+
 export default function LevelPage({ params: { id } }: LevelPageProps) {
-  //SECTION - States
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const retryCount = useRef<number>(5);
+  const inputTextField = useRef<HTMLInputElement>(null);
+
+  const [isWaitingForAIResponse, setIsWaitingForAIResponse] = useState(false);
   const [level, setLevel] = useState<ILevel>();
   const [userInput, setUserInput] = useState<string>('');
-  const [responseText, setResponseText] = useState<string>('');
-  const [words, setWords] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<number>(0);
   const [target, setTarget] = useState<string | null>(null);
   const [variations, setVariations] = useState<string[]>([]);
   const [isGeneratingVariations, setIsGeneratingVariations] =
     useState<boolean>(false);
-  const [pickedWords, setPickedWords] = useState<string[]>([]);
-  const [highlights, setHighlights] = useState<IHighlight[]>([]);
-  const [userInputMatchedTabooWords, setUserInputMatchedTabooWords] = useState<
-    string[]
-  >([]);
-  const [isEmptyInput, setIsEmptyInput] = useState<boolean>(true);
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [retryCount, setRetryCount] = useState<number>(5);
+  const [isCountingdown, setIsCountdown] = useState<boolean>(false);
+  const [conversation, setConversation] = useState<IChat[]>([]);
+  const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
+  const [isFetchingLevel, setIsFetchingLevel] = useState(false);
+
   const {
     time,
     start: startTimer,
@@ -92,43 +112,26 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       startTimer();
     },
   });
-  const [isCountingdown, setIsCountdown] = useState<boolean>(false);
-  const [userInputError, setUserInputError] = useState<string>();
-  const [conversation, setConversation] = useState<IChat[]>([]);
-  const inputTextField = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-  const { toast } = useToast();
-  const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
-  const cachedLevel = useAppSelector(selectLevelStorage);
-  const dispatch = useAppDispatch();
-  const [isFetchingLevel, setIsFetchingLevel] = useState(false);
-
-  const isInputDisable = useMemo(() => {
-    return (
-      !level ||
-      isLoading ||
-      isCountingdown ||
-      isGeneratingVariations ||
-      isSuccess
-    );
-  }, [level, isLoading, isCountingdown, isGeneratingVariations, isSuccess]);
 
   useEffect(() => {
-    if (inputTextField.current) {
-      inputTextField.current.focus();
+    if (timerStatus === 'RUNNING') {
+      inputTextField.current?.focus();
     }
-  }, [inputTextField]);
+  }, [timerStatus]);
+
+  const cachedLevel = useAppSelector(selectLevelStorage);
+  const dispatch = useAppDispatch();
+
+  const isEmptyInput = userInput.length <= 0;
 
   const fetchLevel = async (id: string) => {
-    if (level) {
-      return;
-    }
+    if (level) return;
     setIsFetchingLevel(true);
-    const _level = await getLevel(id);
-    if (_level && level === undefined) {
-      setLevel(_level);
-      incrementLevelPopularity(_level.id);
-      dispatch(setLevelStorage(_level));
+    const fetchedLevel = await getLevel(id);
+    if (fetchedLevel && level === undefined) {
+      setLevel(fetchedLevel);
+      incrementLevelPopularity(fetchedLevel.id);
+      dispatch(setLevelStorage(fetchedLevel));
     }
   };
 
@@ -144,56 +147,28 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     dispatch(setScoresStorage(savedScores));
   }, [savedScores]);
 
-  //SECTION - When level fetched, we start the game
+  // When level fetched, we start the game
   useEffect(() => {
     if (level) {
       resetTimer();
       dispatch(setScoresStorage(undefined));
       setDifficulty(level.difficulty);
-      const words = level.words.map((word) => formatStringForDisplay(word));
-      setWords(words);
-      const _target = generateNewTarget(words);
-      setTarget(_target);
+      words = level.words.map((word) => formatStringForDisplay(word));
+      const newTarget = generateNewTarget();
+      setTarget(newTarget);
       setCurrentProgress(1);
-      setIsSuccess(false);
-      setResponseText(
-        'Think about your prompt while we generate the Taboo words.'
-      );
     }
   }, [level]);
-  //!SECTION
 
-  //!SECTION
-  const generateNewTarget = (words: string[]): string => {
-    if (words.length === 0) {
-      words = pickedWords;
-      setPickedWords([]);
-    }
-    const _target = words[Math.floor(Math.random() * words.length)];
-    const picked = [...pickedWords];
-    picked.push(_target);
-    setPickedWords(picked);
-    const unused = [...words];
-    _.remove(unused, (s) => s === _target);
-    setWords(unused);
-    return _target;
-  };
-
-  const getRegexPattern = (target: string): RegExp => {
-    const magicSeparator = '[\\W_]*';
-    const magicMatchString = target
-      .replace(/\W/g, '')
-      .split('')
-      .join(magicSeparator);
-    const groupRegexString =
-      target.length === 1
-        ? `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`
-        : `(${magicMatchString})`;
-    return new RegExp(groupRegexString, 'gi');
+  const generateNewTarget = (): string => {
+    const newTarget = words[Math.floor(Math.random() * words.length)];
+    // Remove from words so that it doesn't get picked again
+    _.remove(words, (word) => word === newTarget);
+    return newTarget;
   };
 
   const renderWaitingMessageForVariations = () => {
-    switch (retryCount) {
+    switch (retryCount.current) {
       case 5:
         return 'Finding relevant taboo words...';
       case 4:
@@ -209,145 +184,122 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     }
   };
 
-  const generateHighlights = (
-    str: string,
-    forResponse: boolean
-  ): IHighlight[] => {
-    const highlights: IHighlight[] = [];
-    if (forResponse && target) {
-      const regex = getRegexPattern(target);
-      let result;
-      while ((result = regex.exec(str)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (result.index === regex.lastIndex) {
-          regex.lastIndex++;
-        }
-        const startIndex = result.index;
-        const endIndex = regex.lastIndex;
-        const highlight = { start: startIndex, end: endIndex };
-        highlights.push(highlight);
-      }
-    } else {
-      const _variations = target == null ? variations : [...variations, target];
-      const matchedTaboos: string[] = [];
-      for (const variation of _variations) {
-        const parts = [variation];
-        for (const part of parts) {
-          const regex = getRegexPattern(part);
-          let result;
-          while ((result = regex.exec(str)) !== null) {
-            if (!matchedTaboos.includes(variation)) {
-              matchedTaboos.push(variation);
-            }
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (result.index === regex.lastIndex) {
-              regex.lastIndex++;
-            }
-          }
-        }
-      }
-      setUserInputMatchedTabooWords(matchedTaboos);
-    }
-    return highlights;
-  };
-
-  //SECTION - On Input Changed
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setResponseText('');
-    setUserInput(event.target.value);
-    setIsEmptyInput(event.target.value.length <= 0);
-  };
-  //!SECTION
-
-  //SECTION - On Input submitted
-  const onFormSubmit = (event: FormEvent) => {
+  const onUserSubmitInput = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setResponseText('');
-    if (userInputMatchedTabooWords.length <= 0 && userInput.length > 0) {
-      setConversation([...conversation, { role: 'user', content: userInput }]);
-      setUserInput('');
-    }
-  };
-  //!SECTION
-
-  useEffect(() => {
-    const lastPrompt = conversation[conversation.length - 1];
-    if (lastPrompt && lastPrompt.role === 'user') {
-      setConversation([...conversation, { role: 'assistant', content: '...' }]);
-      fetchResponse(lastPrompt);
-    }
-    document.getElementById('chat-end')?.scrollIntoView({ behavior: 'smooth' });
-  }, [conversation]);
-
-  //SECTION - Fetch Response
-  const fetchResponse = async (prompt: IChat) => {
-    setIsLoading(true);
+    // Get the submitted value
+    const userInput = event.currentTarget['user-input'].value as string;
+    // Immediately show user input in UI
+    setConversation([
+      ...conversation,
+      { role: 'user', content: userInput },
+      { role: 'assistant', content: '' },
+    ]);
+    // Pause timer, set loading true
+    setIsWaitingForAIResponse(true);
     pauseTimer();
-    // * Make sure response fade out completely!
-    setTimeout(async () => {
+    setIsLoading(true);
+
+    // If in dev mode, we skip API call and use mock response
+    if (localStorage.getItem(HASH.dev) === '1') {
+      const mockResponse = await getMockResponse(
+        target ?? '',
+        localStorage.getItem('mode') ?? '1'
+      );
+      setConversation([
+        ...conversation,
+        { role: 'assistant', content: mockResponse ?? '' },
+      ]);
+      return;
+    }
+
+    // If input valid, proceed to submit to continue conversation
+    if (userInputMatchedTabooWords.length <= 0 && userInput.length > 0) {
       try {
-        let responseText: string | undefined;
-        if (localStorage.getItem(HASH.dev) === '1') {
-          responseText = await getMockResponse(
-            target ?? '',
-            localStorage.getItem('mode') ?? '1'
-          );
-        } else {
-          const filteredPrompts = conversation.filter(
-            (p) => p.role !== 'error'
-          );
-          responseText = await askAIForQueryResponse([
-            ...filteredPrompts,
-            prompt,
-          ]);
-        }
-        if (responseText === undefined || responseText === null) {
-          setConversation([
-            ...conversation,
-            { role: 'error', content: CONSTANTS.errors.overloaded },
-          ]);
-          setIsLoading(false);
-          startTimer();
-          return;
-        } else {
-          setConversation([
-            ...conversation,
-            { role: 'assistant', content: responseText },
-          ]);
-        }
-        // * Wait for input fade out completely, then show response
-        setTimeout(() => {
-          responseText && setResponseText(responseText);
-          setIsLoading(false);
-        }, 1000);
-      } catch (err) {
-        // Server error
-        setIsSuccess(false);
+        const isNewConversation = conversation.length === 0;
+        // If it's a new conversation, start a new thread,
+        // otherwise continue the existing thread
+        const { runId, threadId } = isNewConversation
+          ? await startNewConversation(userInput)
+          : await continueConversation(userInput, thread_id);
+        run_id = runId;
+        thread_id = threadId;
+        // Start periodic status check for the current thread run
+        await checkConversationStatus();
+        setUserInput('');
+      } catch (error) {
+        console.error(error);
         setConversation([
           ...conversation,
           { role: 'error', content: CONSTANTS.errors.overloaded },
         ]);
+        setIsWaitingForAIResponse(false);
         setIsLoading(false);
         startTimer();
       }
-    }, 1000);
+    }
   };
-  //!SECTION
 
-  //SECTION - Next Question
-  const nextQuestion = async () => {
+  const checkConversationStatus = async () => {
+    const { status } = await checkRunStatusAndCallActionIfNeeded(
+      run_id,
+      thread_id
+    );
+    if (
+      status === 'failed' ||
+      status === 'completed' ||
+      status === 'cancelled' ||
+      status === 'expired'
+    ) {
+      // Fetch the messages from thread and update conversation in UI
+      const messages = await getMessagesFromThread(thread_id);
+      // Convert messages to conversation, revser the order
+      const conversationFromMessages: IChat[] = messages
+        .map((message) => {
+          return {
+            role: message.role,
+            content: (message.content[0] as MessageContentText).text.value,
+          };
+        })
+        .reverse();
+      if (
+        status === 'failed' ||
+        status === 'cancelled' ||
+        status === 'expired'
+      ) {
+        conversationFromMessages.push({
+          role: 'error',
+          content: CONSTANTS.errors.overloaded,
+        });
+      }
+      setIsWaitingForAIResponse(false);
+      setConversation(conversationFromMessages);
+      setIsLoading(false);
+      startTimer();
+    } else {
+      // Check again
+      await checkConversationStatus();
+    }
+  };
+
+  // Scroll the DOM chat to always show the latest message
+  useEffect(() => {
+    document.getElementById('chat-end')?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversation]);
+
+  // Move on to next question, save the scores to cache. Delay and set the current progress to next one
+  const nextQuestion = async (highlights: IHighlight[]) => {
     pauseTimer();
     const copySavedScores = [...savedScores];
     copySavedScores.push({
       id: currentProgress,
       target: target ?? '',
+      taboos: variations,
       conversation: conversation,
       difficulty: difficulty,
       completion: time,
       responseHighlights: highlights,
     });
     setSavedScores(copySavedScores);
-    setIsSuccess(true);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
       toast({
         title: 'Game Over! Generating Results...',
@@ -356,60 +308,55 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
   };
-  //!SECTION
+
+  // If last message from conversation is from assistant, we generate highlights for it. And move on to next question
+  useEffect(() => {
+    if (
+      conversation.length > 0 &&
+      conversation[conversation.length - 1].role === 'assistant'
+    ) {
+      const lastAssistantMessage = conversation[conversation.length - 1];
+      const highlights = generateHighlights(
+        target,
+        lastAssistantMessage.content,
+        true
+      );
+      if (highlights.length > 0) {
+        toast({ title: "That's a hit! Well done!", duration: 1000 });
+        nextQuestion(highlights);
+      }
+    }
+  }, [conversation]);
 
   const generateVariationsForTarget = async (
     retries: number,
     target: string,
     callback: (variations?: IWord) => void
   ) => {
-    setRetryCount(retries);
-    if (localStorage.getItem(HASH.dev)) {
-      getMockVariations(target, true)
-        .then((variations) => {
-          callback(variations);
-        })
-        .catch(() => {
-          if (retries > 0) {
-            generateVariationsForTarget(retries - 1, target, callback);
-          } else {
-            callback();
-          }
-        });
-    } else {
-      try {
+    retryCount.current = retries;
+    try {
+      if (localStorage.getItem(HASH.dev)) {
+        const variations = await getMockVariations(target, true);
+        callback(variations);
+      } else {
         const taboo = await getTabooWords(target);
         if (taboo && taboo.taboos.length > 1 && taboo.isVerified) {
           callback(taboo);
         } else {
-          askAITabooWordsForTarget(target)
-            .then(async (variations) => {
-              callback(variations);
-            })
-            .catch(() => {
-              if (retries > 0) {
-                generateVariationsForTarget(retries - 1, target, callback);
-              } else {
-                callback();
-              }
-            });
+          const variations = await askAITabooWordsForTarget(target);
+          callback(variations);
         }
-      } catch {
-        if (retries > 0) {
-          generateVariationsForTarget(retries - 1, target, callback);
-        } else {
-          callback();
-        }
+      }
+    } catch {
+      if (retries > 0) {
+        generateVariationsForTarget(retries - 1, target, callback);
+      } else {
+        callback();
       }
     }
   };
 
-  const startCountdown = () => {
-    countdown.start();
-    setIsCountdown(true);
-  };
-
-  //SECTION - When target changed
+  // When target changed
   useEffect(() => {
     if (target) {
       setVariations([target]);
@@ -426,15 +373,14 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
             _variations = variations.taboos;
           }
           setVariations(_variations.map(formatStringForDisplay));
-          setResponseText('');
-          startCountdown();
+          countdown.start();
+          setIsCountdown(true);
         }, 2000);
       });
     }
   }, [target]);
-  //!SECTION
 
-  //SECTION - When progress changed
+  // When progress changed
   useEffect(() => {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
@@ -443,74 +389,49 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     } else if (currentProgress === 1) {
       return;
     } else {
-      const _target = generateNewTarget(words);
-      setTarget(_target);
-      setVariations([_target]);
+      const newTarget = generateNewTarget();
+      setTarget(newTarget);
+      setVariations([newTarget]);
       setUserInput('');
-      setIsSuccess(false);
     }
   }, [currentProgress]);
-  //!SECTION
 
-  //SECITON - Timer control
+  // Timer control
   useEffect(() => {
     if (isCountingdown) {
       resetTimer();
     }
   }, [isCountingdown]);
-  //!SECTION
 
-  //SECTION -  Compute highlight match
-  useEffect(() => {
-    if (target) {
-      const highlights = generateHighlights(responseText, true);
-      setHighlights(highlights);
-    }
-  }, [responseText]);
-  //!SECTION
+  // user input validated against taboo words.
+  const matchers = target == null ? variations : [...variations, target];
+  const userInputMatchedTabooWords = getMatchedTabooWords(userInput, matchers);
+  const userInputError =
+    userInputMatchedTabooWords.length > 0
+      ? `Uh-oh, you hit taboo words: ${userInputMatchedTabooWords.join(', ')}`
+      : undefined;
 
-  //SECTION - Compute user input validation match
-  useEffect(() => {
-    // TODO: Generate highlights for user input not used, but call this function to update matched taboo words state. This side effect not good, pending improvement
-    const _ = generateHighlights(userInput, false);
-  }, [userInput]);
-  //!SECTION
-
-  //SECTION - When highlights updated
-  useEffect(() => {
-    if (highlights.length > 0) {
-      toast({ title: "That's a hit! Good job!" });
-      nextQuestion();
-    } else {
-      setIsSuccess(false);
-      inputTextField.current?.focus();
-      isCountingdown ||
-      isEmptyInput ||
-      isLoading ||
-      isGeneratingVariations ||
-      isLoading
-        ? pauseTimer()
-        : startTimer();
-    }
-  }, [highlights]);
-  //!SECTION
-
-  //SECTION - User input validation condition
-  useEffect(() => {
-    if (userInputMatchedTabooWords.length > 0) {
-      setUserInputError(
-        `Uh-oh, you hit taboo words: ${userInputMatchedTabooWords.join(', ')}`
+  const renderHighlightedMessageBubble = (message: string): JSX.Element[] => {
+    const renderNormalMessageSpan = (message: string) => {
+      return <span key={uniqueId(message)}>{message}</span>;
+    };
+    const renderHighlightMessageSpan = (message: string) => {
+      return (
+        <span
+          key={uniqueId(message)}
+          className='rounded-lg px-1 py-1 bg-green-400 text-black'
+        >
+          {message}
+        </span>
       );
-    } else {
-      setUserInputError(undefined);
-    }
-  }, [userInputMatchedTabooWords]);
-  //!SECTION
-
-  const generateHighlightedMessage = (message: string): JSX.Element[] => {
+    };
     let parts = [];
-    if (highlights.length === 0) parts = [<span key={message}>{message}</span>];
-    else {
+    const highlights = generateHighlights(target, message, true);
+    if (highlights.length === 0) {
+      // No highlights found, just return message in normal style
+      parts = [<span key={message}>{message}</span>];
+    } else {
+      // Highlights found, generate higlights for message matches
       let startIndex = 0;
       let endIndex = 0;
       for (const highlight of highlights) {
@@ -520,34 +441,19 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         }
         // Normal part
         parts.push(
-          makeNormalMessagePart(message.substring(startIndex, endIndex))
+          renderNormalMessageSpan(message.substring(startIndex, endIndex))
         );
         startIndex = endIndex;
         endIndex = highlight.end;
         // Highlighted part
         parts.push(
-          makeHighlightMessagePart(message.substring(startIndex, endIndex))
+          renderHighlightMessageSpan(message.substring(startIndex, endIndex))
         );
         startIndex = endIndex;
       }
-      parts.push(makeNormalMessagePart(message.substring(endIndex)));
+      parts.push(renderNormalMessageSpan(message.substring(endIndex)));
     }
     return parts;
-  };
-
-  const makeNormalMessagePart = (message: string) => {
-    return <span key={uniqueId(message)}>{message}</span>;
-  };
-
-  const makeHighlightMessagePart = (message: string) => {
-    return (
-      <span
-        key={uniqueId(message)}
-        className='rounded-lg px-1 py-1 bg-green-400 text-black'
-      >
-        {message}
-      </span>
-    );
   };
 
   if (!level) {
@@ -609,7 +515,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
             >
               {prompt.role === 'assistant' &&
               idx === conversation.length - 1 ? (
-                prompt.content === '...' ? (
+                isWaitingForAIResponse ? (
                   <span className='flex flex-row gap-1 items-center'>
                     {'...'.split('').map((c, i) =>
                       i === 0 ? (
@@ -639,7 +545,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                     )}
                   </span>
                 ) : (
-                  generateHighlightedMessage(prompt.content)
+                  renderHighlightedMessageBubble(prompt.content)
                 )
               ) : prompt.role === 'error' ? (
                 <span className='text-slate-400'>{prompt.content}</span>
@@ -662,7 +568,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
               {target}
             </span>
           </div>
-          <form onSubmit={onFormSubmit} className='flex flex-col gap-2'>
+          <form onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
             <div className='flex relative items-center justify-center gap-4 px-4'>
               <IconButton
                 id='clear'
@@ -673,13 +579,11 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                   !level ||
                   isLoading ||
                   isCountingdown ||
-                  isGeneratingVariations ||
-                  isSuccess
+                  isGeneratingVariations
                 }
                 className='absolute right-20 z-10 shadow-lg rounded-full !w-[20px] !h-[20px]'
                 onClick={() => {
                   setUserInput('');
-                  setIsEmptyInput(true);
                   inputTextField.current?.focus();
                 }}
               >
@@ -687,7 +591,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
               </IconButton>
               <Input
                 id='user-input'
-                disabled={isInputDisable}
+                disabled={timerStatus !== 'RUNNING'}
                 ref={inputTextField}
                 autoFocus
                 placeholder={
@@ -705,7 +609,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                 )}
                 type='text'
                 value={userInput}
-                onChange={onInputChange}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setUserInput(event.target.value);
+                }}
                 maxLength={150}
               />
               <IconButton
@@ -718,8 +624,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                   isCountingdown ||
                   isEmptyInput ||
                   userInputMatchedTabooWords.length > 0 ||
-                  isLoading ||
-                  isSuccess
+                  isLoading
                 }
                 type='submit'
                 className='aspect-square'
