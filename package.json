@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ pages/ components/ --fix && stylelint app/**/*.{css,scss} --fix ",
     "style": "prettier --write * --no-error-on-unmatched-pattern",
     "prepare": "husky install",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:e2e": "playwright test",
     "test:e2e:trace": "playwright test --trace on"
   },
