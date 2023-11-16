@@ -55,6 +55,7 @@ export const ScoreInfoButton = ({ className = '', ...props }: ButtonProps) => {
   };
   return (
     <IconButton
+      asChild
       {...props}
       className={cn(className, '')}
       variant='link'

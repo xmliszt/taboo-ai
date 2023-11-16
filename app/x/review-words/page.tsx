@@ -540,6 +540,7 @@ const DevReviewWordsPage = () => {
             {currentEditingTargetWordIndex === idx && (
               <>
                 <IconButton
+                  asChild
                   tooltip='Ask AI for Taboo Words again'
                   aria-label='refresh'
                   disabled={!isPageInteractive}
@@ -553,6 +554,7 @@ const DevReviewWordsPage = () => {
                   <RefreshCcw size={15} color='black' />
                 </IconButton>
                 <IconButton
+                  asChild
                   tooltip='Delete'
                   aria-label='delete'
                   disabled={!isPageInteractive}
@@ -570,6 +572,7 @@ const DevReviewWordsPage = () => {
           </div>
         ))}
         <IconButton
+          asChild
           tooltip='Add target word'
           disabled={
             !isPageInteractive ||
@@ -601,6 +604,7 @@ const DevReviewWordsPage = () => {
               {word}
             </Button>
             <IconButton
+              asChild
               tooltip='Delete'
               aria-label='delete'
               disabled={!isPageInteractive}
@@ -635,6 +639,7 @@ const DevReviewWordsPage = () => {
           className='grow h-12 text-xl'
         />
         <IconButton
+          asChild
           tooltip='Add taboo word'
           aria-label='add word'
           disabled={

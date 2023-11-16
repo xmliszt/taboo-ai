@@ -618,6 +618,7 @@ const AddLevelPage = () => {
                     }}
                   />
                   <IconButton
+                    asChild
                     tooltip='Delete'
                     disabled={tabooWordsCheckingStatus[i]}
                     className='rounded-full shadow-sm absolute -top-4 -right-3 z-10 p-2'
@@ -633,6 +634,7 @@ const AddLevelPage = () => {
               ))}
               {targetWords.length < MAX_TARGET_WORDS_COUNT && (
                 <IconButton
+                  asChild
                   tooltip='Add target word'
                   key='add-button'
                   aria-label='add a new target word'
@@ -777,6 +779,7 @@ const AddLevelPage = () => {
                                     {!(tabooWordsExistedStatus[i] ?? false) && (
                                       <>
                                         <IconButton
+                                          asChild
                                           tooltip='Delete'
                                           disabled={tabooWordsCheckingStatus[i]}
                                           className='rounded-full shadow-sm absolute -top-4 -right-3 z-10 p-2'
@@ -800,6 +803,7 @@ const AddLevelPage = () => {
                                 tabooWords[i].length <
                                   MAX_TABOO_WORDS_COUNT && (
                                   <IconButton
+                                    asChild
                                     tooltip='Add target word'
                                     key='add-button'
                                     aria-label='add a new target word'

@@ -56,6 +56,7 @@ export default function ProfileStatisticsCardView({
       <div className='w-full flex flex-row gap-2 items-center'>
         <h2 className='text-2xl'>Game Statistics</h2>
         <IconButton
+          asChild
           tooltip='Refresh statistics'
           variant='link'
           onClick={() => {

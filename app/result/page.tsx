@@ -661,6 +661,7 @@ export default function ResultPage() {
                 </span>
               ) : (
                 <IconButton
+                  asChild
                   aria-label='Re-Score'
                   tooltip='Re-Score'
                   size='sm'
