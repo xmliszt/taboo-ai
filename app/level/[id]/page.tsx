@@ -56,6 +56,9 @@ interface LevelPageProps {
   params: { id: string };
 }
 
+// If is AI level, then it is true
+let isCustomGame = false;
+
 // The words for this topic
 let words: string[] = [];
 
@@ -133,9 +136,17 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   useEffect(() => {
     if (id === 'ai') {
+      isCustomGame = true;
       const cachedLevel = getPersistence<ILevel>(HASH.level);
       setLevel(cachedLevel);
+      if (cachedLevel) {
+        startGame(cachedLevel);
+      } else {
+        toast({ title: 'Sorry we cannot find the topic to start the game. ' });
+        router.back();
+      }
     } else if (!isFetchingLevel) {
+      isCustomGame = false;
       fetchLevel(id);
     }
   }, [id, isFetchingLevel]);
@@ -175,6 +186,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   const onUserSubmitInput = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (userInputMatchedTabooWords.length > 0) return;
     // Get the submitted value
     const userInput = event.currentTarget['user-input'].value as string;
     // Immediately show user input in UI.
@@ -203,11 +215,24 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
     // If in dev mode, we skip API call and use mock response
     if (isDevMode()) {
-      const mockResponse = await getMockResponse(target ?? '', getDevMode());
-      setConversation([
-        ...conversation,
-        { role: 'assistant', content: mockResponse ?? '' },
-      ]);
+      const mockConversation = [...updatedConversation];
+      mockConversation.pop();
+      try {
+        const mockResponse = await getMockResponse(target ?? '', getDevMode());
+        setConversation([
+          ...mockConversation,
+          { role: 'assistant', content: mockResponse ?? '' },
+        ]);
+      } catch {
+        setConversation([
+          ...mockConversation,
+          { role: 'error', content: CONSTANTS.errors.overloaded },
+        ]);
+      } finally {
+        setIsWaitingForAIResponse(false);
+        setIsLoading(false);
+        startTimer();
+      }
       return;
     }
 
@@ -355,6 +380,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         difficulty: level?.difficulty ?? 1,
         finishedAt: completedAt,
         scores: savedScores,
+        isCustomGame: isCustomGame,
       };
       setPersistence(HASH.game, game);
       router.push('/result');

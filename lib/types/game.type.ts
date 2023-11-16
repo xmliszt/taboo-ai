@@ -8,4 +8,5 @@ export default interface IGame {
   totalDuration: number;
   difficulty: number;
   scores: IScore[];
+  isCustomGame?: boolean;
 }

@@ -78,7 +78,7 @@ export default function ProfileRecentGamesScrollView({
           topicName,
           difficultyString,
           finishedAt,
-          totalScore: `${totalScore} / 300`,
+          totalScore: `${totalScore.toFixed(1)} / 300`,
           totalDuration: `${totalDuration} seconds`,
           totalRating,
         });

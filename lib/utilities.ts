@@ -115,7 +115,7 @@ export const getMockResponse = async (
           res(`adfjlasdjflaksjdfklajsdfjaklsjaj`);
           break;
         case '3':
-          res(undefined);
+          res('Server Overloaded');
           break;
         case '4':
           rej('Mock Failure');

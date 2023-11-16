@@ -181,6 +181,7 @@ export default function ResultPage() {
       level === null ||
       user === undefined ||
       game === null ||
+      game.isCustomGame ||
       !isGameFinished(game) ||
       gameExistedInCloud
     )
