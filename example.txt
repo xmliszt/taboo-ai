@@ -37,6 +37,6 @@ Evaluation Process:
 
 Output:
 {
-  "score": 95,
+  "score": 95.0,
   "reasoning": "The user uses a creative way that circumvent the restrictions that \"Apple\" and \"Tree\" cannot be said. The user first indirectly hinted the AI about the object that could be grown from the tree. Once AI got it correctly, the user then moved on to deliver the final hint towards guessing the word \"tree\". Therefore I will give a very high score of 95 out of 100. The only improvement is the grammar in both clues given by the user. It will be better if the user changed them to: \"What object did Newton get hit by historically?\" and \"Yes. So where is the object that you mentioned grown from?\"."
 }
