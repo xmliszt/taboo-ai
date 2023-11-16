@@ -1,6 +1,13 @@
-import { firestore } from '@/lib/firebase-client';
+import { firestore } from '@/firebase/firebase-client';
 import { User } from 'firebase/auth';
-import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
+} from 'firebase/firestore';
 import moment from 'moment';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
@@ -39,6 +46,9 @@ export const updateUserFromAuth = async (user: User): Promise<IUser> => {
     lastLoginAt: moment(user.metadata.lastSignInTime).format(
       DateUtils.formats.userLoginAt
     ),
+    gameAttemptedCount: 0,
+    gamePlayedCount: 0,
+    levelPlayedCount: 0,
   };
   await setDoc(doc(firestore, 'users', email), { ...newUser }, { merge: true });
   return newUser;
@@ -58,4 +68,10 @@ export const updateUIDIfNotExist = async (email: string, uid: string) => {
 
 export const deleteUserFromFirebase = async (email: string) => {
   await deleteDoc(doc(firestore, 'users', email));
+};
+
+export const incrementGameAttemptedCount = async (email: string) => {
+  await updateDoc(doc(firestore, 'users', email), {
+    gameAttemptedCount: increment(1),
+  });
 };

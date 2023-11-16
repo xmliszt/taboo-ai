@@ -6,4 +6,8 @@ export default interface IUser {
   photoUrl?: string;
   firstLoginAt?: string;
   lastLoginAt?: string;
+  gameAttemptedCount?: number;
+  gamePlayedCount?: number;
+  levelPlayedCount?: number;
+  isNicknamePublic?: boolean;
 }

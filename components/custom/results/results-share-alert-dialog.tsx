@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CONSTANTS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { ForwardedRef, forwardRef, MouseEventHandler, useState } from 'react';
+import { ForwardedRef, forwardRef, MouseEventHandler } from 'react';
 import { isMobile } from 'react-device-detect';
 import { StarRatingBar } from '../star-rating-bar';
 
@@ -77,7 +77,7 @@ export const ResultsShareAlertDialog = forwardRef(
                 {scores.map((score) => (
                   <div
                     key={score.key}
-                    className='flex flex-row gap-4 items-center w-full justify-between'
+                    className='flex flex-row gap-4 items-center w-full justify-between leading-none'
                   >
                     <b>{score.target}</b>
                     <StarRatingBar

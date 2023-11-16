@@ -2,6 +2,14 @@
 
 ## Release Notes (V3.0)
 
+### 16 Nov 2023 - V3.1.0
+
+- AI Evaluation with Feedback Improvements
+- Profile Page opened (for signed in user)
+- Change nickname at profile page (for signed in user)
+- View 5 past games (for signed in user)
+- View game statistics (for signed in user)
+
 ### 05 Nov 2023 - V3.0.14
 
 - Smart AI score evaluation

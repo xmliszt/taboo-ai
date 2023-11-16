@@ -3,7 +3,6 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getRandomInt } from '@/lib/utilities';
-import { HASH } from '@/lib/hash';
 import { CONSTANTS } from '@/lib/constants';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '../ui/button';
@@ -17,65 +16,74 @@ import {
 import IconButton from '../ui/icon-button';
 import { Bot } from 'lucide-react';
 import { AdminManager } from '@/lib/admin-manager';
-import { IDisplayScore } from '@/lib/types/score.type';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
-import { selectLevelStorage } from '@/lib/redux/features/levelStorageSlice';
-import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
+import { IScore } from '@/lib/types/score.type';
+import {
+  clearDevMode,
+  getDevMode,
+  isDevMode,
+  setDevMode,
+  setDevModeOff,
+  setDevModeOn,
+} from '@/lib/utils/devUtils';
+import IGame from '@/lib/types/game.type';
+import {
+  aggregateTotalScore,
+  aggregateTotalTimeTaken,
+} from '@/lib/utils/gameUtils';
+import { getHash, HASH } from '@/lib/hash';
+import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
+import ILevel from '@/lib/types/level.type';
 
-interface DevToggleProps {}
-
-const DevToggle = (props: DevToggleProps) => {
+const DevToggle = () => {
   const [devOn, setDevOn] = useState<boolean>(false);
   const [selectedMode, setSelectedMode] = useState<number>(1);
   const { user, status } = useAuth();
   const router = useRouter();
   const path = usePathname();
-  const level = useAppSelector(selectLevelStorage);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (status === 'authenticated' && AdminManager.checkIsAdmin(user)) {
-      setDevOn(localStorage.getItem(HASH.dev) ? true : false);
-      const mode = localStorage.getItem('mode');
+      setDevOn(isDevMode());
+      const mode = getDevMode();
       if (mode) {
         setSelectedMode(Number(mode));
       } else {
         setSelectedMode(1);
-        localStorage.setItem('mode', '1');
+        setDevMode('1');
       }
     } else {
-      localStorage.removeItem(HASH.dev);
-      localStorage.removeItem('mode');
+      clearDevMode();
     }
   }, [user, status]);
 
   const onDevToggle = (isChecked: boolean) => {
     if (isChecked) {
-      localStorage.setItem(HASH.dev, '1');
+      setDevModeOn();
     } else {
-      localStorage.removeItem(HASH.dev);
+      setDevModeOff();
     }
     setDevOn(isChecked);
   };
 
   const onModeChange = (mode: number) => {
     setSelectedMode(mode);
-    localStorage.setItem('mode', String(mode));
+    setDevMode(mode.toString());
   };
 
   const autoCompleteLevel = () => {
+    const level = getPersistence<ILevel>(HASH.level);
     if (level) {
-      const savedScores: IDisplayScore[] = [];
+      const savedScores: IScore[] = [];
       for (let i = 1; i <= CONSTANTS.numberOfQuestionsPerGame; i++) {
         const target = level.words[i - 1];
         savedScores.push({
           id: i,
           target: target,
+          taboos: [],
           conversation: [
             { role: 'user', content: 'Sample user input: ' + target },
             { role: 'assistant', content: 'Sample response: ' + target },
           ],
-          difficulty: level.difficulty,
           completion: getRandomInt(1, 100),
           responseHighlights: [
             {
@@ -85,7 +93,18 @@ const DevToggle = (props: DevToggleProps) => {
           ],
         });
       }
-      dispatch(setScoresStorage(savedScores));
+      // Create IGame object
+      const completedAt = new Date();
+      const game: IGame = {
+        id: getHash(`admin-${level.id}-${completedAt.toISOString()}`),
+        levelId: level.id,
+        totalScore: aggregateTotalScore(savedScores, level.difficulty),
+        totalDuration: aggregateTotalTimeTaken(savedScores),
+        difficulty: level.difficulty,
+        finishedAt: completedAt,
+        scores: savedScores,
+      };
+      setPersistence(HASH.game, game);
     }
     router.push('/result');
   };

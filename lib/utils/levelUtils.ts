@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+import { IHighlight } from '../types/highlight.type';
 import ILevel from '../types/level.type';
 import { DateUtils } from './dateUtils';
 
@@ -67,3 +68,61 @@ export class LevelUtils {
     }
   }
 }
+
+export const getRegexPattern = (target: string): RegExp => {
+  const magicSeparator = '[\\W_]*';
+  const magicMatchString = target
+    .replace(/\W/g, '')
+    .split('')
+    .join(magicSeparator);
+  const groupRegexString =
+    target.length === 1
+      ? `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`
+      : `(${magicMatchString})`;
+  return new RegExp(groupRegexString, 'gi');
+};
+
+export const getMatchedTabooWords = (
+  userInput: string,
+  matchers: string[]
+): string[] => {
+  const matchedTaboos: string[] = [];
+  for (const matcher of matchers) {
+    if (!matcher) continue;
+    const regex = getRegexPattern(matcher);
+    let result;
+    while ((result = regex.exec(userInput)) !== null) {
+      if (!matchedTaboos.includes(matcher)) {
+        matchedTaboos.push(matcher);
+      }
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (result.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+    }
+  }
+  return matchedTaboos;
+};
+
+export const generateHighlights = (
+  target: string | null,
+  message: string,
+  forResponse: boolean
+): IHighlight[] => {
+  const highlights: IHighlight[] = [];
+  if (forResponse && target) {
+    const regex = getRegexPattern(target);
+    let result;
+    while ((result = regex.exec(message)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (result.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+      const startIndex = result.index;
+      const endIndex = regex.lastIndex;
+      const highlight = { start: startIndex, end: endIndex };
+      highlights.push(highlight);
+    }
+  }
+  return highlights;
+};

@@ -64,6 +64,9 @@ const nextConfig = {
       },
     ];
   },
+  eslint: {
+    dirs: ['app', 'pages', 'components', 'lib'],
+  },
 };
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({

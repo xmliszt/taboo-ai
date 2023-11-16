@@ -1,10 +1,11 @@
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import { getAllLevels, getLevel } from '@/lib/services/levelService';
 
-export async function generateMetadata(
-  { params: { id } }: { params: { id: string } },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params: { id },
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   const level = await getLevel(id);
   return {
     title: level?.name ?? 'Level',
@@ -26,5 +27,5 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <>{children}</>;
 }

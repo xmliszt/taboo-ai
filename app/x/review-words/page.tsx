@@ -38,8 +38,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { LevelUtils } from '@/lib/utils/levelUtils';
 import { sendEmailX } from '@/lib/services/emailService';
-import { firebaseAuth } from '@/lib/firebase-client';
-import { RejectionReason } from '@/pages/api/x/send-email';
+import { firebaseAuth } from '@/firebase/firebase-client';
 import { Label } from '@/components/ui/label';
 import { SelectGroup } from '@radix-ui/react-select';
 import { AdminManager } from '@/lib/admin-manager';
@@ -52,6 +51,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import { RejectionReason } from '@/app/api/x/mail/route';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();

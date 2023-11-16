@@ -1,17 +1,24 @@
-import ILevel from '../types/level.type';
 import _, { uniqueId } from 'lodash';
-import { CONSTANTS } from '../constants';
-import { formatResponseTextIntoArray } from '../utilities';
-import { IAIScore, IChat } from '../types/score.type';
-import IWord from '../types/word.type';
 import moment from 'moment';
+
+import { CONSTANTS } from '../constants';
+import IEvaluation from '../types/evaluation.type';
+import ILevel from '../types/level.type';
+import { IChat } from '../types/score.type';
+import IWord from '../types/word.type';
+import { formatResponseTextIntoArray } from '../utilities';
 import { DateUtils } from '../utils/dateUtils';
 
+/**
+ * Ask the AI for a list of taboo words for a given target word.
+ * @param {string} targetWord The target word to generate taboo words for.
+ * @returns {Promise<IWord>} The taboo words generated.
+ */
 export async function askAITabooWordsForTarget(
   targetWord: string
 ): Promise<IWord> {
   const target = _.toLower(_.trim(targetWord));
-  const response = await fetch('/api/ai', {
+  const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -40,67 +47,12 @@ export async function askAITabooWordsForTarget(
   };
 }
 
-export async function askAIForQueryResponse(prompt: IChat[]): Promise<string> {
-  const response = await fetch('/api/ai', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      system:
-        'You are playing the Game of Taboo with user. User gives you clues, you try to guess the word(s). Ask user for confirmation. In American English.',
-      prompt: prompt,
-      temperature: 0,
-    }),
-    cache: 'no-store',
-  });
-  const json = await response.json();
-  return json.response;
-}
-
-export async function askAIForJudgingScore(
-  target: string,
-  prompt: string
-): Promise<IAIScore> {
-  const response = await fetch('/api/ai/moderation', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      target: target,
-      prompt: prompt,
-    }),
-    cache: 'no-store',
-  });
-  const json = await response.json();
-  const responseText = json.response;
-  const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-  const regex =
-    /.*"*[Ss]core"*:\s*(\d+)[,.]*\s*"*[Ee]xplanation"*:\s*"*(.+)"*/gim;
-  let matches;
-  let score: number | undefined;
-  let explanation: string | undefined;
-  while ((matches = regex.exec(responseText)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (matches.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-    score = Number(_.trim(matches[1]));
-    score = Number.isNaN(score) ? 0 : score;
-    explanation = _.trim(_.trim(matches[2]), punctuation);
-  }
-  if (score === undefined || explanation === undefined) {
-    throw Error('Unable to generate clue assessment scores');
-  }
-  return {
-    score,
-    explanation,
-  };
-}
-
+/**
+ * Ask AI to generate taboo words for a given topic based on the difficulty.
+ * @param {string} topic The topic to generate taboo words for.
+ * @param {number} difficulty The difficulty of the taboo words.
+ * @returns {Promise<IWord>} The taboo words generated.
+ */
 export async function askAIForCreativeTopic(
   topic: string,
   difficulty: number
@@ -120,7 +72,7 @@ export async function askAIForCreativeTopic(
       difficultyString = 'well-known';
       break;
   }
-  const respone = await fetch('/api/ai', {
+  const respone = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -153,4 +105,44 @@ export async function askAIForCreativeTopic(
   } else {
     return;
   }
+}
+
+/**
+ * Fetch chat completion from conversation
+ * @param {IChat[]} conversation The conversation to complete.
+ * @returns {Promise<{conversation: IChat[]}>} The completed conversation.
+ */
+export async function fetchConversationCompletion(
+  conversation: IChat[]
+): Promise<{ conversation: IChat[] }> {
+  const response = await fetch('/api/conversation', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      conversation: conversation,
+    }),
+  });
+  // Getting repsonse in terms of {run_id: "", thread_id: ""}
+  const json = await response.json();
+  return { conversation: json.conversation };
+}
+
+/**
+ * Perform evaluation
+ * @param {IEvaluation} evaluation The evaluation to start.
+ * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
+ */
+export async function performEvaluation(
+  evaluation: IEvaluation
+): Promise<{ score: number; reasoning: string }> {
+  const response = await fetch('/api/evaluation', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(evaluation),
+  });
+  // Get the run_id and thread_id from resposne
+  const json = await response.json();
+  return json;
 }

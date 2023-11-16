@@ -1,9 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import content from './roadmap.md';
 
-interface RoadmapPageProps {}
-
-export default async function RoadmapPage(props: RoadmapPageProps) {
+export default async function RoadmapPage() {
   return (
     <section className='flex flex-col items-center'>
       <article

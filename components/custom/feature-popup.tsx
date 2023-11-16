@@ -9,9 +9,7 @@ import semver from 'semver';
 import { BsDiscord } from 'react-icons/bs';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-interface FeaturePopupProps {}
-
-export default function FeaturePopup(props: FeaturePopupProps) {
+export default function FeaturePopup() {
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);
   const incomingVersion = process.env.NEXT_PUBLIC_TABOO_AI_VERSION;
 

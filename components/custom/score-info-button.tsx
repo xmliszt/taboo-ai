@@ -2,13 +2,12 @@
 
 import { Info } from 'lucide-react';
 import { AspectRatio } from '../ui/aspect-ratio';
-import { Dialog, DialogTrigger, DialogContent } from '../ui/dialog';
+import { Dialog, DialogContent } from '../ui/dialog';
 import IconButton from '../ui/icon-button';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { DialogTriggerProps } from '@radix-ui/react-dialog';
 import { ButtonProps } from '../ui/button';
 
 export const ScoreInfoDialog = () => {
