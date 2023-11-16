@@ -5,11 +5,6 @@ export function clearLevel() {
   localStorage.removeItem(HASH.level);
 }
 
-//ANCHOR - Scores
-export function clearScores() {
-  localStorage.removeItem(HASH.scores);
-}
-
 //ANCHOR - Feature pop up
 export function getFeaturePopupString(): string | null {
   return localStorage.getItem(HASH.hasReadFeaturePopup);

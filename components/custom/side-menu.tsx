@@ -13,20 +13,27 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../auth-provider';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import Link from 'next/link';
-import { useAppSelector } from '@/lib/redux/hook';
-import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
 import { LoginErrorEventProps } from './login-error-dialog';
 import { LoginReminderProps } from './login-reminder-dialog';
-import { CONSTANTS } from '@/lib/constants';
 import AccessLinkCard, { MenuItem } from './common/access-link-card';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import IGame from '@/lib/types/game.type';
+import { HASH } from '@/lib/hash';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const scores = useAppSelector(selectScoreStorage);
+  const [game, setGame] = useState<IGame | null>(null);
   const { user, status, login } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const game = getPersistence<IGame>(HASH.game);
+    setGame(game);
+    bindPersistence<IGame>(HASH.game, setGame);
+  }, []);
 
   useEffect(() => {
     const listener = EventManager.bindEvent(
@@ -123,9 +130,7 @@ export default function SideMenu() {
         title: 'See my last result',
         subtitle:
           'We found your last played result is cached in the app. You can revisit it here!',
-        visible:
-          scores !== undefined &&
-          scores.length === CONSTANTS.numberOfQuestionsPerGame,
+        visible: status != 'authenticated' && isGameFinished(game),
         href: '/result',
       },
       {
@@ -180,7 +185,7 @@ export default function SideMenu() {
         href: '/roadmap',
       },
     ],
-    [user, status, scores, pathname]
+    [user, status, game, pathname]
   );
 
   return (

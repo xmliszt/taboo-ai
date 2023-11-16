@@ -8,6 +8,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'google',
     'prettier',
     'next',
   ],
@@ -20,8 +21,15 @@ module.exports = {
   rules: {
     'react-hooks/exhaustive-deps': 'off',
     'react/react-in-jsx-scope': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'require-jsdoc': 'off',
+    'spaced-comment': 'off',
+    'valid-jsdoc': 'off',
+    'prefer-promise-reject-errors': 'off',
+    'new-cap': 'off',
   },
+  ignorePatterns: ['app/components/ui/*.ts', 'app/components/ui/*.tsx'],
 };

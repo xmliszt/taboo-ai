@@ -1,43 +1,16 @@
 import _ from 'lodash';
 import crypto from 'crypto';
 import { IHighlight } from './types/highlight.type';
-import { IChat, IDisplayScore } from './types/score.type';
-import { NextApiRequest } from 'next';
 import IWord from './types/word.type';
 import moment from 'moment';
 import { DateUtils } from './utils/dateUtils';
 import html2canvas from 'html2canvas';
-
-export function getIp(req: NextApiRequest): string | undefined {
-  let ip: string | undefined;
-  if (req.headers['x-forwarded-for']) {
-    if (req.headers['x-forwarded-for'] as string[]) {
-      ip = req.headers['x-forwarded-for'][0];
-    } else if (req.headers['x-forwarded-for'] as string) {
-      ip = (req.headers['x-forwarded-for'] as string).split(',')[0];
-    }
-  } else if (req.headers['x-real-ip']) {
-    ip = req.socket.remoteAddress;
-  } else {
-    ip = req.socket.remoteAddress;
-  }
-  return ip;
-}
 
 export function generateHashedString(...items: string[]): string {
   const stringToHash = items.join('_');
   const hash = crypto.createHash('sha256').update(stringToHash).digest('hex');
   const truncatedHash = hash.substring(0, 8);
   return truncatedHash;
-}
-
-export function calculateScore(score: IDisplayScore): number {
-  return _.round(
-    score.difficulty *
-      (1 / (score.completion <= 0 ? 1 : score.completion)) *
-      1000,
-    2
-  );
 }
 
 export function getFormattedToday(): string {
@@ -129,7 +102,8 @@ export const formatResponseTextIntoArray = (
 
 export const getMockResponse = async (
   target: string,
-  mode: string
+  mode: string,
+  duration = 1000
 ): Promise<string | undefined> => {
   return new Promise<string | undefined>((res, rej) => {
     setTimeout(() => {
@@ -149,7 +123,7 @@ export const getMockResponse = async (
         default:
           res(`The target response is: ${target}.`);
       }
-    }, 2000);
+    }, duration);
   });
 };
 
@@ -223,23 +197,6 @@ export const getDisplayedTopicName = (name?: string): string => {
   return _.startCase(name) ?? 'Unknown';
 };
 
-export const getCompletionSeconds = (completion: number): number => {
-  return completion <= 0 ? 1 : completion;
-};
-
-export const getCalculatedScore = (score: IDisplayScore): number => {
-  const difficulty = score.difficulty;
-  const multipliers = getDifficultyMultipliers(difficulty);
-  const timeScore = calculateTimeScore(score) * multipliers.timeMultipler;
-  const aiScore = (score.ai_score ?? 0) * multipliers.promptMultiplier;
-  return _.round(timeScore + aiScore, 1);
-};
-
-export const calculateTimeScore = (score: IDisplayScore): number => {
-  const scoreCompletionSeconds = getCompletionSeconds(score.completion);
-  return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
-};
-
 export const b64toBlob = (
   b64Data: string,
   contentType = '',
@@ -291,11 +248,4 @@ export const shareImage = (source: HTMLDivElement): Promise<ShareResult> => {
         rej(err);
       });
   });
-};
-
-export const createConversationFeedForAIJudge = (conversation: IChat[]) => {
-  return conversation
-    .filter((chat) => chat.role !== 'error' && chat.role !== 'system')
-    .map((chat) => `${chat.role === 'user' ? 'P' : 'G'}:${chat.content}`)
-    .join('||');
 };

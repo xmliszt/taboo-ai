@@ -62,7 +62,8 @@ export default function LevelsPage() {
       </div>
       {isScrollToTopButtonVisible && (
         <IconButton
-          className='fixed bottom-2 right-2 animate-fade-in'
+          asChild
+          className='fixed bottom-4 right-4 animate-fade-in'
           tooltip='Scroll to top'
           onClick={handleScrollToTop}
         >

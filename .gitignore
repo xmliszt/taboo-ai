@@ -49,3 +49,7 @@ next-env.d.ts
 /playwright/.cache/
 
 .eslintcache
+functions/*
+**/*.log
+
+ui-debug.log

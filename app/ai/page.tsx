@@ -11,17 +11,14 @@ import { PenTool, SpellCheck2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/custom/spinner';
-import { useAppDispatch } from '@/lib/redux/hook';
-import { setLevelStorage } from '@/lib/redux/features/levelStorageSlice';
+import { setPersistence } from '@/lib/persistence/persistence';
+import { HASH } from '@/lib/hash';
 
-interface AiPageProps {}
-
-export default function AiPage(props: AiPageProps) {
+export default function AiPage() {
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const submitForm = async (event: FormEvent) => {
@@ -34,7 +31,7 @@ export default function AiPage(props: AiPageProps) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
             return setErrorMessage(CONSTANTS.errors.aiModeTopicTooFew);
           }
-          dispatch(setLevelStorage(level));
+          setPersistence(HASH.level, level);
           router.push('/level/ai');
         } else {
           throw new Error(CONSTANTS.errors.overloaded);

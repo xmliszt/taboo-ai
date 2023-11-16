@@ -19,7 +19,6 @@ import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
 import './markdown.css';
 import './globals.css';
 import Header from '@/components/header';
-import ReduxProvider from '@/lib/redux/provider';
 import { NewsletterSignupDialog } from '@/components/custom/newletter-signup-dialog';
 
 const font = Lora({
@@ -50,30 +49,28 @@ export default function RootLayout({
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
       <body className={`${font.className} scrollbar-hide`}>
-        <ReduxProvider>
-          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-            <GlobalTooltipProvider delayDuration={300}>
-              <AuthProvider>
-                {maintenanceMode ? (
-                  <Maintenance />
-                ) : (
-                  <>
-                    <Header />
-                    {children}
-                    <SideMenu />
-                    <PWAInstaller />
-                    <LoginErrorDialog />
-                    <LoginReminderDialog />
-                    <FeaturePopup />
-                    <NewsletterSignupDialog />
-                  </>
-                )}
-                <AnalyticsWrapper />
-              </AuthProvider>
-            </GlobalTooltipProvider>
-            <Toaster />
-          </ThemeProvider>
-        </ReduxProvider>
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+          <GlobalTooltipProvider delayDuration={300}>
+            <AuthProvider>
+              {maintenanceMode ? (
+                <Maintenance />
+              ) : (
+                <>
+                  <Header />
+                  {children}
+                  <SideMenu />
+                  <PWAInstaller />
+                  <LoginErrorDialog />
+                  <LoginReminderDialog />
+                  <FeaturePopup />
+                  <NewsletterSignupDialog />
+                </>
+              )}
+              <AnalyticsWrapper />
+            </AuthProvider>
+          </GlobalTooltipProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

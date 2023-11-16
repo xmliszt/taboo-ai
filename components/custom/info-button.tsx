@@ -22,6 +22,7 @@ export const InfoButton = ({
     <Popover>
       <PopoverTrigger asChild>
         <IconButton
+          asChild
           className={cn(className, '')}
           variant='link'
           tooltip={tooltip}

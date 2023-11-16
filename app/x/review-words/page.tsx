@@ -38,8 +38,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { LevelUtils } from '@/lib/utils/levelUtils';
 import { sendEmailX } from '@/lib/services/emailService';
-import { firebaseAuth } from '@/lib/firebase-client';
-import { RejectionReason } from '@/pages/api/x/send-email';
+import { firebaseAuth } from '@/firebase/firebase-client';
 import { Label } from '@/components/ui/label';
 import { SelectGroup } from '@radix-ui/react-select';
 import { AdminManager } from '@/lib/admin-manager';
@@ -52,6 +51,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import { RejectionReason } from '@/app/api/x/mail/route';
 
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
@@ -540,6 +540,7 @@ const DevReviewWordsPage = () => {
             {currentEditingTargetWordIndex === idx && (
               <>
                 <IconButton
+                  asChild
                   tooltip='Ask AI for Taboo Words again'
                   aria-label='refresh'
                   disabled={!isPageInteractive}
@@ -553,6 +554,7 @@ const DevReviewWordsPage = () => {
                   <RefreshCcw size={15} color='black' />
                 </IconButton>
                 <IconButton
+                  asChild
                   tooltip='Delete'
                   aria-label='delete'
                   disabled={!isPageInteractive}
@@ -570,6 +572,7 @@ const DevReviewWordsPage = () => {
           </div>
         ))}
         <IconButton
+          asChild
           tooltip='Add target word'
           disabled={
             !isPageInteractive ||
@@ -601,6 +604,7 @@ const DevReviewWordsPage = () => {
               {word}
             </Button>
             <IconButton
+              asChild
               tooltip='Delete'
               aria-label='delete'
               disabled={!isPageInteractive}
@@ -635,6 +639,7 @@ const DevReviewWordsPage = () => {
           className='grow h-12 text-xl'
         />
         <IconButton
+          asChild
           tooltip='Add taboo word'
           aria-label='add word'
           disabled={

@@ -1,4 +1,4 @@
-import { firestore } from '@/lib/firebase-client';
+import { firestore } from '@/firebase/firebase-client';
 import {
   collection,
   doc,
