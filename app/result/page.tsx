@@ -30,11 +30,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
-import {
-  checkRunStatusAndCallActionIfNeeded,
-  completeEvaluation,
-  startNewEvaluation,
-} from '@/lib/services/aiService';
+import { performEvaluation } from '@/lib/services/aiService';
 import {
   fetchGameForUser,
   uploadCompletedGameForUser,
@@ -273,12 +269,12 @@ export default function ResultPage() {
     if (aiScore === undefined || aiExplanation === undefined) {
       // Start the AI Evaluation
       try {
-        const { runId, threadId } = await startNewEvaluation({
+        const { score: evaluationScore, reasoning } = await performEvaluation({
           target: score.target,
           taboos: score.taboos,
           conversation: score.conversation,
         });
-        await checkEvaluationStatus(runId, threadId, idx, game);
+        updateGameAIEvaluationAtIndex(idx, evaluationScore, reasoning);
       } catch (error) {
         console.error(error);
         toast({
@@ -289,45 +285,6 @@ export default function ResultPage() {
       }
     }
     setIsScoring(false);
-  };
-
-  const checkEvaluationStatus = async (
-    runId: string,
-    threadId: string,
-    scoreIdx: number,
-    game: IGame
-  ) => {
-    const { status, requiredAction } =
-      await checkRunStatusAndCallActionIfNeeded(runId, threadId);
-    if (requiredAction && status === 'requires_action') {
-      const callObject = requiredAction.submit_tool_outputs.tool_calls[0];
-      const callId = callObject.id;
-      const functionName = callObject.function.name;
-      const functionArgs = JSON.parse(callObject.function.arguments);
-      if (functionName == 'provide_feedbacks') {
-        updateGameAIEvaluationAtIndex(
-          scoreIdx,
-          functionArgs.score,
-          functionArgs.reasoning
-        );
-      }
-      await completeEvaluation(runId, threadId, [
-        {
-          call_id: callId,
-          output: '{"success": true}',
-        },
-      ]);
-      return;
-    } else if (
-      status === 'failed' ||
-      status === 'completed' ||
-      status === 'cancelled' ||
-      status === 'expired'
-    ) {
-      return;
-    }
-    // Check again
-    await checkEvaluationStatus(runId, threadId, scoreIdx, game);
   };
 
   const updateGameAIEvaluationAtIndex = (

@@ -8,6 +8,7 @@ import { DateUtils } from '../utils/dateUtils';
 import { Run } from 'openai/resources/beta/threads/runs/runs';
 import { ThreadMessage } from 'openai/resources/beta/threads/messages/messages';
 import IEvaluation from '../types/evaluation.type';
+import { IChat } from '../types/score.type';
 
 /**
  * Ask the AI for a list of taboo words for a given target word.
@@ -108,27 +109,25 @@ export async function askAIForCreativeTopic(
 }
 
 /**
- * Start a new conversation with the AI.
- * @param userMessage The message to start the conversation with.
- * @returns The runId and threadId of the conversation.
+ * Fetch chat completion from conversation
+ * @param {IChat[]} conversation The conversation to complete.
+ * @returns {Promise<{conversation: IChat[]}>} The completed conversation.
  */
-export async function startNewConversation(
-  userMessage: string
-): Promise<{ runId: string; threadId: string }> {
+export async function fetchConversationCompletion(
+  conversation: IChat[]
+): Promise<{ conversation: IChat[] }> {
   const response = await fetch('/api/conversation', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      message: userMessage,
+      conversation: conversation,
     }),
   });
   // Getting repsonse in terms of {run_id: "", thread_id: ""}
   const json = await response.json();
-  const runId = json.run_id;
-  const threadId = json.thread_id;
-  return { runId, threadId };
+  return { conversation: json.conversation };
 }
 
 /**
@@ -194,13 +193,13 @@ export async function getMessagesFromThread(
 }
 
 /**
- * Start an evaluation session
+ * Perform evaluation
  * @param {IEvaluation} evaluation The evaluation to start.
- * @returns {Promise<{runId: string, threadId: string}>} The runId and threadId of the evaluation.
+ * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
  */
-export async function startNewEvaluation(
+export async function performEvaluation(
   evaluation: IEvaluation
-): Promise<{ runId: string; threadId: string }> {
+): Promise<{ score: number; reasoning: string }> {
   const response = await fetch('/api/evaluation', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -208,9 +207,7 @@ export async function startNewEvaluation(
   });
   // Get the run_id and thread_id from resposne
   const json = await response.json();
-  const runId = json.run_id;
-  const threadId = json.thread_id;
-  return { runId, threadId };
+  return json;
 }
 
 /**

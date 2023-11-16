@@ -1,69 +1,55 @@
 import { openai } from '@/lib/openai';
+import { IChat } from '@/lib/types/score.type';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
+/**
+ * @api {post} /api/conversation Complete a conversation
+ * @apiDescription Completes a conversation with the OpenAI API.
+ * @apiParam {IChat[]} conversation The conversation to complete.
+ * @apiSuccess {IChat[]} conversation The completed conversation.
+ * @apiError (400) {String} Missing conversation.
+ * @apiError (500) {String} Error processing conversation.
+ */
 export async function POST(request: Request) {
-  const assistantId = process.env.OPENAI_PLAYER_ASSISTANT_ID;
-  if (!assistantId) {
-    return new Response('Missing OPENAI_PLAYER_ASSISTANT_ID', { status: 500 });
+  const conversation = (await request.json()).conversation as IChat[];
+  if (!conversation) {
+    return new Response('Missing conversation', { status: 400 });
   }
-  const { message } = await request.json();
-  if (!message) {
-    return new Response('Missing message', { status: 400 });
-  }
-  // get thread_id from search params
-  const { searchParams } = new URL(request.url);
-  const threadID = searchParams.get('thread_id');
-  if (threadID == null) {
-    // Initialise a new conversation
-    try {
-      const newRun = await openai.beta.threads.createAndRun({
-        assistant_id: assistantId,
-        thread: {
-          messages: [
-            {
-              role: 'user',
-              content: message,
-            },
-          ],
-        },
-      });
-      const runID = newRun.id;
-      const threadID = newRun.thread_id;
-      return new Response(
-        JSON.stringify({
-          run_id: runID,
-          thread_id: threadID,
-        }),
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      return new Response('Error creating thread', { status: 500 });
-    }
-  } else {
-    // continue conversation
-    try {
-      await openai.beta.threads.messages.create(threadID, {
-        role: 'user',
-        content: message,
-      });
-      const run = await openai.beta.threads.runs.create(threadID, {
-        assistant_id: assistantId,
-      });
-      const runID = run.id;
-      return new Response(
-        JSON.stringify({
-          run_id: runID,
-          thread_id: threadID,
-        }),
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      return new Response('Error continuing thread', { status: 500 });
-    }
+  // Create a new chat completion with conversation supplied
+  try {
+    const chatCompletionMessages = conversation.map((message) => {
+      return {
+        role: message.role,
+        content: message.content,
+      };
+    });
+    // Add the system message as first item
+    chatCompletionMessages.unshift({
+      role: 'system',
+      content:
+        'You are a player in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. You will engage in a real conversation with the human player. You will reply one message only after player tells you one message. Player will be given a word that he is not allowed to say. There are also other related words that are not allowed to say. Player will provide you with hints. You will reply the player in the conversation manner and try to guess what the word is. You are allowed to say the word because you need to guess it.',
+    });
+    const completion = await openai.chat.completions.create({
+      messages: chatCompletionMessages as ChatCompletionMessageParam[],
+      model: 'gpt-3.5-turbo',
+    });
+    const newConversation = [
+      ...conversation,
+      {
+        role: completion.choices[0].message.role,
+        content: completion.choices[0].message.content,
+      },
+    ];
+    return new Response(
+      JSON.stringify({
+        conversation: newConversation,
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return new Response('Error processing conversation', { status: 500 });
   }
 }

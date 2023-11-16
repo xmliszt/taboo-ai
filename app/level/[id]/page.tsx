@@ -3,7 +3,6 @@
 import _, { uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { MessageContentText } from 'openai/resources/beta/threads/messages/messages';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useTimer } from 'use-timer';
 
@@ -24,10 +23,7 @@ import {
 } from '@/lib/persistence/persistence';
 import {
   askAITabooWordsForTarget,
-  checkRunStatusAndCallActionIfNeeded,
-  continueConversation,
-  getMessagesFromThread,
-  startNewConversation,
+  fetchConversationCompletion,
 } from '@/lib/services/aiService';
 import {
   getLevel,
@@ -59,12 +55,6 @@ import {
 interface LevelPageProps {
   params: { id: string };
 }
-
-// The current run_id cached in the page.
-let runId = '';
-
-// The current thread_id cached in the page.
-let threadId = '';
 
 // The words for this topic
 let words: string[] = [];
@@ -187,12 +177,25 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     event.preventDefault();
     // Get the submitted value
     const userInput = event.currentTarget['user-input'].value as string;
-    // Immediately show user input in UI
-    setConversation([
-      ...conversation,
+    // Immediately show user input in UI.
+    // Remove any message that has role == 'error' and also its previous message if it has role == 'user'.
+    const updatedConversation: IChat[] = [];
+    for (let i = 0; i < conversation.length; i++) {
+      const current = conversation[i];
+      if (current.role === 'user' || current.role === 'assistant') {
+        updatedConversation.push(current);
+      } else if (current.role === 'error') {
+        if (i > 0 && conversation[i - 1].role === 'user') {
+          updatedConversation.pop();
+        }
+      }
+    }
+    updatedConversation.push(
       { role: 'user', content: userInput },
-      { role: 'assistant', content: '' },
-    ]);
+      { role: 'assistant', content: '' }
+    );
+    setConversation(updatedConversation);
+    setUserInput('');
     // Pause timer, set loading true
     setIsWaitingForAIResponse(true);
     pauseTimer();
@@ -211,69 +214,29 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     // If input valid, proceed to submit to continue conversation
     if (userInputMatchedTabooWords.length <= 0 && userInput.length > 0) {
       try {
-        const isNewConversation = conversation.length === 0;
-        // If it's a new conversation, start a new thread,
-        // otherwise continue the existing thread
-        const { runId: newRunId, threadId: newThreadId } = isNewConversation
-          ? await startNewConversation(userInput)
-          : await continueConversation(userInput, threadId);
-        runId = newRunId;
-        threadId = newThreadId;
-        // Start periodic status check for the current thread run
-        await checkConversationStatus();
-        setUserInput('');
+        // Remove the last message from conversation if it is from assistant and does not have any content
+        const inputConversation: IChat[] = [...updatedConversation];
+        if (
+          inputConversation[inputConversation.length - 1].role ===
+            'assistant' &&
+          inputConversation[inputConversation.length - 1].content.length <= 0
+        ) {
+          inputConversation.pop();
+        }
+        const { conversation: newConversation } =
+          await fetchConversationCompletion(inputConversation);
+        setConversation(newConversation);
       } catch (error) {
         console.error(error);
         setConversation([
           ...conversation,
           { role: 'error', content: CONSTANTS.errors.overloaded },
         ]);
+      } finally {
         setIsWaitingForAIResponse(false);
         setIsLoading(false);
         startTimer();
       }
-    }
-  };
-
-  const checkConversationStatus = async () => {
-    const { status } = await checkRunStatusAndCallActionIfNeeded(
-      runId,
-      threadId
-    );
-    if (
-      status === 'failed' ||
-      status === 'completed' ||
-      status === 'cancelled' ||
-      status === 'expired'
-    ) {
-      // Fetch the messages from thread and update conversation in UI
-      const messages = await getMessagesFromThread(threadId);
-      // Convert messages to conversation, revser the order
-      const conversationFromMessages: IChat[] = messages
-        .map((message) => {
-          return {
-            role: message.role,
-            content: (message.content[0] as MessageContentText).text.value,
-          };
-        })
-        .reverse();
-      if (
-        status === 'failed' ||
-        status === 'cancelled' ||
-        status === 'expired'
-      ) {
-        conversationFromMessages.push({
-          role: 'error',
-          content: CONSTANTS.errors.overloaded,
-        });
-      }
-      setIsWaitingForAIResponse(false);
-      setConversation(conversationFromMessages);
-      setIsLoading(false);
-      startTimer();
-    } else {
-      // Check again
-      await checkConversationStatus();
     }
   };
 
