@@ -1,0 +1,42 @@
+Example:
+
+Input:
+{
+  "target": "Tree",
+  "taboos": [
+    "Tree",
+    "Leaf",
+    "Green",
+    "Apple"
+  ],
+  "conversation": [
+    {
+      "role": "user",
+      "content": "Newton was hit by what?"
+    },
+    {
+      "role": "assistant",
+      "content": "Is it an apple?"
+    },
+    {
+      "role": "user",
+      "content": "Yes, so it is grown from what?"
+    },
+    {
+      "role": "assistant",
+      "content": "Tree?"
+    }
+  ]
+}
+
+Evaluation Process:
+1. First message in conversation has the role "user". So I evaluate the content. User uses historical event that "Newton was hit by an apple to disocver the gravity" to hint the AI about "Apple".
+2. Second message in conversation has the role "assistant". So I do not evaluate the content. The content only serves as contextual reference.
+3. Third message in conversation has the role "user". So I evaluate the content. User then follows AI's response of "Apple" to further direct AI into the target "Tree", by asking where the apple is grown from.
+4. Fourth message in conversation has the role "assistant". So I do not evaluate the content.
+
+Output:
+{
+  "score": 95,
+  "reasoning": "The user uses a creative way that circumvent the restrictions that \"Apple\" and \"Tree\" cannot be said. The user first indirectly hinted the AI about the object that could be grown from the tree. Once AI got it correctly, the user then moved on to deliver the final hint towards guessing the word \"tree\". Therefore I will give a very high score of 95 out of 100. The only improvement is the grammar in both clues given by the user. It will be better if the user changed them to: \"What object did Newton get hit by historically?\" and \"Yes. So where is the object that you mentioned grown from?\"."
+}

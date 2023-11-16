@@ -12,7 +12,11 @@ export async function POST(request: NextRequest) {
     taboos: string[];
     conversation: IChat[];
   };
-  if (!target || !taboos || !conversation) {
+  // Filter out conversation messages whose role is not 'user' or 'assistant'
+  const filteredConversation = conversation.filter(
+    (message) => message.role === 'user' || message.role === 'assistant'
+  );
+  if (!target || !taboos || !filteredConversation) {
     return new Response('Missing target, taboos or conversation', {
       status: 400,
     });
@@ -25,7 +29,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'user',
-            content: JSON.stringify({ target, taboos, conversation }),
+            content: JSON.stringify({ target, taboos, filteredConversation }),
           },
         ],
       },

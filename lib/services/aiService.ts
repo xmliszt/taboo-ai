@@ -178,7 +178,6 @@ export async function checkRunStatusAndCallActionIfNeeded(
   const json = await respone.json();
   const status = json.status;
   const requiredAction = json.required_actions;
-  console.log(status, requiredAction);
   return { status, requiredAction };
 }
 
