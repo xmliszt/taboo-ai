@@ -76,7 +76,7 @@ export function UserLoginPortal() {
         label: 'My Last Result',
         icon: <ScrollText />,
         isVisible:
-          status != 'authenticated' &&
+          status !== 'authenticated' &&
           isGameFinished(game) &&
           pathname !== '/result',
         onClick: () => {
@@ -98,7 +98,7 @@ export function UserLoginPortal() {
         onClick: handleLogout,
       },
     ];
-  }, [pathname, game]);
+  }, [pathname, game, status]);
 
   const handleLogin = async () => {
     if (!login) return;
