@@ -15,6 +15,8 @@ import ProfileRecentGamesScrollView from '@/components/custom/profile/profile-re
 import ProfileStatisticsCardView from '@/components/custom/profile/profile-statistics-card-view';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { BookX } from 'lucide-react';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -111,6 +113,19 @@ export default function ProfilePage() {
           </label>
         </div>
       </div>
+
+      <Alert className='text-gray-500 border-gray-500 opacity-70 -mb-10'>
+        <BookX size={20} />
+        <AlertTitle className='leading-snug'>
+          Custom AI generated games will not be included in the records.
+        </AlertTitle>
+        <AlertDescription>
+          If you would like to see your custom games here, first play the game
+          via AI Mode, and then follow the prompt to contribute your AI custom
+          topic to us. Then once your topic is officially added to Taboo AI, you
+          can play again and your game will be saved to your records.
+        </AlertDescription>
+      </Alert>
 
       {user && <ProfileRecentGamesScrollView user={user} />}
       {user && <ProfileStatisticsCardView email={user.email} />}
