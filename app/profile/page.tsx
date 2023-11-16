@@ -13,6 +13,8 @@ import ConstructionBlock from '@/components/custom/common/construction-block';
 import ProfileDangerZone from '@/components/custom/profile/profile-danger-zone';
 import ProfileRecentGamesScrollView from '@/components/custom/profile/profile-recent-games-scroll-view';
 import ProfileStatisticsCardView from '@/components/custom/profile/profile-statistics-card-view';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -28,6 +30,13 @@ export default function ProfilePage() {
       toast({
         title: 'You need to sign in to view your profile.',
       });
+      EventManager.fireEvent<LoginReminderProps>(
+        CustomEventKey.LOGIN_REMINDER,
+        {
+          title: 'You need to sign in to view your profile.',
+          redirectHref: '/profile',
+        }
+      );
       router.push('/');
       return;
     }
