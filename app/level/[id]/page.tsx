@@ -114,7 +114,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   // When user is authenticated, we increment the game attempted count
   useEffect(() => {
-    if (!hasIncrementedGameAttemptedCount.current && user) {
+    if (!hasIncrementedGameAttemptedCount.current && user && id !== 'ai') {
       hasIncrementedGameAttemptedCount.current = true;
       incrementGameAttemptedCount(user.email);
     }
