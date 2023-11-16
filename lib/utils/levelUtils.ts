@@ -88,6 +88,7 @@ export const getMatchedTabooWords = (
 ): string[] => {
   const matchedTaboos: string[] = [];
   for (const matcher of matchers) {
+    if (!matcher) continue;
     const regex = getRegexPattern(matcher);
     let result;
     while ((result = regex.exec(userInput)) !== null) {

@@ -185,7 +185,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       if (current.role === 'user' || current.role === 'assistant') {
         updatedConversation.push(current);
       } else if (current.role === 'error') {
-        if (i > 0 && conversation[i - 1].role === 'user') {
+        if (i - 1 >= 0 && conversation[i - 1].role === 'user') {
           updatedConversation.pop();
         }
       }
@@ -211,25 +211,25 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       return;
     }
 
+    // Remove the last message from conversation if it is from assistant and does not have any content
+    const inputConversation: IChat[] = [...updatedConversation];
+    if (
+      inputConversation[inputConversation.length - 1].role === 'assistant' &&
+      inputConversation[inputConversation.length - 1].content.length <= 0
+    ) {
+      inputConversation.pop();
+    }
     // If input valid, proceed to submit to continue conversation
     if (userInputMatchedTabooWords.length <= 0 && userInput.length > 0) {
       try {
-        // Remove the last message from conversation if it is from assistant and does not have any content
-        const inputConversation: IChat[] = [...updatedConversation];
-        if (
-          inputConversation[inputConversation.length - 1].role ===
-            'assistant' &&
-          inputConversation[inputConversation.length - 1].content.length <= 0
-        ) {
-          inputConversation.pop();
-        }
         const { conversation: newConversation } =
           await fetchConversationCompletion(inputConversation);
+
         setConversation(newConversation);
       } catch (error) {
         console.error(error);
         setConversation([
-          ...conversation,
+          ...inputConversation,
           { role: 'error', content: CONSTANTS.errors.overloaded },
         ]);
       } finally {

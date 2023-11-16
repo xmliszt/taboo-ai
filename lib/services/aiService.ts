@@ -1,12 +1,13 @@
-import ILevel from '../types/level.type';
 import _, { uniqueId } from 'lodash';
-import { CONSTANTS } from '../constants';
-import { formatResponseTextIntoArray } from '../utilities';
-import IWord from '../types/word.type';
 import moment from 'moment';
-import { DateUtils } from '../utils/dateUtils';
+
+import { CONSTANTS } from '../constants';
 import IEvaluation from '../types/evaluation.type';
+import ILevel from '../types/level.type';
 import { IChat } from '../types/score.type';
+import IWord from '../types/word.type';
+import { formatResponseTextIntoArray } from '../utilities';
+import { DateUtils } from '../utils/dateUtils';
 
 /**
  * Ask the AI for a list of taboo words for a given target word.

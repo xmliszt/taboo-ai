@@ -38,7 +38,7 @@ export default function ProfileStatisticsSimpleCardView({
       </div>
       {onClick &&
         (isMobile || isTablet ? (
-          <Button size='sm' className='' variant='secondary'>
+          <Button size='sm' className='' variant='secondary' onClick={onClick}>
             Play Again
           </Button>
         ) : (
