@@ -2,7 +2,6 @@ import ILevel from '../types/level.type';
 import _, { uniqueId } from 'lodash';
 import { CONSTANTS } from '../constants';
 import { formatResponseTextIntoArray } from '../utilities';
-import { IChat } from '../types/score.type';
 import IWord from '../types/word.type';
 import moment from 'moment';
 import { DateUtils } from '../utils/dateUtils';
@@ -135,14 +134,14 @@ export async function startNewConversation(
 /**
  * Continue a running conversation
  * @param {string} userMessage The message to continue the conversation with.
- * @param {string} thread_id The threadId of the conversation.
+ * @param {string} threadId The threadId of the conversation.
  * @returns {Promise<{runId: string, threadId: string}>} The runId and threadId of the conversation.
  */
 export const continueConversation = async (
   userMessage: string,
-  thread_id: string
+  threadId: string
 ): Promise<{ runId: string; threadId: string }> => {
-  const response = await fetch('/api/conversation?thread_id=' + thread_id, {
+  const response = await fetch('/api/conversation?thread_id=' + threadId, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -153,9 +152,7 @@ export const continueConversation = async (
   });
   // Getting repsonse in terms of {run_id: "", thread_id: ""}
   const json = await response.json();
-  const runId = json.run_id;
-  const threadId = json.thread_id;
-  return { runId, threadId };
+  return { runId: json.run_id, threadId: json.thread_id };
 };
 
 /**

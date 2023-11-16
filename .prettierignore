@@ -28,3 +28,5 @@ robots.txt
 **/*.png
 
 example.txt
+ui-debug.log
+.firebaserc

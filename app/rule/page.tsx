@@ -5,9 +5,7 @@ import ruleContent from './rule.md';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
-interface RulePageProps {}
-
-export default function RulePage(props: RulePageProps) {
+export default function RulePage() {
   const router = useRouter();
   return (
     <section className='w-full h-full flex flex-col pt-20 px-8 lg:px-48 lg:pt-32 pb-4'>

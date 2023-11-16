@@ -2,15 +2,16 @@
 
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
-import { CONSTANTS } from '@/lib/constants';
-import { useAppSelector } from '@/lib/redux/hook';
-import { selectScoreStorage } from '@/lib/redux/features/scoreStorageSlice';
-import { PenSquare, Quote, ScrollText, View } from 'lucide-react';
-import { MouseEventHandler, useMemo } from 'react';
+import { PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { HomeMenuButton } from '../home-menu-button';
 import { useRouter } from 'next/navigation';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { LoginReminderProps } from '../login-reminder-dialog';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import IGame from '@/lib/types/game.type';
+import { HASH } from '@/lib/hash';
 
 interface HomeMenuButtonData {
   key: string;
@@ -25,8 +26,14 @@ interface HomeMenuButtonData {
 
 export default function HomeMenuButtonArray() {
   const { user, status } = useAuth();
-  const scores = useAppSelector(selectScoreStorage);
   const router = useRouter();
+  const [game, setGame] = useState<IGame | null>(null);
+
+  useEffect(() => {
+    const game = getPersistence<IGame>(HASH.game);
+    setGame(game);
+    bindPersistence<IGame>(HASH.game, setGame);
+  }, []);
 
   const handleAddTopic = () => {
     if (status === 'authenticated') {
@@ -71,9 +78,17 @@ export default function HomeMenuButtonArray() {
           'We found your last played result is cached in the app. You can revisit it here!',
         ariaLabel: 'Click to revisit last game results',
         href: '/result',
-        visible:
-          scores !== undefined &&
-          scores.length === CONSTANTS.numberOfQuestionsPerGame,
+        visible: isGameFinished(game) && status !== 'authenticated',
+      },
+      {
+        key: 'view my profile',
+        icon: <User size={20} />,
+        title: 'View My Profile',
+        subtitle:
+          'Access your personal profile to see your game history, edit your nickname, and more!',
+        ariaLabel: 'Click to visit your personal profile',
+        href: '/profile',
+        visible: user !== undefined && status === 'authenticated',
       },
       {
         key: 'review topic and words',
@@ -86,7 +101,7 @@ export default function HomeMenuButtonArray() {
         visible: AdminManager.checkIsAdmin(user) && status === 'authenticated',
       },
     ],
-    [user, status, scores]
+    [user, status, game]
   );
 
   return (

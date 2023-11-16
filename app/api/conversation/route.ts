@@ -1,8 +1,8 @@
 import { openai } from '@/lib/openai';
 
 export async function POST(request: Request) {
-  const assistant_id = process.env.OPENAI_PLAYER_ASSISTANT_ID;
-  if (!assistant_id) {
+  const assistantId = process.env.OPENAI_PLAYER_ASSISTANT_ID;
+  if (!assistantId) {
     return new Response('Missing OPENAI_PLAYER_ASSISTANT_ID', { status: 500 });
   }
   const { message } = await request.json();
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     // Initialise a new conversation
     try {
       const newRun = await openai.beta.threads.createAndRun({
-        assistant_id: assistant_id,
+        assistant_id: assistantId,
         thread: {
           messages: [
             {
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
         content: message,
       });
       const run = await openai.beta.threads.runs.create(threadID, {
-        assistant_id: assistant_id,
+        assistant_id: assistantId,
       });
       const runID = run.id;
       return new Response(

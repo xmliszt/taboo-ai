@@ -3,8 +3,8 @@ import { IChat } from '@/lib/types/score.type';
 import { NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {
-  const assistant_id = process.env.OPENAI_TEACHER_ASSISTANT_ID;
-  if (!assistant_id) {
+  const assistantId = process.env.OPENAI_TEACHER_ASSISTANT_ID;
+  if (!assistantId) {
     return new Response('Missing OPENAI_PLAYER_ASSISTANT_ID', { status: 500 });
   }
   const { target, taboos, conversation } = (await request.json()) as {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const newRun = await openai.beta.threads.createAndRun({
-      assistant_id: assistant_id,
+      assistant_id: assistantId,
       thread: {
         messages: [
           {

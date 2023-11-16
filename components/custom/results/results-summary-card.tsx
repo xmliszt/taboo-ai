@@ -3,6 +3,7 @@ import { getDifficulty, getDisplayedTopicName } from '@/lib/utilities';
 import { ScoreInfoButton } from '../score-info-button';
 import { StarRatingBar } from '../star-rating-bar';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { getOverallRating } from '@/lib/utils/gameUtils';
 
 export default function ResultsSummaryCard({
   total,
@@ -15,7 +16,7 @@ export default function ResultsSummaryCard({
   topicName: string;
   difficulty: number;
 }) {
-  const rating = totalScore ? (totalScore * 6) / 300 : undefined;
+  const rating = totalScore ? getOverallRating(totalScore) : undefined;
   const roundedTotalScore = totalScore ? _.round(totalScore, 1) : undefined;
   const displayTopicName = getDisplayedTopicName(topicName);
   const difficultyName = getDifficulty(difficulty, false);

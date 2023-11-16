@@ -8,8 +8,8 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { useAppDispatch } from '@/lib/redux/hook';
-import { setLevelStorage } from '@/lib/redux/features/levelStorageSlice';
+import { setPersistence } from '@/lib/persistence/persistence';
+import { HASH } from '@/lib/hash';
 
 interface LevelCardProps {
   level?: ILevel;
@@ -18,10 +18,9 @@ interface LevelCardProps {
 export function LevelCard({ level }: LevelCardProps) {
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
-  const dispatch = useAppDispatch();
   const goToLevel = () => {
     if (level) {
-      dispatch(setLevelStorage(level));
+      setPersistence(HASH.level, level);
       router.push(`/level/${level.id}`);
     } else {
       return router.push('/ai');

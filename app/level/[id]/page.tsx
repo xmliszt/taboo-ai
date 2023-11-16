@@ -1,14 +1,27 @@
 'use client';
 
-import {
-  FormEvent,
-  useState,
-  useEffect,
-  useRef,
-  ChangeEvent,
-  useMemo,
-} from 'react';
+import _, { uniqueId } from 'lodash';
+import { SendHorizonal, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { MessageContentText } from 'openai/resources/beta/threads/messages/messages';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { useTimer } from 'use-timer';
+
+import { useAuth } from '@/components/auth-provider';
+import { Skeleton } from '@/components/custom/skeleton';
 import Timer from '@/components/custom/timer';
+import IconButton from '@/components/ui/icon-button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/components/ui/use-toast';
+import { CONSTANTS } from '@/lib/constants';
+import { getHash, HASH } from '@/lib/hash';
+import {
+  getPersistence,
+  removePersistence,
+  setPersistence,
+} from '@/lib/persistence/persistence';
 import {
   askAITabooWordsForTarget,
   checkRunStatusAndCallActionIfNeeded,
@@ -16,40 +29,28 @@ import {
   getMessagesFromThread,
   startNewConversation,
 } from '@/lib/services/aiService';
-import _, { uniqueId } from 'lodash';
-import { CONSTANTS } from '@/lib/constants';
-import { useTimer } from 'use-timer';
-import { useRouter } from 'next/navigation';
+import {
+  getLevel,
+  incrementLevelPopularity,
+} from '@/lib/services/levelService';
+import { incrementGameAttemptedCount } from '@/lib/services/userService';
+import { getTabooWords } from '@/lib/services/wordService';
+import IGame from '@/lib/types/game.type';
 import { IHighlight } from '@/lib/types/highlight.type';
+import ILevel from '@/lib/types/level.type';
+import { IChat, IScore } from '@/lib/types/score.type';
+import IWord from '@/lib/types/word.type';
 import {
   formatStringForDisplay,
   getMockResponse,
   getMockVariations,
 } from '@/lib/utilities';
-import { HASH } from '@/lib/hash';
-import { getTabooWords } from '@/lib/services/wordService';
-import IWord from '@/lib/types/word.type';
-import { useToast } from '@/components/ui/use-toast';
-import { SendHorizonal, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import IconButton from '@/components/ui/icon-button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { Label } from '@/components/ui/label';
-import { IChat, IDisplayScore } from '@/lib/types/score.type';
-import ILevel from '@/lib/types/level.type';
-import { Skeleton } from '@/components/custom/skeleton';
+import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import {
-  getLevel,
-  incrementLevelPopularity,
-} from '@/lib/services/levelService';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
-import {
-  selectLevelStorage,
-  setLevelStorage,
-} from '@/lib/redux/features/levelStorageSlice';
-import { setScoresStorage } from '@/lib/redux/features/scoreStorageSlice';
-import { MessageContentText } from 'openai/resources/beta/threads/messages/messages';
+  aggregateTotalScore,
+  aggregateTotalTimeTaken,
+} from '@/lib/utils/gameUtils';
 import {
   generateHighlights,
   getMatchedTabooWords,
@@ -60,28 +61,26 @@ interface LevelPageProps {
 }
 
 // The current run_id cached in the page.
-let run_id = '';
+let runId = '';
 
 // The current thread_id cached in the page.
-let thread_id = '';
+let threadId = '';
 
 // The words for this topic
 let words: string[] = [];
 
-// The picked words for this topic
-const pickedWords: string[] = [];
-
 export default function LevelPage({ params: { id } }: LevelPageProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
+  const hasIncrementedGameAttemptedCount = useRef<boolean>(false);
 
   const [isWaitingForAIResponse, setIsWaitingForAIResponse] = useState(false);
-  const [level, setLevel] = useState<ILevel>();
+  const [level, setLevel] = useState<ILevel | null>(null);
   const [userInput, setUserInput] = useState<string>('');
-  const [difficulty, setDifficulty] = useState<number>(0);
   const [target, setTarget] = useState<string | null>(null);
   const [variations, setVariations] = useState<string[]>([]);
   const [isGeneratingVariations, setIsGeneratingVariations] =
@@ -90,7 +89,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
   const [conversation, setConversation] = useState<IChat[]>([]);
-  const [savedScores, setSavedScores] = useState<IDisplayScore[]>([]);
+  const [savedScores, setSavedScores] = useState<IScore[]>([]);
   const [isFetchingLevel, setIsFetchingLevel] = useState(false);
 
   const {
@@ -113,14 +112,20 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     },
   });
 
+  // When timer starts running, we focus on the textfield input
   useEffect(() => {
     if (timerStatus === 'RUNNING') {
       inputTextField.current?.focus();
     }
   }, [timerStatus]);
 
-  const cachedLevel = useAppSelector(selectLevelStorage);
-  const dispatch = useAppDispatch();
+  // When user is authenticated, we increment the game attempted count
+  useEffect(() => {
+    if (!hasIncrementedGameAttemptedCount.current && user) {
+      hasIncrementedGameAttemptedCount.current = true;
+      incrementGameAttemptedCount(user.email);
+    }
+  }, [user]);
 
   const isEmptyInput = userInput.length <= 0;
 
@@ -128,37 +133,31 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     if (level) return;
     setIsFetchingLevel(true);
     const fetchedLevel = await getLevel(id);
-    if (fetchedLevel && level === undefined) {
+    if (fetchedLevel) {
       setLevel(fetchedLevel);
       incrementLevelPopularity(fetchedLevel.id);
-      dispatch(setLevelStorage(fetchedLevel));
+      setPersistence(HASH.level, fetchedLevel);
+      startGame(fetchedLevel);
     }
   };
 
   useEffect(() => {
     if (id === 'ai') {
+      const cachedLevel = getPersistence<ILevel>(HASH.level);
       setLevel(cachedLevel);
     } else if (!isFetchingLevel) {
       fetchLevel(id);
     }
-  }, [id, cachedLevel, isFetchingLevel]);
+  }, [id, isFetchingLevel]);
 
-  useEffect(() => {
-    dispatch(setScoresStorage(savedScores));
-  }, [savedScores]);
-
-  // When level fetched, we start the game
-  useEffect(() => {
-    if (level) {
-      resetTimer();
-      dispatch(setScoresStorage(undefined));
-      setDifficulty(level.difficulty);
-      words = level.words.map((word) => formatStringForDisplay(word));
-      const newTarget = generateNewTarget();
-      setTarget(newTarget);
-      setCurrentProgress(1);
-    }
-  }, [level]);
+  const startGame = (level: ILevel) => {
+    resetTimer();
+    removePersistence(HASH.game);
+    words = level.words.map((word) => formatStringForDisplay(word));
+    const newTarget = generateNewTarget();
+    setTarget(newTarget);
+    setCurrentProgress(1);
+  };
 
   const generateNewTarget = (): string => {
     const newTarget = words[Math.floor(Math.random() * words.length)];
@@ -200,11 +199,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     setIsLoading(true);
 
     // If in dev mode, we skip API call and use mock response
-    if (localStorage.getItem(HASH.dev) === '1') {
-      const mockResponse = await getMockResponse(
-        target ?? '',
-        localStorage.getItem('mode') ?? '1'
-      );
+    if (isDevMode()) {
+      const mockResponse = await getMockResponse(target ?? '', getDevMode());
       setConversation([
         ...conversation,
         { role: 'assistant', content: mockResponse ?? '' },
@@ -218,11 +214,11 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         const isNewConversation = conversation.length === 0;
         // If it's a new conversation, start a new thread,
         // otherwise continue the existing thread
-        const { runId, threadId } = isNewConversation
+        const { runId: newRunId, threadId: newThreadId } = isNewConversation
           ? await startNewConversation(userInput)
-          : await continueConversation(userInput, thread_id);
-        run_id = runId;
-        thread_id = threadId;
+          : await continueConversation(userInput, threadId);
+        runId = newRunId;
+        threadId = newThreadId;
         // Start periodic status check for the current thread run
         await checkConversationStatus();
         setUserInput('');
@@ -241,8 +237,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   const checkConversationStatus = async () => {
     const { status } = await checkRunStatusAndCallActionIfNeeded(
-      run_id,
-      thread_id
+      runId,
+      threadId
     );
     if (
       status === 'failed' ||
@@ -251,7 +247,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       status === 'expired'
     ) {
       // Fetch the messages from thread and update conversation in UI
-      const messages = await getMessagesFromThread(thread_id);
+      const messages = await getMessagesFromThread(threadId);
       // Convert messages to conversation, revser the order
       const conversationFromMessages: IChat[] = messages
         .map((message) => {
@@ -295,7 +291,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       target: target ?? '',
       taboos: variations,
       conversation: conversation,
-      difficulty: difficulty,
       completion: time,
       responseHighlights: highlights,
     });
@@ -335,7 +330,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   ) => {
     retryCount.current = retries;
     try {
-      if (localStorage.getItem(HASH.dev)) {
+      if (isDevMode()) {
         const variations = await getMockVariations(target, true);
         callback(variations);
       } else {
@@ -356,7 +351,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     }
   };
 
-  // When target changed
+  // When target changed, we generate new targets and clear the conversation
   useEffect(() => {
     if (target) {
       setVariations([target]);
@@ -385,6 +380,20 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     const isLastRound =
       currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
+      // Game Finsihed. Save game to cache
+      const completedAt = new Date();
+      const game: IGame = {
+        id: getHash(
+          `${user?.email ?? 'guest'}-${level?.id}-${completedAt.toISOString()}`
+        ),
+        levelId: level?.id ?? '',
+        totalScore: aggregateTotalScore(savedScores, level?.difficulty ?? 1),
+        totalDuration: aggregateTotalTimeTaken(savedScores),
+        difficulty: level?.difficulty ?? 1,
+        finishedAt: completedAt,
+        scores: savedScores,
+      };
+      setPersistence(HASH.game, game);
       router.push('/result');
     } else if (currentProgress === 1) {
       return;
@@ -575,6 +584,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                 type='button'
                 tooltip='Clear input'
                 aria-label='Clear input button'
+                asChild
                 disabled={
                   !level ||
                   isLoading ||

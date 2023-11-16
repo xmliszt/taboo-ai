@@ -50,7 +50,6 @@ export class RouteManager {
         return {
           title: 'Taboo AI',
           hasBackButton: true,
-          customBackHref: TabooPathname.LEVELS,
           hideMenu: true,
           hideUserMenu: true,
           hideDevToggle: false,
@@ -96,8 +95,6 @@ export class RouteManager {
       case TabooPathname.PROFILE === route:
         return {
           title: 'My Profile',
-          hideMenu: true,
-          hasBackButton: true,
         };
       default:
         return {

@@ -1,5 +1,7 @@
-import { firestore } from '@/firebase/firebase-client';
+import { firestore, realtime } from '@/firebase/firebase-client';
+import { ref, update, get, child } from 'firebase/database';
 import {
+  DocumentReference,
   addDoc,
   collection,
   deleteDoc,
@@ -9,12 +11,15 @@ import {
   getDocs,
   increment,
   query,
+  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import moment from 'moment';
 import ILevel from '../types/level.type';
+import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
+import ILevelStats from '../types/levelStats.type';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {
   const snapshot = await getDocs(collection(firestore, 'levels'));
@@ -110,4 +115,137 @@ export const verifyLevel = async (id: string): Promise<void> => {
 
 export const incrementLevelPopularity = async (id: string) => {
   await updateDoc(doc(firestore, 'levels', id), { popularity: increment(1) });
+};
+
+/**
+ * Create the level document in users/{email}/levels if not exists, otherwise,
+ * update the score if score is the highest, update the playedAt if playedAt is the latest.
+ * @param {string} email: the user email
+ * @param {ILevel} level: the level attempted
+ * @param {Date} playedAt: the date the level is attempted
+ * @param {number} score: the total score of the level
+ */
+export const uploadPlayedLevelForUser = async (
+  email: string,
+  level: ILevel,
+  playedAt: Date,
+  score: number
+) => {
+  const levelRef = doc(firestore, 'users', email, 'levels', level.id);
+  const levelSnapshot = await getDoc(levelRef);
+  if (!levelSnapshot.exists()) {
+    await setDoc(levelRef, {
+      lastPlayedAt: playedAt,
+      bestScore: score,
+      attempts: increment(1),
+      ref: doc(firestore, 'levels', level.id),
+    });
+  } else {
+    const levelData = levelSnapshot.data();
+    if (levelData) {
+      const lastPlayedAt = levelData.lastPlayedAt;
+      const bestScore = levelData.bestScore;
+      await updateDoc(levelRef, {
+        attempts: increment(1),
+        lastPlayedAt: lastPlayedAt > playedAt ? lastPlayedAt : playedAt,
+        bestScore: bestScore > score ? bestScore : score,
+      });
+    }
+  }
+};
+
+/**
+ * Update Realtime Database level record with the current scorer.
+ * If such level ID does not exist, create a new record, the scorer automatically
+ * becomes the top scorer. If exists, then we compare if the scorer has higher score
+ * than the current top score, if yes, we overwrite and udpate the top scorer. If not, we
+ * ignore, simply increase the attemp count only.
+ * @param {string} levelID: the level ID
+ * @param {IUser} scorer: the user who scored
+ * @param {number} score: the score of the scorer
+ * @returns {Promise<void>}
+ */
+export const updateRealtimeDBLevelRecord = async (
+  levelID: string,
+  scorer: IUser,
+  score: number
+): Promise<void> => {
+  const currentRecord = await get(child(ref(realtime, 'levelStats'), levelID));
+  const prevTopScore = currentRecord.val()?.topScore ?? -Infinity;
+  const prevTopScorer = currentRecord.val()?.topScorer ?? undefined;
+  const updates = {
+    topScore: Math.max(prevTopScore, score),
+    topScorer: prevTopScore > score ? prevTopScorer : scorer.email,
+  };
+  await update(child(ref(realtime, 'levelStats'), levelID), updates);
+};
+
+/**
+ * Get the statistical data for levels played by the user
+ * @param {string} email: the user email
+ * @returns {Promise<ILevelStats>} the level statistical data for the user
+ */
+export const getLevelStatistics = async (
+  email: string
+): Promise<ILevelStats> => {
+  const snapshot = await getDocs(
+    collection(firestore, 'users', email, 'levels')
+  );
+  const levelRefs: {
+    ref: DocumentReference;
+    score: number;
+    attempts: number;
+  }[] = [];
+  snapshot.forEach((result) => {
+    levelRefs.push({
+      ref: result.data().ref,
+      score: result.data().bestScore as number,
+      attempts: result.data().attempts as number,
+    });
+  });
+  if (levelRefs.length === 0)
+    return {
+      bestPerformingLevel: undefined,
+      mostFrequentlyPlayedLevel: undefined,
+    };
+  const levels: {
+    id: string;
+    name: string;
+    difficulty: number;
+    score: number;
+    attempts: number;
+  }[] = [];
+  for (const levelRef of levelRefs) {
+    const levelSnapshot = await getDoc(levelRef.ref);
+    const level = levelSnapshot.data() as ILevel;
+    level.id = levelSnapshot.id;
+    levels.push({
+      id: levelSnapshot.id,
+      name: level.name,
+      difficulty: level.difficulty,
+      score: levelRef.score,
+      attempts: levelRef.attempts,
+    });
+  }
+  // Get the best performing level
+  const bestPerformingLevel = levels.reduce((prev, current) => {
+    return prev.score > current.score ? prev : current;
+  });
+  const mostFrequentlyPlayedLevel = levels.reduce((prev, current) => {
+    return prev.attempts > current.attempts ? prev : current;
+  });
+  return {
+    bestPerformingLevel: {
+      id: bestPerformingLevel.id,
+      name: bestPerformingLevel.name,
+      difficulty: bestPerformingLevel.difficulty,
+      score: bestPerformingLevel.score,
+    },
+    mostFrequentlyPlayedLevel: {
+      id: mostFrequentlyPlayedLevel.id,
+      name: mostFrequentlyPlayedLevel.name,
+      difficulty: mostFrequentlyPlayedLevel.difficulty,
+      attempts: mostFrequentlyPlayedLevel.attempts,
+    },
+  };
 };

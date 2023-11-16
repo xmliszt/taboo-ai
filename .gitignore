@@ -51,3 +51,5 @@ next-env.d.ts
 .eslintcache
 functions/*
 **/*.log
+
+ui-debug.log
