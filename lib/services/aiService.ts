@@ -5,8 +5,6 @@ import { formatResponseTextIntoArray } from '../utilities';
 import IWord from '../types/word.type';
 import moment from 'moment';
 import { DateUtils } from '../utils/dateUtils';
-import { Run } from 'openai/resources/beta/threads/runs/runs';
-import { ThreadMessage } from 'openai/resources/beta/threads/messages/messages';
 import IEvaluation from '../types/evaluation.type';
 import { IChat } from '../types/score.type';
 
@@ -131,68 +129,6 @@ export async function fetchConversationCompletion(
 }
 
 /**
- * Continue a running conversation
- * @param {string} userMessage The message to continue the conversation with.
- * @param {string} threadId The threadId of the conversation.
- * @returns {Promise<{runId: string, threadId: string}>} The runId and threadId of the conversation.
- */
-export const continueConversation = async (
-  userMessage: string,
-  threadId: string
-): Promise<{ runId: string; threadId: string }> => {
-  const response = await fetch('/api/conversation?thread_id=' + threadId, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      message: userMessage,
-    }),
-  });
-  // Getting repsonse in terms of {run_id: "", thread_id: ""}
-  const json = await response.json();
-  return { runId: json.run_id, threadId: json.thread_id };
-};
-
-/**
- * Check the status of a conversation Run and return the status and required action.
- * @param {string} runId The runId of the conversation.
- * @param {string} threadId The threadId of the conversation.
- * @returns {Promise<{status: Run['status'], requiredAction: Run.RequiredAction | null}>} The status and required action of the conversation.
- */
-export async function checkRunStatusAndCallActionIfNeeded(
-  runId: string,
-  threadId: string
-): Promise<{
-  status: Run['status'];
-  requiredAction: Run.RequiredAction | null;
-}> {
-  const respone = await fetch(
-    '/api/conversation/status?run_id=' + runId + '&thread_id=' + threadId
-  );
-  // Getting response in form of {status: RunStatus, required_action: object | null}
-  const json = await respone.json();
-  const status = json.status;
-  const requiredAction = json.required_actions;
-  return { status, requiredAction };
-}
-
-/**
- * Retrieve the message list from a thread.
- * @param {string} threadId The threadId of the conversation.
- * @returns {Promise<ThreadMessage[]>} The list of messages in the thread.
- */
-export async function getMessagesFromThread(
-  threadId: string
-): Promise<ThreadMessage[]> {
-  const response = await fetch(
-    '/api/conversation/messages?thread_id=' + threadId
-  );
-  const json = await response.json();
-  return json;
-}
-
-/**
  * Perform evaluation
  * @param {IEvaluation} evaluation The evaluation to start.
  * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
@@ -208,27 +144,4 @@ export async function performEvaluation(
   // Get the run_id and thread_id from resposne
   const json = await response.json();
   return json;
-}
-
-/**
- * Accept the evaluation. This is the completion step for the AI to move a Run into completed status
- * @param {string} runId The runId of the evaluation.
- * @param {string} threadId The threadId of the evaluation.
- * @param {EvaluationOutput[]} outputs The outputs of the evaluation.
- * @returns {Promise<void>} This call does not have any return expected.
- */
-type EvaluationOutput = { call_id: string; output: string };
-export async function completeEvaluation(
-  runId: string,
-  threadId: string,
-  outputs: EvaluationOutput[]
-) {
-  await fetch(
-    '/api/evaluation/complete?run_id=' + runId + '&thread_id=' + threadId,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ outputs }),
-    }
-  );
 }
