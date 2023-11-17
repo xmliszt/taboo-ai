@@ -6,11 +6,6 @@ const aiRateLimiter = RateLimiter({
   uniqueTokenPerInterval: 500,
 });
 
-const normalRateLimiter = RateLimiter({
-  interval: 60 * 1000,
-  uniqueTokenPerInterval: 500,
-});
-
 const checkRateLimit = (
   req: NextRequest
 ): { status: number; message: string } | undefined => {
@@ -21,7 +16,6 @@ const checkRateLimit = (
     req.ip;
   if (!ipAddress) return;
   if (req.url) {
-    console.log(req.url);
     const res = NextResponse.next(req);
     switch (true) {
       case /api\/ai$/.test(req.url):

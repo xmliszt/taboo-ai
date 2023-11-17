@@ -5,6 +5,7 @@ export enum CustomEventKey {
   SHARE_SCORE = 'share-score-event',
   NEWLETTER_DIALOG = 'toggle-newsletter-dialog',
   OPEN_SCORE_INFO_DIALOG = 'toggle-score-info-dialog',
+  STORAGE_UPDATE = 'storage-update-event',
 }
 
 export class EventManager {

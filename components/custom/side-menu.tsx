@@ -32,7 +32,10 @@ export default function SideMenu() {
   useEffect(() => {
     const game = getPersistence<IGame>(HASH.game);
     setGame(game);
-    bindPersistence<IGame>(HASH.game, setGame);
+    const unbind = bindPersistence<IGame>(HASH.game, setGame);
+    return () => {
+      unbind();
+    };
   }, []);
 
   useEffect(() => {
