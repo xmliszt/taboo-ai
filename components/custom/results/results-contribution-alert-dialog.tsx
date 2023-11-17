@@ -36,7 +36,6 @@ export default function ResutlsContributionAlertDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => {
-              onOpenChange(false);
               onTopicReviewSheetOpenChange(false);
             }}
           >
@@ -45,6 +44,7 @@ export default function ResutlsContributionAlertDialog({
           <AlertDialogAction
             autoFocus
             onClick={() => {
+              onOpenChange(false);
               onTopicReviewSheetOpenChange(true);
             }}
           >

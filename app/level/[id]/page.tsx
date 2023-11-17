@@ -16,11 +16,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { CONSTANTS } from '@/lib/constants';
 import { getHash, HASH } from '@/lib/hash';
-import {
-  getPersistence,
-  removePersistence,
-  setPersistence,
-} from '@/lib/persistence/persistence';
+import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import {
   askAITabooWordsForTarget,
   fetchConversationCompletion,
@@ -153,7 +149,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   const startGame = (level: ILevel) => {
     resetTimer();
-    removePersistence(HASH.game);
+    // removePersistence(HASH.game);
     words = level.words.map((word) => formatStringForDisplay(word));
     const newTarget = generateNewTarget();
     setTarget(newTarget);
@@ -161,6 +157,14 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   };
 
   const generateNewTarget = (): string => {
+    if (words.length <= 0) {
+      toast({
+        title:
+          'Sorry something went wrong suddenly! We apologize for the inconvenience. Please try play the topic again.',
+        variant: 'destructive',
+      });
+      router.back();
+    }
     const newTarget = words[Math.floor(Math.random() * words.length)];
     // Remove from words so that it doesn't get picked again
     _.remove(words, (word) => word === newTarget);

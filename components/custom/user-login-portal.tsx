@@ -47,7 +47,10 @@ export function UserLoginPortal() {
   useEffect(() => {
     const game = getPersistence<IGame>(HASH.game);
     setGame(game);
-    bindPersistence<IGame>(HASH.game, setGame);
+    const unbind = bindPersistence<IGame>(HASH.game, setGame);
+    return () => {
+      unbind();
+    };
   }, []);
 
   const handleLogout = async () => {
