@@ -120,13 +120,8 @@ export default function ResultPage() {
     if (level && level.isAIGenerated) {
       const exists = await isLevelExists(level.name, user?.email);
       setHasTopicSubmitted(exists);
-      if (exists) {
-        toast({ title: 'You have already submitted this topic.' });
-        return;
-      }
-      if (status === 'authenticated') {
-        setContributionDialogOpen(true);
-      }
+      if (exists) return;
+      setContributionDialogOpen(true);
     }
   }, [level, user, status]);
 
@@ -142,7 +137,7 @@ export default function ResultPage() {
     } else {
       checkCachedGame();
     }
-  }, [status]);
+  }, [status, gameID]);
 
   const checkOnlineGame = async () => {
     try {
@@ -787,7 +782,20 @@ export default function ResultPage() {
           setContributionDialogOpen(open);
         }}
         onTopicReviewSheetOpenChange={(open) => {
-          setIsTopicReviewSheetOpen(open);
+          if (!open) {
+            setIsTopicReviewSheetOpen(false);
+            return;
+          }
+          if (status === 'unauthenticated') {
+            EventManager.fireEvent<LoginReminderProps>(
+              CustomEventKey.LOGIN_REMINDER,
+              {
+                title: 'You need to login to contribute a topic to us.',
+              }
+            );
+          } else {
+            setIsTopicReviewSheetOpen(true);
+          }
         }}
       />
       <ScoreInfoDialog />
