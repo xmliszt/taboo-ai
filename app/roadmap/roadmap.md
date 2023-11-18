@@ -2,6 +2,12 @@
 
 ## Release Notes (V3.0)
 
+### 18 Nov 2023 - V3.1.1
+
+- Topics page can toggle to view best score and top scorer instead
+- Profile page add Privacy Settings section for user to toggle anonymity option
+- Topics page add scrollbar for easier navigation
+
 ### 16 Nov 2023 - V3.1.0
 
 - AI Evaluation with Feedback Improvements
