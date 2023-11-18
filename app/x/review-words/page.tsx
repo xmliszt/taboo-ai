@@ -447,7 +447,7 @@ const DevReviewWordsPage = () => {
   }
 
   return (
-    <section className='flex flex-col gap-4 justify-center items-center py-20 leading-snug'>
+    <main className='flex flex-col gap-4 justify-center items-center py-20 leading-snug'>
       <div className='flex flex-wrap gap-2 justify-center p-2'>
         <Badge variant={selectedLevel?.isVerified ? 'default' : 'destructive'}>
           {selectedLevel?.isVerified ? 'Verified' : 'Not Verified'}
@@ -783,7 +783,7 @@ const DevReviewWordsPage = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </section>
+    </main>
   );
 };
 

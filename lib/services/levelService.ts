@@ -1,5 +1,13 @@
 import { firestore, realtime } from '@/firebase/firebase-client';
-import { ref, update, get, child } from 'firebase/database';
+import {
+  ref,
+  update,
+  get,
+  child,
+  onValue,
+  DataSnapshot,
+  Unsubscribe,
+} from 'firebase/database';
 import {
   DocumentReference,
   addDoc,
@@ -176,6 +184,12 @@ export const updateRealtimeDBLevelRecord = async (
   const updates = {
     topScore: Math.max(prevTopScore, score),
     topScorer: prevTopScore > score ? prevTopScorer : scorer.email,
+    topScorerName:
+      prevTopScore > score
+        ? prevTopScorer
+        : scorer.anonymity
+        ? 'Anonymous'
+        : scorer.nickname,
   };
   await update(child(ref(realtime, 'levelStats'), levelID), updates);
 };
@@ -248,4 +262,19 @@ export const getLevelStatistics = async (
       attempts: mostFrequentlyPlayedLevel.attempts,
     },
   };
+};
+
+/**
+ * Listen to the level ranking stats from Firebase Realtime Database
+ * @param {function} onLevelRankingStatsUpdated: the callback function to be called when the level ranking stats is updated
+ * @returns {Unsubscribe} the unsubscribe function
+ */
+export const bindLevelRankingStatsListener = (
+  onLevelRankingStatsUpdated: (snapshot: DataSnapshot) => unknown
+): Unsubscribe => {
+  const unbind = onValue(
+    ref(realtime, 'levelStats/'),
+    onLevelRankingStatsUpdated
+  );
+  return unbind;
 };

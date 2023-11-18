@@ -466,7 +466,7 @@ const AddLevelPage = () => {
   }
 
   return (
-    <div className='w-full h-full flex flex-col gap-4 items-center p-4 pt-16'>
+    <main className='w-full h-full flex flex-col gap-4 items-center p-4 pt-16'>
       {isScrollToTopButtonVisible && (
         <IconButton
           className='fixed bottom-8 right-8 animate-fade-in z-40'
@@ -894,7 +894,7 @@ const AddLevelPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </main>
   );
 };
 

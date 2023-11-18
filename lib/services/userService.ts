@@ -22,6 +22,15 @@ export const getUser = async (
   return null;
 };
 
+export const updateUserAnonymity = async (
+  email: string,
+  anonymity: boolean
+) => {
+  await updateDoc(doc(firestore, 'users', email), {
+    anonymity: anonymity,
+  });
+};
+
 export const updateUserFromUser = async (user: IUser): Promise<IUser> => {
   const email = user.email;
   if (!email) {
