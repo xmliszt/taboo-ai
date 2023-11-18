@@ -17,6 +17,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BookX } from 'lucide-react';
+import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -43,6 +44,7 @@ export default function ProfilePage() {
       return;
     }
     if (status === 'authenticated' && user?.nickname) {
+      console.log(user.nickname);
       setNickname(user.nickname);
       oldNickname.current = user.nickname;
     }
@@ -75,7 +77,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <section className='pt-20 px-10 py-32 bg-background text-foreground flex flex-col items-center gap-16 overflow-auto'>
+    <main className='pt-20 px-10 py-32 bg-background text-foreground flex flex-col items-center gap-16 overflow-auto'>
       <div className='flex flex-col gap-4 items-center'>
         <Image
           className='rounded-full shadow-md border-2 border-primary'
@@ -135,9 +137,17 @@ export default function ProfilePage() {
         description='You will soon be able to create your own flashcards with the words you have played, kickstart custom game from the flashcard, organize them into decks and share them with your friends...'
         className='w-full max-w-[500px]'
       />
+
+      {user && (
+        <ProfilePrivacySettingsCard
+          className='w-full max-w-[500px]'
+          user={user}
+        />
+      )}
+
       {user && status === 'authenticated' && (
         <ProfileDangerZone className='w-full max-w-[500px]' />
       )}
-    </section>
+    </main>
   );
 }

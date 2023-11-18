@@ -13,6 +13,9 @@ import {
 } from '@/components/ui/select';
 import { SortType } from '@/lib/utils/levelUtils';
 import { useState } from 'react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 type SortItem = {
   value: SortType;
@@ -34,11 +37,14 @@ export default function LevelsSearchBar({
   topicNumber,
   setFilterKeyword,
   onSorterChange,
+  onRankingModeChange,
 }: {
   topicNumber: number;
   setFilterKeyword: React.Dispatch<React.SetStateAction<string>>;
   onSorterChange?: (sorter: SortType) => void;
+  onRankingModeChange?: (isRankingModeOn: boolean) => void;
 }) {
+  const [isRankingModeOn, setIsRankingModeOn] = useState(false);
   const [selectedSorter, setSelectedSorter] = useState<SortType>('create-new');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -87,11 +93,38 @@ export default function LevelsSearchBar({
           </Button>
         )}
       </div>
-      <Badge className='mt-3 shadow-[0_5px_20px_rgba(0,0,0,0.7)]'>
-        {searchTerm && searchTerm.length > 0
-          ? `Found ${topicNumber} topics`
-          : `Total ${topicNumber} topics`}
-      </Badge>
+      <div className='mt-4 flex flex-row justify-between items-center'>
+        <Badge className='shadow-[0_5px_10px_rgba(0,0,0,0.3)]'>
+          {searchTerm && searchTerm.length > 0
+            ? `Found ${topicNumber} topics`
+            : `Total ${topicNumber} topics`}
+        </Badge>
+        <div className='flex flex-row gap-2 items-center'>
+          <Switch
+            id='ranking-mode-switch'
+            className={cn(
+              isRankingModeOn
+                ? 'shadow-[0_5px_10px_rgba(0,0,0,0.3)]'
+                : 'shadow-none'
+            )}
+            checked={isRankingModeOn}
+            onCheckedChange={(checked) => {
+              setIsRankingModeOn(checked);
+              onRankingModeChange && onRankingModeChange(checked);
+            }}
+          />
+          <Label
+            htmlFor='ranking-mode-switch'
+            className={cn(
+              isRankingModeOn
+                ? 'text-primary font-bold'
+                : 'text-muted-foreground font-light'
+            )}
+          >
+            Ranking Mode
+          </Label>
+        </div>
+      </div>
     </>
   );
 }

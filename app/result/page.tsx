@@ -731,7 +731,7 @@ export default function ResultPage() {
 
   return (
     <>
-      <section className='relative'>
+      <main className='relative'>
         <LoadingMask
           key='loading-mask'
           isLoading={isLoading}
@@ -743,7 +743,7 @@ export default function ResultPage() {
         >
           {renderResults()}
         </section>
-      </section>
+      </main>
       <div className='fixed flex flex-col md:flex-row gap-2 items-center md:justify-center bottom-2 z-40 w-full py-4 px-4'>
         {!hasTopicSubmitted && level?.isAIGenerated && (
           <Button
