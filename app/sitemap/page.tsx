@@ -59,7 +59,7 @@ export default async function SitemapPage() {
   ];
 
   return (
-    <div className='leading-snug text-center md:text-left w-full h-full pt-20 px-10 pb-10 flex flex-col gap-4 overflow-y-auto'>
+    <main className='leading-snug text-center md:text-left w-full h-full pt-20 px-10 pb-10 flex flex-col gap-4 overflow-y-auto'>
       <section id='features-section'>
         <h3 className='text-xl font-extrabold text-center my-2'>Features</h3>
         <Separator />
@@ -122,6 +122,6 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-    </div>
+    </main>
   );
 }

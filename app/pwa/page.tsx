@@ -4,7 +4,7 @@ import InstallButton from '@/components/custom/install-button';
 
 export default async function InstallPWAPage() {
   return (
-    <section className='flex flex-col items-center'>
+    <main className='flex flex-col items-center'>
       <article
         data-testid='content-article'
         className='leading-normal w-10/12 pt-24 lg:pt-32 pb-20 lg:pb-28'
@@ -14,6 +14,6 @@ export default async function InstallPWAPage() {
           <InstallButton />
         </div>
       </article>
-    </section>
+    </main>
   );
 }

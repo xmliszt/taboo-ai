@@ -470,7 +470,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   }
 
   return (
-    <section className='flex justify-center h-full'>
+    <main className='flex justify-center h-full'>
       {isCountingdown ? (
         <div
           className={cn(
@@ -660,6 +660,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
           </div>
         </section>
       </section>
-    </section>
+    </main>
   );
 }

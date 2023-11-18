@@ -53,7 +53,7 @@ export default function AiPage() {
 
   return (
     <>
-      <section className='w-full h-full flex flex-col items-center pt-20 px-10'>
+      <main className='w-full h-full flex flex-col items-center pt-20 px-10'>
         {errorMessage !== undefined && (
           <Alert className='text-center animate-fade-in font-extrabold text-2xl mb-8'>
             <SpellCheck2 color='red' />
@@ -128,7 +128,7 @@ export default function AiPage() {
             )}
           </div>
         </form>
-      </section>
+      </main>
     </>
   );
 }

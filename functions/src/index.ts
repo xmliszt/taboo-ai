@@ -1,10 +1,14 @@
 import { initializeApp } from 'firebase-admin/app';
-import { firestore as adminFirestore } from 'firebase-admin';
+import {
+  firestore as adminFirestore,
+  database as adminDatabase,
+} from 'firebase-admin';
 import { firestore } from 'firebase-functions';
 import * as logger from 'firebase-functions/logger';
 
 initializeApp();
-const db = adminFirestore();
+const fs = adminFirestore();
+const db = adminDatabase();
 
 /**
  * Triggered when a new game is added to a user.
@@ -17,7 +21,7 @@ exports.onUserGameAdded = firestore
   .document('users/{userId}/games/{gameId}')
   .onCreate((snapshot, context) => {
     logger.info('onUserGameAdded', snapshot, context);
-    db.doc(`users/${context.params.userId}`).update({
+    fs.doc(`users/${context.params.userId}`).update({
       gamePlayedCount: adminFirestore.FieldValue.increment(1),
     });
   });
@@ -33,7 +37,44 @@ exports.onUserLevelAdded = firestore
   .document('users/{userId}/levels/{levelId}')
   .onCreate((snapshot, context) => {
     logger.info('onUserLevelAdded', snapshot, context);
-    db.doc(`users/${context.params.userId}`).update({
+    fs.doc(`users/${context.params.userId}`).update({
       levelPlayedCount: adminFirestore.FieldValue.increment(1),
     });
+  });
+
+/**
+ * Triggerred when user updates the anonymity field or nickname
+ * in their user document. This will update the topScorerName
+ * field in the levelStats document if the user is the top scorer
+ * of the level.
+ */
+exports.onUserAnonymityChanged = firestore
+  .document('users/{userId}')
+  .onUpdate(async (snapshot, context) => {
+    logger.info('onUserAnonymityChanged', snapshot, context);
+    const oldUser = snapshot.before.data();
+    const user = snapshot.after.data();
+    const oldAnonymity: boolean = oldUser.anonymity;
+    const newAnonymity: boolean = user.anonymity;
+    const oldNickname = oldUser.nickname;
+    const newNickname = user.nickname;
+    if (oldAnonymity === newAnonymity && oldNickname === newNickname) return;
+
+    const levelsAttemptedByUser = await fs
+      .collection(`users/${context.params.userId}/levels`)
+      .get();
+    const levelIdsAttempted = levelsAttemptedByUser.docs.map((doc) => doc.id);
+    const updates: { [key: string]: unknown } = {};
+    for (const levelId of levelIdsAttempted) {
+      const levelStatsRef = db.ref(`levelStats/${levelId}`);
+      const levelStatsSnapshot = await levelStatsRef.get();
+      if (levelStatsSnapshot.val()?.topScorer === user.email) {
+        updates[levelId] = {
+          topScore: levelStatsSnapshot.val()?.topScore,
+          topScorer: levelStatsSnapshot.val()?.topScorer,
+          topScorerName: newAnonymity ? 'Anonymous' : newNickname,
+        };
+      }
+    }
+    await db.ref('levelStats').update(updates);
   });

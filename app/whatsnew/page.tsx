@@ -5,7 +5,7 @@ import { SiDiscord } from 'react-icons/si';
 
 export default async function WhatsNewPage() {
   return (
-    <section className='flex flex-col items-center'>
+    <main className='flex flex-col items-center'>
       <article
         data-testid='content-article'
         className='leading-normal w-10/12 pt-16 lg:pt-32 pb-24'
@@ -20,6 +20,6 @@ export default async function WhatsNewPage() {
           />
         </div>
       </article>
-    </section>
+    </main>
   );
 }

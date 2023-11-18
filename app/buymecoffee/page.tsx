@@ -9,7 +9,7 @@ const BuyMeCoffeeQR = '/images/bmc_qr.png';
 const BuyMeCoffeePage = () => {
   return (
     <>
-      <section className='w-full h-full flex flex-col gap-8 items-center overflow-y-scroll scrollbar-hide leading-normal py-20'>
+      <main className='w-full h-full flex flex-col gap-8 items-center overflow-y-scroll scrollbar-hide leading-normal py-20'>
         <div className='w-[300px] h-auto '>
           <a
             href='/images/bmc_qr.png'
@@ -40,7 +40,7 @@ const BuyMeCoffeePage = () => {
         >
           <ReactMarkdown>{content}</ReactMarkdown>
         </article>
-      </section>
+      </main>
     </>
   );
 };
