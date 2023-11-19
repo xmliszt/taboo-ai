@@ -89,3 +89,32 @@ exports.onUserAnonymityChanged = firestore
     }
     await db.ref('levelStats').update(updates);
   });
+
+/**
+ * Triggerred when user deletes their account.
+ * This will delete the user's record from the levelStats
+ * document if the user is the top scorer of the level.
+ * This will also delete the user's record from the
+ * users collection.
+ */
+exports.onUserDeleted = firestore
+  .document('users/{userId}')
+  .onDelete(async (snapshot, context) => {
+    logger.info('onUserDeleted', snapshot, context);
+    const levelsAttemptedByUser = await fs
+      .collection(`users/${context.params.userId}/levels`)
+      .get();
+    const levelIdsAttempted = levelsAttemptedByUser.docs.map((doc) => doc.id);
+    const updates: { [key: string]: unknown } = {};
+    for (const levelId of levelIdsAttempted) {
+      const levelStatsRef = db.ref(`levelStats/${levelId}`);
+      const levelStatsSnapshot = await levelStatsRef.get();
+      if (levelStatsSnapshot.val()?.topScorer === snapshot.data()?.email) {
+        // Delete the record
+        updates[levelId] = null;
+      }
+    }
+    await db.ref('levelStats').update(updates);
+    // Recursively delete everything in user's document
+    await fs.recursiveDelete(fs.doc(`users/${context.params.userId}`));
+  });

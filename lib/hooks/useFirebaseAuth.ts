@@ -78,13 +78,17 @@ export function useFirebaseAuth() {
               (await updateUIDIfNotExist(user.email, currentUser.uid));
             setUser(user);
             setStatus('authenticated');
-            toast({ title: 'Welcome Back!' });
+            toast({ title: 'Welcome Back! ' + user.nickname });
           } else {
             // new user
             const newUser = await updateUserFromAuth(currentUser);
             setUser(newUser);
             setStatus('authenticated');
-            toast({ title: 'Welcome to Taboo AI!!' });
+            toast({
+              title:
+                'Hi ' + newUser.nickname ??
+                newUser.name + '! Welcome to Taboo AI!',
+            });
           }
         } catch (error) {
           console.log(error.message);
