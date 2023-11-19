@@ -180,13 +180,15 @@ export const updateRealtimeDBLevelRecord = async (
 ): Promise<void> => {
   const currentRecord = await get(child(ref(realtime, 'levelStats'), levelID));
   const prevTopScore = currentRecord.val()?.topScore ?? -Infinity;
-  const prevTopScorer = currentRecord.val()?.topScorer ?? undefined;
+  const prevTopScorerEmail = currentRecord.val()?.topScorer ?? scorer.email;
+  const prevTopScorerNickname =
+    currentRecord.val()?.topScorerName ?? scorer.nickname ?? 'Anonymous';
   const updates = {
     topScore: Math.max(prevTopScore, score),
-    topScorer: prevTopScore > score ? prevTopScorer : scorer.email,
+    topScorer: prevTopScore > score ? prevTopScorerEmail : scorer.email,
     topScorerName:
       prevTopScore > score
-        ? prevTopScorer
+        ? prevTopScorerNickname
         : scorer.anonymity
         ? 'Anonymous'
         : scorer.nickname,
