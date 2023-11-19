@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../auth-provider';
 import { LoginErrorEventProps } from './login-error-dialog';
 
@@ -20,6 +20,8 @@ export interface LoginReminderProps {
   title: string;
   message?: string;
   redirectHref?: string;
+  afterDialogClose?: () => void;
+  cancelLabel?: string;
 }
 
 export default function LoginReminderDialog() {
@@ -28,19 +30,23 @@ export default function LoginReminderDialog() {
   const [title, setTitle] = useState<string>('');
   const [message, setMessage] = useState<string>();
   const [redirectHref, setRedirectHref] = useState<string>();
+  const [customCancelLabel, setCustomCancelLabel] = useState('Cancel');
+  const afterDialogCloseRef = useRef<(() => void) | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const listener = EventManager.bindEvent(
       CustomEventKey.LOGIN_REMINDER,
       ({
-        detail: { title, message, redirectHref },
+        detail: { title, message, redirectHref, afterDialogClose, cancelLabel },
       }: {
         detail: LoginReminderProps;
       }) => {
         setTitle(title);
         setMessage(message);
         setRedirectHref(redirectHref);
+        afterDialogClose && (afterDialogCloseRef.current = afterDialogClose);
+        cancelLabel && setCustomCancelLabel(cancelLabel);
         setIsOpen(true);
       }
     );
@@ -76,7 +82,13 @@ export default function LoginReminderDialog() {
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            onClick={() => {
+              afterDialogCloseRef.current && afterDialogCloseRef.current();
+            }}
+          >
+            {customCancelLabel}
+          </AlertDialogCancel>
           <AlertDialogAction autoFocus onClick={handleLogin}>
             Login
           </AlertDialogAction>

@@ -1,8 +1,8 @@
 export default interface IUser {
   uid?: string;
   email: string;
-  name?: string;
-  nickname?: string;
+  name?: string; // Name from google auth
+  nickname?: string; // Player custom name
   photoUrl?: string;
   firstLoginAt?: string;
   lastLoginAt?: string;

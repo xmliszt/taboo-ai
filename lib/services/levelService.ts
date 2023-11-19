@@ -142,19 +142,21 @@ export const uploadPlayedLevelForUser = async (
   const levelRef = doc(firestore, 'users', email, 'levels', level.id);
   const levelSnapshot = await getDoc(levelRef);
   if (!levelSnapshot.exists()) {
-    await setDoc(levelRef, {
-      lastPlayedAt: playedAt,
-      bestScore: score,
-      attempts: increment(1),
-      ref: doc(firestore, 'levels', level.id),
-    });
+    await setDoc(
+      levelRef,
+      {
+        lastPlayedAt: playedAt,
+        bestScore: score,
+        ref: doc(firestore, 'levels', level.id),
+      },
+      { merge: true }
+    );
   } else {
     const levelData = levelSnapshot.data();
     if (levelData) {
       const lastPlayedAt = levelData.lastPlayedAt;
       const bestScore = levelData.bestScore;
       await updateDoc(levelRef, {
-        attempts: increment(1),
         lastPlayedAt: lastPlayedAt > playedAt ? lastPlayedAt : playedAt,
         bestScore: bestScore > score ? bestScore : score,
       });
@@ -180,18 +182,20 @@ export const updateRealtimeDBLevelRecord = async (
 ): Promise<void> => {
   const currentRecord = await get(child(ref(realtime, 'levelStats'), levelID));
   const prevTopScore = currentRecord.val()?.topScore ?? -Infinity;
-  const prevTopScorer = currentRecord.val()?.topScorer ?? undefined;
-  const updates = {
+  const prevTopScorerEmail = currentRecord.val()?.topScorer ?? scorer.email;
+  const prevTopScorerNickname =
+    currentRecord.val()?.topScorerName ?? scorer.nickname ?? 'Anonymous';
+  const levelStat = {
     topScore: Math.max(prevTopScore, score),
-    topScorer: prevTopScore > score ? prevTopScorer : scorer.email,
+    topScorer: prevTopScore > score ? prevTopScorerEmail : scorer.email,
     topScorerName:
       prevTopScore > score
-        ? prevTopScorer
+        ? prevTopScorerNickname
         : scorer.anonymity
         ? 'Anonymous'
-        : scorer.nickname,
+        : scorer.nickname ?? scorer.name ?? 'Anonymous',
   };
-  await update(child(ref(realtime, 'levelStats'), levelID), updates);
+  await update(child(ref(realtime, 'levelStats'), levelID), levelStat);
 };
 
 /**

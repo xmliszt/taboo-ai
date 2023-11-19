@@ -43,10 +43,10 @@ export default function ProfilePage() {
       router.push('/');
       return;
     }
-    if (status === 'authenticated' && user?.nickname) {
-      console.log(user.nickname);
-      setNickname(user.nickname);
-      oldNickname.current = user.nickname;
+    if (status === 'authenticated' && (user?.nickname || user?.name)) {
+      const name = user.nickname ?? user.name ?? '';
+      setNickname(name);
+      oldNickname.current = name;
     }
   }, [user, status]);
 

@@ -29,6 +29,7 @@ export const uploadCompletedGameForUser = async (
   const finishedAt = existingGameRef.data()?.finishedAt;
   // Create the game document
   await setDoc(gameRef, {
+    levelId: levelId,
     levelRef: doc(firestore, 'levels', levelId),
     finishedAt: finishedAt ?? game.finishedAt,
     totalScore: game.totalScore,
