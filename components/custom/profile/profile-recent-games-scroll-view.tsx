@@ -162,7 +162,7 @@ export default function ProfileRecentGamesScrollView({
                     <CardContent className='flex flex-col gap-3'>
                       <div className='flex flex-col'>
                         <span className='italic text-muted-foreground'>
-                          Diffculty:{' '}
+                          Difficulty:{' '}
                         </span>
                         <span className='font-bold'>
                           {game.difficultyString}

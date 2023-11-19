@@ -28,6 +28,7 @@ import ILevel from '../types/level.type';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
 import ILevelStats from '../types/levelStats.type';
+import IUserLevel from '../types/userLevel.type';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {
   const snapshot = await getDocs(collection(firestore, 'levels'));
@@ -281,4 +282,28 @@ export const bindLevelRankingStatsListener = (
     onLevelRankingStatsUpdated
   );
   return unbind;
+};
+
+export const getLevelsByUser = async (email: string): Promise<IUserLevel[]> => {
+  const snapshot = await getDocs(
+    collection(firestore, 'users', email, 'levels')
+  );
+  const levels: IUserLevel[] = [];
+  snapshot.forEach((result) => {
+    const levelData = result.data() as IUserLevel;
+    levelData.levelId = result.id;
+    levels.push(levelData);
+  });
+  return levels;
+};
+
+export const getLevelStatById = async (
+  levelId: string
+): Promise<{
+  topScore: number;
+  topScorer: string;
+  topScorerName: string;
+}> => {
+  const snapshot = await get(child(ref(realtime, 'levelStats'), levelId));
+  return snapshot.val();
 };
