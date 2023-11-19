@@ -142,19 +142,21 @@ export const uploadPlayedLevelForUser = async (
   const levelRef = doc(firestore, 'users', email, 'levels', level.id);
   const levelSnapshot = await getDoc(levelRef);
   if (!levelSnapshot.exists()) {
-    await setDoc(levelRef, {
-      lastPlayedAt: playedAt,
-      bestScore: score,
-      attempts: increment(1),
-      ref: doc(firestore, 'levels', level.id),
-    });
+    await setDoc(
+      levelRef,
+      {
+        lastPlayedAt: playedAt,
+        bestScore: score,
+        ref: doc(firestore, 'levels', level.id),
+      },
+      { merge: true }
+    );
   } else {
     const levelData = levelSnapshot.data();
     if (levelData) {
       const lastPlayedAt = levelData.lastPlayedAt;
       const bestScore = levelData.bestScore;
       await updateDoc(levelRef, {
-        attempts: increment(1),
         lastPlayedAt: lastPlayedAt > playedAt ? lastPlayedAt : playedAt,
         bestScore: bestScore > score ? bestScore : score,
       });

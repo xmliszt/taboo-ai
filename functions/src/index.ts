@@ -15,15 +15,26 @@ const db = adminDatabase();
  * This will update the user's gamePlayedCount under its
  * document in the users collection. Path: users/{userId}.
  * A new game is considered added to a user when the user
- * completes a game.
+ * completes a game. This will also update the `attempts`
+ * field in the level document under the users `levels`
+ * collection for the matching level, incrementing it by 1.
  */
 exports.onUserGameAdded = firestore
   .document('users/{userId}/games/{gameId}')
-  .onCreate((snapshot, context) => {
+  .onCreate(async (snapshot, context) => {
     logger.info('onUserGameAdded', snapshot, context);
-    fs.doc(`users/${context.params.userId}`).update({
+    await fs.doc(`users/${context.params.userId}`).update({
       gamePlayedCount: adminFirestore.FieldValue.increment(1),
     });
+    const levelId: string = snapshot.data()?.levelId;
+    if (levelId) {
+      await fs
+        .doc(`users/${context.params.userId}/levels/${levelId}`)
+        .set(
+          { attempts: adminFirestore.FieldValue.increment(1) },
+          { merge: true }
+        );
+    }
   });
 
 /**
