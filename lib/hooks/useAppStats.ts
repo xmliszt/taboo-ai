@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { listenToAppStats } from '../services/appService';
 
 export interface AppStatsProps {
-  visitors: number;
   views: number;
 }
 export const useAppStats = () => {
