@@ -88,7 +88,7 @@ export default function HomeMenuButtonArray() {
         icon: <User size={20} />,
         title: 'View My Profile',
         subtitle:
-          'Access your personal profile to see your game history, edit your nickname, and more!',
+          'Access your personal profile to see your game history, game statistics, edit your nickname, manage privacy settings, delete yoru account, and more!',
         ariaLabel: 'Click to visit your personal profile',
         href: '/profile',
         visible: user !== undefined && status === 'authenticated',
@@ -98,7 +98,7 @@ export default function HomeMenuButtonArray() {
         icon: <View size={20} />,
         title: 'Review Topics & Words',
         subtitle:
-          'This mode is only open for admin access. You can review and verify topics and worlds submitted.',
+          'Review and verify topics and worlds submitted. Only available for admin!',
         ariaLabel: 'Click to review topics as dev',
         href: '/x/review-words',
         visible: AdminManager.checkIsAdmin(user) && status === 'authenticated',

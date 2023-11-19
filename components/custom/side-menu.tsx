@@ -107,7 +107,7 @@ export default function SideMenu() {
         path: 'login',
         title: 'Login',
         subtitle:
-          'Login to Taboo AI to enjoy more features! You can contribute more topics for others to play. Personal profile and flashcards are coming soon!',
+          'Login to enjoy much more features! Contribute topics, personal profile, view game statistics, join rankings, and more!',
         visible: user === undefined || status !== 'authenticated',
         highlight: true,
         onClick: handleLogin,
@@ -140,7 +140,7 @@ export default function SideMenu() {
         path: '/profile',
         title: 'My Profile',
         subtitle:
-          'Access your personalized profile here. Manage your flashcards. Play custom games. And much more...',
+          'Access your personalized profile here. Change your nickname, view past results, game statistics, manage privacy settings, delete your account...',
         visible: user !== undefined && status === 'authenticated',
         href: '/profile',
       },
