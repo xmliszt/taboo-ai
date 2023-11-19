@@ -14,6 +14,8 @@ import { useAuth } from '../auth-provider';
 import { Medal, Trophy } from 'lucide-react';
 import { StarRatingBar } from './star-rating-bar';
 import { getOverallRating } from '@/lib/utils/gameUtils';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { LoginReminderProps } from './login-reminder-dialog';
 
 interface LevelCardProps {
   isShowingRank?: boolean;
@@ -30,14 +32,29 @@ export function LevelCard({
   topScorerEmail,
   topScorerName,
 }: LevelCardProps) {
-  const { user } = useAuth();
+  const { user, status } = useAuth();
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
 
   const goToLevel = () => {
     if (level) {
       setPersistence(HASH.level, level);
-      router.push(`/level/${level.id}`);
+      if (isShowingRank && status === 'unauthenticated') {
+        EventManager.fireEvent<LoginReminderProps>(
+          CustomEventKey.LOGIN_REMINDER,
+          {
+            title:
+              'You are not logged in. Only logged in users can have their results saved and ranked.',
+            redirectHref: `/level/${level.id}`,
+            afterDialogClose: () => {
+              router.push(`/level/${level.id}`);
+            },
+            cancelLabel: 'Play as Guest',
+          }
+        );
+      } else {
+        router.push(`/level/${level.id}`);
+      }
     } else {
       return router.push('/ai');
     }
