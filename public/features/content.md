@@ -1,6 +1,7 @@
-# 🥇 v3.1.1: Profile Page & Rankings! 🏆
+# 🥇 v3.1.2: Profile Page & Rankings 🏆
+_new patch v3.1.2 on 19 Nov 2023_
 
-Hi fellow Taboo AI enthusiasts and English Learners! We have some good news for you in this latest update.
+Hi fellow Taboo AI enthusiasts and English Learners! We have some good news for you in this latest update (v3.1).
 
 ## Profile Page is finally open 😎
 
@@ -25,6 +26,12 @@ If you go to the **Topics Page** ([Choose a topic](/levels)), you will find a ne
 ![2](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-0-2.png?raw=true)
 
 We have updated our profile page for _signed in user_. Now you will be able to revisit the results of your past 5 games played! [Head down to your profile](/profile) and find your past played games there!
+
+## View Topics You Played 
+
+![View topics](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-2-1.png?raw=true)
+
+You will also be able to view all the topics you have completed so far in your profile page! [Head down to your profile](/profile) and see how you perform at each topic! If you are the **top scorer** of that topic, you will see a shining card indicating you are the **champion** 🏆!
 
 ## View Game Statistics
 
