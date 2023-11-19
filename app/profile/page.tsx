@@ -18,6 +18,7 @@ import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BookX } from 'lucide-react';
 import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
+import ProfilePlayedTopicScrollView from '@/components/custom/profile/profile-topic-scroll-view';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -130,6 +131,7 @@ export default function ProfilePage() {
       </Alert>
 
       {user && <ProfileRecentGamesScrollView user={user} />}
+      {user && <ProfilePlayedTopicScrollView user={user} />}
       {user && <ProfileStatisticsCardView email={user.email} />}
 
       <ConstructionBlock
