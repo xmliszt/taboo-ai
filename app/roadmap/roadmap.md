@@ -2,6 +2,15 @@
 
 ## Release Notes (V3.0)
 
+### 19 Nov 2023 - V3.1.2
+
+- Profile page has a new section for user to view the played topics and quick access to play them!
+- Update some information on the app
+- Update greeting messages
+- Fix issue where nickname is not in sync
+- Fix issue where results are not uploaded successfully
+- Fix issue where user account deletion does not delete public ranks
+
 ### 18 Nov 2023 - V3.1.1
 
 - Topics page can toggle to view best score and top scorer instead
