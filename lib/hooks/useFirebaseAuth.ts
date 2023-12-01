@@ -78,8 +78,9 @@ export function useFirebaseAuth() {
               (await updateUIDIfNotExist(user.email, currentUser.uid));
             setUser(user);
             setStatus('authenticated');
+            const username = user.nickname ?? user.name;
             toast({
-              title: 'Welcome Back! ' + user.nickname ?? user.name ?? '',
+              title: 'Welcome Back!' + (username ? ' ' + username : ''),
             });
           } else {
             // new user
