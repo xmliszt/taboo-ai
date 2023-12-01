@@ -87,10 +87,12 @@ export function useFirebaseAuth() {
             const newUser = await updateUserFromAuth(currentUser);
             setUser(newUser);
             setStatus('authenticated');
+            const username = newUser.nickname ?? newUser.name;
             toast({
               title:
-                'Hi ' + newUser.nickname ??
-                newUser.name + '! Welcome to Taboo AI!',
+                'Hi' +
+                (username ? ' ' + username : '') +
+                '! Welcome to Taboo AI!',
             });
           }
         } catch (error) {
