@@ -78,18 +78,21 @@ export function useFirebaseAuth() {
               (await updateUIDIfNotExist(user.email, currentUser.uid));
             setUser(user);
             setStatus('authenticated');
+            const username = user.nickname ?? user.name;
             toast({
-              title: 'Welcome Back! ' + user.nickname ?? user.name ?? '',
+              title: 'Welcome Back!' + (username ? ' ' + username : ''),
             });
           } else {
             // new user
             const newUser = await updateUserFromAuth(currentUser);
             setUser(newUser);
             setStatus('authenticated');
+            const username = newUser.nickname ?? newUser.name;
             toast({
               title:
-                'Hi ' + newUser.nickname ??
-                newUser.name + '! Welcome to Taboo AI!',
+                'Hi' +
+                (username ? ' ' + username : '') +
+                '! Welcome to Taboo AI!',
             });
           }
         } catch (error) {
