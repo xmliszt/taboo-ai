@@ -2,24 +2,23 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { BookX } from 'lucide-react';
+import { updateUserFromUser } from '@/lib/services/userService';
 import { isMobile, isTablet } from 'react-device-detect';
-
-import { useAuth } from '@/components/auth-provider';
+import { Spinner } from '@/components/custom/spinner';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ConstructionBlock from '@/components/custom/common/construction-block';
-import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import ProfileDangerZone from '@/components/custom/profile/profile-danger-zone';
-import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
 import ProfileRecentGamesScrollView from '@/components/custom/profile/profile-recent-games-scroll-view';
 import ProfileStatisticsCardView from '@/components/custom/profile/profile-statistics-card-view';
-import ProfilePlayedTopicScrollView from '@/components/custom/profile/profile-topic-scroll-view';
-import { Spinner } from '@/components/custom/spinner';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { updateUserFromUser } from '@/lib/services/userService';
+import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { BookX, X } from 'lucide-react';
+import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
+import ProfilePlayedTopicScrollView from '@/components/custom/profile/profile-topic-scroll-view';
+import ProfileSubscriptionCard from '@/components/custom/profile/profile-subscription-card';
+import { useToast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -28,7 +27,21 @@ export default function ProfilePage() {
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
   const [isNicknameUpdating, setIsNicknameUpdating] = useState(false);
+  const [hideAlert, setHideAlert] = useState(false);
   const oldNickname = useRef<string>('');
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const anchor = searchParams.get('anchor');
+    if (anchor) {
+      const el = document.getElementById(anchor);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1000);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -113,19 +126,27 @@ export default function ProfilePage() {
           </label>
         </div>
       </div>
-
-      <Alert className='-mb-10 border-gray-500 text-gray-500 opacity-70'>
-        <BookX size={20} />
-        <AlertTitle className='leading-snug'>
-          Custom AI generated games will not be included in the records.
-        </AlertTitle>
-        <AlertDescription>
-          If you would like to see your custom games here, first play the game via AI Mode, and then
-          follow the prompt to contribute your AI custom topic to us. Then once your topic is
-          officially added to Taboo AI, you can play again and your game will be saved to your
-          records.
-        </AlertDescription>
-      </Alert>
+      {!hideAlert && (
+        <Alert className='text-gray-500 border-gray-500 opacity-70 -mb-10 relative'>
+          <BookX size={20} />
+          <AlertTitle className='leading-snug'>
+            <X
+              size={15}
+              className='absolute top-2 right-2 hover:cursor-pointer'
+              onClick={() => {
+                setHideAlert(true);
+              }}
+            />
+            Custom AI generated games will not be included in the records.
+          </AlertTitle>
+          <AlertDescription>
+            If you would like to see your custom games here, first play the game
+            via AI Mode, and then follow the prompt to contribute your AI custom
+            topic to us. Then once your topic is officially added to Taboo AI,
+            you can play again and your game will be saved to your records.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {user && <ProfileRecentGamesScrollView user={user} />}
       {user && <ProfilePlayedTopicScrollView user={user} />}
@@ -139,7 +160,15 @@ export default function ProfilePage() {
 
       {user && <ProfilePrivacySettingsCard className='w-full max-w-[500px]' user={user} />}
 
-      {user && status === 'authenticated' && <ProfileDangerZone className='w-full max-w-[500px]' />}
+      {user && <ProfileSubscriptionCard className='w-full max-w-[500px]' />}
+
+      {user && status === 'authenticated' && (
+        <ProfileDangerZone className='w-full max-w-[500px]' />
+      )}
     </main>
   );
 }
+function useAuth(): { user: any; status: any; } {
+  throw new Error('Function not implemented.');
+}
+

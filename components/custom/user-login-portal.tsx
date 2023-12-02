@@ -2,16 +2,18 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { HASH } from '@/lib/hash';
-import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import IGame from '@/lib/types/game.type';
-import { cn } from '@/lib/utils';
-import { isGameFinished } from '@/lib/utils/gameUtils';
-
+import {
+  BookMarked,
+  Construction,
+  LogIn,
+  LogOut,
+  PenTool,
+  ScrollText,
+  User,
+} from 'lucide-react';
+import { Spinner } from './spinner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +25,13 @@ import {
 import IconButton from '../ui/icon-button';
 import { toast } from '../ui/use-toast';
 import { LoginErrorEventProps } from './login-error-dialog';
-import { Spinner } from './spinner';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+import IGame from '@/lib/types/game.type';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import { HASH } from '@/lib/hash';
+import { Badge } from '../ui/badge';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { cn } from '@/lib/utils';
 
 interface UserMenuItem {
   label: string;
@@ -36,7 +44,7 @@ interface UserMenuItem {
 export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, status, login, logout } = useAuth();
+  const { user, userPlan, status, login, logout } = useAuth();
   const [game, setGame] = useState<IGame | null>(null);
 
   useEffect(() => {
@@ -62,6 +70,14 @@ export function UserLoginPortal() {
 
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
+      {
+        label: 'Change Subscription',
+        icon: <BookMarked />,
+        isVisible: pathname !== '/pricing',
+        onClick: () => {
+          router.push('/pricing');
+        },
+      },
       {
         label: 'Contribute A Topic',
         icon: <PenTool />,
@@ -121,6 +137,9 @@ export function UserLoginPortal() {
               <span className='font-light italic'>You are logged in as</span>
               <span>{user.email}</span>
             </DropdownMenuLabel>
+            {userPlan?.type && (
+              <Badge className='ml-2 mb-2'>{userPlan.type.toUpperCase()}</Badge>
+            )}
             <DropdownMenuSeparator />
             {userMenuItems.map(
               (item) =>
