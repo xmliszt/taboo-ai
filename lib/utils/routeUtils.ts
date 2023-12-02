@@ -16,6 +16,7 @@ export enum TabooPathname {
   X_REVIEW_WORDS = '/x/review-words',
   SITEMAP = '/sitemap',
   PROFILE = '/profile',
+  PRICING = '/pricing',
 }
 
 export class RouteManager {
@@ -46,7 +47,7 @@ export class RouteManager {
         return {
           isTransparent: true,
         };
-      case `/${route.split('/')[1]}` === '/level':
+      case /^\/level/.test(route):
         return {
           title: 'Taboo AI',
           hasBackButton: true,
@@ -95,6 +96,14 @@ export class RouteManager {
       case TabooPathname.PROFILE === route:
         return {
           title: 'My Profile',
+        };
+      case TabooPathname.PRICING === route:
+        return {
+          hasBackButton: true,
+        };
+      case /^\/checkout\/success/.test(route):
+        return {
+          title: 'Checkout Success',
         };
       default:
         return {

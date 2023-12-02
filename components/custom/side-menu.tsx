@@ -145,6 +145,14 @@ export default function SideMenu() {
         href: '/profile',
       },
       {
+        path: '/pricing',
+        title: 'Pricing',
+        subtitle:
+          'Become a PRO player and access all the PRO features by subscribing to Taboo AI!',
+        visible: true,
+        href: '/pricing',
+      },
+      {
         path: 'separator',
         title: 'separator',
         subtitle: '',

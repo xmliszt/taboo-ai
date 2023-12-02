@@ -13,12 +13,15 @@ import {
   updateUIDIfNotExist,
 } from '../services/userService';
 import IUser from '../types/user.type';
+import { IUserSubscriptionPlan } from '../types/subscription-plan.type';
+import { fetchCustomerSubscriptions } from '../services/subscriptionService';
 
 const TIMEOUT = 60000; // seconds
 
 export function useFirebaseAuth() {
   const { toast } = useToast();
   const [user, setUser] = useState<IUser>();
+  const [userPlan, setUserPlan] = useState<IUserSubscriptionPlan>();
   const [status, setStatus] = useState<AuthStatus>('loading');
   const loginTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -79,6 +82,19 @@ export function useFirebaseAuth() {
             setUser(user);
             setStatus('authenticated');
             const username = user.nickname ?? user.name;
+            // fetch subscription plan
+            const userPlan = await fetchCustomerSubscriptions(
+              user.email,
+              user.customerId
+            );
+            if (userPlan === undefined) {
+              // set free plan
+              setUserPlan({
+                type: 'free',
+              });
+            } else {
+              setUserPlan(userPlan);
+            }
             toast({
               title: 'Welcome Back!' + (username ? ' ' + username : ''),
             });
@@ -115,5 +131,5 @@ export function useFirebaseAuth() {
     return () => unsubscribe();
   }, [handleAuthUser]);
 
-  return { user, status, setStatus, login, logout };
+  return { user, userPlan, status, setStatus, login, logout };
 }

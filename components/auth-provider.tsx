@@ -1,6 +1,7 @@
 'use client';
 
 import { useFirebaseAuth } from '@/lib/hooks/useFirebaseAuth';
+import { IUserSubscriptionPlan } from '@/lib/types/subscription-plan.type';
 import IUser from '@/lib/types/user.type';
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 
@@ -12,6 +13,7 @@ export type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
 const authProviderContext = createContext<{
   user?: IUser;
+  userPlan?: IUserSubscriptionPlan;
   status: AuthStatus;
   setStatus?: Dispatch<SetStateAction<AuthStatus>>;
   login?: () => Promise<void>;
@@ -21,11 +23,12 @@ const authProviderContext = createContext<{
 });
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
-  const { user, status, setStatus, login, logout } = useFirebaseAuth();
+  const { user, userPlan, status, setStatus, login, logout } =
+    useFirebaseAuth();
   return (
     <authProviderContext.Provider
       {...props}
-      value={{ user, status, setStatus, login, logout }}
+      value={{ user, userPlan, status, setStatus, login, logout }}
     >
       {children}
     </authProviderContext.Provider>

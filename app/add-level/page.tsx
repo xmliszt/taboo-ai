@@ -484,15 +484,16 @@ const AddLevelPage = () => {
         onScroll={onScrollChange}
       >
         <CardContent className='p-6 pt-2'>
-          <p className='leading-snug text-sm mt-2 text-muted-foreground'>
+          <div className='leading-snug text-sm mt-2 text-muted-foreground'>
             You can create your custom topics here! Fill up the fields below and
             submit your topics. Your topic will be reviewed and uploaded to
             Taboo AI within 3 working days!{' '}
-            <InfoButton
-              className='!w-[20px] !h-[20px]'
-              tooltip='Read About Taboo AI Content Policy'
-              title='Taboo AI Content Policy'
-              description='Taboo AI, our innovative web application, is designed to
+            <span>
+              <InfoButton
+                size={15}
+                tooltip='Read About Taboo AI Content Policy'
+                title='Taboo AI Content Policy'
+                description='Taboo AI, our innovative web application, is designed to
                     ensure a safe and respectful user experience for everyone.
                     As part of our commitment to maintaining a positive online
                     environment, all content submitted by users will be
@@ -503,8 +504,9 @@ const AddLevelPage = () => {
                     measures, we aim to create a platform where users can freely
                     express themselves while upholding a responsible and
                     respectful community.'
-            />
-          </p>
+              />
+            </span>
+          </div>
           <div className='flex flex-col gap-1 mt-4'>
             <Label className='text-lg' htmlFor='input-topicName'>
               1. Topic name

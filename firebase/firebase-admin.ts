@@ -12,4 +12,5 @@ if (admin.apps.length === 0) {
   });
 }
 const auth = admin.auth();
-export { auth };
+const firestore = admin.firestore();
+export { auth, firestore };
