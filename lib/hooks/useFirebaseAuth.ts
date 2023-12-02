@@ -15,12 +15,15 @@ import {
   updateUserFromAuth,
 } from '../services/userService';
 import IUser from '../types/user.type';
+import { IUserSubscriptionPlan } from '../types/subscription-plan.type';
+import { fetchCustomerSubscriptions } from '../services/subscriptionService';
 
 const TIMEOUT = 60000; // seconds
 
 export function useFirebaseAuth() {
   const { toast } = useToast();
   const [user, setUser] = useState<IUser>();
+  const [userPlan, setUserPlan] = useState<IUserSubscriptionPlan>();
   const [status, setStatus] = useState<AuthStatus>('loading');
   const loginTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -65,29 +68,47 @@ export function useFirebaseAuth() {
     }
   }, []);
 
-  const handleAuthUser = useCallback(async (currentUser: User | null | undefined) => {
-    if (currentUser && currentUser.email) {
-      try {
-        const user = await getUser(currentUser.email);
-        if (user) {
-          // existing user
-          await signinUser(user.email);
-          user.uid === undefined && (await updateUIDIfNotExist(user.email, currentUser.uid));
-          setUser(user);
-          setStatus('authenticated');
-          const username = user.nickname ?? user.name;
-          toast({
-            title: 'Welcome Back!' + (username ? ' ' + username : ''),
-          });
-        } else {
-          // new user
-          const newUser = await updateUserFromAuth(currentUser);
-          setUser(newUser);
-          setStatus('authenticated');
-          const username = newUser.nickname ?? newUser.name;
-          toast({
-            title: 'Hi' + (username ? ' ' + username : '') + '! Welcome to Taboo AI!',
-          });
+  const handleAuthUser = useCallback(
+    async (currentUser: User | null | undefined) => {
+      if (currentUser && currentUser.email) {
+        try {
+          const user = await getUser(currentUser.email);
+          if (user) {
+            // existing user
+            await signinUser(user.email);
+            user.uid === undefined &&
+              (await updateUIDIfNotExist(user.email, currentUser.uid));
+            setUser(user);
+            setStatus('authenticated');
+            const username = user.nickname ?? user.name;
+            // fetch subscription plan
+            const userPlan = await fetchCustomerSubscriptions(
+              user.email,
+              user.customerId
+            );
+            if (userPlan === undefined) {
+              // set free plan
+              setUserPlan({
+                type: 'free',
+              });
+            } else {
+              setUserPlan(userPlan);
+            }
+            toast({
+              title: 'Welcome Back!' + (username ? ' ' + username : ''),
+            });
+          } else {
+            // new user
+            const newUser = await updateUserFromAuth(currentUser);
+            setUser(newUser);
+            setStatus('authenticated');
+            const username = newUser.nickname ?? newUser.name;
+            toast({
+              title:
+                'Hi' +
+                (username ? ' ' + username : '') +
+                '! Welcome to Taboo AI!',
+            });
         }
       } catch (error) {
         console.log(error.message);
@@ -107,5 +128,5 @@ export function useFirebaseAuth() {
     return () => unsubscribe();
   }, [handleAuthUser]);
 
-  return { user, status, setStatus, login, logout };
+  return { user, userPlan, status, setStatus, login, logout };
 }

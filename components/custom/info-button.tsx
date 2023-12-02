@@ -12,6 +12,7 @@ interface InfoButtonProps {
   description?: string;
   tooltip?: string;
   className?: string;
+  size?: number;
 }
 
 export const InfoButton = ({
@@ -19,12 +20,18 @@ export const InfoButton = ({
   description,
   tooltip = 'View Info',
   className = '',
+  size = 20,
 }: InfoButtonProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <IconButton asChild className={cn(className, '')} variant='link' tooltip={tooltip}>
-          <HelpCircle color='black' size={20} />
+        <IconButton
+          asChild
+          className={cn(className, '-ml-1')}
+          variant='link'
+          tooltip={tooltip}
+        >
+          <HelpCircle size={size} />
         </IconButton>
       </PopoverTrigger>
       <PopoverContent className='bg-muted leading-snug text-card-foreground'>
