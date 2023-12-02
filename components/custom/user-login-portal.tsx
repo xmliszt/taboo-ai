@@ -181,7 +181,7 @@ export function UserLoginPortal() {
                   router.push('/pricing');
                 }}
               >
-                Upgrade subscription
+                Upgrade My Plan
               </Button>
             )}
             {userPlan?.trialEndDate && (
