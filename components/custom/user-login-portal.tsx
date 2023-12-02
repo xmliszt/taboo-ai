@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/components/auth-provider';
 import {
+  BookMarked,
   Construction,
   LogIn,
   LogOut,
@@ -29,6 +30,7 @@ import { isGameFinished } from '@/lib/utils/gameUtils';
 import IGame from '@/lib/types/game.type';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import { HASH } from '@/lib/hash';
+import { Badge } from '../ui/badge';
 
 interface UserMenuItem {
   label: string;
@@ -41,7 +43,7 @@ interface UserMenuItem {
 export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, status, login, logout } = useAuth();
+  const { user, userPlan, status, login, logout } = useAuth();
   const [game, setGame] = useState<IGame | null>(null);
 
   useEffect(() => {
@@ -67,6 +69,14 @@ export function UserLoginPortal() {
 
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
+      {
+        label: 'Change Subscription',
+        icon: <BookMarked />,
+        isVisible: pathname !== '/pricing',
+        onClick: () => {
+          router.push('/pricing');
+        },
+      },
       {
         label: 'Contribute A Topic',
         icon: <PenTool />,
@@ -132,6 +142,9 @@ export function UserLoginPortal() {
               <span className='italic font-light'>You are logged in as</span>
               <span>{user.email}</span>
             </DropdownMenuLabel>
+            {userPlan?.type && (
+              <Badge className='ml-2 mb-2'>{userPlan.type.toUpperCase()}</Badge>
+            )}
             <DropdownMenuSeparator />
             {userMenuItems.map(
               (item) =>

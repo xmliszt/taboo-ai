@@ -5,6 +5,8 @@ const allowedOrigins = [
   /taboo-.+-xmliszt\.vercel\.app$/,
   /taboo-ai-xmliszt-xmliszt-team\.vercel\.app$/,
   /localhost:\d+$/,
+  /127\.0\.0\.1:\d+$/,
+  /\[::1\]:\d+$/,
   /192\.168\.\d+\.\d+:\d+$/,
 ];
 
