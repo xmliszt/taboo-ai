@@ -120,7 +120,6 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       setIsLoading(true);
       const redirectUrl = await createCheckoutSession(
         priceId,
-        user?.name,
         user?.email,
         user?.customerId
       );
