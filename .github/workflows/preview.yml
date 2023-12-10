@@ -1,6 +1,6 @@
 name: Vercel Preview Deployment
 env:
-  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+  PREVIEW_GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.PREVIEW_GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
@@ -23,6 +23,8 @@ jobs:
       - name: Running Jest Tests
         run: npm test
   Firebase-Cloud-Functions-Preview-Deployment:
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: google-application-credentials.json
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -36,8 +38,12 @@ jobs:
         run: npm ci
       - name: Install Firebase CLI
         run: npm install --global firebase-tools
+      - name: Prepare Google Application Credentials
+        shell: bash
+        run: |
+          echo "${{ secrets.PREVIEW_GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}" | base64 --decode > "google-application-credentials.json"
       - name: Deploy Firebase Cloud Functions
-        run: firebase use preview && firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
+        run: firebase use preview && firebase deploy --only functions
   Deploy-Preview:
     needs: Unit-Test
     timeout-minutes: 60
@@ -51,6 +57,8 @@ jobs:
           node-version: 19.x
       - name: Install Node Dependencies
         run: npm ci
+      - name: Install Cloud Functions Node Dependencies
+        run: cd functions && npm ci && cd ..
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Pull Vercel Environment Information

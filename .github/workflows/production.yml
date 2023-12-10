@@ -32,6 +32,8 @@ jobs:
           node-version: 19.x
       - name: Install Node Dependencies
         run: npm ci
+      - name: Install Cloud Functions Node Dependencies
+        run: cd functions && npm ci && cd ..
       - name: Install Firebase CLI
         run: npm install --global firebase-tools
       - name: Deploy Firebase Cloud Functions
