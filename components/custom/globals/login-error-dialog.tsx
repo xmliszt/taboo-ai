@@ -11,7 +11,7 @@ import {
   AlertDialogHeader,
 } from '@/components/ui/alert-dialog';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../auth-provider';
+import { useAuth } from '../../auth-provider';
 import { useRouter } from 'next/navigation';
 
 export interface LoginErrorEventProps {

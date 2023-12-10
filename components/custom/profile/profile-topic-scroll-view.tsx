@@ -9,6 +9,7 @@ import { Skeleton } from '../skeleton';
 import IUserLevel from '@/lib/types/userLevel.type';
 import ProfileTopicsCardView from './topics/profile-topics-card-view';
 import { RefreshCcw } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProfilePlayedTopicScrollView({
   user,
@@ -76,6 +77,17 @@ export default function ProfilePlayedTopicScrollView({
       <div className='w-full overflow-x-auto flex flex-row gap-8 p-8 justify-start rounded-lg border leading-snug'>
         {isLoading ? (
           <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+        ) : playedTopics.length === 0 ? (
+          <div className='text-center w-full'>
+            You have not completed any topics yet.{' '}
+            <Link
+              href='/levels'
+              className='underline hover:text-muted-foreground transition-all'
+            >
+              Go play some topics
+            </Link>
+            .
+          </div>
         ) : (
           playedTopics.map((topic) => (
             <ProfileTopicsCardView

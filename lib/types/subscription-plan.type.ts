@@ -27,8 +27,10 @@ export interface IUserSubscriptionPlan {
   type?: SubscriptionPlanType; // if undefined, user is default under free plan
   tier?: number; // The tier of the plan, 1 is the lowest, 2 is the second lowest, etc. This is for determining downgrade or upgrade
   status?: Stripe.Subscription.Status; // free plan does not have status
-  priceId?: string; // from Stripe. free plan does not have priceId
+  priceId?: string; // price ID from Stripe. free plan does not have priceId
+  subId?: string; // subscription ID from Stripe. free plan does not have subId
   trialEndDate?: moment.Moment;
   nextBillingDate?: moment.Moment;
   currentBillingStartDate?: moment.Moment;
+  subscription?: Stripe.Subscription;
 }

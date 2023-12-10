@@ -12,6 +12,6 @@ export default interface IUser {
   gamePlayedCount?: number;
   levelPlayedCount?: number;
   anonymity?: boolean; // Whether to show user's nickname in leaderboard
-  customerId?: string; // Stripe subscription customer ID, if null, means user is not subscribed yet.
+  customerId?: string; // Stripe subscription customer ID, if null, means user has never subscribed before, so does not exist in Stripe
   customerPlanType?: SubscriptionPlanType; // The current plan type user is subscribed to, this is a Taboo AI defined ID, not the Stripe price ID
 }

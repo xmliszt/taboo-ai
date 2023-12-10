@@ -1,5 +1,6 @@
 name: Vercel Preview Deployment
 env:
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
@@ -21,6 +22,22 @@ jobs:
         run: npm ci
       - name: Running Jest Tests
         run: npm test
+  Firebase-Cloud-Functions-Preview-Deployment:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Firebase Cloud Functions
+        run: firebase use preview && firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
   Deploy-Preview:
     needs: Unit-Test
     timeout-minutes: 60

@@ -26,8 +26,8 @@ export default function ProfileStatisticsCardView({
   const router = useRouter();
 
   useEffect(() => {
-    getUserData(email);
-  }, []);
+    email && getUserData(email);
+  }, [email]);
 
   const getUserData = async (email: string) => {
     try {

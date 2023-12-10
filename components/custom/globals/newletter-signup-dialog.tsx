@@ -6,7 +6,12 @@ import {
 } from '@/lib/cache';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useCallback, useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../ui/dialog';
 import semver from 'semver';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
