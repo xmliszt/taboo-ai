@@ -32,7 +32,7 @@ export default function PricingPage() {
       </h2>
       <p></p>
       {isLoading ? (
-        <Skeleton className='mt-10 w-full' numberOfRows={10} />
+        <Skeleton className='mt-10 w-full px-4' numberOfRows={10} />
       ) : (
         <PricingCardCarousell className='-mt-2' plans={plans} />
       )}
