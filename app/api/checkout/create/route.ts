@@ -20,14 +20,12 @@ export async function POST(req: NextRequest) {
     );
 
   let priceId: string;
-  let customerName: string;
   let customerEmail: string;
   let customerId: string;
 
   try {
     const body = await req.json();
     priceId = body.priceId;
-    customerName = body.customerName;
     customerEmail = body.customerEmail;
     customerId = body.customerId;
   } catch (error) {
@@ -43,6 +41,69 @@ export async function POST(req: NextRequest) {
   const targetPlan = availablePlans.find((plan) => plan.priceId === priceId);
   if (!targetPlan) {
     return NextResponse.json({ message: 'Plan not found' }, { status: 404 });
+  }
+
+  // Check if customer already has a subscription
+  if (customerId) {
+    try {
+      const subscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+      });
+      if (subscriptions.data.length > 0) {
+        return NextResponse.json(
+          { message: 'Customer already has a subscription' },
+          { status: 400 }
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Stripe.errors.StripeError) {
+        return NextResponse.json(
+          { message: error.message },
+          { status: error.statusCode }
+        );
+      } else {
+        return NextResponse.json(
+          { message: 'Failed to fetch subscriptions' },
+          { status: 500 }
+        );
+      }
+    }
+  }
+
+  // Check by email if customer already has a subscription
+  if (customerEmail) {
+    try {
+      const customers = await stripe.customers.list({
+        email: customerEmail,
+        limit: 1,
+      });
+      if (customers.data.length > 0) {
+        const customer = customers.data[0];
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customer.id,
+        });
+        if (subscriptions.data.length > 0) {
+          return NextResponse.json(
+            { message: 'Customer already has a subscription' },
+            { status: 400 }
+          );
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Stripe.errors.StripeError) {
+        return NextResponse.json(
+          { message: error.message },
+          { status: error.statusCode }
+        );
+      } else {
+        return NextResponse.json(
+          { message: 'Failed to fetch subscriptions' },
+          { status: 500 }
+        );
+      }
+    }
   }
 
   const checkoutSessionCreateParams: Stripe.Checkout.SessionCreateParams = {
@@ -83,12 +144,6 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-    // If customerID present, we update the customer object in Stripe with customer's name
-    const customerID = customerId ?? session.customer;
-    customerID &&
-      (await stripe.customers.update(customerID, {
-        name: customerName,
-      }));
     return NextResponse.json({ redirectUrl: session.url });
   } catch (error) {
     console.error(error);
