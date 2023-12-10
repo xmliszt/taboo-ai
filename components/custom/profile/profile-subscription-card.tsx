@@ -56,9 +56,7 @@ export default function ProfileSubscriptionCard({
   const userHasCancelledSubscription = subscriptionCancelDate !== undefined;
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      refreshUserSubscriptionPlan?.();
-    }
+    refreshUserSubscriptionPlan?.();
   }, [status]);
 
   const proceedToCancelSubscription = async () => {
