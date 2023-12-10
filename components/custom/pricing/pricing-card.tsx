@@ -64,8 +64,20 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
     : undefined;
 
   const subscribeTo = async (priceId?: string) => {
+    // If subscription is already cancelled, do not allow to subscribe again
+    if (subscriptionCancelDate) {
+      return confirmAlert({
+        title: 'You have already cancelled your subscription',
+        description: `You have already cancelled your subscription. Your subscription will end on ${subscriptionCancelDate.format(
+          'DD MMM YYYY'
+        )}. You can still use the paid features until then. After that, you will automatically switch to FREE plan.`,
+        hasConfirmButton: false,
+        cancelLabel: 'OK',
+      });
+    }
     // If it is a free plan, it does not have priceId, its type is 'free'.
     if (!priceId || plan.type === 'free') {
+      // user is currently trialing and not cancelled, show cancel trial dialog
       if (userPlan?.status === 'trialing') {
         return confirmAlert({
           title: 'You are already on a free trial',
@@ -78,17 +90,8 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
           },
         });
       }
+      // user is on active subscription and not cancelled, show downgrade dialog
       if (userPlan?.status === 'active') {
-        if (subscriptionCancelDate) {
-          return confirmAlert({
-            title: 'You have already cancelled your subscription',
-            description: `You have already cancelled your subscription. Your subscription will end on ${subscriptionCancelDate.format(
-              'DD MMM YYYY'
-            )}. You can still use the paid features until then. After that, you will automatically switch to FREE plan.`,
-            hasConfirmButton: false,
-            cancelLabel: 'OK',
-          });
-        }
         return confirmAlert({
           title: 'Downgrade to FREE plan',
           description:
@@ -98,7 +101,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
           },
         });
       }
-      // Other cases where subscription is not active or trailing
+      // Other cases where subscription is not active or trialing
       return confirmAlert({
         title: 'You do not have an active paid subscription',
         description:
@@ -107,6 +110,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         cancelLabel: 'OK',
       });
     }
+    // If user is not logged in, show login reminder
     if (status !== 'authenticated') {
       return EventManager.fireEvent<LoginReminderProps>(
         CustomEventKey.LOGIN_REMINDER,
@@ -116,6 +120,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         }
       );
     }
+    // user logged in, selected paid plan and valid, create checkout session
     try {
       setIsLoading(true);
       const redirectUrl = await createCheckoutSession(
