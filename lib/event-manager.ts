@@ -6,6 +6,9 @@ export enum CustomEventKey {
   NEWLETTER_DIALOG = 'toggle-newsletter-dialog',
   OPEN_SCORE_INFO_DIALOG = 'toggle-score-info-dialog',
   STORAGE_UPDATE = 'storage-update-event',
+  SUBSCRIPTION_LOCK_DIALOG = 'toggle-subscription-lock-dialog',
+  GENERIC_ALERT_DIALOG = 'toggle-generic-alert-dialog',
+  GENERIC_FEEDBACK_DIALOG = 'toggle-generic-feedback-dialog',
 }
 
 export class EventManager {

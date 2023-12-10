@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { askAIForCreativeTopic } from '../../lib/services/aiService';
 import { CONSTANTS } from '../../lib/constants';
 import { useRouter } from 'next/navigation';
@@ -13,13 +13,29 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/custom/spinner';
 import { setPersistence } from '@/lib/persistence/persistence';
 import { HASH } from '@/lib/hash';
+import { useAuth } from '@/components/auth-provider';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function AiPage() {
+  const { status, userPlan } = useAuth();
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { toast } = useToast();
   const router = useRouter();
+  const isLocked =
+    status === 'unauthenticated' ||
+    (status === 'authenticated' && userPlan?.type === 'free');
+
+  useEffect(() => {
+    if (isLocked) {
+      toast({
+        title: 'You need a paid subscription to access this feature',
+      });
+      router.push('/pricing');
+    }
+  }, [isLocked]);
 
   const submitForm = async (event: FormEvent) => {
     event.preventDefault();
@@ -50,6 +66,11 @@ export default function AiPage() {
     setTopic(event.target.value);
     setErrorMessage(undefined);
   };
+
+  if (status === 'loading' || isLocked)
+    return (
+      <main className='w-full h-full flex flex-col items-center pt-20 px-10'></main>
+    );
 
   return (
     <>

@@ -11,6 +11,7 @@ import {
 import moment from 'moment';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
+import { SubscriptionPlanType } from '../types/subscription-plan.type';
 
 export const getUser = async (
   email: string
@@ -83,4 +84,35 @@ export const incrementGameAttemptedCount = async (email: string) => {
   await updateDoc(doc(firestore, 'users', email), {
     gameAttemptedCount: increment(1),
   });
+};
+
+export const updateUserSubscriptionPlan = async (
+  email: string,
+  customerPlanType: SubscriptionPlanType
+) => {
+  await updateDoc(doc(firestore, 'users', email), {
+    customerPlanType,
+  });
+};
+
+export const fetchUserSubscription = async (
+  email: string
+): Promise<
+  | {
+      email: string;
+      customerId: string;
+      customerPlanType: SubscriptionPlanType;
+    }
+  | undefined
+> => {
+  const snapshot = await getDoc(doc(firestore, 'subscriptions', email));
+  if (snapshot.exists()) {
+    return snapshot.data() as {
+      email: string;
+      customerId: string;
+      customerPlanType: SubscriptionPlanType;
+    };
+  } else {
+    return undefined;
+  }
 };

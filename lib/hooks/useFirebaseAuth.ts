@@ -11,14 +11,19 @@ import {
   getUser,
   signinUser,
   updateUIDIfNotExist,
+  updateUserSubscriptionPlan,
+  fetchUserSubscription,
 } from '../services/userService';
 import IUser from '../types/user.type';
+import { IUserSubscriptionPlan } from '../types/subscription-plan.type';
+import { fetchCustomerSubscriptions } from '../services/subscriptionService';
 
 const TIMEOUT = 60000; // seconds
 
 export function useFirebaseAuth() {
   const { toast } = useToast();
   const [user, setUser] = useState<IUser>();
+  const [userPlan, setUserPlan] = useState<IUserSubscriptionPlan>();
   const [status, setStatus] = useState<AuthStatus>('loading');
   const loginTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -79,6 +84,24 @@ export function useFirebaseAuth() {
             setUser(user);
             setStatus('authenticated');
             const username = user.nickname ?? user.name;
+            // fetch subscription plan
+            const userPlan = await fetchCustomerSubscriptions(
+              user.email,
+              user.customerId
+            );
+            if (userPlan === undefined) {
+              // set free plan
+              setUserPlan({
+                type: 'free',
+              });
+              await updateUserSubscriptionPlan(user.email, 'free');
+            } else {
+              setUserPlan(userPlan);
+              await updateUserSubscriptionPlan(
+                user.email,
+                userPlan.type ?? 'free'
+              );
+            }
             toast({
               title: 'Welcome Back!' + (username ? ' ' + username : ''),
             });
@@ -87,6 +110,14 @@ export function useFirebaseAuth() {
             const newUser = await updateUserFromAuth(currentUser);
             setUser(newUser);
             setStatus('authenticated');
+            // fetch if existing subscription saved
+            const userExistingSubscription = await fetchUserSubscription(
+              newUser.email
+            );
+            await updateUserSubscriptionPlan(
+              newUser.email,
+              userExistingSubscription?.customerPlanType ?? 'free'
+            );
             const username = newUser.nickname ?? newUser.name;
             toast({
               title:
@@ -96,16 +127,37 @@ export function useFirebaseAuth() {
             });
           }
         } catch (error) {
-          console.log(error.message);
+          console.error(error.message);
           setStatus('unauthenticated');
         }
       } else {
         setUser(undefined);
+        setUserPlan(undefined);
         setStatus('unauthenticated');
       }
     },
     []
   );
+
+  const refreshUserSubscriptionPlan = async () => {
+    if (user) {
+      const userSubscription = await fetchUserSubscription(user.email);
+      const userPlan = await fetchCustomerSubscriptions(
+        user.email,
+        userSubscription?.customerId
+      );
+      if (userPlan === undefined) {
+        // set free plan
+        setUserPlan({
+          type: 'free',
+        });
+      } else {
+        setUserPlan(userPlan);
+      }
+    } else {
+      setUserPlan(undefined);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
@@ -115,5 +167,13 @@ export function useFirebaseAuth() {
     return () => unsubscribe();
   }, [handleAuthUser]);
 
-  return { user, status, setStatus, login, logout };
+  return {
+    user,
+    userPlan,
+    status,
+    setStatus,
+    login,
+    logout,
+    refreshUserSubscriptionPlan,
+  };
 }

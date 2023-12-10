@@ -5,10 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Next.js: debug full stack",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "npm run vercel:dev",
+            "serverReadyAction": {
+              "pattern": "started server on .+, url: (https?://.+)",
+              "uriFormat": "%s",
+              "action": "debugWithChrome"
+            }
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
+            "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
         }
     ]

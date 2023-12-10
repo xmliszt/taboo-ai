@@ -13,8 +13,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../auth-provider';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import Link from 'next/link';
-import { LoginErrorEventProps } from './login-error-dialog';
-import { LoginReminderProps } from './login-reminder-dialog';
+import { LoginErrorEventProps } from './globals/login-error-dialog';
+import { LoginReminderProps } from './globals/login-reminder-dialog';
 import AccessLinkCard, { MenuItem } from './common/access-link-card';
 import { isGameFinished } from '@/lib/utils/gameUtils';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
@@ -143,6 +143,14 @@ export default function SideMenu() {
           'Access your personalized profile here. Change your nickname, view past results, game statistics, manage privacy settings, delete your account...',
         visible: user !== undefined && status === 'authenticated',
         href: '/profile',
+      },
+      {
+        path: '/pricing',
+        title: 'Pricing',
+        subtitle:
+          'Taboo AI is free to play. However, you can choose to subscribe to our PRO plan to enjoy exclusive features!',
+        visible: true,
+        href: '/pricing',
       },
       {
         path: 'separator',

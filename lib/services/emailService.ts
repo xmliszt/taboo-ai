@@ -38,13 +38,7 @@ export const sendEmail = async (
   html?: string
 ) => {
   const url = `/api/mail`;
-  return await request<{
-    nickname: string;
-    fromEmail: string;
-    content: string;
-    subject?: string;
-    html?: string;
-  }>(url, 'POST', {
+  return await request<{ message: string }>(url, 'POST', {
     nickname: nickname,
     email: fromEmail,
     message: content,
@@ -62,10 +56,7 @@ export const sendEmailX = async (
 ) => {
   const url = `/api/x/mail`;
   return await request<{
-    topic: string;
-    type: 'verify' | 'reject';
-    to: string;
-    reason?: RejectionReason;
+    message: string;
   }>(
     url,
     'POST',
