@@ -81,7 +81,7 @@ export default function LevelsPage() {
         onScroll={onScrollChange}
       >
         {/* AI Mode Card */}
-        <LevelCard />
+        <LevelCard allowedPlanType={['pro']} />
 
         {/* Levels Card */}
         {isFetchingLevels ? (

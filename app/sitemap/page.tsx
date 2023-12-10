@@ -19,6 +19,7 @@ export default async function SitemapPage() {
     { title: 'Contribute A Topic', href: '/add-level' },
     { title: 'Results', href: '/result' },
     { title: 'Profile', href: '/profile' },
+    { title: 'Pricing', href: '/pricing' },
   ];
   const baseUrl = RouteManager.baseUrl;
   const informations: SitemapRoute[] = [

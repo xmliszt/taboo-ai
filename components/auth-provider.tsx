@@ -19,17 +19,33 @@ const authProviderContext = createContext<{
   setStatus?: Dispatch<SetStateAction<AuthStatus>>;
   login?: () => Promise<void>;
   logout?: () => Promise<void>;
+  refreshUserSubscriptionPlan?: () => Promise<void>;
 }>({
   status: 'loading',
 });
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
-  const { user, userPlan, status, setStatus, login, logout } =
-    useFirebaseAuth();
+  const {
+    user,
+    userPlan,
+    status,
+    setStatus,
+    login,
+    logout,
+    refreshUserSubscriptionPlan,
+  } = useFirebaseAuth();
   return (
     <authProviderContext.Provider
       {...props}
-      value={{ user, userPlan, status, setStatus, login, logout }}
+      value={{
+        user,
+        userPlan,
+        status,
+        setStatus,
+        login,
+        logout,
+        refreshUserSubscriptionPlan,
+      }}
     >
       {children}
     </authProviderContext.Provider>

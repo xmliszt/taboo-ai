@@ -1,8 +1,3 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { deleteUser, getAuth } from 'firebase/auth';
-import { Skull } from 'lucide-react';
-
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -13,12 +8,25 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { deleteUserFromFirebase } from '@/lib/services/userService';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-
+import { Skull } from 'lucide-react';
+import { useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { useToast } from '@/components/ui/use-toast';
 import { Spinner } from '../spinner';
+import { deleteUserFromFirebase, getUser } from '@/lib/services/userService';
+import { useRouter } from 'next/navigation';
+import {
+  cancelSubscription,
+  fetchCustomerSubscriptions,
+} from '@/lib/services/subscriptionService';
 
 const auth = getAuth();
 
@@ -30,11 +38,25 @@ export default function ProfileDangerZone({ className }: { className?: string })
 
   const proceedToDeleteUser = async () => {
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user || !user.email) {
+      toast({
+        title:
+          'We cannot identify the user to be deleted. Please retry login and try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    const userDoc = await getUser(user.email);
+    const userSubscription = await fetchCustomerSubscriptions(
+      user.email,
+      userDoc?.customerId
+    );
     try {
       setIsDeleting(true);
-      user.email && (await deleteUserFromFirebase(user.email));
-      await deleteUser(user);
+      user.email && (await deleteUserFromFirebase(user.email)); // Firebase db delete user
+      await user.delete(); // Firebase auth delete user
+      userSubscription?.subId &&
+        (await cancelSubscription(userSubscription.subId)); // If subscription ID presents, cancel the subscription from Stripe
       toast({ title: 'Your account has been deleted.' });
       router.push('/');
     } catch (error) {
@@ -57,8 +79,15 @@ export default function ProfileDangerZone({ className }: { className?: string })
             <CardTitle>Danger Zone</CardTitle>
           </CardHeader>
           <CardDescription>
-            Once you delete your account, there is no going back. All your data with us will be
-            permanently deleted. Please be certain.
+            Once you delete your account, there is no going back. All your data
+            with us will be permanently deleted.{' '}
+            <b>
+              Your active subscription will also be cancelled. However, you
+              ongoing paid subscription (including trial) will still be
+              available until the end of the billing cycle if you log in with
+              the same email account again.
+            </b>{' '}
+            Please be certain.
           </CardDescription>
           <Button
             className='mt-4'
@@ -83,8 +112,15 @@ export default function ProfileDangerZone({ className }: { className?: string })
               Are you absolutely sure?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              The action cannot be undone. This will permanently delete your account and remove all
-              your data from our servers.
+              The action cannot be undone. This will permanently delete your
+              account and remove all your data from our server.{' '}
+              <b>
+                Your current subscription will also be cancelled automatically.
+                However, you ongoing subscription will still be available until
+                the end of the billing cycle if you log in with the same email
+                account again.
+              </b>{' '}
+              This action is <b>irreversible</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

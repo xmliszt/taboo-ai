@@ -2,11 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { isMobile } from 'react-device-detect';
-
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { HASH } from '@/lib/hash';
+import { LoginErrorEventProps } from './globals/login-error-dialog';
+import AccessLinkCard, { MenuItem } from './common/access-link-card';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
 import { isGameFinished } from '@/lib/utils/gameUtils';
@@ -14,9 +11,11 @@ import { isGameFinished } from '@/lib/utils/gameUtils';
 import { useAuth } from '../auth-provider';
 import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
-import AccessLinkCard, { MenuItem } from './common/access-link-card';
-import { LoginErrorEventProps } from './login-error-dialog';
-import { LoginReminderProps } from './login-reminder-dialog';
+import { usePathname, useRouter } from 'next/navigation';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { HASH } from '@/lib/hash';
+import { LoginReminderProps } from './globals/login-reminder-dialog';
+import { isMobile } from 'react-device-detect';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -139,7 +138,7 @@ export default function SideMenu() {
         path: '/pricing',
         title: 'Pricing',
         subtitle:
-          'Become a PRO player and access all the PRO features by subscribing to Taboo AI!',
+          'Taboo AI is free to play. However, you can choose to subscribe to our PRO plan to enjoy exclusive features!',
         visible: true,
         href: '/pricing',
       },

@@ -1,19 +1,27 @@
 'use client';
 
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
+import {
+  BookMarked,
+  BookPlus,
+  PenSquare,
+  Quote,
+  ScrollText,
+  User,
+  View,
+} from 'lucide-react';
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { HASH } from '@/lib/hash';
+import { LoginReminderProps } from '../globals/login-reminder-dialog';
+import { isGameFinished } from '@/lib/utils/gameUtils';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
-import { isGameFinished } from '@/lib/utils/gameUtils';
 
 import { HomeMenuButton } from '../home-menu-button';
-import { LoginReminderProps } from '../login-reminder-dialog';
+import { HASH } from '@/lib/hash';
 
 interface HomeMenuButtonData {
   key: string;
@@ -27,7 +35,7 @@ interface HomeMenuButtonData {
 }
 
 export default function HomeMenuButtonArray() {
-  const { user, status } = useAuth();
+  const { user, userPlan, status } = useAuth();
   const router = useRouter();
   const [game, setGame] = useState<IGame | null>(null);
 
@@ -82,6 +90,16 @@ export default function HomeMenuButtonArray() {
         visible: isGameFinished(game) && status !== 'authenticated',
       },
       {
+        key: 'view pricing',
+        icon: <BookMarked size={20} />,
+        title: 'Taboo AI Pricing',
+        subtitle:
+          'Taboo AI offers both free and paid plans. Choose a plan that suits you the best! PRO plan offers more exclusive features, including AI Mode!',
+        ariaLabel: 'Click to upgrade your subscription',
+        href: '/pricing',
+        visible: status !== 'authenticated',
+      },
+      {
         key: 'view my profile',
         icon: <User size={20} />,
         title: 'View My Profile',
@@ -90,6 +108,16 @@ export default function HomeMenuButtonArray() {
         ariaLabel: 'Click to visit your personal profile',
         href: '/profile',
         visible: user !== undefined && status === 'authenticated',
+      },
+      {
+        key: 'upgrade subscription',
+        icon: <BookPlus size={20} />,
+        title: 'Upgrade Your Subscription',
+        subtitle:
+          'Become a PRO. Upgrade your subscription to enjoy more exclusive PRO features',
+        ariaLabel: 'Click to upgrade your subscription',
+        href: '/pricing',
+        visible: userPlan?.type === 'free' && status === 'authenticated',
       },
       {
         key: 'review topic and words',
@@ -101,7 +129,7 @@ export default function HomeMenuButtonArray() {
         visible: AdminManager.checkIsAdmin(user) && status === 'authenticated',
       },
     ],
-    [user, status, game]
+    [user, status, game, userPlan]
   );
 
   return (

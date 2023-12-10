@@ -18,6 +18,18 @@ export async function GET(req: NextRequest) {
     );
   }
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const customer = await stripe.customers.retrieve(customerId);
-  return NextResponse.json({ customer });
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    return NextResponse.json({ customer });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.statusCode }
+      );
+    } else {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
 }

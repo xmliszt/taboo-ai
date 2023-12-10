@@ -12,6 +12,8 @@ import {
   getUser,
   signinUser,
   updateUIDIfNotExist,
+  updateUserSubscriptionPlan,
+  fetchUserSubscription,
   updateUserFromAuth,
 } from '../services/userService';
 import IUser from '../types/user.type';
@@ -91,8 +93,13 @@ export function useFirebaseAuth() {
               setUserPlan({
                 type: 'free',
               });
+              await updateUserSubscriptionPlan(user.email, 'free');
             } else {
               setUserPlan(userPlan);
+              await updateUserSubscriptionPlan(
+                user.email,
+                userPlan.type ?? 'free'
+              );
             }
             toast({
               title: 'Welcome Back!' + (username ? ' ' + username : ''),
@@ -102,6 +109,14 @@ export function useFirebaseAuth() {
             const newUser = await updateUserFromAuth(currentUser);
             setUser(newUser);
             setStatus('authenticated');
+            // fetch if existing subscription saved
+            const userExistingSubscription = await fetchUserSubscription(
+              newUser.email
+            );
+            await updateUserSubscriptionPlan(
+              newUser.email,
+              userExistingSubscription?.customerPlanType ?? 'free'
+            );
             const username = newUser.nickname ?? newUser.name;
             toast({
               title:
@@ -109,16 +124,37 @@ export function useFirebaseAuth() {
                 (username ? ' ' + username : '') +
                 '! Welcome to Taboo AI!',
             });
+          }
+        } catch (error) {
+          console.error(error.message);
+          setStatus('unauthenticated');
         }
-      } catch (error) {
-        console.log(error.message);
+      } else {
+        setUser(undefined);
+        setUserPlan(undefined);
         setStatus('unauthenticated');
       }
-    } else {
-      setUser(undefined);
-      setStatus('unauthenticated');
-    }
   }, []);
+
+  const refreshUserSubscriptionPlan = async () => {
+    if (user) {
+      const userSubscription = await fetchUserSubscription(user.email);
+      const userPlan = await fetchCustomerSubscriptions(
+        user.email,
+        userSubscription?.customerId
+      );
+      if (userPlan === undefined) {
+        // set free plan
+        setUserPlan({
+          type: 'free',
+        });
+      } else {
+        setUserPlan(userPlan);
+      }
+    } else {
+      setUserPlan(undefined);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
@@ -128,5 +164,13 @@ export function useFirebaseAuth() {
     return () => unsubscribe();
   }, [handleAuthUser]);
 
-  return { user, userPlan, status, setStatus, login, logout };
+  return {
+    user,
+    userPlan,
+    status,
+    setStatus,
+    login,
+    logout,
+    refreshUserSubscriptionPlan,
+  };
 }
