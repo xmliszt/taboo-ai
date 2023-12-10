@@ -20,12 +20,14 @@ export async function POST(req: NextRequest) {
     );
 
   let priceId: string;
+  let customerName: string;
   let customerEmail: string;
   let customerId: string;
 
   try {
     const body = await req.json();
     priceId = body.priceId;
+    customerName = body.customerName;
     customerEmail = body.customerEmail;
     customerId = body.customerId;
   } catch (error) {
@@ -51,15 +53,7 @@ export async function POST(req: NextRequest) {
         quantity: 1,
       },
     ],
-    subscription_data: {
-      trial_settings: {
-        end_behavior: {
-          missing_payment_method: 'cancel',
-        },
-      },
-      trial_period_days: targetPlan.trialsDays,
-    },
-    payment_method_collection: 'if_required',
+    payment_method_collection: 'always',
     success_url: `${origin}/checkout/success/{CHECKOUT_SESSION_ID}`, // Success redirect to user's profile subscription section
     cancel_url: `${origin}/pricing`,
   };
@@ -68,6 +62,15 @@ export async function POST(req: NextRequest) {
     checkoutSessionCreateParams.customer = customerId;
   } else {
     checkoutSessionCreateParams.customer_email = customerEmail;
+    // If customer ID not present, that means the user is new to Stripe, so we set the trial period
+    checkoutSessionCreateParams.subscription_data = {
+      trial_settings: {
+        end_behavior: {
+          missing_payment_method: 'cancel', // If user doesn't add payment method, cancel the subscription after trial ends
+        },
+      },
+      trial_period_days: targetPlan.trialsDays,
+    };
   }
 
   try {
@@ -80,6 +83,12 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+    // If customerID present, we update the customer object in Stripe with customer's name
+    const customerID = customerId ?? session.customer;
+    customerID &&
+      (await stripe.customers.update(customerID, {
+        name: customerName,
+      }));
     return NextResponse.json({ redirectUrl: session.url });
   } catch (error) {
     console.error(error);

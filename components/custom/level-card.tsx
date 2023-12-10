@@ -11,11 +11,12 @@ import { useState } from 'react';
 import { setPersistence } from '@/lib/persistence/persistence';
 import { HASH } from '@/lib/hash';
 import { useAuth } from '../auth-provider';
-import { Medal, Trophy } from 'lucide-react';
+import { Lock, Medal, Trophy } from 'lucide-react';
 import { StarRatingBar } from './star-rating-bar';
 import { getOverallRating } from '@/lib/utils/gameUtils';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from './login-reminder-dialog';
+import { LoginReminderProps } from './globals/login-reminder-dialog';
+import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
 
 interface LevelCardProps {
   isShowingRank?: boolean;
@@ -23,6 +24,7 @@ interface LevelCardProps {
   topScore?: number;
   topScorerEmail?: string;
   topScorerName?: string;
+  allowedPlanType?: SubscriptionPlanType[];
 }
 
 export function LevelCard({
@@ -31,12 +33,21 @@ export function LevelCard({
   topScore,
   topScorerEmail,
   topScorerName,
+  allowedPlanType,
 }: LevelCardProps) {
-  const { user, status } = useAuth();
+  const { user, userPlan, status } = useAuth();
   const router = useRouter();
   const [pointHasDown, setPointHasDown] = useState(false);
+  const isAIMode = !level;
+  const isLocked =
+    isAIMode &&
+    (status !== 'authenticated' ||
+      !allowedPlanType?.includes(userPlan?.type ?? 'free'));
 
   const goToLevel = () => {
+    if (isLocked) {
+      return EventManager.fireEvent(CustomEventKey.SUBSCRIPTION_LOCK_DIALOG);
+    }
     if (level) {
       setPersistence(HASH.level, level);
       if (isShowingRank && status === 'unauthenticated') {
@@ -61,7 +72,7 @@ export function LevelCard({
   };
 
   const renderCardContent = () => {
-    if (level) {
+    if (!isAIMode) {
       return (
         <section className='flex flex-wrap gap-2'>
           {level?.isNew === true && (
@@ -167,13 +178,19 @@ export function LevelCard({
         isShowingRank && user && user?.email === topScorerEmail
           ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
           : '',
-        level ? '' : 'unicorn-color',
-        'w-full h-auto sm:w-[200px] sm:min-h-[300px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
+        isAIMode ? 'unicorn-color' : '',
+        'relative w-full h-auto sm:w-[200px] sm:min-h-[300px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
       )}
     >
+      {isLocked && (
+        <div className='absolute z-10 bg-black bg-opacity-60 w-full h-full top-0 left-0 rounded-lg flex flex-col gap-2 justify-center items-center text-white leading-normal p-4'>
+          <Lock size={50} color='#eeeeee' strokeWidth={1} />
+          <div>You need a PRO subscription to access this content</div>
+        </div>
+      )}
       <CardHeader>
         <div className='text-md leading-tight font-extrabold rounded-lg p-2 shadow-md bg-primary text-primary-foreground'>
-          {level ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
+          {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
         </div>
       </CardHeader>
       <CardContent className='relative'>

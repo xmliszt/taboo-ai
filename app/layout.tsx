@@ -6,7 +6,7 @@ import { Lora } from 'next/font/google';
 
 import { _meta } from '@/lib/metadata';
 import { AnalyticsWrapper } from '@/components/analytics-wrapper';
-import FeaturePopup from '@/components/custom/feature-popup';
+import FeaturePopup from '@/components/custom/globals/feature-popup';
 import Maintenance from '@/components/custom/maintenance';
 import PWAInstaller from '@/components/custom/pwa-installer';
 import { AuthProvider } from '@/components/auth-provider';
@@ -14,13 +14,16 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import SideMenu from '@/components/custom/side-menu';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
-import { LoginErrorDialog } from '@/components/custom/login-error-dialog';
-import LoginReminderDialog from '@/components/custom/login-reminder-dialog';
+import { LoginErrorDialog } from '@/components/custom/globals/login-error-dialog';
+import LoginReminderDialog from '@/components/custom/globals/login-reminder-dialog';
 
 import './markdown.css';
 import './globals.css';
 import Header from '@/components/header';
-import { NewsletterSignupDialog } from '@/components/custom/newletter-signup-dialog';
+import { NewsletterSignupDialog } from '@/components/custom/globals/newletter-signup-dialog';
+import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
+import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
+import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -63,6 +66,9 @@ export default function RootLayout({
                   <PWAInstaller />
                   <LoginErrorDialog />
                   <LoginReminderDialog />
+                  <SubscriptionLockDialog />
+                  <GenericAlertDialog />
+                  <GenericFeedbackDialog />
                   <FeaturePopup />
                   <NewsletterSignupDialog />
                 </>

@@ -1,0 +1,38 @@
+name: Vercel Production Deployment
+env:
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Unit-Test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Running Jest Tests
+        run: npm test
+  Firebase-Cloud-Functions-Production-Deployment:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Firebase Cloud Functions
+        run: firebase use production && firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}

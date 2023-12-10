@@ -5,16 +5,19 @@ import {
 } from '../types/subscription-plan.type';
 import moment from 'moment';
 import { firestore } from '@/firebase/firebase-client';
+import Stripe from 'stripe';
 
 /**
  * Creates a checkout session for the given plan
  * @param {string} priceId - The Stripe price id
+ * @param {string} name - The customer name
  * @param {string} email - The customer email
  * @param {string} customerId - The customer id
  * @returns {Promise<string>} - The checkout session url
  */
 export const createCheckoutSession = async (
   priceId: string,
+  name?: string,
   email?: string,
   customerId?: string
 ): Promise<string> => {
@@ -27,6 +30,7 @@ export const createCheckoutSession = async (
       },
       body: JSON.stringify({
         priceId: priceId,
+        customerName: name,
         customerEmail: email,
         customerId: customerId,
       }),
@@ -43,46 +47,58 @@ export const createCheckoutSession = async (
  * Fetches the customer's subscriptions
  * @param {string} email - The customer email
  * @param {string | undefined} customerId - The customer id
- * @returns {Promise<IUserSubscriptionPlan>} - The customer's subscription plan
+ * @returns {Promise<IUserSubscriptionPlan | undefined>} - The customer's subscription plan
  */
 export const fetchCustomerSubscriptions = async (
   email: string,
   customerId?: string
 ): Promise<IUserSubscriptionPlan | undefined> => {
   if (!customerId) return undefined;
-  const response = await fetch('/api/subscriptions?customerId=' + customerId, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  const { subscriptions } = await response.json();
-  if (subscriptions.length === 0) {
-    // update user's plan to free in firebase
-    await updateDoc(doc(firestore, 'users', email), {
-      customerId: customerId,
-      customerPlanType: 'free',
-    });
+  try {
+    const response = await fetch(
+      '/api/subscriptions?customerId=' + customerId,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const { subscriptions } = await response.json();
+    if (subscriptions.length === 0) {
+      // if user has no subscription in stripe, update user's plan to free in firebase
+      await updateDoc(doc(firestore, 'users', email), {
+        customerId: customerId,
+        customerPlanType: 'free',
+      });
+      return undefined;
+    }
+    const subscription = subscriptions[0];
+    const priceId = subscription.items.data[0].plan.id;
+    const availablePlans = await fetchAvailableSubscriptionPlans();
+    // find the plan subscribed by user based on priceId, if not found, default get the free plan object
+    const planSubscribed =
+      availablePlans.find((plan) => plan.priceId === priceId) ??
+      availablePlans.find((plan) => plan.type === 'free');
+    // The user subscription plan model that will be available in the app.
+    const userSubscriptionPlan: IUserSubscriptionPlan = {
+      type: planSubscribed?.type,
+      tier: planSubscribed?.tier,
+      priceId: priceId,
+      subId: subscription.id,
+      status: subscription.status,
+      trialEndDate: subscription.trial_end
+        ? moment.unix(subscription.trial_end)
+        : undefined,
+      nextBillingDate: moment.unix(subscription.current_period_end),
+      currentBillingStartDate: moment.unix(subscription.current_period_start),
+      subscription: subscription,
+    };
+    return userSubscriptionPlan;
+  } catch (error) {
+    console.error(error);
     return undefined;
   }
-  const subscription = subscriptions[0];
-  const priceId = subscription.items.data[0].plan.id;
-  const availablePlans = await fetchAvailableSubscriptionPlans();
-  const planSubscribed =
-    availablePlans.find((plan) => plan.priceId === priceId) ??
-    availablePlans.find((plan) => plan.type === 'free');
-  const userSubscriptionPlan: IUserSubscriptionPlan = {
-    type: planSubscribed?.type,
-    tier: planSubscribed?.tier,
-    priceId: priceId,
-    status: subscription.status,
-    trialEndDate: subscription.trial_end
-      ? moment.unix(subscription.trial_end)
-      : undefined,
-    nextBillingDate: moment.unix(subscription.current_period_end),
-    currentBillingStartDate: moment.unix(subscription.current_period_start),
-  };
-  return userSubscriptionPlan;
 };
 
 /**
@@ -105,4 +121,16 @@ export const fetchAvailableSubscriptionPlans = async (): Promise<
  */
 export const checkoutSuccess = async (sessionId: string) => {
   await fetch('/api/checkout/success?session=' + sessionId);
+};
+
+/**
+ * Call this function when user has cancelled checkout session.
+ * @param {string} subId - The id of the subscription to cancel
+ */
+export const cancelSubscription = async (
+  subId: string
+): Promise<Stripe.Subscription> => {
+  const response = await fetch('/api/subscriptions/cancel?subId=' + subId);
+  const json = await response.json();
+  return json.subscription;
 };

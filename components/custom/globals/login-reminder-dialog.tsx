@@ -13,7 +13,7 @@ import {
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '../auth-provider';
+import { useAuth } from '../../auth-provider';
 import { LoginErrorEventProps } from './login-error-dialog';
 
 export interface LoginReminderProps {

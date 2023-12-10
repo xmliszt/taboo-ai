@@ -13,7 +13,7 @@ export default function PricingCardCarousell({
   plans: ISubscriptionPlan[];
   className?: string;
 }) {
-  const { userPlan, status } = useAuth();
+  const { status } = useAuth();
 
   if (status === 'loading')
     return <Skeleton className='w-full px-16 py-10' numberOfRows={10} />;
@@ -26,27 +26,7 @@ export default function PricingCardCarousell({
       )}
     >
       {plans.map((plan, index) => (
-        <PricingCard
-          key={index}
-          index={index}
-          plan={plan}
-          actionLabel={
-            userPlan === undefined
-              ? plan.type === 'free'
-                ? 'Current Plan'
-                : 'Start Free Trial'
-              : userPlan.type === plan.type
-              ? 'Current Plan'
-              : userPlan.tier ?? 0 > plan.tier
-              ? 'Downgrade Plan'
-              : 'Upgrade Plan'
-          }
-          isCurrentPlan={
-            userPlan === undefined
-              ? plan.type === 'free'
-              : userPlan.type === plan.type
-          }
-        />
+        <PricingCard key={index} index={index} plan={plan} />
       ))}
     </div>
   );

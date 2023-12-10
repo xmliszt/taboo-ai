@@ -118,3 +118,58 @@ exports.onUserDeleted = firestore
     // Recursively delete everything in user's document
     await fs.recursiveDelete(fs.doc(`users/${context.params.userId}`));
   });
+
+/**
+ * Triggerred when user's customerId field is updated.
+ */
+exports.onUserCustomerIdChanged = firestore
+  .document('users/{userId}')
+  .onUpdate(async (snapshot, context) => {
+    logger.info('onUserCustomerIdChanged', snapshot, context);
+    const oldUserData = snapshot.before.data();
+    const newUserData = snapshot.after.data();
+    const userID = context.params.userId;
+    const oldCustomerId: string = oldUserData.customerId;
+    const newCustomerId: string = newUserData.customerId;
+    const oldCustomerPlanType: string = oldUserData.customerPlanType;
+    const newCustomerPlanType: string = newUserData.customerPlanType;
+
+    // If nothing changed, return
+    if (
+      oldCustomerId === newCustomerId &&
+      oldCustomerPlanType === newCustomerPlanType
+    ) {
+      return;
+    }
+
+    // If user has customerId and it's updated
+    // save it in the '/subscriptions' collection
+    if (newCustomerId) {
+      await fs.doc(`subscriptions/${userID}`).set({
+        email: userID,
+        customerId: newCustomerId,
+        customerPlanType: newCustomerPlanType,
+      });
+    }
+  });
+
+/**
+ * Triggerred when user is created.
+ */
+exports.onUserCreated = firestore
+  .document('users/{userId}')
+  .onCreate(async (snapshot, context) => {
+    logger.info('onUserCreated', snapshot, context);
+    const userID = context.params.userId;
+
+    // Search for user in '/subscriptions' collection, if found, copy
+    // customerId and customerPlanType to user document
+    const subscriptionSnapshot = await fs.doc(`subscriptions/${userID}`).get();
+    if (subscriptionSnapshot.exists) {
+      const subscriptionData = subscriptionSnapshot.data();
+      await fs.doc(`users/${userID}`).update({
+        customerId: subscriptionData?.customerId,
+        customerPlanType: subscriptionData?.customerPlanType,
+      });
+    }
+  });
