@@ -51,7 +51,10 @@ export async function POST(req: NextRequest) {
       });
       if (subscriptions.data.length > 0) {
         return NextResponse.json(
-          { message: 'Customer already has a subscription' },
+          {
+            code: 'existing-subscription',
+            message: 'Customer already has a subscription',
+          },
           { status: 400 }
         );
       }
@@ -85,7 +88,10 @@ export async function POST(req: NextRequest) {
         });
         if (subscriptions.data.length > 0) {
           return NextResponse.json(
-            { message: 'Customer already has a subscription' },
+            {
+              code: 'existing-subscription',
+              message: 'Customer already has a subscription',
+            },
             { status: 400 }
           );
         }
