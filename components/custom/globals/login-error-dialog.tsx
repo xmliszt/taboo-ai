@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import {
   AlertDialog,
@@ -12,9 +10,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../auth-provider';
+import { useRouter } from 'next/navigation';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-
-import { useAuth } from '../auth-provider';
 
 export interface LoginErrorEventProps {
   error: string;

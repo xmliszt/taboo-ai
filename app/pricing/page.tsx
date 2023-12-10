@@ -27,7 +27,7 @@ export default function PricingPage() {
 
   return (
     <div className='mt-20 w-full flex flex-col items-center'>
-      <h2 className='leading-snug text-center text-4xl font-bold px-4'>
+      <h2 className='leading-snug text-center text-2xl lg:text-4xl font-bold px-4'>
         Choose The Right Plan For You
       </h2>
       <p></p>

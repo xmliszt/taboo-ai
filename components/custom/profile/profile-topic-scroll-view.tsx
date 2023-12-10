@@ -7,10 +7,11 @@ import IconButton from '@/components/ui/icon-button';
 import { getLevelsByUser } from '@/lib/services/levelService';
 import IUser from '@/lib/types/user.type';
 import IUserLevel from '@/lib/types/userLevel.type';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 import { Skeleton } from '../skeleton';
 import ProfileTopicsCardView from './topics/profile-topics-card-view';
+import { cn } from '@/lib/utils';
 
 export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +72,18 @@ export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) 
       </div>
       <div className='flex w-full flex-row justify-start gap-8 overflow-x-auto rounded-lg border p-8 leading-snug'>
         {isLoading ? (
-          <Skeleton className='h-[350px] w-full' numberOfRows={12} />
+          <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+        ) : playedTopics.length === 0 ? (
+          <div className='text-center w-full'>
+            You have not completed any topics yet.{' '}
+            <Link
+              href='/levels'
+              className='underline hover:text-muted-foreground transition-all'
+            >
+              Go play some topics
+            </Link>
+            .
+          </div>
         ) : (
           playedTopics.map((topic) => (
             <ProfileTopicsCardView key={topic.levelId} userEmail={user.email} topic={topic} />

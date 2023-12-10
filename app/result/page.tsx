@@ -8,7 +8,7 @@ import { CircleSlash, Hand, MousePointerClick, RefreshCcw } from 'lucide-react';
 import { isMobile, isTablet } from 'react-device-detect';
 
 import { useAuth } from '@/components/auth-provider';
-import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
+import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
 import ResutlsContributionAlertDialog from '@/components/custom/results/results-contribution-alert-dialog';
 import { ResultsShareAlertDialog } from '@/components/custom/results/results-share-alert-dialog';
 import ResultsSummaryCard from '@/components/custom/results/results-summary-card';

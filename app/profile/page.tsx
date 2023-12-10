@@ -11,7 +11,7 @@ import ProfileDangerZone from '@/components/custom/profile/profile-danger-zone';
 import ProfileRecentGamesScrollView from '@/components/custom/profile/profile-recent-games-scroll-view';
 import ProfileStatisticsCardView from '@/components/custom/profile/profile-statistics-card-view';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
+import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BookX, X } from 'lucide-react';
 import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+
 import { useTheme } from 'next-themes';
 import semver from 'semver';
 
@@ -8,7 +9,7 @@ import { getNewsletterPopupString, setNewsletterPopupString } from '@/lib/cache'
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export const NewsletterSignupDialog = () => {
   const { resolvedTheme } = useTheme();

@@ -24,12 +24,13 @@ import {
 } from '../ui/dropdown-menu';
 import IconButton from '../ui/icon-button';
 import { toast } from '../ui/use-toast';
-import { LoginErrorEventProps } from './login-error-dialog';
+import { LoginErrorEventProps } from './globals/login-error-dialog';
 import { isGameFinished } from '@/lib/utils/gameUtils';
 import IGame from '@/lib/types/game.type';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import { HASH } from '@/lib/hash';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
 
@@ -138,7 +139,37 @@ export function UserLoginPortal() {
               <span>{user.email}</span>
             </DropdownMenuLabel>
             {userPlan?.type && (
-              <Badge className='ml-2 mb-2'>{userPlan.type.toUpperCase()}</Badge>
+              <>
+                <Badge className='ml-2 mb-2'>
+                  {userPlan.type.toUpperCase()}
+                </Badge>
+                {userPlan?.trialEndDate && (
+                  <Badge variant='secondary' className='ml-2 mb-2'>
+                    Trial
+                  </Badge>
+                )}
+              </>
+            )}
+            {userPlan?.type === 'free' && (
+              <Button
+                variant='link'
+                size='sm'
+                className='h-auto animate-pulse'
+                onClick={() => {
+                  router.push('/pricing');
+                }}
+              >
+                Upgrade subscription
+              </Button>
+            )}
+            {userPlan?.trialEndDate && (
+              <>
+                <DropdownMenuSeparator />
+                <p className='p-2 text-sm font-semibold italic'>
+                  Trial ends on{' '}
+                  {userPlan.trialEndDate.format('DD MMM YYYY, hh:mm A')}
+                </p>
+              </>
             )}
             <DropdownMenuSeparator />
             {userMenuItems.map(
