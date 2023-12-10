@@ -19,25 +19,23 @@ export const createCheckoutSession = async (
   email?: string,
   customerId?: string
 ): Promise<string> => {
-  try {
-    const response = await fetch('/api/checkout/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        priceId: priceId,
-        customerEmail: email,
-        customerId: customerId,
-      }),
-    });
-    const { redirectUrl } = await response.json();
-    return redirectUrl;
-  } catch (error) {
-    console.error(error);
-    throw new Error('Failed to create checkout session');
+  const response = await fetch('/api/checkout/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: JSON.stringify({
+      priceId: priceId,
+      customerEmail: email,
+      customerId: customerId,
+    }),
+  });
+  const json = await response.json();
+  if (json.code === 'existing-subscription') {
+    throw new Error('Sorry, you have already subscribed to a plan.');
   }
+  return json.redirectUrl;
 };
 
 /**
