@@ -29,7 +29,10 @@ import { useAuth } from '@/components/auth-provider';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../spinner';
 import { useToast } from '@/components/ui/use-toast';
-import { cancelSubscription } from '@/lib/services/subscriptionService';
+import {
+  cancelSubscription,
+  createCustomerPortalSession,
+} from '@/lib/services/subscriptionService';
 import { Separator } from '@/components/ui/separator';
 import { confirmAlert } from '../globals/generic-alert-dialog';
 import { feedback } from '../globals/generic-feedback-dialog';
@@ -82,6 +85,24 @@ export default function ProfileSubscriptionCard({
       });
     } finally {
       setIsCancellingSubscription(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    if (!user?.customerId) return;
+    try {
+      const portalSessionUrl = await createCustomerPortalSession(
+        user?.customerId,
+        `${window.location.origin}/profile?anchor=subscription`
+      );
+      router.push(portalSessionUrl);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title:
+          'Sorry, we cannot open your billing portal at the moment. Please try again!',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -184,13 +205,16 @@ export default function ProfileSubscriptionCard({
                 </div>
               </div>
               {renderSubscriptionDetails(userPlan?.status)}
+              <div className='h-4'></div>
+              {user?.customerId !== undefined && (
+                <Button onClick={handleManageBilling}>
+                  Manage Your Billing
+                </Button>
+              )}
               {!userHasCancelledSubscription && (
                 <>
                   <Button
-                    className={cn(
-                      'mt-4',
-                      userPlan?.type === 'free' && 'animate-pulse'
-                    )}
+                    className={cn(userPlan?.type === 'free' && 'animate-pulse')}
                     onClick={() => {
                       router.push(TabooPathname.PRICING);
                     }}

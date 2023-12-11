@@ -253,6 +253,16 @@ export default function SideMenu() {
               </Link>
             </p>
             <p>
+              <Link
+                href='/pricing'
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                Pricing
+              </Link>
+            </p>
+            <p>
               <Link href='/privacy'>Privacy Policy</Link>
             </p>
             <p>
