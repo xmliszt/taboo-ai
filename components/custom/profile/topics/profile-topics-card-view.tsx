@@ -131,17 +131,19 @@ export default function ProfileTopicsCardView({
                     {getDifficulty(topicDetails?.difficulty ?? 1, false)}
                   </span>
                 </div>
+                {topic.attempts > 0 && (
+                  <div className='flex flex-col'>
+                    <span className='italic text-muted-foreground'>
+                      Completed:{' '}
+                    </span>
+                    <span className='font-bold'>
+                      {topic.attempts} {topic.attempts > 1 ? 'times' : 'time'}
+                    </span>
+                  </div>
+                )}
                 <div className='flex flex-col'>
                   <span className='italic text-muted-foreground'>
-                    You completed:{' '}
-                  </span>
-                  <span className='font-bold'>
-                    {topic.attempts} {topic.attempts > 1 ? 'times' : 'time'}
-                  </span>
-                </div>
-                <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>
-                    Your Best Score:
+                    Best Score:
                   </span>
                   <span className='font-bold'>
                     {topic.bestScore.toFixed(1)}
@@ -149,7 +151,7 @@ export default function ProfileTopicsCardView({
                 </div>
                 <div className='flex flex-col'>
                   <span className='italic text-muted-foreground'>
-                    Your Rating:{' '}
+                    Best Rating:{' '}
                   </span>
                   <StarRatingBar
                     rating={getOverallRating(topic.bestScore, 6)}
