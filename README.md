@@ -16,6 +16,69 @@ Visit https://taboo-ai.vercel.app/
 
 # Contribute
 
-Taboo AI is an open-source project. To contribute, simply fork the project into your own repository. Look at the **Issues** to find out what else can be done. Or raise your own issues. Once you are done, simply submit a pull request!
+Taboo AI is an open-source project. To contribute, simply fork the project into your own repository. Look at the [**Issues**](https://github.com/xmliszt/taboo-ai/issues) to find the one that you are interested in working with. Or raise your own issues. Once you are done, simply submit a pull request for review.
+
+## Branching
+
+Taboo AI has `main` branch for production, `preview` for staging. When you create a feature branch, you can either PR to `main` or `preview` depending on the urgency of the issue.
+
+- PR to `main` will be blocked if no approval or unit test or preview deployment failed.
+- PR to `preview` requires approval as well.
+
+When you create a PR, GitHub pipeline is automatically run to deploy a staging build to vercel preview. Once succeeded, you can check the deployment from https://taboo-ai-xmliszt.vercel.app .
+
+## Local Dev Environment
+
+When you clone the project, simply run `npm i && npm run dev` to start your development. You might notice certain features in the local dev version not working, for example Google Authentication, Supabase Connection. This is because you need to specify a environment file for local development and it stays in your local and never pushed to GitHub. You should create your own environment file in order for some features to work:
+
+`.env.local`
+
+```
+SITE_URL="http://localhost:3000"
+
+# OPENAI API
+OPENAI_API_KEY="sk-"
+OPENAI_ORGANIZATION_ID=""
+
+# Taboo AI app settings
+NEXT_PUBLIC_MAINTENANCE="false"
+NEXT_PUBLIC_TABOO_AI_VERSION="3.1.2"
+
+# Sendgrid API
+SENDGRID_API_KEY=""
+SENDGRID_TO_EMAIL=""
+SENDGRID_FROM_EMAIL=""
+
+# Vercel analytics
+VERCEL_ANALYTICS_ID=""
+VERCEL_WEB_ANALYTICS_ID=""
+
+# Firebase project settings
+NEXT_PUBLIC_FIREBASE_CLIENT_API_KEY=''
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="taboo-ai-preview.firebaseapp.com"
+NEXT_PUBLIC_FIREBASE_DATABASE_URL="https://taboo-ai-preview-default-rtdb.asia-southeast1.firebasedatabase.app"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="taboo-ai-preview"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="taboo-ai-preview.appspot.com"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="508144832475"
+NEXT_PUBLIC_FIREBASE_APP_ID="1:508144832475:web:61f8681bef340b04d321fe"
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=""
+
+# Firebase admin settings
+FIREBASE_CLIENT_EMAIL=""
+FIREBASE_PRIVATE_KEY=""
+
+# Stripe API
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=""
+STRIPE_SECRET_KEY=""
+
+```
+
+For any missing values in the environment sample above, if you need it, please feel free to leave me a message and I will assist you in setting up.
+
+## Why not use Vercel env?
+
+Yes the most convenient way is to use Vercel. However, unfortunately I'm on FREE plan in vercel so I cannot add team members in order to do so. So for now, you have to create your own local env file 😅 sorry for the inconvenience!
+
+---
 
 Thank you for your contribution to make Taboo AI a better platform for English learning!
