@@ -63,7 +63,7 @@ export default function ProfileTopicsCardView({
   };
 
   const goToTopic = (levelId: string) => {
-    router.push(`/topics/${levelId}`);
+    router.push(`/level/${levelId}`);
   };
 
   if (hasError) {
