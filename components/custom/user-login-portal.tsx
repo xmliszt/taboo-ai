@@ -32,13 +32,14 @@ import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import { HASH } from '@/lib/hash';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { createCustomerPortalSession } from '@/lib/services/subscriptionService';
 
 interface UserMenuItem {
   label: string;
   icon: React.ReactElement;
   isVisible: boolean;
   isUpcoming?: boolean;
-  onClick: (event: Event) => void;
+  onClick: ((event: Event) => void) | ((event: Event) => Promise<void>);
 }
 
 export function UserLoginPortal() {
@@ -68,15 +69,31 @@ export function UserLoginPortal() {
     }
   };
 
+  const handleManageSubscription = async () => {
+    if (!user?.customerId) return;
+    try {
+      const portalSessionUrl = await createCustomerPortalSession(
+        user.customerId,
+        `${window.location.origin}/profile?anchor=subscription`
+      );
+      router.push(portalSessionUrl);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title:
+          'Sorry, we are unable to manage your subscription. Please try again!',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
       {
-        label: 'Change Subscription',
+        label: 'Manage Subscription',
         icon: <BookMarked />,
-        isVisible: pathname !== '/pricing',
-        onClick: () => {
-          router.push('/pricing');
-        },
+        isVisible: user?.customerId !== undefined,
+        onClick: handleManageSubscription,
       },
       {
         label: 'Contribute A Topic',
@@ -112,7 +129,7 @@ export function UserLoginPortal() {
         onClick: handleLogout,
       },
     ];
-  }, [pathname, game, status]);
+  }, [pathname, game, status, user?.customerId]);
 
   const handleLogin = async () => {
     if (!login) return;

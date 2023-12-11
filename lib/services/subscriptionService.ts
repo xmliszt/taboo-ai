@@ -176,3 +176,28 @@ const buildUserSubscriptionPlanFromStripeSubscription = async (
   };
   return userSubscriptionPlan;
 };
+
+/**
+ * Creates a Stripe Billing Portal session for the customer,
+ * and then redirects the customer to the portal.
+ * @param {string} customerId - The customer id
+ * @param {string} redirectUrl - The redirect url
+ * @returns {Promise<string>} - The portal session url
+ */
+export const createCustomerPortalSession = async (
+  customerId: string,
+  redirectUrl: string
+): Promise<string> => {
+  const response = await fetch('/api/customer-portal', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      customerId: customerId,
+      redirectUrl: redirectUrl,
+    }),
+  });
+  const json = await response.json();
+  return json.portalSessionUrl;
+};
