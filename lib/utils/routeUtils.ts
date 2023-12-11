@@ -46,7 +46,7 @@ export class RouteManager {
         return {
           isTransparent: true,
         };
-      case `/${route.split('/')[1]}` === '/level':
+      case /^\/level\//.test(route):
         return {
           title: 'Taboo AI',
           hasBackButton: true,
