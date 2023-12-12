@@ -10,6 +10,9 @@ on:
   pull_request:
     branches:
       - preview
+  pull_request_target:
+    branches:
+      - preview
 jobs:
   Unit-Test:
     timeout-minutes: 60
