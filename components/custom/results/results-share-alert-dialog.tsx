@@ -67,7 +67,7 @@ export const ResultsShareAlertDialog = forwardRef(
             </AlertDialogTitle>
             <div className='mt-4 leading-snug'>
               <p>
-                Hey! I scored a total of <b>{totalScore}</b> out of 300 in Taboo
+                Hey! I scored a total of <b>{totalScore.toFixed(2)}</b> out of 300 in Taboo
                 AI!
               </p>
             </div>
