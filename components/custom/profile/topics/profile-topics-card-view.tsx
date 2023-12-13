@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import _ from 'lodash';
-import { Medal, RefreshCcw } from 'lucide-react';
-import moment from 'moment';
-import { isMobile, isTablet } from 'react-device-detect';
-
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { getLevel, getLevelStatById } from '@/lib/services/levelService';
-import ILevel from '@/lib/types/level.type';
+import { Medal, PlusCircle, RefreshCcw } from 'lucide-react';
 import IUserLevel from '@/lib/types/userLevel.type';
-import { getDifficulty } from '@/lib/utilities';
-import { cn } from '@/lib/utils';
-import { DateUtils } from '@/lib/utils/dateUtils';
-import { getOverallRating } from '@/lib/utils/gameUtils';
-
+import ILevel from '@/lib/types/level.type';
+import { getLevel, getLevelStatById } from '@/lib/services/levelService';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '../../skeleton';
+import { cn } from '@/lib/utils';
+import moment from 'moment';
+import { DateUtils } from '@/lib/utils/dateUtils';
+import { getDifficulty } from '@/lib/utilities';
 import { StarRatingBar } from '../../star-rating-bar';
+import { getOverallRating } from '@/lib/utils/gameUtils';
+import { isMobile, isTablet } from 'react-device-detect';
+import { Button } from '@/components/ui/button';
 
 interface ProfileTopicsCardViewProps {
   userEmail: string;
@@ -32,7 +30,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
   const [topicDetails, setTopicDetails] = useState<ILevel>();
 
   useEffect(() => {
-    loadTopic(topic.levelId);
+    topic.levelId !== 'play-more' && loadTopic(topic.levelId);
   }, []);
 
   const loadTopic = async (levelId: string) => {
@@ -52,7 +50,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
   };
 
   const goToTopic = (levelId: string) => {
-    router.push(`/level/${levelId}`);
+    router.push(levelId === 'play-more' ? '/levels' : `/level/${levelId}`);
   };
 
   if (hasError) {
@@ -60,7 +58,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
       <Tooltip key={topic.levelId}>
         <TooltipTrigger>
           <Card
-            className='h-[300px] min-w-[250px] max-w-[250px] border border-red-500 text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
+            className='text-left max-w-[250px] min-w-[250px] h-[300px] border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg border-red-500 snap-center'
             onClick={() => {
               loadTopic(topic.levelId);
             }}
@@ -85,66 +83,103 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
   return (
     <Tooltip key={topic.levelId}>
       <TooltipTrigger>
-        <Card
-          className={cn(
-            isChampion ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
-            'h-full min-w-[250px] max-w-[250px] border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
-          )}
-          onClick={() => {
-            goToTopic(topic.levelId);
-          }}
-        >
-          <CardHeader>
-            <CardTitle className='text-left text-card-foreground'>
-              {_.startCase(topicDetails?.name ?? '--')}
-            </CardTitle>
-            <CardDescription>
-              {moment(topic.lastPlayedAt).format(DateUtils.formats.gamePlayedAt)}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className='flex flex-col gap-3'>
-            {isLoading ? (
-              <Skeleton />
-            ) : (
-              <>
-                <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Difficulty: </span>
-                  <span className='font-bold'>
-                    {getDifficulty(topicDetails?.difficulty ?? 1, false)}
-                  </span>
-                </div>
-                {topic.attempts > 0 && (
-                  <div className='flex flex-col'>
-                    <span className='italic text-muted-foreground'>Completed: </span>
-                    <span className='font-bold'>
-                      {topic.attempts} {topic.attempts > 1 ? 'times' : 'time'}
-                    </span>
-                  </div>
-                )}
-                <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Best Score:</span>
-                  <span className='font-bold'>{topic.bestScore.toFixed(1)}</span>
-                </div>
-                <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Best Rating: </span>
-                  <StarRatingBar rating={getOverallRating(topic.bestScore, 6)} maxRating={6} />
-                </div>
-                {isChampion && (
-                  <div className='flex flex-row items-center justify-start gap-2'>
-                    <Medal size={50} />
-                    <span className='italic text-muted-foreground'>
-                      You are the <b>Top Scorer</b> for this topic!
-                    </span>
-                  </div>
-                )}
-
-                {(isMobile || isTablet) && <Button variant='secondary'>Play Again</Button>}
-              </>
+        {topic.levelId === 'play-more' ? (
+          <Card
+            className='text-left max-w-[250px] min-w-[250px] h-full border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg snap-center'
+            onClick={() => {
+              goToTopic(topic.levelId);
+            }}
+          >
+            <CardHeader>
+              <CardTitle className='text-center text-border'>
+                Play More Topics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex justify-center items-center mt-24'>
+              <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
+            </CardContent>
+          </Card>
+        ) : (
+          <Card
+            className={cn(
+              isChampion ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
+              'text-left max-w-[250px] min-w-[250px] h-full border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg snap-center'
             )}
-          </CardContent>
-        </Card>
+            onClick={() => {
+              goToTopic(topic.levelId);
+            }}
+          >
+            <CardHeader>
+              <CardTitle className='text-left text-card-foreground'>
+                {_.startCase(topicDetails?.name ?? '--')}
+              </CardTitle>
+              <CardDescription>
+                {moment(topic.lastPlayedAt).format(
+                  DateUtils.formats.gamePlayedAt
+                )}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='flex flex-col gap-3'>
+              {isLoading ? (
+                <Skeleton />
+              ) : (
+                <>
+                  <div className='flex flex-col'>
+                    <span className='italic text-muted-foreground'>
+                      Difficulty:{' '}
+                    </span>
+                    <span className='font-bold'>
+                      {getDifficulty(topicDetails?.difficulty ?? 1, false)}
+                    </span>
+                  </div>
+                  {topic.attempts > 0 && (
+                    <div className='flex flex-col'>
+                      <span className='italic text-muted-foreground'>
+                        Completed:{' '}
+                      </span>
+                      <span className='font-bold'>
+                        {topic.attempts} {topic.attempts > 1 ? 'times' : 'time'}
+                      </span>
+                    </div>
+                  )}
+                  <div className='flex flex-col'>
+                    <span className='italic text-muted-foreground'>
+                      Best Score:
+                    </span>
+                    <span className='font-bold'>
+                      {topic.bestScore.toFixed(1)}
+                    </span>
+                  </div>
+                  <div className='flex flex-col'>
+                    <span className='italic text-muted-foreground'>
+                      Best Rating:{' '}
+                    </span>
+                    <StarRatingBar
+                      rating={getOverallRating(topic.bestScore, 6)}
+                      maxRating={6}
+                    />
+                  </div>
+                  {isChampion && (
+                    <div className='flex flex-row gap-2 items-center justify-start'>
+                      <Medal size={50} />
+                      <span className='italic text-muted-foreground'>
+                        You are the <b>Top Scorer</b> for this topic!
+                      </span>
+                    </div>
+                  )}
+
+                  {(isMobile || isTablet) && (
+                    <Button variant='secondary'>Play Again</Button>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </TooltipTrigger>
-      <TooltipContent>Play Again</TooltipContent>
+      <TooltipContent>
+        {topic.levelId === 'play-more' ? 'Play More Topics' : 'Play Again'}
+      </TooltipContent>
     </Tooltip>
   );
 }

@@ -110,12 +110,12 @@ export default function HomeMenuButtonArray() {
         visible: user !== undefined && status === 'authenticated',
       },
       {
-        key: 'upgrade subscription',
+        key: 'upgrade plan',
         icon: <BookPlus size={20} />,
-        title: 'Upgrade Your Subscription',
+        title: 'Upgrade My Plan',
         subtitle:
-          'Become a PRO. Upgrade your subscription to enjoy more exclusive PRO features',
-        ariaLabel: 'Click to upgrade your subscription',
+          'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features',
+        ariaLabel: 'Click to upgrade your plan',
         href: '/pricing',
         visible: userPlan?.type === 'free' && status === 'authenticated',
       },
