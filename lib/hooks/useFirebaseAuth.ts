@@ -141,6 +141,8 @@ export function useFirebaseAuth() {
 
   const refreshUserSubscriptionPlan = async () => {
     if (user) {
+      const refreshedUser = await getUser(user.email);
+      refreshedUser && setUser(refreshedUser);
       const userSubscription = await fetchUserSubscription(user.email);
       const userPlan = await fetchCustomerSubscriptions(
         user.email,
@@ -155,6 +157,7 @@ export function useFirebaseAuth() {
         setUserPlan(userPlan);
       }
     } else {
+      setUser(undefined);
       setUserPlan(undefined);
     }
   };

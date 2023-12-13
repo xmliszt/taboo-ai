@@ -20,6 +20,14 @@ import { BookX, X } from 'lucide-react';
 import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
 import ProfilePlayedTopicScrollView from '@/components/custom/profile/profile-topic-scroll-view';
 import ProfileSubscriptionCard from '@/components/custom/profile/profile-subscription-card';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -159,7 +167,29 @@ export default function ProfilePage() {
 
       {user && <ProfileRecentGamesScrollView user={user} />}
       {user && <ProfilePlayedTopicScrollView user={user} />}
-      {user && <ProfileStatisticsCardView />}
+      {user?.customerPlanType === 'free' ? (
+        <Card className='w-full max-w-[500px]'>
+          <CardContent>
+            <CardHeader className='p-0 my-4'>
+              <CardTitle>Game Statistics</CardTitle>
+            </CardHeader>
+            <CardDescription>
+              Upgrade to PRO plan to unlock your exclusive game statistics. Get
+              more insights on your game performance and improve your game play!
+            </CardDescription>
+            <Button
+              className='w-full mt-4 animate-pulse'
+              onClick={() => {
+                router.push('/pricing');
+              }}
+            >
+              Upgrade My Plan
+            </Button>
+          </CardContent>
+        </Card>
+      ) : user !== undefined ? (
+        <ProfileStatisticsCardView />
+      ) : null}
 
       <ConstructionBlock
         title='Flashcard under construction...'

@@ -34,7 +34,7 @@ export default function ProfileRecentGamesScrollView({
 
   useEffect(() => {
     getRecentGamesData(user.email);
-  }, []);
+  }, [user]);
 
   const getRecentGamesData = async (email: string) => {
     try {

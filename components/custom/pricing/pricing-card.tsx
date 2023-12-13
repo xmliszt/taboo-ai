@@ -65,6 +65,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
 
   const subscribeTo = async (priceId?: string) => {
     // If subscription is already cancelled, do not allow to subscribe again
+    console.log(subscriptionCancelDate);
     if (subscriptionCancelDate) {
       return confirmAlert({
         title: 'You have already cancelled your subscription',
