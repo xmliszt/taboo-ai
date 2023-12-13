@@ -220,8 +220,8 @@ export default function ProfileSubscriptionCard({
                     }}
                   >
                     {userPlan?.type === 'free'
-                      ? 'Upgrade Your Plan'
-                      : 'Change Your Plan'}
+                      ? 'Upgrade My Plan'
+                      : 'Change My Plan'}
                   </Button>
                   {userPlan.type !== 'free' && (
                     <Button

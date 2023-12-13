@@ -27,14 +27,14 @@ export default function PricingPage() {
 
   return (
     <div className='mt-20 w-full flex flex-col items-center'>
-      <h2 className='leading-snug text-center text-2xl lg:text-4xl font-bold px-4'>
+      <h2 className='leading-snug text-center text-xl lg:text-4xl font-bold px-4'>
         Choose The Right Plan For You
       </h2>
-      <p></p>
+      <div className='h-4'></div>
       {isLoading ? (
         <Skeleton className='mt-10 w-full px-4' numberOfRows={10} />
       ) : (
-        <PricingCardCarousell className='-mt-2' plans={plans} />
+        <PricingCardCarousell className='h-full px-12' plans={plans} />
       )}
     </div>
   );
