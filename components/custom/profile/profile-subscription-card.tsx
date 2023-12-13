@@ -208,7 +208,7 @@ export default function ProfileSubscriptionCard({
               <div className='h-4'></div>
               {user?.customerId !== undefined && (
                 <Button onClick={handleManageBilling}>
-                  Manage Your Billing
+                  Manage Billing & Plan
                 </Button>
               )}
               {!userHasCancelledSubscription && (
@@ -250,7 +250,7 @@ export default function ProfileSubscriptionCard({
             Found your subscription incorrect?{' '}
             <Button
               variant='link'
-              className='p-1'
+              className='p-1 underline'
               size='sm'
               onClick={() => {
                 feedback({

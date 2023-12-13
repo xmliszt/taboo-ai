@@ -90,7 +90,7 @@ export function UserLoginPortal() {
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
       {
-        label: 'Manage Subscription',
+        label: 'Manage Billing & Plan',
         icon: <BookMarked />,
         isVisible: user?.customerId !== undefined,
         onClick: handleManageSubscription,
