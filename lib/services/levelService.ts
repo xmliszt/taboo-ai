@@ -185,12 +185,26 @@ export const updateRealtimeDBLevelRecord = async (
 };
 
 /**
- * Get the statistical data for levels played by the user
+ * Get the statistical data for levels played by the user.
+ * This is a PRO feature, so we check if the user has non-free plan.
  * @param {string} email: the user email
  * @returns {Promise<ILevelStats>} the level statistical data for the user
  */
-export const getLevelStatistics = async (email: string): Promise<ILevelStats> => {
-  const snapshot = await getDocs(collection(firestore, 'users', email, 'levels'));
+export const getLevelStatistics = async (
+  email: string
+): Promise<ILevelStats> => {
+  // Check if user has non-free plan
+  const userDoc = await getDoc(doc(firestore, 'users', email));
+  const user = userDoc.data();
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (user.customerPlanType === 'free') {
+    throw new Error('User has free plan');
+  }
+  const snapshot = await getDocs(
+    collection(firestore, 'users', email, 'levels')
+  );
   const levelRefs: {
     ref: DocumentReference;
     score: number;
