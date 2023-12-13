@@ -12,13 +12,11 @@ import { getLevelStatistics } from '@/lib/services/levelService';
 import _ from 'lodash';
 import { useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
+import { useAuth } from '@/components/auth-provider';
 
-export default function ProfileStatisticsCardView({
-  email,
-}: {
-  email: string;
-}) {
+export default function ProfileStatisticsCardView() {
   type Topic = { id?: string; name?: string };
+  const { user: currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
   const [bestTopic, setBestTopic] = useState<Topic>();
@@ -26,8 +24,8 @@ export default function ProfileStatisticsCardView({
   const router = useRouter();
 
   useEffect(() => {
-    email && getUserData(email);
-  }, [email]);
+    currentUser?.email && getUserData(currentUser.email);
+  }, [currentUser]);
 
   const getUserData = async (email: string) => {
     try {
@@ -60,7 +58,7 @@ export default function ProfileStatisticsCardView({
           tooltip='Refresh statistics'
           variant='link'
           onClick={() => {
-            getUserData(email);
+            currentUser?.email && getUserData(currentUser.email);
           }}
         >
           <RefreshCcw
@@ -73,7 +71,7 @@ export default function ProfileStatisticsCardView({
           isMobile
             ? 'overflow-x-auto flex-nowrap'
             : 'flex-wrap justify-start items-start max-h-[500px] overflow-y-auto',
-          'w-full flex gap-4 p-4 rounded-lg border leading-snug flex-row '
+          'w-full flex flex-row gap-4 p-4 rounded-lg border leading-snug snap-x'
         )}
       >
         {isLoading ? (
@@ -116,6 +114,11 @@ export default function ProfileStatisticsCardView({
               key='total-game-completed-count'
               title='# of Games Completed'
               value={`${user?.gamePlayedCount ?? 0}`}
+            />
+            <ProfileStatisticsSimpleCardView
+              key='coming-soon'
+              title='Stay tuned...'
+              value='More stats coming soon!'
             />
           </>
         )}

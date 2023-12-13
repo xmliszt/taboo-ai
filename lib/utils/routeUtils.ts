@@ -47,7 +47,7 @@ export class RouteManager {
         return {
           isTransparent: true,
         };
-      case /^\/level/.test(route):
+      case /^\/level\//.test(route):
         return {
           title: 'Taboo AI',
           hasBackButton: true,

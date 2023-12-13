@@ -22,7 +22,7 @@ export default function PricingCardCarousell({
     <div
       className={cn(
         className,
-        'flex flex-row gap-8 overflow-x-auto p-12 max-w-full snap-x snap-mandatory'
+        'flex flex-row gap-8 overflow-auto max-w-full snap-both'
       )}
     >
       {plans.map((plan, index) => (

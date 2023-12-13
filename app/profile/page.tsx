@@ -20,17 +20,29 @@ import { BookX, X } from 'lucide-react';
 import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
 import ProfilePlayedTopicScrollView from '@/components/custom/profile/profile-topic-scroll-view';
 import ProfileSubscriptionCard from '@/components/custom/profile/profile-subscription-card';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, status } = useAuth();
+  const { user, status, refreshUserSubscriptionPlan } = useAuth();
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
   const [isNicknameUpdating, setIsNicknameUpdating] = useState(false);
   const [hideAlert, setHideAlert] = useState(false);
   const oldNickname = useRef<string>('');
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    refreshUserSubscriptionPlan?.();
+  }, []);
 
   useEffect(() => {
     const anchor = searchParams.get('anchor');
@@ -132,7 +144,7 @@ export default function ProfilePage() {
         </div>
       </div>
       {!hideAlert && (
-        <Alert className='text-gray-500 border-gray-500 opacity-70 -mb-10 relative'>
+        <Alert className='text-gray-500 border-gray-500 opacity-70 -my-10 relative'>
           <BookX size={20} />
           <AlertTitle className='leading-snug'>
             <X
@@ -155,7 +167,29 @@ export default function ProfilePage() {
 
       {user && <ProfileRecentGamesScrollView user={user} />}
       {user && <ProfilePlayedTopicScrollView user={user} />}
-      {user && <ProfileStatisticsCardView email={user.email} />}
+      {user?.customerPlanType === 'free' ? (
+        <Card className='w-full max-w-[500px]'>
+          <CardContent>
+            <CardHeader className='p-0 my-4'>
+              <CardTitle>Game Statistics</CardTitle>
+            </CardHeader>
+            <CardDescription>
+              Upgrade to PRO plan to unlock your exclusive game statistics. Get
+              more insights on your game performance and improve your game play!
+            </CardDescription>
+            <Button
+              className='w-full mt-4 animate-pulse'
+              onClick={() => {
+                router.push('/pricing');
+              }}
+            >
+              Upgrade My Plan
+            </Button>
+          </CardContent>
+        </Card>
+      ) : user !== undefined ? (
+        <ProfileStatisticsCardView />
+      ) : null}
 
       <ConstructionBlock
         title='Flashcard under construction...'

@@ -28,6 +28,12 @@ export default function ProfilePlayedTopicScrollView({
       setIsLoading(true);
       const playedTopics = await getLevelsByUser(email);
       sortPlayedTopics(playedTopics);
+      playedTopics.push({
+        levelId: 'play-more',
+        attempts: 0,
+        bestScore: 0,
+        lastPlayedAt: new Date(),
+      });
       setPlayedTopics(playedTopics);
     } catch (error) {
       console.error(error);
@@ -74,7 +80,7 @@ export default function ProfilePlayedTopicScrollView({
           />
         </IconButton>
       </div>
-      <div className='w-full overflow-x-auto flex flex-row gap-8 p-8 justify-start rounded-lg border leading-snug'>
+      <div className='w-full overflow-x-auto flex flex-row gap-8 p-8 justify-start rounded-lg border leading-snug snap-x'>
         {isLoading ? (
           <Skeleton className='w-full h-[350px]' numberOfRows={12} />
         ) : playedTopics.length === 0 ? (

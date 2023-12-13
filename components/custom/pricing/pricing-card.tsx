@@ -65,6 +65,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
 
   const subscribeTo = async (priceId?: string) => {
     // If subscription is already cancelled, do not allow to subscribe again
+    console.log(subscriptionCancelDate);
     if (subscriptionCancelDate) {
       return confirmAlert({
         title: 'You have already cancelled your subscription',
@@ -190,7 +191,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         user?.customerPlanType === plan.type
           ? 'border-[1px] border-primary'
           : '',
-        'relative max-w-[280px] min-w-[280px] snap-center hover:scale-105 transition-transform ease-in-out'
+        'relative max-h-[480px] min-h-[480px] max-w-[280px] min-w-[280px] snap-center hover:scale-105 transition-transform ease-in-out mt-12'
       )}
     >
       <CardHeader>
@@ -206,7 +207,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
           ${plan.pricePerMonth} per month
         </CardDescription>
       </CardHeader>
-      <CardContent className='flex flex-col gap-2 h-[300px]'>
+      <CardContent className='flex flex-col gap-2 h-full mb-24'>
         {plan.features.map((feature, index) => (
           <div
             key={index}

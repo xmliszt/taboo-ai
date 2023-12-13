@@ -176,12 +176,12 @@ export function UserLoginPortal() {
               <Button
                 variant='link'
                 size='sm'
-                className='h-auto animate-pulse'
+                className='h-auto animate-pulse underline'
                 onClick={() => {
                   router.push('/pricing');
                 }}
               >
-                Upgrade subscription
+                Upgrade My Plan
               </Button>
             )}
             {userPlan?.trialEndDate && (
