@@ -31,7 +31,7 @@ export default function ProfileStatisticsSimpleCardView({
       <div className='text-xs italic text-muted-foreground'>{title}</div>
       <div
         className={cn(
-          'w-full flex flex-grow justify-center items-center text-center',
+          'w-full flex flex-grow justify-center items-center text-center max-w-[200px]',
           isNaN(Number(value)) ? 'text-2xl' : 'text-5xl'
         )}
       >

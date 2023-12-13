@@ -68,7 +68,7 @@ export default function ProfileRecentGameCard({
             </CardDescription>
           </CardHeader>
           {game.id == 'play-more' ? (
-            <CardContent className='flex justify-center items-center mt-16'>
+            <CardContent className='flex justify-center items-center min-h-[200px]'>
               <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
             </CardContent>
           ) : (
