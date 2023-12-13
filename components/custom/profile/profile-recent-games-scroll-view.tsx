@@ -1,16 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import _ from 'lodash';
-import { PlusCircle, RefreshCcw } from 'lucide-react';
-import moment from 'moment';
-import { isMobile, isTablet } from 'react-device-detect';
-
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import IconButton from '@/components/ui/icon-button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { fetchRecentGames } from '@/lib/services/gameService';
 import { getLevel } from '@/lib/services/levelService';
 import IUser from '@/lib/types/user.type';
@@ -23,9 +13,6 @@ import {
   getOverallRating,
 } from '@/lib/utils/gameUtils';
 
-import { Skeleton } from '../skeleton';
-import { StarRatingBar } from '../star-rating-bar';
-
 type RecentGame = {
   id: string;
   topicName: string;
@@ -36,7 +23,22 @@ type RecentGame = {
   totalRating: number;
 };
 
-export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) {
+import _ from 'lodash';
+import { RefreshCcw } from 'lucide-react';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '../skeleton';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import ProfileRecentGameCard from './profile-recent-game-card';
+
+export default function ProfileRecentGamesScrollView({
+  user,
+}: {
+  user: IUser;
+}) {
+  const numberOfMostRecentGamesToDisplay =
+    user.customerPlanType === 'free' ? 1 : 10;
   const [isLoading, setIsLoading] = useState(false);
   const [recentGames, setRecentGames] = useState<RecentGame[]>([]);
   const router = useRouter();
@@ -48,7 +50,11 @@ export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) 
   const getRecentGamesData = async (email: string) => {
     try {
       setIsLoading(true);
-      const games = await fetchRecentGames(email, 5, 0);
+      const games = await fetchRecentGames(
+        email,
+        numberOfMostRecentGamesToDisplay,
+        0
+      );
       const recentGames: RecentGame[] = [];
       for (const game of games) {
         const levelId = game.levelId;
@@ -87,14 +93,6 @@ export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) 
     }
   };
 
-  const goToResult = (gameId: string) => {
-    if (gameId == 'play-more') {
-      router.push('/levels');
-      return;
-    }
-    router.push(`/result?id=${gameId}`);
-  };
-
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
       <div className='flex w-full flex-row items-center gap-2'>
@@ -110,68 +108,37 @@ export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) 
           <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
         </IconButton>
       </div>
-      <span className='mb-2 italic text-muted-foreground'> Most Recent 5</span>
-      <div className='flex w-full flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-4 leading-snug'>
-        {isLoading ? (
-          <Skeleton className='h-[350px] w-full' numberOfRows={12} />
-        ) : (
-          recentGames.map((game) => (
-            <Tooltip key={game.id}>
-              <TooltipTrigger>
-                <Card
-                  className='h-full min-w-[200px] max-w-[200px] border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
-                  onClick={() => {
-                    goToResult(game.id);
-                  }}
-                >
-                  <CardHeader>
-                    <CardTitle
-                      className={
-                        game.id == 'play-more'
-                          ? 'text-center text-border'
-                          : 'text-left text-card-foreground'
-                      }
-                    >
-                      {game.topicName}
-                    </CardTitle>
-                    <CardDescription>
-                      {game.id == 'play-more' ? '' : game.finishedAt}
-                    </CardDescription>
-                  </CardHeader>
-                  {game.id == 'play-more' ? (
-                    <CardContent className='mt-16 flex items-center justify-center'>
-                      <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
-                    </CardContent>
-                  ) : (
-                    <CardContent className='flex flex-col gap-3'>
-                      <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>Difficulty: </span>
-                        <span className='font-bold'>{game.difficultyString}</span>
-                      </div>
-                      <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>Total Time Taken: </span>
-                        <span className='font-bold'>{game.totalDuration}</span>
-                      </div>
-                      <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>Total Score:</span>
-                        <span className='font-bold'>{game.totalScore}</span>
-                      </div>
-                      <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>Overall Ratings: </span>
-                        <StarRatingBar rating={game.totalRating} maxRating={6} />
-                      </div>
-                      {(isMobile || isTablet) && <Button variant='secondary'>View Results</Button>}
-                    </CardContent>
-                  )}
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                {game.id == 'play-more' ? 'Play More Topics' : 'View Results'}
-              </TooltipContent>
-            </Tooltip>
-          ))
-        )}
-      </div>
+      <span className='text-muted-foreground italic mb-2'>
+        {' '}
+        Most Recent{' '}
+        {numberOfMostRecentGamesToDisplay === 1
+          ? 'Game'
+          : `${numberOfMostRecentGamesToDisplay} Games`}
+      </span>
+      {user.customerPlanType === 'free' && (
+        <div className='italic text-sm leading-none text-muted-foreground'>
+          To view more past games, upgrade to PRO plan:{' '}
+          <Button
+            className='underline p-0 animate-pulse'
+            size='sm'
+            variant='link'
+            onClick={() => {
+              router.push('/pricing');
+            }}
+          >
+            Upgrade My Plan
+          </Button>
+        </div>
+      )}
+      {isLoading ? (
+        <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+      ) : (
+        <div className='w-full overflow-x-auto flex flex-row gap-4 p-4 justify-start rounded-lg border leading-snug snap-x'>
+          {recentGames.map((game) => (
+            <ProfileRecentGameCard key={game.id} game={game} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

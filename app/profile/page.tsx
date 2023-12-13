@@ -23,13 +23,17 @@ import { Input } from '@/components/ui/input';
 export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, status } = useAuth();
+  const { user, status, refreshUserSubscriptionPlan } = useAuth();
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
   const [isNicknameUpdating, setIsNicknameUpdating] = useState(false);
   const [hideAlert, setHideAlert] = useState(false);
   const oldNickname = useRef<string>('');
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    refreshUserSubscriptionPlan?.();
+  }, []);
 
   useEffect(() => {
     const anchor = searchParams.get('anchor');
@@ -127,7 +131,7 @@ export default function ProfilePage() {
         </div>
       </div>
       {!hideAlert && (
-        <Alert className='text-gray-500 border-gray-500 opacity-70 -mb-10 relative'>
+        <Alert className='text-gray-500 border-gray-500 opacity-70 -my-10 relative'>
           <BookX size={20} />
           <AlertTitle className='leading-snug'>
             <X
@@ -150,7 +154,7 @@ export default function ProfilePage() {
 
       {user && <ProfileRecentGamesScrollView user={user} />}
       {user && <ProfilePlayedTopicScrollView user={user} />}
-      {user && <ProfileStatisticsCardView email={user.email} />}
+      {user && <ProfileStatisticsCardView />}
 
       <ConstructionBlock
         title='Flashcard under construction...'
