@@ -9,7 +9,7 @@ on:
       - preview
   pull_request_target:
     branches:
-      - preview
+      - main
 jobs:
   Unit-Test:
     timeout-minutes: 60
