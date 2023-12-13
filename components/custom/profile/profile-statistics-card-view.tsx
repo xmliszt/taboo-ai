@@ -12,13 +12,12 @@ import { getLevelStatistics } from '@/lib/services/levelService';
 import _ from 'lodash';
 import { useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
+import { useAuth } from '@/components/auth-provider';
+import { Button } from '@/components/ui/button';
 
-export default function ProfileStatisticsCardView({
-  email,
-}: {
-  email: string;
-}) {
+export default function ProfileStatisticsCardView() {
   type Topic = { id?: string; name?: string };
+  const { user: currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
   const [bestTopic, setBestTopic] = useState<Topic>();
@@ -26,8 +25,8 @@ export default function ProfileStatisticsCardView({
   const router = useRouter();
 
   useEffect(() => {
-    email && getUserData(email);
-  }, [email]);
+    currentUser?.email && getUserData(currentUser.email);
+  }, [currentUser]);
 
   const getUserData = async (email: string) => {
     try {
@@ -55,71 +54,93 @@ export default function ProfileStatisticsCardView({
     <div className='w-full flex flex-col gap-2 justify-start'>
       <div className='w-full flex flex-row gap-2 items-center'>
         <h2 className='text-2xl'>Game Statistics</h2>
-        <IconButton
-          asChild
-          tooltip='Refresh statistics'
-          variant='link'
-          onClick={() => {
-            getUserData(email);
-          }}
+        {user?.customerPlanType !== 'free' && (
+          <IconButton
+            asChild
+            tooltip='Refresh statistics'
+            variant='link'
+            onClick={() => {
+              currentUser?.email && getUserData(currentUser.email);
+            }}
+          >
+            <RefreshCcw
+              className={cn(isLoading ? 'animate-spin' : 'animate-none')}
+            />
+          </IconButton>
+        )}
+      </div>
+      {!user || user?.customerPlanType === 'free' ? (
+        <div className='text-sm w-full border border-primary rounded-lg p-4'>
+          Upgrade to PRO plan to unlock your exclusive game statistics. Get more
+          insights on your game performance and improve your game play!
+          <Button
+            className='w-full mt-4 animate-pulse'
+            onClick={() => {
+              router.push('/pricing');
+            }}
+          >
+            Upgrade My Plan
+          </Button>
+        </div>
+      ) : (
+        <div
+          className={cn(
+            isMobile
+              ? 'overflow-x-auto flex-nowrap'
+              : 'flex-wrap justify-start items-start max-h-[500px] overflow-y-auto',
+            'w-full flex gap-4 p-4 rounded-lg border leading-snug flex-row snap-x'
+          )}
         >
-          <RefreshCcw
-            className={cn(isLoading ? 'animate-spin' : 'animate-none')}
-          />
-        </IconButton>
-      </div>
-      <div
-        className={cn(
-          isMobile
-            ? 'overflow-x-auto flex-nowrap'
-            : 'flex-wrap justify-start items-start max-h-[500px] overflow-y-auto',
-          'w-full flex gap-4 p-4 rounded-lg border leading-snug flex-row '
-        )}
-      >
-        {isLoading ? (
-          <Skeleton className='w-full h-[350px]' numberOfRows={12} />
-        ) : (
-          <>
-            {bestTopic?.name && (
+          {isLoading ? (
+            <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+          ) : (
+            <div>
+              {bestTopic?.name && (
+                <ProfileStatisticsSimpleCardView
+                  key='best-performing-topic'
+                  title='Best Performing Topic'
+                  value={bestTopic.name}
+                  tooltip='Play Again'
+                  onClick={() => {
+                    router.push(`/level/${bestTopic.id}`);
+                  }}
+                />
+              )}
+              {mostFreqTopic?.name && (
+                <ProfileStatisticsSimpleCardView
+                  key='most-frequently-played-topic'
+                  title='Most Frequently Played Topic'
+                  value={mostFreqTopic.name}
+                  tooltip='Play Again'
+                  onClick={() => {
+                    router.push(`/level/${mostFreqTopic.id}`);
+                  }}
+                />
+              )}
               <ProfileStatisticsSimpleCardView
-                key='best-performing-topic'
-                title='Best Performing Topic'
-                value={bestTopic.name}
-                tooltip='Play Again'
-                onClick={() => {
-                  router.push(`/level/${bestTopic.id}`);
-                }}
+                key='attempted-level-count'
+                title='# of Topics Attempted'
+                value={`${user?.levelPlayedCount ?? 0}`}
               />
-            )}
-            {mostFreqTopic?.name && (
               <ProfileStatisticsSimpleCardView
-                key='most-frequently-played-topic'
-                title='Most Frequently Played Topic'
-                value={mostFreqTopic.name}
-                tooltip='Play Again'
-                onClick={() => {
-                  router.push(`/level/${mostFreqTopic.id}`);
-                }}
+                key='total-game-attempted-count'
+                title='# of Games Attempted'
+                value={`${user?.gameAttemptedCount ?? 0}`}
               />
-            )}
-            <ProfileStatisticsSimpleCardView
-              key='attempted-level-count'
-              title='# of Topics Attempted'
-              value={`${user?.levelPlayedCount ?? 0}`}
-            />
-            <ProfileStatisticsSimpleCardView
-              key='total-game-attempted-count'
-              title='# of Games Attempted'
-              value={`${user?.gameAttemptedCount ?? 0}`}
-            />
-            <ProfileStatisticsSimpleCardView
-              key='total-game-completed-count'
-              title='# of Games Completed'
-              value={`${user?.gamePlayedCount ?? 0}`}
-            />
-          </>
-        )}
-      </div>
+              <ProfileStatisticsSimpleCardView
+                key='total-game-completed-count'
+                title='# of Games Completed'
+                value={`${user?.gamePlayedCount ?? 0}`}
+              />
+              <ProfileStatisticsSimpleCardView
+                key='coming-soon'
+                title='#stay tuned...'
+                value='More stats coming soon!'
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

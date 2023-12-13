@@ -21,7 +21,7 @@ export default function ProfileStatisticsSimpleCardView({
   return (
     <div
       className={cn(
-        'border rounded-lg leading-snug relative p-4 flex flex-col gap-2',
+        'border rounded-lg leading-snug relative p-4 flex flex-col gap-2 snap-center',
         isMobile
           ? 'max-w-[200px]  min-w-[200px] h-[200px]'
           : 'h-[150px] max-w-full min-w-[150px]'
@@ -30,7 +30,7 @@ export default function ProfileStatisticsSimpleCardView({
       <div className='text-xs italic text-muted-foreground'>{title}</div>
       <div
         className={cn(
-          'w-full flex flex-grow justify-center items-center',
+          'w-full flex flex-grow justify-center items-center text-center',
           isNaN(Number(value)) ? 'text-2xl' : 'text-5xl'
         )}
       >

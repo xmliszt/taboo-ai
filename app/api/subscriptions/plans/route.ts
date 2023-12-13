@@ -18,6 +18,20 @@ export const plans: ISubscriptionPlan[] = [
         status: 'complete',
       },
       {
+        id: 'feature-ai-evaluation',
+        title: 'GPT3 powered AI evaluation',
+        description:
+          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. Free plan comes with GPT3 AI model, which is not as powerful as GPT4, but still provides great evaluation results as feedbacks.',
+        status: 'partial',
+      },
+      {
+        id: 'feature-recent-games',
+        title: 'View 1 most recent game in profile',
+        description:
+          'In your profile, you are able to see your most recent 1 game played. You can revisit the game results by clicking on the game card. PRO plan allows you to view most recent 10 game results.',
+        status: 'partial',
+      },
+      {
         id: 'feature-access-to-curated-topics',
         title: 'No access to curated topics',
         description:
@@ -32,18 +46,11 @@ export const plans: ISubscriptionPlan[] = [
         status: 'absent',
       },
       {
-        id: 'feature-ai-evaluation',
-        title: 'GPT3 powered AI evaluation',
+        id: 'feature-game-stats',
+        title: 'No access to exclusive game statistics',
         description:
-          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. Free plan comes with GPT3 AI model, which is not as powerful as GPT4, but still provides great evaluation results as feedbacks.',
-        status: 'partial',
-      },
-      {
-        id: 'feature-flashcard',
-        title: '1 x flashcard deck creation',
-        description:
-          'You can create 1 flashcard deck. Flashcard deck is a great way to manage interesting words you encounter during the games. You can start a custom game from a flashcard deck, revise the words you have learned.',
-        status: 'partial',
+          'In your profile, a game statistics section is available for PRO plan users. It provides you with insights on your performance, for example, how many games you have played, which topic you have played the most,, which topic you have the best performance, etc.',
+        status: 'absent',
       },
     ],
   },
@@ -63,6 +70,20 @@ export const plans: ISubscriptionPlan[] = [
         status: 'complete',
       },
       {
+        id: 'feature-ai-evaluation',
+        title: 'GPT4 powered AI evaluation',
+        description:
+          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. Pro plan comes with GPT4 AI model, which is by far the most powerful AI model available, and it provides the best evaluation results as feedbacks.',
+        status: 'complete',
+      },
+      {
+        id: 'feature-recent-games',
+        title: 'View 10 most recent games in profile',
+        description:
+          'In your profile, you are able to see your most recent 10 games played. You can revisit the game results by clicking on the game card.',
+        status: 'complete',
+      },
+      {
         id: 'feature-access-to-curated-topics',
         title: 'Unlimited access to curated topics',
         description:
@@ -77,17 +98,10 @@ export const plans: ISubscriptionPlan[] = [
         status: 'complete',
       },
       {
-        id: 'feature-ai-evaluation',
-        title: 'GPT4 powered AI evaluation',
+        id: 'feature-game-stats',
+        title: 'Access to exclusive game statistics',
         description:
-          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. Pro plan comes with GPT4 AI model, which is by far the most powerful AI model available, and it provides the best evaluation results as feedbacks.',
-        status: 'complete',
-      },
-      {
-        id: 'feature-flashcard',
-        title: 'Unlimited flashcard deck creation',
-        description:
-          'You can create unlimited number of flashcard decks. Flashcard deck is a great way to manage interesting words you encounter during the games. You can start a custom game from a flashcard deck, revise the words you have learned.',
+          'In your profile, a game statistics section is available for PRO plan users. It provides you with insights on your performance, for example, how many games you have played, which topic you have played the most,, which topic you have the best performance, etc.',
         status: 'complete',
       },
     ],
