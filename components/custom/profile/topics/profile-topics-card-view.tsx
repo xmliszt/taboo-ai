@@ -95,7 +95,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
                 Play More Topics
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-center items-center mt-24'>
+            <CardContent className='flex justify-center items-center min-h-[300px]'>
               <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
             </CardContent>
           </Card>
