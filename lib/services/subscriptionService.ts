@@ -61,6 +61,9 @@ export const fetchCustomerSubscriptions = async (
         }),
       });
       const { subscriptions } = await response.json();
+      if (!Array.isArray(subscriptions)) {
+        return undefined;
+      }
       if (subscriptions.length === 0) {
         // if user has no subscription in stripe, update user's plan to free in firebase
         await updateDoc(doc(firestore, 'users', email), {
@@ -97,6 +100,9 @@ export const fetchCustomerSubscriptions = async (
       }
     );
     const { subscriptions } = await response.json();
+    if (!Array.isArray(subscriptions)) {
+      return undefined;
+    }
     if (subscriptions.length === 0) {
       // if user has no subscription in stripe, update user's plan to free in firebase
       await updateDoc(doc(firestore, 'users', email), {

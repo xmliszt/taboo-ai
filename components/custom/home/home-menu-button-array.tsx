@@ -114,7 +114,7 @@ export default function HomeMenuButtonArray() {
         icon: <BookPlus size={20} />,
         title: 'Upgrade My Plan',
         subtitle:
-          'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features',
+          'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features.',
         ariaLabel: 'Click to upgrade your plan',
         href: '/pricing',
         visible: userPlan?.type === 'free' && status === 'authenticated',

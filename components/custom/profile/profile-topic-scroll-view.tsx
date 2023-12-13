@@ -19,7 +19,7 @@ export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) 
 
   useEffect(() => {
     getPlayedTopicsData(user.email);
-  }, []);
+  }, [user]);
 
   const getPlayedTopicsData = async (email: string) => {
     try {
