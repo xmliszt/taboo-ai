@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata } from 'next';
 import Script from 'next/script';
 import { Lora } from 'next/font/google';
@@ -71,6 +72,7 @@ export default function RootLayout({
           </GlobalTooltipProvider>
           <Toaster />
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
