@@ -4,7 +4,6 @@ import moment from 'moment';
 
 import { firestore } from '@/firebase/firebase-client';
 
-import { SubscriptionPlanType } from '../types/subscription-plan.type';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
 
