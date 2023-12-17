@@ -1,19 +1,16 @@
 'use client';
 
+import { useCallback, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { useTheme } from 'next-themes';
-import { useCallback, useEffect, useRef } from 'react';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 export function Confetti() {
   const { resolvedTheme } = useTheme();
   const refAnimationInstance = useRef<confetti.CreateTypes | null>(null);
-  const getRefConfettiInstance = useCallback(
-    (instance: confetti.CreateTypes | null) => {
-      refAnimationInstance.current = instance;
-    },
-    []
-  );
+  const getRefConfettiInstance = useCallback((instance: confetti.CreateTypes | null) => {
+    refAnimationInstance.current = instance;
+  }, []);
   const confettiColors: string[] =
     resolvedTheme === 'dark' ? ['#fc6a89', '#ffffff'] : ['#bb0000', '#000000'];
 

@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import PricingCardCarousell from '@/components/custom/pricing/pricing-card-carousell';
 import { Skeleton } from '@/components/custom/skeleton';
 import { fetchAvailableSubscriptionPlans } from '@/lib/services/subscriptionService';
 import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
-import { useEffect, useState } from 'react';
 
 export default function PricingPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +27,8 @@ export default function PricingPage() {
   }, []);
 
   return (
-    <div className='mt-20 w-full flex flex-col items-center'>
-      <h2 className='leading-snug text-center text-xl lg:text-4xl font-bold px-4'>
+    <div className='mt-20 flex w-full flex-col items-center'>
+      <h2 className='px-4 text-center text-xl font-bold leading-snug lg:text-4xl'>
         Choose The Right Plan For You
       </h2>
       <div className='h-4'></div>

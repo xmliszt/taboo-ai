@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { sendEmail } from '@/lib/services/emailService';
-import { useEffect, useRef, useState } from 'react';
 
 type GenericFeedbackDialogProps = {
   title: string;
@@ -62,10 +63,7 @@ export default function GenericFeedbackDialog() {
       }
     );
     return () => {
-      EventManager.removeListener(
-        CustomEventKey.GENERIC_FEEDBACK_DIALOG,
-        listener
-      );
+      EventManager.removeListener(CustomEventKey.GENERIC_FEEDBACK_DIALOG, listener);
     };
   }, []);
 
@@ -90,8 +88,7 @@ export default function GenericFeedbackDialog() {
     } catch (error) {
       console.error(error);
       toast({
-        title:
-          "We couldn't send your feedback at the moment. Please try again later.",
+        title: "We couldn't send your feedback at the moment. Please try again later.",
         variant: 'destructive',
       });
     }
@@ -107,12 +104,10 @@ export default function GenericFeedbackDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && (
-            <AlertDialogDescription>{description}</AlertDialogDescription>
-          )}
+          {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
         </AlertDialogHeader>
         <form action=''>
-          <div className='flex flex-row gap-2 items-center'>
+          <div className='flex flex-row items-center gap-2'>
             <Label htmlFor='email-input' className='w-[60px]'>
               Email
             </Label>
@@ -128,7 +123,7 @@ export default function GenericFeedbackDialog() {
             />
           </div>
           <div className='h-2'></div>
-          <div className='flex flex-row gap-2 items-center'>
+          <div className='flex flex-row items-center gap-2'>
             <Label htmlFor='feedback-input' className='w-[60px]'>
               Details
             </Label>

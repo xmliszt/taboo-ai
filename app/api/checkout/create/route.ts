@@ -1,6 +1,7 @@
-import { plans as availablePlans } from '@/app/api/subscriptions/plans/route';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+
+import { plans as availablePlans } from '@/app/api/subscriptions/plans/route';
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -13,11 +14,7 @@ export async function POST(req: NextRequest) {
   }
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const origin = req.headers.get('origin');
-  if (!origin)
-    return NextResponse.json(
-      { message: 'Origin header not set' },
-      { status: 500 }
-    );
+  if (!origin) return NextResponse.json({ message: 'Origin header not set' }, { status: 500 });
 
   let priceId: string;
   let customerEmail: string;
@@ -29,13 +26,9 @@ export async function POST(req: NextRequest) {
     customerEmail = body.customerEmail;
     customerId = body.customerId;
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Failed to parse request body' },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: 'Failed to parse request body' }, { status: 400 });
   }
-  if (!priceId)
-    return NextResponse.json({ message: 'Plan id not set' }, { status: 500 });
+  if (!priceId) return NextResponse.json({ message: 'Plan id not set' }, { status: 500 });
 
   // Refetch the plans just to make sur
   const targetPlan = availablePlans.find((plan) => plan.priceId === priceId);
@@ -61,15 +54,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
       console.error(error);
       if (error instanceof Stripe.errors.StripeError) {
-        return NextResponse.json(
-          { message: error.message },
-          { status: error.statusCode }
-        );
+        return NextResponse.json({ message: error.message }, { status: error.statusCode });
       } else {
-        return NextResponse.json(
-          { message: 'Failed to fetch subscriptions' },
-          { status: 500 }
-        );
+        return NextResponse.json({ message: 'Failed to fetch subscriptions' }, { status: 500 });
       }
     }
   }
@@ -99,15 +86,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
       console.error(error);
       if (error instanceof Stripe.errors.StripeError) {
-        return NextResponse.json(
-          { message: error.message },
-          { status: error.statusCode }
-        );
+        return NextResponse.json({ message: error.message }, { status: error.statusCode });
       } else {
-        return NextResponse.json(
-          { message: 'Failed to fetch subscriptions' },
-          { status: 500 }
-        );
+        return NextResponse.json({ message: 'Failed to fetch subscriptions' }, { status: 500 });
       }
     }
   }
@@ -141,14 +122,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create(
-      checkoutSessionCreateParams
-    );
+    const session = await stripe.checkout.sessions.create(checkoutSessionCreateParams);
     if (!session.url) {
-      return NextResponse.json(
-        { message: 'Stripe session url not set' },
-        { status: 500 }
-      );
+      return NextResponse.json({ message: 'Stripe session url not set' }, { status: 500 });
     }
     return NextResponse.json({ redirectUrl: session.url });
   } catch (error) {
@@ -157,10 +133,7 @@ export async function POST(req: NextRequest) {
       const { message } = error;
       return NextResponse.json({ message }, { status: error.statusCode });
     } else {
-      return NextResponse.json(
-        { message: 'Failed to create checkout session' },
-        { status: 500 }
-      );
+      return NextResponse.json({ message: 'Failed to create checkout session' }, { status: 500 });
     }
   }
 }

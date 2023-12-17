@@ -7,19 +7,13 @@ import Stripe from 'stripe';
  */
 export async function GET(req: NextRequest) {
   if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json(
-      { error: 'Stripe key not found' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Stripe key not found' }, { status: 500 });
   }
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const params = req.nextUrl.searchParams;
   const subscriptionID = params.get('subId');
   if (!subscriptionID) {
-    return NextResponse.json(
-      { error: 'Subscription id not found' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Subscription id not found' }, { status: 400 });
   }
   try {
     const subscription = await stripe.subscriptions.update(subscriptionID, {
@@ -29,10 +23,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error(error);
     if (error instanceof Stripe.errors.StripeError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.statusCode }
-      );
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
     } else {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

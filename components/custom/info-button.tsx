@@ -25,12 +25,7 @@ export const InfoButton = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <IconButton
-          asChild
-          className={cn(className, '')}
-          variant='link'
-          tooltip={tooltip}
-        >
+        <IconButton asChild className={cn(className, '')} variant='link' tooltip={tooltip}>
           <HelpCircle size={size} />
         </IconButton>
       </PopoverTrigger>

@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,8 +13,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { checkoutSuccess } from '@/lib/services/subscriptionService';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 export default function CheckoutSuccessPage({
   params: { sessionId },
@@ -33,13 +34,13 @@ export default function CheckoutSuccessPage({
   }, []);
 
   return (
-    <div className='mt-20 w-full flex flex-col items-center justify-center'>
-      <h1 className='leading-snug text-center text-4xl font-bold -mt-10'>
+    <div className='mt-20 flex w-full flex-col items-center justify-center'>
+      <h1 className='-mt-10 text-center text-4xl font-bold leading-snug'>
         Thank you for your purchase!
       </h1>
       <Link
         href='/profile?anchor=subscription'
-        className='mt-10 bg-primary text-primary-foreground p-6 rounded-xl'
+        className='mt-10 rounded-xl bg-primary p-6 text-primary-foreground'
       >
         View My Subscription
       </Link>
@@ -53,11 +54,10 @@ export default function CheckoutSuccessPage({
           <AlertDialogHeader>
             <AlertDialogTitle>Something went wrong!</AlertDialogTitle>
             <AlertDialogDescription className='leading-snug'>
-              Something unexpected happened during the update process between
-              Stripe and us. Your subscription may not be updated with us. Taboo
-              AI team has been notified and we will help you resolve this issue
-              as soon as possible! Alternatively, you can also raise an issue
-              report to us in the subscription section in your profile
+              Something unexpected happened during the update process between Stripe and us. Your
+              subscription may not be updated with us. Taboo AI team has been notified and we will
+              help you resolve this issue as soon as possible! Alternatively, you can also raise an
+              issue report to us in the subscription section in your profile
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

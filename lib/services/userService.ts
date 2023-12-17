@@ -4,9 +4,9 @@ import moment from 'moment';
 
 import { firestore } from '@/firebase/firebase-client';
 
+import { SubscriptionPlanType } from '../types/subscription-plan.type';
 import IUser from '../types/user.type';
 import { DateUtils } from '../utils/dateUtils';
-import { SubscriptionPlanType } from '../types/subscription-plan.type';
 
 export const getUser = async (email: string): Promise<IUser | null | undefined> => {
   const snapshot = await getDoc(doc(firestore, 'users', email));

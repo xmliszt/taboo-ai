@@ -437,10 +437,9 @@ const AddLevelPage = () => {
         onScroll={onScrollChange}
       >
         <CardContent className='p-6 pt-2'>
-          <div className='leading-snug text-sm mt-2 text-muted-foreground'>
-            You can create your custom topics here! Fill up the fields below and
-            submit your topics. Your topic will be reviewed and uploaded to
-            Taboo AI within 3 working days!{' '}
+          <div className='mt-2 text-sm leading-snug text-muted-foreground'>
+            You can create your custom topics here! Fill up the fields below and submit your topics.
+            Your topic will be reviewed and uploaded to Taboo AI within 3 working days!{' '}
             <span>
               <InfoButton
                 size={15}
@@ -460,7 +459,7 @@ const AddLevelPage = () => {
               />
             </span>
           </div>
-          <div className='flex flex-col gap-1 mt-4'>
+          <div className='mt-4 flex flex-col gap-1'>
             <Label className='text-lg' htmlFor='input-topicName'>
               1. Topic name
             </Label>

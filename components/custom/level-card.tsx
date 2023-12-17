@@ -1,22 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { setPersistence } from '@/lib/persistence/persistence';
-import { HASH } from '@/lib/hash';
-import { useAuth } from '../auth-provider';
-import { Lock, Medal, Trophy } from 'lucide-react';
-import { StarRatingBar } from './star-rating-bar';
-import { getOverallRating } from '@/lib/utils/gameUtils';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from './globals/login-reminder-dialog';
-import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
-import ILevel from '@/lib/types/level.type';
 import { useRouter } from 'next/navigation';
-import { Badge } from '../ui/badge';
+import { Lock, Medal, Trophy } from 'lucide-react';
+
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { HASH } from '@/lib/hash';
+import { setPersistence } from '@/lib/persistence/persistence';
+import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
 import { cn } from '@/lib/utils';
-import { getDifficulty } from '@/lib/utilities';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
+import { getOverallRating } from '@/lib/utils/gameUtils';
+
+import ILevel from '../../lib/types/level.type';
+import { getDifficulty } from '../../lib/utilities';
+import { useAuth } from '../auth-provider';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { LoginReminderProps } from './globals/login-reminder-dialog';
+import { StarRatingBar } from './star-rating-bar';
 
 interface LevelCardProps {
   isShowingRank?: boolean;
@@ -41,8 +43,7 @@ export function LevelCard({
   const isAIMode = !level;
   const isLocked =
     isAIMode &&
-    (status !== 'authenticated' ||
-      !allowedPlanType?.includes(userPlan?.type ?? 'free'));
+    (status !== 'authenticated' || !allowedPlanType?.includes(userPlan?.type ?? 'free'));
 
   const goToLevel = () => {
     if (isLocked) {
@@ -169,17 +170,17 @@ export function LevelCard({
           ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
           : '',
         isAIMode ? 'unicorn-color' : '',
-        'relative w-full h-auto sm:w-[200px] sm:min-h-[300px] transition-all ease-in-out cursor-pointer shadow-md flex flex-col hover:scale-[1.02]'
+        'relative flex h-auto w-full cursor-pointer flex-col shadow-md transition-all ease-in-out hover:scale-[1.02] sm:min-h-[300px] sm:w-[200px]'
       )}
     >
       {isLocked && (
-        <div className='absolute z-10 bg-black bg-opacity-60 w-full h-full top-0 left-0 rounded-lg flex flex-col gap-2 justify-center items-center text-white leading-normal p-4'>
+        <div className='absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-black bg-opacity-60 p-4 leading-normal text-white'>
           <Lock size={50} color='#eeeeee' strokeWidth={1} />
           <div>You need a PRO subscription to access this content</div>
         </div>
       )}
       <CardHeader>
-        <div className='text-md leading-tight font-extrabold rounded-lg p-2 shadow-md bg-primary text-primary-foreground'>
+        <div className='text-md rounded-lg bg-primary p-2 font-extrabold leading-tight text-primary-foreground shadow-md'>
           {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
         </div>
       </CardHeader>

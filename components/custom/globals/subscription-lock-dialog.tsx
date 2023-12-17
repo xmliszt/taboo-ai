@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +14,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
 import { useAuth } from '../../auth-provider';
 
 export default function SubscriptionLockDialog() {
@@ -21,17 +23,11 @@ export default function SubscriptionLockDialog() {
   const router = useRouter();
 
   useEffect(() => {
-    const listener = EventManager.bindEvent(
-      CustomEventKey.SUBSCRIPTION_LOCK_DIALOG,
-      () => {
-        setIsOpen(true);
-      }
-    );
+    const listener = EventManager.bindEvent(CustomEventKey.SUBSCRIPTION_LOCK_DIALOG, () => {
+      setIsOpen(true);
+    });
     return () => {
-      EventManager.removeListener(
-        CustomEventKey.SUBSCRIPTION_LOCK_DIALOG,
-        listener
-      );
+      EventManager.removeListener(CustomEventKey.SUBSCRIPTION_LOCK_DIALOG, listener);
     };
   }, []);
 
@@ -45,12 +41,11 @@ export default function SubscriptionLockDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Oops, you are currently on{' '}
-            {(userPlan?.type ?? 'free').toUpperCase()} plan
+            Oops, you are currently on {(userPlan?.type ?? 'free').toUpperCase()} plan
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Your current subscription plan does not have access to this content.
-            To access, consider upgrade your plan.
+            Your current subscription plan does not have access to this content. To access, consider
+            upgrade your plan.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

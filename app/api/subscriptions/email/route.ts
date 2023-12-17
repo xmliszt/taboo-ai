@@ -6,10 +6,7 @@ import Stripe from 'stripe';
  */
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json(
-      { error: 'Stripe key not found' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Stripe key not found' }, { status: 500 });
   }
   const body = await req.json();
   const email = body.email;
@@ -43,10 +40,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error(error);
     if (error instanceof Stripe.errors.StripeError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.statusCode }
-      );
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
     } else {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

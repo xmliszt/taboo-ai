@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { LoginErrorEventProps } from './globals/login-error-dialog';
-import AccessLinkCard, { MenuItem } from './common/access-link-card';
+import { usePathname, useRouter } from 'next/navigation';
+import { isMobile } from 'react-device-detect';
+
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
 import { isGameFinished } from '@/lib/utils/gameUtils';
@@ -11,11 +14,9 @@ import { isGameFinished } from '@/lib/utils/gameUtils';
 import { useAuth } from '../auth-provider';
 import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
-import { usePathname, useRouter } from 'next/navigation';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { HASH } from '@/lib/hash';
+import AccessLinkCard, { MenuItem } from './common/access-link-card';
+import { LoginErrorEventProps } from './globals/login-error-dialog';
 import { LoginReminderProps } from './globals/login-reminder-dialog';
-import { isMobile } from 'react-device-detect';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
