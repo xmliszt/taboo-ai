@@ -1,36 +1,28 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { sendEmail } from '@/lib/services/emailService';
-import { useToast } from '../../ui/use-toast';
-import { Card, CardContent, CardHeader } from '../../ui/card';
-import { useForm } from 'react-hook-form';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form';
-import { Input } from '../../ui/input';
-import { Button } from '../../ui/button';
-import { Textarea } from '../../ui/textarea';
-import { Spinner } from '../spinner';
+import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+
+import { sendEmail } from '@/lib/services/emailService';
+
 import { useAuth } from '../../auth-provider';
+import { Button } from '../../ui/button';
+import { Card, CardContent, CardHeader } from '../../ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
+import { Input } from '../../ui/input';
+import { Textarea } from '../../ui/textarea';
+import { useToast } from '../../ui/use-toast';
+import { Spinner } from '../spinner';
 
 const contactFormSchema = z.object({
   nickname: z
     .string()
     .nonempty('Name/Nickanme cannot be empty.')
     .max(50, 'Name/Nickname cannot be more than 50 characters.'),
-  email: z
-    .string()
-    .nonempty('Email address cannot be empty.')
-    .email('Invalid email address'),
+  email: z.string().nonempty('Email address cannot be empty.').email('Invalid email address'),
   message: z.string().nonempty('Message cannot be empty.'),
 });
 
@@ -76,10 +68,7 @@ const ContactMe = () => {
         <CardContent>
           <div className='flex flex-col gap-8'>
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onValid)}
-                className='flex flex-col gap-4'
-              >
+              <form onSubmit={form.handleSubmit(onValid)} className='flex flex-col gap-4'>
                 <FormField
                   control={form.control}
                   name='nickname'
@@ -87,11 +76,7 @@ const ContactMe = () => {
                     <FormItem>
                       <FormLabel>How do we address you?</FormLabel>
                       <FormControl>
-                        <Input
-                          type='text'
-                          placeholder='Your name / nickname...'
-                          {...field}
-                        />
+                        <Input type='text' placeholder='Your name / nickname...' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -104,11 +89,7 @@ const ContactMe = () => {
                     <FormItem>
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
-                        <Input
-                          type='email'
-                          placeholder='Your email address'
-                          {...field}
-                        />
+                        <Input type='email' placeholder='Your email address' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -133,9 +114,9 @@ const ContactMe = () => {
               </form>
             </Form>
 
-            <div className='w-full flex flex-row flex-wrap gap-4 justify-center'>
+            <div className='flex w-full flex-row flex-wrap justify-center gap-4'>
               <a
-                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
+                className='rounded-md transition-all hover:scale-105 hover:opacity-70'
                 href='https://www.producthunt.com/posts/taboo-ai?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
                 target='_blank'
               >
@@ -147,7 +128,7 @@ const ContactMe = () => {
                 />
               </a>
               <a
-                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
+                className='rounded-md transition-all hover:scale-105 hover:opacity-70'
                 href='https://www.producthunt.com/posts/taboo-ai?utm_source=badge-top-post-topic-badge&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
                 target='_blank'
               >
@@ -159,7 +140,7 @@ const ContactMe = () => {
                 />
               </a>
               <a
-                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
+                className='rounded-md transition-all hover:scale-105 hover:opacity-70'
                 href='https://theresanaiforthat.com/ai/taboo-ai/?ref=embed'
                 target='_blank'
                 rel='noreferrer'
@@ -173,11 +154,11 @@ const ContactMe = () => {
               </a>
 
               <a
-                className='hover:opacity-70 hover:scale-105 transition-all rounded-md'
+                className='rounded-md transition-all hover:scale-105 hover:opacity-70'
                 href='https://aibrb.com/taboo-ai-a-cutting-edge-ai-powered-game-for-language-learning-and-fun/'
               >
                 <Image
-                  className='rounded-md border-[1px] border-gray-300 py-1 bg-white'
+                  className='rounded-md border-[1px] border-gray-300 bg-white py-1'
                   alt='Taboo.AI: A Cutting-Edge AI-Powered Game for Language Learning and Fun | Featured on AIBRB.COM'
                   src='https://aibrb.com/wp-content/uploads/2023/09/Featured-on-AIBRB.com-white.png'
                   width='240'

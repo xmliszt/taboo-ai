@@ -1,5 +1,6 @@
-import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
 import { NextResponse } from 'next/server';
+
+import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
 
 export const plans: ISubscriptionPlan[] = [
   {

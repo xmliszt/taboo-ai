@@ -5,12 +5,7 @@ interface ErrorResponse {
   details?: any;
 }
 
-async function request<T>(
-  url: string,
-  method: string,
-  body?: any,
-  token?: string
-): Promise<T> {
+async function request<T>(url: string, method: string, body?: any, token?: string): Promise<T> {
   const response = await fetch(url, {
     method,
     headers: {

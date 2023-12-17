@@ -1,9 +1,11 @@
 import _ from 'lodash';
+
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { getDifficulty, getDisplayedTopicName } from '@/lib/utilities';
+import { getOverallRating } from '@/lib/utils/gameUtils';
+
 import { ScoreInfoButton } from '../score-info-button';
 import { StarRatingBar } from '../star-rating-bar';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { getOverallRating } from '@/lib/utils/gameUtils';
 
 export default function ResultsSummaryCard({
   total,
@@ -22,7 +24,7 @@ export default function ResultsSummaryCard({
   const difficultyName = getDifficulty(difficulty, false);
 
   return (
-    <Card className='shadow-lg text-xl'>
+    <Card className='text-xl shadow-lg'>
       <CardHeader>
         <div className='flex flex-row justify-between gap-2'>
           <span>

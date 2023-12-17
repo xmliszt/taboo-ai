@@ -1,10 +1,8 @@
+import { NextRequest } from 'next/server';
+import { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
+
 import { openai } from '@/lib/openai';
 import { IChat } from '@/lib/types/score.type';
-import { NextRequest } from 'next/server';
-import {
-  ChatCompletionSystemMessageParam,
-  ChatCompletionUserMessageParam,
-} from 'openai/resources';
 
 export async function POST(request: NextRequest) {
   const { target, taboos, conversation } = (await request.json()) as {
@@ -43,9 +41,7 @@ export async function POST(request: NextRequest) {
         type: 'json_object',
       },
     });
-    const { score, reasoning } = JSON.parse(
-      completion.choices[0].message.content ?? ''
-    );
+    const { score, reasoning } = JSON.parse(completion.choices[0].message.content ?? '');
     return new Response(
       JSON.stringify({
         score,

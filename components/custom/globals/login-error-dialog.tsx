@@ -1,18 +1,20 @@
 'use client';
 
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogTitle,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useEffect, useState } from 'react';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+
 import { useAuth } from '../../auth-provider';
-import { useRouter } from 'next/navigation';
 
 export interface LoginErrorEventProps {
   error: string;
@@ -29,11 +31,7 @@ export function LoginErrorDialog() {
   useEffect(() => {
     const listener = EventManager.bindEvent(
       CustomEventKey.LOGIN_ERROR,
-      ({
-        detail: { error, redirectHref },
-      }: {
-        detail: LoginErrorEventProps;
-      }) => {
+      ({ detail: { error, redirectHref } }: { detail: LoginErrorEventProps }) => {
         console.log(error);
         setAlertHeader(error);
         setAlertOpen(true);

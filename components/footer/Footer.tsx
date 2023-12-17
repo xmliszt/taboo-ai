@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer
       data-testid='footer'
-      className='py-3 w-full h-auto rounded-t-lg shadow-2xl flex flex-col gap-0 justify-center items-center fixed bottom-0 z-50 text-center text-xs lg:text-sm bg-primary text-primary-foreground'
+      className='fixed bottom-0 z-50 flex h-auto w-full flex-col items-center justify-center gap-0 rounded-t-lg bg-primary py-3 text-center text-xs text-primary-foreground shadow-2xl lg:text-sm'
     >
       <div className='px-2'>
         Powered by{' '}
@@ -36,12 +36,8 @@ export default function Footer() {
           Li Yuxuan <Github size={12} className='inline' />
         </a>
       </div>
-      <div className='px-2 flex flex-row gap-2'>
-        <a
-          aria-label='Read more about the Privacy Policy'
-          href='/privacy'
-          className='underline '
-        >
+      <div className='flex flex-row gap-2 px-2'>
+        <a aria-label='Read more about the Privacy Policy' href='/privacy' className='underline '>
           Privacy Policy
         </a>
         <a
@@ -51,18 +47,10 @@ export default function Footer() {
         >
           Cookie Policy
         </a>
-        <a
-          aria-label='Read Taboo AI features'
-          href='/whatsnew'
-          className='underline '
-        >
+        <a aria-label='Read Taboo AI features' href='/whatsnew' className='underline '>
           Features
         </a>
-        <a
-          aria-label='Read Taboo AI releases roadmap'
-          href='/roadmap'
-          className='underline '
-        >
+        <a aria-label='Read Taboo AI releases roadmap' href='/roadmap' className='underline '>
           Releases Roadmap
         </a>
       </div>

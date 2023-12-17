@@ -1,21 +1,19 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { RefreshCcw } from 'lucide-react';
+
 import IconButton from '@/components/ui/icon-button';
 import { getLevelsByUser } from '@/lib/services/levelService';
 import IUser from '@/lib/types/user.type';
-import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { Skeleton } from '../skeleton';
 import IUserLevel from '@/lib/types/userLevel.type';
-import ProfileTopicsCardView from './topics/profile-topics-card-view';
-import { RefreshCcw } from 'lucide-react';
-import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
-export default function ProfilePlayedTopicScrollView({
-  user,
-}: {
-  user: IUser;
-}) {
+import { Skeleton } from '../skeleton';
+import ProfileTopicsCardView from './topics/profile-topics-card-view';
+
+export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) {
   const [isLoading, setIsLoading] = useState(false);
   const [playedTopics, setPlayedTopics] = useState<IUserLevel[]>([]);
 
@@ -64,8 +62,8 @@ export default function ProfilePlayedTopicScrollView({
   };
 
   return (
-    <div className='w-full flex flex-col gap-2 justify-start'>
-      <div className='w-full flex flex-row gap-2 items-center'>
+    <div className='flex w-full flex-col justify-start gap-2'>
+      <div className='flex w-full flex-row items-center gap-2'>
         <h2 className='text-2xl'>Completed Topics</h2>
         <IconButton
           asChild
@@ -75,32 +73,23 @@ export default function ProfilePlayedTopicScrollView({
             getPlayedTopicsData(user.email);
           }}
         >
-          <RefreshCcw
-            className={cn(isLoading ? 'animate-spin' : 'animate-none')}
-          />
+          <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
         </IconButton>
       </div>
-      <div className='w-full overflow-x-auto flex flex-row gap-8 p-8 justify-start rounded-lg border leading-snug snap-x'>
+      <div className='flex w-full snap-x flex-row justify-start gap-8 overflow-x-auto rounded-lg border p-8 leading-snug'>
         {isLoading ? (
-          <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+          <Skeleton className='h-[350px] w-full' numberOfRows={12} />
         ) : playedTopics.length === 0 ? (
-          <div className='text-center w-full'>
+          <div className='w-full text-center'>
             You have not completed any topics yet.{' '}
-            <Link
-              href='/levels'
-              className='underline hover:text-muted-foreground transition-all'
-            >
+            <Link href='/levels' className='underline transition-all hover:text-muted-foreground'>
               Go play some topics
             </Link>
             .
           </div>
         ) : (
           playedTopics.map((topic) => (
-            <ProfileTopicsCardView
-              key={topic.levelId}
-              userEmail={user.email}
-              topic={topic}
-            />
+            <ProfileTopicsCardView key={topic.levelId} userEmail={user.email} topic={topic} />
           ))
         )}
       </div>

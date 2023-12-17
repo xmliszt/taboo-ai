@@ -1,10 +1,10 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import copy from 'clipboard-copy';
 import _ from 'lodash';
 import { CircleSlash, Hand, MousePointerClick, RefreshCcw } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
 import { useAuth } from '@/components/auth-provider';
@@ -31,10 +31,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { performEvaluation } from '@/lib/services/aiService';
-import {
-  fetchGameForUser,
-  uploadCompletedGameForUser,
-} from '@/lib/services/gameService';
+import { fetchGameForUser, uploadCompletedGameForUser } from '@/lib/services/gameService';
 import {
   getLevel,
   isLevelExists,
@@ -43,11 +40,7 @@ import {
 } from '@/lib/services/levelService';
 import IGame from '@/lib/types/game.type';
 import ILevel from '@/lib/types/level.type';
-import {
-  b64toBlob,
-  getDifficultyMultipliers,
-  shareImage,
-} from '@/lib/utilities';
+import { b64toBlob, getDifficultyMultipliers, shareImage } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import {
@@ -103,8 +96,7 @@ export default function ResultPage() {
     const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
       if (!isGameFinished(game)) {
         toast({
-          title:
-            'Sorry we are not able to share your scores because they are incomplete.',
+          title: 'Sorry we are not able to share your scores because they are incomplete.',
         });
         return;
       }
@@ -184,12 +176,7 @@ export default function ResultPage() {
     try {
       setIsGameUploading(true);
       await uploadCompletedGameForUser(user.email, level.id, game);
-      await uploadPlayedLevelForUser(
-        user.email,
-        level,
-        game.finishedAt,
-        game.totalScore
-      );
+      await uploadPlayedLevelForUser(user.email, level, game.finishedAt, game.totalScore);
       await updateRealtimeDBLevelRecord(level.id, user, game.totalScore);
       setIsUploadFailed(false);
     } catch (error) {
@@ -233,9 +220,7 @@ export default function ResultPage() {
     if (!game || !game.scores) return;
     setIsScoring(true);
     setLoadingMessage(
-      `Stay tuned! Taboo AI is evaluating your performance... [${idx + 1}/${
-        game.scores.length
-      }]`
+      `Stay tuned! Taboo AI is evaluating your performance... [${idx + 1}/${game.scores.length}]`
     );
     const score = game.scores[idx];
     const aiScore = score.aiScore;
@@ -283,11 +268,7 @@ export default function ResultPage() {
     setIsScoring(false);
   };
 
-  const updateGameAIEvaluationAtIndex = (
-    idx: number,
-    aiScore?: number,
-    aiReasoning?: string
-  ) => {
+  const updateGameAIEvaluationAtIndex = (idx: number, aiScore?: number, aiReasoning?: string) => {
     const game = getPersistence<IGame>(HASH.game);
     if (!game || !game.scores) return;
     game.scores[idx].aiScore = aiScore;
@@ -311,22 +292,16 @@ export default function ResultPage() {
     } catch (error) {
       console.error(error);
       toast({
-        title:
-          'Sorry, we are unable to perform sharing at the moment. Please try again later.',
+        title: 'Sorry, we are unable to perform sharing at the moment. Please try again later.',
         variant: 'destructive',
       });
     }
   };
 
-  const performNavigatorShare = (
-    title: string,
-    imageLink?: string,
-    imageName?: string
-  ) => {
+  const performNavigatorShare = (title: string, imageLink?: string, imageName?: string) => {
     if (!game || !isGameFinished(game)) {
       toast({
-        title:
-          'Sorry we are not able to share your scores because they are incomplete.',
+        title: 'Sorry we are not able to share your scores because they are incomplete.',
         variant: 'destructive',
       });
       return;
@@ -340,13 +315,9 @@ export default function ResultPage() {
           .share({
             title: title,
             files: [
-              new File(
-                [b64toBlob(imageLink.split(',')[1], 'image/octet-stream')],
-                imageName,
-                {
-                  type: 'image/png',
-                }
-              ),
+              new File([b64toBlob(imageLink.split(',')[1], 'image/octet-stream')], imageName, {
+                type: 'image/png',
+              }),
             ],
           })
           .then(() => console.log('Shared'))
@@ -404,7 +375,7 @@ export default function ResultPage() {
         },
         (key, highlight) => {
           return (
-            <span key={key} className='bg-green-400 px-1 rounded-lg text-black'>
+            <span key={key} className='rounded-lg bg-green-400 px-1 text-black'>
               {highlight}
             </span>
           );
@@ -422,8 +393,7 @@ export default function ResultPage() {
     onHighlightMessagePart: (key: string, s: string) => JSX.Element
   ): JSX.Element[] => {
     let parts = [];
-    if (highlights.length === 0)
-      parts = [<span key={`message-${idx}`}>{message}</span>];
+    if (highlights.length === 0) parts = [<span key={`message-${idx}`}>{message}</span>];
     else {
       let startIndex = 0;
       let endIndex = 0;
@@ -451,20 +421,13 @@ export default function ResultPage() {
         startIndex = endIndex;
       }
       parts.push(
-        onNormalMessagePart(
-          `normal-message-${endIndex}-${idx}`,
-          message.substring(endIndex)
-        )
+        onNormalMessagePart(`normal-message-${endIndex}-${idx}`, message.substring(endIndex))
       );
     }
     return parts;
   };
 
-  const generateMobileStatsRow = (
-    key: string,
-    title: string,
-    content: React.ReactElement
-  ) => {
+  const generateMobileStatsRow = (key: string, title: string, content: React.ReactElement) => {
     return (
       <div key={key} className='px-3 py-1 leading-snug'>
         <span className='font-extrabold text-primary'>{title}: </span>
@@ -473,19 +436,10 @@ export default function ResultPage() {
     );
   };
 
-  const renderMessageBubble = (
-    idx: number,
-    chat: IChat,
-    score: IScore,
-    isLastBubble = false
-  ) => {
+  const renderMessageBubble = (idx: number, chat: IChat, score: IScore, isLastBubble = false) => {
     if (chat.role === 'assistant') {
       return isLastBubble
-        ? generateHighlightedMessage(
-            idx,
-            chat.content,
-            score.responseHighlights
-          )
+        ? generateHighlightedMessage(idx, chat.content, score.responseHighlights)
         : chat.content;
     } else if (chat.role === 'error') {
       return <span className='text-slate-500'>{chat.content}</span>;
@@ -500,7 +454,7 @@ export default function ResultPage() {
     return (
       <div
         key={`accordion-content-conversation-${score.id}`}
-        className='w-full flex flex-col gap-4 bg-secondary text-secondary-foreground p-4'
+        className='flex w-full flex-col gap-4 bg-secondary p-4 text-secondary-foreground'
       >
         {score.conversation.map((chat, idx) => (
           <p
@@ -509,31 +463,21 @@ export default function ResultPage() {
               chat.role === 'user'
                 ? 'chat-bubble-right'
                 : chat.role === 'assistant'
-                ? 'chat-bubble-left !bg-primary-foreground !text-primary'
-                : chat.role === 'error'
-                ? 'chat-bubble-left !bg-primary-foreground'
-                : 'hidden'
+                  ? 'chat-bubble-left !bg-primary-foreground !text-primary'
+                  : chat.role === 'error'
+                    ? 'chat-bubble-left !bg-primary-foreground'
+                    : 'hidden'
             )}
           >
-            {renderMessageBubble(
-              idx,
-              chat,
-              score,
-              idx === score.conversation.length - 1
-            )}
+            {renderMessageBubble(idx, chat, score, idx === score.conversation.length - 1)}
           </p>
         ))}
       </div>
     );
   };
 
-  const generateStatsItems = (
-    score: IScore,
-    difficulty: number
-  ): StatItem[] => {
-    const timeMultipler = level
-      ? getDifficultyMultipliers(level.difficulty).timeMultipler
-      : null;
+  const generateStatsItems = (score: IScore, difficulty: number): StatItem[] => {
+    const timeMultipler = level ? getDifficultyMultipliers(level.difficulty).timeMultipler : null;
     const promptMultiplier = level
       ? getDifficultyMultipliers(level.difficulty).promptMultiplier
       : null;
@@ -560,28 +504,24 @@ export default function ResultPage() {
       },
       {
         title: 'Total Time Taken',
-        content: (
-          <span>{`${getCompletionSeconds(score.completion)} seconds`}</span>
-        ),
+        content: <span>{`${getCompletionSeconds(score.completion)} seconds`}</span>,
       },
       {
         title: `Time Score (${(timeMultipler ?? 0) * 100}%)`,
         content: (
           <span>{`${calculateTimeScore(score).toString()} x ${
             (timeMultipler ?? 0) * 100
-          }% = ${_.round(
-            calculateTimeScore(score) * (timeMultipler ?? 0),
-            1
-          )}`}</span>
+          }% = ${_.round(calculateTimeScore(score) * (timeMultipler ?? 0), 1)}`}</span>
         ),
       },
       {
         title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
         content:
           score.aiScore !== undefined ? (
-            <span>{`${score.aiScore.toString()} x ${
-              (promptMultiplier ?? 0) * 100
-            }% = ${_.round(score.aiScore * (promptMultiplier ?? 0), 1)}`}</span>
+            <span>{`${score.aiScore.toString()} x ${(promptMultiplier ?? 0) * 100}% = ${_.round(
+              score.aiScore * (promptMultiplier ?? 0),
+              1
+            )}`}</span>
           ) : (
             <Button
               className='ml-4'
@@ -627,27 +567,15 @@ export default function ResultPage() {
   const generateMobileScoreStack = () => {
     if (!game) return <></>;
     return game.scores.map((score) => (
-      <AccordionItem
-        key={`word-${score.id}`}
-        value={`word-${score.id}`}
-        className='pb-1'
-      >
+      <AccordionItem key={`word-${score.id}`} value={`word-${score.id}`} className='pb-1'>
         <AccordionTrigger key={`accordion-trigger-${score.id}`}>
-          <div className='w-full text-primary flex flex-row gap-2 items-center justify-between'>
-            <div className='flex flex-row flex-grow items-center gap-2 justify-between'>
-              <span className='text-left leading-snug'>
-                {_.startCase(score.target)}
-              </span>
-              <div className='max-w-[120px] animate-pulse text-muted-foreground text-xs flex flex-row items-center gap-1 whitespace-nowrap'>
-                {isMobile || isTablet ? (
-                  <Hand size={15} />
-                ) : (
-                  <MousePointerClick size={15} />
-                )}{' '}
+          <div className='flex w-full flex-row items-center justify-between gap-2 text-primary'>
+            <div className='flex flex-grow flex-row items-center justify-between gap-2'>
+              <span className='text-left leading-snug'>{_.startCase(score.target)}</span>
+              <div className='flex max-w-[120px] animate-pulse flex-row items-center gap-1 whitespace-nowrap text-xs text-muted-foreground'>
+                {isMobile || isTablet ? <Hand size={15} /> : <MousePointerClick size={15} />}{' '}
                 {isMobile || isTablet ? 'Tap' : 'Click'} to{' '}
-                {expandedValues.includes(`word-${score.id}`)
-                  ? 'fold'
-                  : 'expand'}
+                {expandedValues.includes(`word-${score.id}`) ? 'fold' : 'expand'}
               </div>
             </div>
             <div className='flex flex-row items-center'>
@@ -673,10 +601,7 @@ export default function ResultPage() {
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent
-          key={`accordion-content-${score.id}`}
-          className='bg-secondary rounded-lg'
-        >
+        <AccordionContent key={`accordion-content-${score.id}`} className='rounded-lg bg-secondary'>
           {generateConversation(score)}
           {generateStatsItems(score, game.difficulty).map((item, idx) => {
             return generateMobileStatsRow(
@@ -692,12 +617,9 @@ export default function ResultPage() {
 
   const renderResults = () => {
     return game ? (
-      <div className='w-full flex flex-col gap-6 mb-8 mt-20 px-4'>
+      <div className='mb-8 mt-20 flex w-full flex-col gap-6 px-4'>
         {isUploadFailed && (
-          <ResultsUploadAlert
-            isUploading={isGameUploading}
-            retryUpload={tryUploadGameToCloud}
-          />
+          <ResultsUploadAlert isUploading={isGameUploading} retryUpload={tryUploadGameToCloud} />
         )}
         {level && (
           <ResultsSummaryCard
@@ -720,9 +642,9 @@ export default function ResultPage() {
         </div>
       </div>
     ) : status === 'loading' || isCheckingOnline ? (
-      <Skeleton className='w-full pt-20 px-4' hasHeaderRow numberOfRows={10} />
+      <Skeleton className='w-full px-4 pt-20' hasHeaderRow numberOfRows={10} />
     ) : (
-      <div className='animate-pulse w-full mt-40 px-4 flex flex-col gap-6 justify-center items-center'>
+      <div className='mt-40 flex w-full animate-pulse flex-col items-center justify-center gap-6 px-4'>
         <CircleSlash size={56} />
         <h2 className='text-2xl font-bold'>You have no results</h2>
       </div>
@@ -732,30 +654,20 @@ export default function ResultPage() {
   return (
     <>
       <main className='relative'>
-        <LoadingMask
-          key='loading-mask'
-          isLoading={isLoading}
-          message={loadingMessage}
-        />
-        <section
-          className='!leading-screenshot pb-24 lg:pb-48 pt-4'
-          ref={screenshotRef}
-        >
+        <LoadingMask key='loading-mask' isLoading={isLoading} message={loadingMessage} />
+        <section className='!leading-screenshot pb-24 pt-4 lg:pb-48' ref={screenshotRef}>
           {renderResults()}
         </section>
       </main>
-      <div className='fixed flex flex-col md:flex-row gap-2 items-center md:justify-center bottom-2 z-40 w-full py-4 px-4'>
+      <div className='fixed bottom-2 z-40 flex w-full flex-col items-center gap-2 px-4 py-4 md:flex-row md:justify-center'>
         {!hasTopicSubmitted && level?.isAIGenerated && (
           <Button
             className='w-4/5 shadow-xl'
             onClick={() => {
               if (!user || status !== 'authenticated') {
-                EventManager.fireEvent<LoginReminderProps>(
-                  CustomEventKey.LOGIN_REMINDER,
-                  {
-                    title: 'You need to login to contribute a topic to us.',
-                  }
-                );
+                EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+                  title: 'You need to login to contribute a topic to us.',
+                });
               } else {
                 setIsTopicReviewSheetOpen(true);
               }
@@ -787,12 +699,9 @@ export default function ResultPage() {
             return;
           }
           if (status === 'unauthenticated') {
-            EventManager.fireEvent<LoginReminderProps>(
-              CustomEventKey.LOGIN_REMINDER,
-              {
-                title: 'You need to login to contribute a topic to us.',
-              }
-            );
+            EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+              title: 'You need to login to contribute a topic to us.',
+            });
           } else {
             setIsTopicReviewSheetOpen(true);
           }

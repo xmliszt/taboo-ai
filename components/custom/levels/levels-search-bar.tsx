@@ -1,7 +1,10 @@
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
 import { isMobile } from 'react-device-detect';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,11 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { SortType } from '@/lib/utils/levelUtils';
-import { useState } from 'react';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { SortType } from '@/lib/utils/levelUtils';
 
 type SortItem = {
   value: SortType;
@@ -55,7 +56,7 @@ export default function LevelsSearchBar({
 
   return (
     <>
-      <div className='flex flex-row gap-4 items-center'>
+      <div className='flex flex-row items-center gap-4'>
         <Select
           value={selectedSorter}
           onValueChange={(value) => {
@@ -66,7 +67,7 @@ export default function LevelsSearchBar({
           <SelectTrigger className='w-[250px]'>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className='w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)]'>
+          <SelectContent className='max-h-[var(--radix-select-content-available-height)] w-[var(--radix-select-trigger-width)]'>
             <SelectGroup>
               <SelectLabel>Sort Topics</SelectLabel>
               {sorters.map((sorter) => (
@@ -93,20 +94,16 @@ export default function LevelsSearchBar({
           </Button>
         )}
       </div>
-      <div className='mt-4 flex flex-row justify-between items-center'>
+      <div className='mt-4 flex flex-row items-center justify-between'>
         <Badge className='shadow-[0_5px_10px_rgba(0,0,0,0.3)]'>
           {searchTerm && searchTerm.length > 0
             ? `Found ${topicNumber} topics`
             : `Total ${topicNumber} topics`}
         </Badge>
-        <div className='flex flex-row gap-2 items-center'>
+        <div className='flex flex-row items-center gap-2'>
           <Switch
             id='ranking-mode-switch'
-            className={cn(
-              isRankingModeOn
-                ? 'shadow-[0_5px_10px_rgba(0,0,0,0.3)]'
-                : 'shadow-none'
-            )}
+            className={cn(isRankingModeOn ? 'shadow-[0_5px_10px_rgba(0,0,0,0.3)]' : 'shadow-none')}
             checked={isRankingModeOn}
             onCheckedChange={(checked) => {
               setIsRankingModeOn(checked);
@@ -116,9 +113,7 @@ export default function LevelsSearchBar({
           <Label
             htmlFor='ranking-mode-switch'
             className={cn(
-              isRankingModeOn
-                ? 'text-primary font-bold'
-                : 'text-muted-foreground font-light'
+              isRankingModeOn ? 'font-bold text-primary' : 'font-light text-muted-foreground'
             )}
           >
             Ranking Mode

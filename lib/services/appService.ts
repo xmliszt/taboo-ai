@@ -1,15 +1,8 @@
-import {
-  DataSnapshot,
-  increment,
-  onValue,
-  ref,
-  update,
-} from 'firebase/database';
+import { DataSnapshot, increment, onValue, ref, update } from 'firebase/database';
+
 import { realtime } from '../../firebase/firebase-client';
 
-export const listenToAppStats = (
-  onSnapshotUpdated: (snapshot: DataSnapshot) => unknown
-) => {
+export const listenToAppStats = (onSnapshotUpdated: (snapshot: DataSnapshot) => unknown) => {
   onValue(ref(realtime, 'stats/'), onSnapshotUpdated);
 };
 

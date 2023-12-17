@@ -1,9 +1,9 @@
 'use client';
 
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import _, { uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useTimer } from 'use-timer';
 
 import { useAuth } from '@/components/auth-provider';
@@ -17,14 +17,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { CONSTANTS } from '@/lib/constants';
 import { getHash, HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
-import {
-  askAITabooWordsForTarget,
-  fetchConversationCompletion,
-} from '@/lib/services/aiService';
-import {
-  getLevel,
-  incrementLevelPopularity,
-} from '@/lib/services/levelService';
+import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
+import { getLevel, incrementLevelPopularity } from '@/lib/services/levelService';
 import { incrementGameAttemptedCount } from '@/lib/services/userService';
 import { getTabooWords } from '@/lib/services/wordService';
 import IGame from '@/lib/types/game.type';
@@ -32,21 +26,11 @@ import { IHighlight } from '@/lib/types/highlight.type';
 import ILevel from '@/lib/types/level.type';
 import { IChat, IScore } from '@/lib/types/score.type';
 import IWord from '@/lib/types/word.type';
-import {
-  formatStringForDisplay,
-  getMockResponse,
-  getMockVariations,
-} from '@/lib/utilities';
+import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
-import {
-  aggregateTotalScore,
-  aggregateTotalTimeTaken,
-} from '@/lib/utils/gameUtils';
-import {
-  generateHighlights,
-  getMatchedTabooWords,
-} from '@/lib/utils/levelUtils';
+import { aggregateTotalScore, aggregateTotalTimeTaken } from '@/lib/utils/gameUtils';
+import { generateHighlights, getMatchedTabooWords } from '@/lib/utils/levelUtils';
 
 interface LevelPageProps {
   params: { id: string };
@@ -72,8 +56,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const [userInput, setUserInput] = useState<string>('');
   const [target, setTarget] = useState<string | null>(null);
   const [variations, setVariations] = useState<string[]>([]);
-  const [isGeneratingVariations, setIsGeneratingVariations] =
-    useState<boolean>(false);
+  const [isGeneratingVariations, setIsGeneratingVariations] = useState<boolean>(false);
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCountingdown, setIsCountdown] = useState<boolean>(false);
@@ -223,10 +206,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       mockConversation.pop();
       try {
         const mockResponse = await getMockResponse(target ?? '', getDevMode());
-        setConversation([
-          ...mockConversation,
-          { role: 'assistant', content: mockResponse ?? '' },
-        ]);
+        setConversation([...mockConversation, { role: 'assistant', content: mockResponse ?? '' }]);
       } catch {
         setConversation([
           ...mockConversation,
@@ -298,16 +278,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   // If last message from conversation is from assistant, we generate highlights for it. And move on to next question
   useEffect(() => {
-    if (
-      conversation.length > 0 &&
-      conversation[conversation.length - 1].role === 'assistant'
-    ) {
+    if (conversation.length > 0 && conversation[conversation.length - 1].role === 'assistant') {
       const lastAssistantMessage = conversation[conversation.length - 1];
-      const highlights = generateHighlights(
-        target,
-        lastAssistantMessage.content,
-        true
-      );
+      const highlights = generateHighlights(target, lastAssistantMessage.content, true);
       if (highlights.length > 0) {
         toast({ title: "That's a hit! Well done!", duration: 1000 });
         nextQuestion(highlights);
@@ -353,10 +326,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         setTimeout(() => {
           setIsGeneratingVariations(false);
           let _variations = [target];
-          if (
-            variations &&
-            _.toLower(variations.target) === _.toLower(target)
-          ) {
+          if (variations && _.toLower(variations.target) === _.toLower(target)) {
             _variations = variations.taboos;
           }
           setVariations(_variations.map(formatStringForDisplay));
@@ -369,15 +339,12 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   // When progress changed
   useEffect(() => {
-    const isLastRound =
-      currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
+    const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
       // Game Finsihed. Save game to cache
       const completedAt = new Date();
       const game: IGame = {
-        id: getHash(
-          `${user?.email ?? 'guest'}-${level?.id}-${completedAt.toISOString()}`
-        ),
+        id: getHash(`${user?.email ?? 'guest'}-${level?.id}-${completedAt.toISOString()}`),
         levelId: level?.id ?? '',
         totalScore: aggregateTotalScore(savedScores, level?.difficulty ?? 1),
         totalDuration: aggregateTotalTimeTaken(savedScores),
@@ -419,10 +386,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     };
     const renderHighlightMessageSpan = (message: string) => {
       return (
-        <span
-          key={uniqueId(message)}
-          className='rounded-lg px-1 py-1 bg-green-400 text-black'
-        >
+        <span key={uniqueId(message)} className='rounded-lg bg-green-400 px-1 py-1 text-black'>
           {message}
         </span>
       );
@@ -442,15 +406,11 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
           endIndex++;
         }
         // Normal part
-        parts.push(
-          renderNormalMessageSpan(message.substring(startIndex, endIndex))
-        );
+        parts.push(renderNormalMessageSpan(message.substring(startIndex, endIndex)));
         startIndex = endIndex;
         endIndex = highlight.end;
         // Highlighted part
-        parts.push(
-          renderHighlightMessageSpan(message.substring(startIndex, endIndex))
-        );
+        parts.push(renderHighlightMessageSpan(message.substring(startIndex, endIndex)));
         startIndex = endIndex;
       }
       parts.push(renderNormalMessageSpan(message.substring(endIndex)));
@@ -460,9 +420,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   if (!level) {
     return (
-      <section className='flex justify-center h-full pt-20 px-4'>
-        <h1 className='fixed z-20 top-3 w-full flex justify-center'>
-          <div className='rounded-lg shadow-lg px-3 py-1 w-fit'>Taboo AI</div>
+      <section className='flex h-full justify-center px-4 pt-20'>
+        <h1 className='fixed top-3 z-20 flex w-full justify-center'>
+          <div className='w-fit rounded-lg px-3 py-1 shadow-lg'>Taboo AI</div>
         </h1>
         <Skeleton numberOfRows={10} />
       </section>
@@ -470,55 +430,42 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   }
 
   return (
-    <main className='flex justify-center h-full'>
+    <main className='flex h-full justify-center'>
       {isCountingdown ? (
         <div
           className={cn(
-            'fixed z-50 top-1/2 w-full text-center animate-bounce',
+            'fixed top-1/2 z-50 w-full animate-bounce text-center',
             countdown.time === 0
               ? 'text-6xl'
               : countdown.time === 1
-              ? 'text-5xl'
-              : countdown.time === 2
-              ? 'text-4xl'
-              : countdown.time === 3
-              ? 'text-3xl'
-              : 'text-2xl'
+                ? 'text-5xl'
+                : countdown.time === 2
+                  ? 'text-4xl'
+                  : countdown.time === 3
+                    ? 'text-3xl'
+                    : 'text-2xl'
           )}
         >
-          {countdown.time === 0
-            ? 'Start'
-            : countdown.time === -1
-            ? ''
-            : countdown.time}
+          {countdown.time === 0 ? 'Start' : countdown.time === -1 ? '' : countdown.time}
         </div>
       ) : isGeneratingVariations ? (
-        <div className='fixed z-50 top-1/2 w-full text-center text-3xl animate-bounce'>
+        <div className='fixed top-1/2 z-50 w-full animate-bounce text-center text-3xl'>
           {renderWaitingMessageForVariations()}
         </div>
       ) : (
         <></>
       )}
-      <Timer
-        className='fixed top-3 right-3 z-50 shadow-lg'
-        time={time}
-        status={timerStatus}
-      />
-      <section className='flex flex-col gap-4 text-center h-full w-full pt-20'>
-        <div className='flex-grow w-full flex flex-col gap-4 px-4 pb-4 overflow-y-scroll scrollbar-hide'>
+      <Timer className='fixed right-3 top-3 z-50 shadow-lg' time={time} status={timerStatus} />
+      <section className='flex h-full w-full flex-col gap-4 pt-20 text-center'>
+        <div className='flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 pb-4 scrollbar-hide'>
           {conversation.map((prompt, idx) => (
             <p
               key={idx}
-              className={cn(
-                prompt.role === 'user'
-                  ? 'chat-bubble-right'
-                  : 'chat-bubble-left'
-              )}
+              className={cn(prompt.role === 'user' ? 'chat-bubble-right' : 'chat-bubble-left')}
             >
-              {prompt.role === 'assistant' &&
-              idx === conversation.length - 1 ? (
+              {prompt.role === 'assistant' && idx === conversation.length - 1 ? (
                 isWaitingForAIResponse ? (
-                  <span className='flex flex-row gap-1 items-center'>
+                  <span className='flex flex-row items-center gap-1'>
                     {'...'.split('').map((c, i) =>
                       i === 0 ? (
                         <span
@@ -559,32 +506,27 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
           <div id='chat-end'></div>
         </div>
 
-        <section className='border-t-border border-t-[1px] w-full flex flex-col transition-colors bg-card text-card-foreground'>
+        <section className='flex w-full flex-col border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
           <Progress
-            className='rounded-none h-1'
+            className='h-1 rounded-none'
             value={(currentProgress / CONSTANTS.numberOfQuestionsPerGame) * 100}
           />
-          <div className='relative mb-4 flex flex-col items-center gap-2 pt-4 px-4 text-card-foreground'>
-            <span className='font-light text-base'>Make AI Say:</span>
-            <span className='text-card text-xl bg-card-foreground px-2 py-1 rounded-lg font-bold'>
+          <div className='relative mb-4 flex flex-col items-center gap-2 px-4 pt-4 text-card-foreground'>
+            <span className='text-base font-light'>Make AI Say:</span>
+            <span className='rounded-lg bg-card-foreground px-2 py-1 text-xl font-bold text-card'>
               {target}
             </span>
           </div>
           <form onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
-            <div className='flex relative items-center justify-center gap-4 px-4'>
+            <div className='relative flex items-center justify-center gap-4 px-4'>
               <IconButton
                 id='clear'
                 type='button'
                 tooltip='Clear input'
                 aria-label='Clear input button'
                 asChild
-                disabled={
-                  !level ||
-                  isLoading ||
-                  isCountingdown ||
-                  isGeneratingVariations
-                }
-                className='absolute right-20 z-10 shadow-lg rounded-full !w-[20px] !h-[20px]'
+                disabled={!level || isLoading || isCountingdown || isGeneratingVariations}
+                className='absolute right-20 z-10 !h-[20px] !w-[20px] rounded-full shadow-lg'
                 onClick={() => {
                   setUserInput('');
                   inputTextField.current?.focus();
@@ -601,8 +543,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                   isGeneratingVariations
                     ? 'Generating taboo words...'
                     : isCountingdown
-                    ? 'Ready to ask questions?'
-                    : 'Enter your prompt...'
+                      ? 'Ready to ask questions?'
+                      : 'Enter your prompt...'
                 }
                 className={cn(
                   'flex-grow pr-10',
@@ -639,22 +581,18 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
             {userInputError && (
               <Label
                 htmlFor='user-input'
-                className='text-red-400 leading-snug px-4 animate-fade-in'
+                className='animate-fade-in px-4 leading-snug text-red-400'
               >
                 {userInputError}
               </Label>
             )}
           </form>
-          <div className='text-base mt-4 w-full px-4 pb-8 overflow-x-auto whitespace-nowrap'>
+          <div className='mt-4 w-full overflow-x-auto whitespace-nowrap px-4 pb-8 text-base'>
             <span>
               <span className='font-light italic'>Taboos: </span>
-              <span className='text-red-400'>
-                {variations.map(_.startCase).join(', ')}
-              </span>{' '}
+              <span className='text-red-400'>{variations.map(_.startCase).join(', ')}</span>{' '}
               {isGeneratingVariations && (
-                <span className=''>
-                  ({renderWaitingMessageForVariations()})
-                </span>
+                <span className=''>({renderWaitingMessageForVariations()})</span>
               )}
             </span>
           </div>

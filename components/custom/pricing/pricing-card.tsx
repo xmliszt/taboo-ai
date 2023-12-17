@@ -1,11 +1,12 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Check, X } from 'lucide-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import moment from 'moment';
+
+import { useAuth } from '@/components/auth-provider';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,22 +16,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/components/ui/use-toast';
-import { useRouter } from 'next/navigation';
-import { Spinner } from '../spinner';
-import {
-  cancelSubscription,
-  createCheckoutSession,
-} from '@/lib/services/subscriptionService';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { cancelSubscription, createCheckoutSession } from '@/lib/services/subscriptionService';
 import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
 import { cn } from '@/lib/utils';
-import { useEffect, useRef, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/components/auth-provider';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from '../globals/login-reminder-dialog';
+
 import { confirmAlert } from '../globals/generic-alert-dialog';
-import moment from 'moment';
+import { LoginReminderProps } from '../globals/login-reminder-dialog';
+import { Spinner } from '../spinner';
 
 interface PricingCardProps {
   index: number;
@@ -50,14 +45,13 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         ? 'Current Plan' // If not logged in, free plan is current plan
         : 'Start Free Trial' // If not logged in, paid plan is start free trial
       : userPlan.type === plan.type
-      ? 'Current Plan' // If logged in, current plan is current plan
-      : userPlan.tier ?? 0 > plan.tier
-      ? 'Downgrade Plan' // If logged in and current plan is higher tier than this plan, downgrade plan
-      : user?.customerId === undefined
-      ? 'Start Free Trial' // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start free trial
-      : 'Upgrade Plan'; // If logged in and current plan is lower tier than this plan, upgrade plan
-  const isCurrentPlan =
-    userPlan === undefined ? plan.type === 'free' : userPlan.type === plan.type;
+        ? 'Current Plan' // If logged in, current plan is current plan
+        : userPlan.tier ?? 0 > plan.tier
+          ? 'Downgrade Plan' // If logged in and current plan is higher tier than this plan, downgrade plan
+          : user?.customerId === undefined
+            ? 'Start Free Trial' // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start free trial
+            : 'Upgrade Plan'; // If logged in and current plan is lower tier than this plan, upgrade plan
+  const isCurrentPlan = userPlan === undefined ? plan.type === 'free' : userPlan.type === plan.type;
   const subscriptionCancelledAt = userPlan?.subscription?.cancel_at;
   const subscriptionCancelDate = subscriptionCancelledAt
     ? moment(subscriptionCancelledAt * 1000)
@@ -112,22 +106,15 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
     }
     // If user is not logged in, show login reminder
     if (status !== 'authenticated') {
-      return EventManager.fireEvent<LoginReminderProps>(
-        CustomEventKey.LOGIN_REMINDER,
-        {
-          title: 'You need to login to subscribe',
-          redirectHref: '/pricing',
-        }
-      );
+      return EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+        title: 'You need to login to subscribe',
+        redirectHref: '/pricing',
+      });
     }
     // user logged in, selected paid plan and valid, create checkout session
     try {
       setIsLoading(true);
-      const redirectUrl = await createCheckoutSession(
-        priceId,
-        user?.email,
-        user?.customerId
-      );
+      const redirectUrl = await createCheckoutSession(priceId, user?.email, user?.customerId);
       router.replace(redirectUrl);
     } catch (error) {
       toast({
@@ -184,43 +171,30 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       id={`plan-card-${index}`}
       ref={cardRef}
       className={cn(
-        /pro/i.test(plan.name)
-          ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
-          : '',
-        user?.customerPlanType === plan.type
-          ? 'border-[1px] border-primary'
-          : '',
-        'relative max-h-[400px] min-h-[400px] max-w-[280px] min-w-[280px] snap-center hover:scale-105 transition-transform ease-in-out my-12'
+        /pro/i.test(plan.name) ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
+        user?.customerPlanType === plan.type ? 'border-[1px] border-primary' : '',
+        'relative my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center transition-transform ease-in-out hover:scale-105'
       )}
     >
       <CardHeader className='p-6 pb-4'>
         <CardTitle>
-          <div className='flex flex-row justify-between items-center'>
+          <div className='flex flex-row items-center justify-between'>
             {plan.name}
-            {plan.type !== 'free' && (
-              <Badge>{plan.trialsDays} days free trial</Badge>
-            )}
+            {plan.type !== 'free' && <Badge>{plan.trialsDays} days free trial</Badge>}
           </div>
         </CardTitle>
-        <CardDescription className='text-base'>
-          ${plan.pricePerMonth} per month
-        </CardDescription>
+        <CardDescription className='text-base'>${plan.pricePerMonth} per month</CardDescription>
       </CardHeader>
-      <CardContent className='flex flex-col gap-[0.35rem] h-full text-sm'>
+      <CardContent className='flex h-full flex-col gap-[0.35rem] text-sm'>
         {plan.features.map((feature, index) => (
-          <div
-            key={index}
-            className='flex flex-row gap-2 justify-start items-start'
-          >
+          <div key={index} className='flex flex-row items-start justify-start gap-2'>
             <div className='w-[22px]'>
               {feature.status === 'absent' ? (
                 <X size={20} color='#E54666' strokeWidth={2} />
               ) : (
                 <Check
                   size={20}
-                  color={
-                    feature.status === 'complete' ? '#7eb262' : '#7eb26250'
-                  }
+                  color={feature.status === 'complete' ? '#7eb262' : '#7eb26250'}
                   strokeWidth={2}
                 />
               )}
@@ -230,23 +204,21 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
               <PopoverTrigger asChild>
                 <span
                   className={cn(
-                    'leading-tight underline underline-offset-2 decoration-dotted hover:cursor-help',
-                    feature.status === 'absent'
-                      ? 'text-muted-foreground'
-                      : 'text-primary'
+                    'leading-tight underline decoration-dotted underline-offset-2 hover:cursor-help',
+                    feature.status === 'absent' ? 'text-muted-foreground' : 'text-primary'
                   )}
                 >
                   {feature.title}{' '}
                 </span>
               </PopoverTrigger>
-              <PopoverContent className='leading-snug bg-muted text-card-foreground'>
-                <p className='leading-tight text-base'>{feature.description}</p>
+              <PopoverContent className='bg-muted leading-snug text-card-foreground'>
+                <p className='text-base leading-tight'>{feature.description}</p>
               </PopoverContent>
             </Popover>
           </div>
         ))}
       </CardContent>
-      <CardFooter className='flex justify-center absolute bottom-0 w-full left-0 z-10'>
+      <CardFooter className='absolute bottom-0 left-0 z-10 flex w-full justify-center'>
         <Button
           className='w-full'
           disabled={isCurrentPlan || isLoading}

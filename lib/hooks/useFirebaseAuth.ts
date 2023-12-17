@@ -1,22 +1,24 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+
 import { AuthStatus } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
 import { firebaseAuth } from '@/firebase/firebase-client';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { signInWithGoogle } from '../services/authService';
+import { fetchCustomerSubscriptions } from '../services/subscriptionService';
 import {
-  updateUserFromAuth,
+  fetchUserSubscription,
   getUser,
   signinUser,
   updateUIDIfNotExist,
+  updateUserFromAuth,
   updateUserSubscriptionPlan,
-  fetchUserSubscription,
 } from '../services/userService';
-import IUser from '../types/user.type';
 import { IUserSubscriptionPlan } from '../types/subscription-plan.type';
-import { fetchCustomerSubscriptions } from '../services/subscriptionService';
+import IUser from '../types/user.type';
 
 const TIMEOUT = 60000; // seconds
 
@@ -41,10 +43,7 @@ export function useFirebaseAuth() {
       }, TIMEOUT);
       await signInWithGoogle();
     } catch (error) {
-      if (
-        error.code === 'auth/popup-blocked' ||
-        error.code === 'auth/cancelled-popup-request'
-      ) {
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
         throw Error('Sign in popup was blocked by browser.');
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({ title: 'Sign in is cancelled.' });
@@ -71,83 +70,65 @@ export function useFirebaseAuth() {
     }
   }, []);
 
-  const handleAuthUser = useCallback(
-    async (currentUser: User | null | undefined) => {
-      if (currentUser && currentUser.email) {
-        try {
-          const user = await getUser(currentUser.email);
-          if (user) {
-            // existing user
-            await signinUser(user.email);
-            user.uid === undefined &&
-              (await updateUIDIfNotExist(user.email, currentUser.uid));
-            setUser(user);
-            setStatus('authenticated');
-            const username = user.nickname ?? user.name;
-            // fetch subscription plan
-            const userPlan = await fetchCustomerSubscriptions(
-              user.email,
-              user.customerId
-            );
-            if (userPlan === undefined) {
-              // set free plan
-              setUserPlan({
-                type: 'free',
-              });
-              await updateUserSubscriptionPlan(user.email, 'free');
-            } else {
-              setUserPlan(userPlan);
-              await updateUserSubscriptionPlan(
-                user.email,
-                userPlan.type ?? 'free'
-              );
-            }
-            toast({
-              title: 'Welcome Back!' + (username ? ' ' + username : ''),
+  const handleAuthUser = useCallback(async (currentUser: User | null | undefined) => {
+    if (currentUser && currentUser.email) {
+      try {
+        const user = await getUser(currentUser.email);
+        if (user) {
+          // existing user
+          await signinUser(user.email);
+          user.uid === undefined && (await updateUIDIfNotExist(user.email, currentUser.uid));
+          setUser(user);
+          setStatus('authenticated');
+          const username = user.nickname ?? user.name;
+          // fetch subscription plan
+          const userPlan = await fetchCustomerSubscriptions(user.email, user.customerId);
+          if (userPlan === undefined) {
+            // set free plan
+            setUserPlan({
+              type: 'free',
             });
+            await updateUserSubscriptionPlan(user.email, 'free');
           } else {
-            // new user
-            const newUser = await updateUserFromAuth(currentUser);
-            setUser(newUser);
-            setStatus('authenticated');
-            // fetch if existing subscription saved
-            const userExistingSubscription = await fetchUserSubscription(
-              newUser.email
-            );
-            await updateUserSubscriptionPlan(
-              newUser.email,
-              userExistingSubscription?.customerPlanType ?? 'free'
-            );
-            const username = newUser.nickname ?? newUser.name;
-            toast({
-              title:
-                'Hi' +
-                (username ? ' ' + username : '') +
-                '! Welcome to Taboo AI!',
-            });
+            setUserPlan(userPlan);
+            await updateUserSubscriptionPlan(user.email, userPlan.type ?? 'free');
           }
-        } catch (error) {
-          console.error(error.message);
-          setStatus('unauthenticated');
+          toast({
+            title: 'Welcome Back!' + (username ? ' ' + username : ''),
+          });
+        } else {
+          // new user
+          const newUser = await updateUserFromAuth(currentUser);
+          setUser(newUser);
+          setStatus('authenticated');
+          // fetch if existing subscription saved
+          const userExistingSubscription = await fetchUserSubscription(newUser.email);
+          await updateUserSubscriptionPlan(
+            newUser.email,
+            userExistingSubscription?.customerPlanType ?? 'free'
+          );
+          const username = newUser.nickname ?? newUser.name;
+          toast({
+            title: 'Hi' + (username ? ' ' + username : '') + '! Welcome to Taboo AI!',
+          });
         }
-      } else {
-        setUser(undefined);
-        setUserPlan(undefined);
+      } catch (error) {
+        console.error(error.message);
         setStatus('unauthenticated');
       }
-    },
-    []
-  );
+    } else {
+      setUser(undefined);
+      setUserPlan(undefined);
+      setStatus('unauthenticated');
+    }
+  }, []);
 
   const refreshUserSubscriptionPlan = async () => {
     if (user) {
       const refreshedUser = await getUser(user.email);
       refreshedUser && setUser(refreshedUser);
       const userSubscription = await fetchUserSubscription(user.email);
-      const userPlan = await fetchCustomerSubscriptions(
-        user.email,
-        userSubscription?.customerId
-      );
+      const userPlan = await fetchCustomerSubscriptions(user.email, userSubscription?.customerId);
       if (userPlan === undefined) {
         // set free plan
         setUserPlan({

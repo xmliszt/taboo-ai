@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +14,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+
 import { useAuth } from '../../auth-provider';
 import { LoginErrorEventProps } from './login-error-dialog';
 
@@ -77,9 +79,7 @@ export default function LoginReminderDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {message && (
-            <AlertDialogDescription>{message}</AlertDialogDescription>
-          )}
+          {message && <AlertDialogDescription>{message}</AlertDialogDescription>}
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel

@@ -1,6 +1,7 @@
+import { ChatCompletionMessageParam } from 'openai/resources';
+
 import { openai } from '@/lib/openai';
 import { IChat } from '@/lib/types/score.type';
-import { ChatCompletionMessageParam } from 'openai/resources';
 
 /**
  * @api {post} /api/conversation Complete a conversation

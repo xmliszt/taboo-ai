@@ -1,20 +1,14 @@
 'use client';
 
-import {
-  getNewsletterPopupString,
-  setNewsletterPopupString,
-} from '@/lib/cache';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '../../ui/dialog';
-import semver from 'semver';
-import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
+import semver from 'semver';
+
+import { getNewsletterPopupString, setNewsletterPopupString } from '@/lib/cache';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { cn } from '@/lib/utils';
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../ui/dialog';
 
 export const NewsletterSignupDialog = () => {
   const { resolvedTheme } = useTheme();
@@ -30,8 +24,7 @@ export const NewsletterSignupDialog = () => {
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    !isOpen &&
-      setNewsletterPopupString(process.env.NEXT_PUBLIC_TABOO_AI_VERSION);
+    !isOpen && setNewsletterPopupString(process.env.NEXT_PUBLIC_TABOO_AI_VERSION);
   };
 
   const tryOpenNewsletterDialog = useCallback(() => {
@@ -42,10 +35,7 @@ export const NewsletterSignupDialog = () => {
     }
     if (incomingVersion) {
       try {
-        const versionDiff = semver.diff(
-          String(incomingVersion),
-          String(featurePopupString)
-        );
+        const versionDiff = semver.diff(String(incomingVersion), String(featurePopupString));
         if (versionDiff === null || versionDiff === 'patch') {
           // If it is a patch release, or no difference, then we do not show,
           // We only update the version in the local storage
@@ -54,10 +44,7 @@ export const NewsletterSignupDialog = () => {
             setNewsletterPopupString(incomingVersion);
           return;
         }
-        const isIncomingVersionNewer = semver.gt(
-          incomingVersion,
-          featurePopupString
-        );
+        const isIncomingVersionNewer = semver.gt(incomingVersion, featurePopupString);
         if (isIncomingVersionNewer) {
           displayNewletterPopup();
           return;
@@ -75,12 +62,9 @@ export const NewsletterSignupDialog = () => {
   }, [tryOpenNewsletterDialog]);
 
   useEffect(() => {
-    const listener = EventManager.bindEvent(
-      CustomEventKey.NEWLETTER_DIALOG,
-      () => {
-        tryOpenNewsletterDialog();
-      }
-    );
+    const listener = EventManager.bindEvent(CustomEventKey.NEWLETTER_DIALOG, () => {
+      tryOpenNewsletterDialog();
+    });
     return () => {
       EventManager.removeListener(CustomEventKey.NEWLETTER_DIALOG, listener);
     };
@@ -89,7 +73,7 @@ export const NewsletterSignupDialog = () => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className='!bg-white !text-black !rounded-lg'
+        className='!rounded-lg !bg-white !text-black'
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
@@ -103,7 +87,7 @@ export const NewsletterSignupDialog = () => {
           height='320'
           className={cn(
             resolvedTheme === 'dark' ? '' : '',
-            'border-2 rounded-lg bg-card text-card-foreground w-full shadow-lg'
+            'w-full rounded-lg border-2 bg-card text-card-foreground shadow-lg'
           )}
           scrolling='no'
         ></iframe>

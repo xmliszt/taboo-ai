@@ -1,12 +1,12 @@
-import { auth } from '@/firebase/firebase-admin';
 import { NextRequest } from 'next/server';
+
+import { auth } from '@/firebase/firebase-admin';
 
 export const checkAuth = async (
   request: NextRequest
 ): Promise<{ status: number; message: string } | undefined> => {
   const token = request.headers.get('token');
-  if (!token)
-    return { status: 401, message: 'Not authenticated. No user token.' };
+  if (!token) return { status: 401, message: 'Not authenticated. No user token.' };
   // verify token
   let decodedToken;
   try {

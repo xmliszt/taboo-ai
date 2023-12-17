@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+
 import { getAllLevels, getLevel } from '@/lib/services/levelService';
 
 export async function generateMetadata({
@@ -22,10 +23,6 @@ export async function generateStaticParams() {
   return (await getAllLevels()).map((level) => ({ id: level.id }));
 }
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

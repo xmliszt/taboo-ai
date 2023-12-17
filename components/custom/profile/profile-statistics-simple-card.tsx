@@ -1,8 +1,9 @@
+import { MousePointerClick } from 'lucide-react';
+import { isMobile, isTablet } from 'react-device-detect';
+
 import { Button } from '@/components/ui/button';
 import IconButton from '@/components/ui/icon-button';
 import { cn } from '@/lib/utils';
-import { MousePointerClick } from 'lucide-react';
-import { isMobile, isTablet } from 'react-device-detect';
 
 interface ProfileStatisticsSimpleCardProps {
   key: string;
@@ -21,16 +22,14 @@ export default function ProfileStatisticsSimpleCardView({
   return (
     <div
       className={cn(
-        'border rounded-lg leading-snug relative p-4 flex flex-col gap-2 snap-center',
-        isMobile
-          ? 'max-w-[200px]  min-w-[200px] h-[200px]'
-          : 'h-[150px] max-w-full min-w-[150px]'
+        'relative flex snap-center flex-col gap-2 rounded-lg border p-4 leading-snug',
+        isMobile ? 'h-[200px]  min-w-[200px] max-w-[200px]' : 'h-[150px] min-w-[150px] max-w-full'
       )}
     >
       <div className='text-xs italic text-muted-foreground'>{title}</div>
       <div
         className={cn(
-          'w-full flex flex-grow justify-center items-center text-center max-w-[200px]',
+          'flex w-full max-w-[200px] flex-grow items-center justify-center text-center',
           isNaN(Number(value)) ? 'text-2xl' : 'text-5xl'
         )}
       >

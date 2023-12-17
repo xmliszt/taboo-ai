@@ -1,5 +1,6 @@
-import { openai } from '@/lib/openai';
 import { NextRequest } from 'next/server';
+
+import { openai } from '@/lib/openai';
 
 export async function POST(request: NextRequest) {
   const { prompt, temperature, maxToken } = await request.json();

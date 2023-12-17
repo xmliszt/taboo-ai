@@ -1,22 +1,18 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getRandomInt } from '@/lib/utilities';
-import { CONSTANTS } from '@/lib/constants';
-import { useAuth } from '@/components/auth-provider';
-import { Button } from '../ui/button';
-import { Switch } from '../ui/switch';
-import { Checkbox } from '../ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import IconButton from '../ui/icon-button';
+import { usePathname, useRouter } from 'next/navigation';
 import { Bot } from 'lucide-react';
+
+import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
+import { CONSTANTS } from '@/lib/constants';
+import { getHash, HASH } from '@/lib/hash';
+import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
+import IGame from '@/lib/types/game.type';
+import ILevel from '@/lib/types/level.type';
 import { IScore } from '@/lib/types/score.type';
+import { getRandomInt } from '@/lib/utilities';
 import {
   clearDevMode,
   getDevMode,
@@ -25,14 +21,13 @@ import {
   setDevModeOff,
   setDevModeOn,
 } from '@/lib/utils/devUtils';
-import IGame from '@/lib/types/game.type';
-import {
-  aggregateTotalScore,
-  aggregateTotalTimeTaken,
-} from '@/lib/utils/gameUtils';
-import { getHash, HASH } from '@/lib/hash';
-import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
-import ILevel from '@/lib/types/level.type';
+import { aggregateTotalScore, aggregateTotalTimeTaken } from '@/lib/utils/gameUtils';
+
+import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import IconButton from '../ui/icon-button';
+import { Switch } from '../ui/switch';
 
 const DevToggle = () => {
   const [devOn, setDevOn] = useState<boolean>(false);
@@ -116,8 +111,8 @@ const DevToggle = () => {
           <Bot />
         </IconButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='flex flex-col gap-2 justify-center p-2'>
-        <div className='flex flex-row gap-2 w-full justify-center items-center'>
+      <DropdownMenuContent className='flex flex-col justify-center gap-2 p-2'>
+        <div className='flex w-full flex-row items-center justify-center gap-2'>
           <Switch
             id='dev-toggle'
             aria-label='Toggle for development mode'
@@ -131,11 +126,11 @@ const DevToggle = () => {
           <>
             <fieldset
               id='response-mode'
-              className='w-full p-4 bg-card border-[1px] border-primary text-primary leading-none rounded-lg'
+              className='w-full rounded-lg border-[1px] border-primary bg-card p-4 leading-none text-primary'
             >
               <h2 className='mb-4 font-bold'>Server Response Mode</h2>
               <div className='flex flex-col gap-2'>
-                <div className='flex flex-row gap-2 items-center'>
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
                     id='response-success'
                     aria-label='Toggle for response success mode'
@@ -150,7 +145,7 @@ const DevToggle = () => {
                   />
                   <label htmlFor='response-success'>success</label>
                 </div>
-                <div className='flex flex-row gap-2 items-center'>
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
                     id='response-nomatch'
                     aria-label='Toggle for response no match mode'
@@ -165,7 +160,7 @@ const DevToggle = () => {
                   />
                   <label htmlFor='response-nomatch'>no-match</label>
                 </div>
-                <div className='flex flex-row gap-2 items-center'>
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
                     id='response-overload'
                     aria-label='Toggle for overloaded mode'
@@ -180,7 +175,7 @@ const DevToggle = () => {
                   />
                   <label htmlFor='response-overload'>overloaded</label>
                 </div>
-                <div className='flex flex-row gap-2 items-center'>
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
                     id='response-error'
                     aria-label='Toggle for server error mode'
@@ -197,10 +192,7 @@ const DevToggle = () => {
                 </div>
               </div>
             </fieldset>
-            <Button
-              disabled={!/^\/level\/.+$/.test(path ?? '')}
-              onClick={autoCompleteLevel}
-            >
+            <Button disabled={!/^\/level\/.+$/.test(path ?? '')} onClick={autoCompleteLevel}>
               auto complete
             </Button>
           </>

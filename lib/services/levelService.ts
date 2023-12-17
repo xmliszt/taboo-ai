@@ -1,19 +1,10 @@
-import { firestore, realtime } from '@/firebase/firebase-client';
+import { child, DataSnapshot, get, onValue, ref, Unsubscribe, update } from 'firebase/database';
 import {
-  ref,
-  update,
-  get,
-  child,
-  onValue,
-  DataSnapshot,
-  Unsubscribe,
-} from 'firebase/database';
-import {
-  DocumentReference,
   addDoc,
   collection,
   deleteDoc,
   doc,
+  DocumentReference,
   getCountFromServer,
   getDoc,
   getDocs,
@@ -24,11 +15,14 @@ import {
   where,
 } from 'firebase/firestore';
 import moment from 'moment';
+
+import { firestore, realtime } from '@/firebase/firebase-client';
+
 import ILevel from '../types/level.type';
-import IUser from '../types/user.type';
-import { DateUtils } from '../utils/dateUtils';
 import ILevelStats from '../types/levelStats.type';
+import IUser from '../types/user.type';
 import IUserLevel from '../types/userLevel.type';
+import { DateUtils } from '../utils/dateUtils';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {
   const snapshot = await getDocs(collection(firestore, 'levels'));
@@ -83,10 +77,7 @@ export const getLevel = async (id: string): Promise<ILevel | undefined> => {
   return undefined;
 };
 
-export const isLevelExists = async (
-  topicName?: string,
-  authorEmail?: string
-): Promise<boolean> => {
+export const isLevelExists = async (topicName?: string, authorEmail?: string): Promise<boolean> => {
   if (!topicName || !authorEmail) {
     return false;
   }
@@ -100,17 +91,11 @@ export const isLevelExists = async (
   return snapshot.data().count > 0;
 };
 
-export const updateLevelTargetWords = async (
-  id: string,
-  words: string[]
-): Promise<void> => {
+export const updateLevelTargetWords = async (id: string, words: string[]): Promise<void> => {
   await updateDoc(doc(firestore, 'levels', id), { words: words });
 };
 
-export const updateLevelIsNew = async (
-  id: string,
-  isNew: boolean
-): Promise<void> => {
+export const updateLevelIsNew = async (id: string, isNew: boolean): Promise<void> => {
   await updateDoc(doc(firestore, 'levels', id), { isNew: isNew });
 };
 
@@ -193,8 +178,8 @@ export const updateRealtimeDBLevelRecord = async (
       prevTopScore > score
         ? prevTopScorerNickname
         : scorer.anonymity
-        ? 'Anonymous'
-        : scorer.nickname ?? scorer.name ?? 'Anonymous',
+          ? 'Anonymous'
+          : scorer.nickname ?? scorer.name ?? 'Anonymous',
   };
   await update(child(ref(realtime, 'levelStats'), levelID), levelStat);
 };
@@ -205,9 +190,7 @@ export const updateRealtimeDBLevelRecord = async (
  * @param {string} email: the user email
  * @returns {Promise<ILevelStats>} the level statistical data for the user
  */
-export const getLevelStatistics = async (
-  email: string
-): Promise<ILevelStats> => {
+export const getLevelStatistics = async (email: string): Promise<ILevelStats> => {
   // Check if user has non-free plan
   const userDoc = await getDoc(doc(firestore, 'users', email));
   const user = userDoc.data();
@@ -217,9 +200,7 @@ export const getLevelStatistics = async (
   if (user.customerPlanType === 'free') {
     throw new Error('User has free plan');
   }
-  const snapshot = await getDocs(
-    collection(firestore, 'users', email, 'levels')
-  );
+  const snapshot = await getDocs(collection(firestore, 'users', email, 'levels'));
   const levelRefs: {
     ref: DocumentReference;
     score: number;
@@ -287,17 +268,12 @@ export const getLevelStatistics = async (
 export const bindLevelRankingStatsListener = (
   onLevelRankingStatsUpdated: (snapshot: DataSnapshot) => unknown
 ): Unsubscribe => {
-  const unbind = onValue(
-    ref(realtime, 'levelStats/'),
-    onLevelRankingStatsUpdated
-  );
+  const unbind = onValue(ref(realtime, 'levelStats/'), onLevelRankingStatsUpdated);
   return unbind;
 };
 
 export const getLevelsByUser = async (email: string): Promise<IUserLevel[]> => {
-  const snapshot = await getDocs(
-    collection(firestore, 'users', email, 'levels')
-  );
+  const snapshot = await getDocs(collection(firestore, 'users', email, 'levels'));
   const levels: IUserLevel[] = [];
   snapshot.forEach((result) => {
     const levelData = result.data() as IUserLevel;

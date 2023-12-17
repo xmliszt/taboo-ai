@@ -1,5 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import _ from 'lodash';
+import { RefreshCcw } from 'lucide-react';
+import moment from 'moment';
+
+import { Button } from '@/components/ui/button';
 import IconButton from '@/components/ui/icon-button';
 import { fetchRecentGames } from '@/lib/services/gameService';
 import { getLevel } from '@/lib/services/levelService';
@@ -12,22 +19,12 @@ import {
   aggregateTotalTimeTaken,
   getOverallRating,
 } from '@/lib/utils/gameUtils';
-import _ from 'lodash';
-import { RefreshCcw } from 'lucide-react';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
+
 import { Skeleton } from '../skeleton';
 import ProfileRecentGameCard, { RecentGame } from './profile-recent-game-card';
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 
-export default function ProfileRecentGamesScrollView({
-  user,
-}: {
-  user: IUser;
-}) {
-  const numberOfMostRecentGamesToDisplay =
-    user.customerPlanType === 'free' ? 1 : 10;
+export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) {
+  const numberOfMostRecentGamesToDisplay = user.customerPlanType === 'free' ? 1 : 10;
   const [isLoading, setIsLoading] = useState(false);
   const [recentGames, setRecentGames] = useState<RecentGame[]>([]);
   const router = useRouter();
@@ -39,20 +36,14 @@ export default function ProfileRecentGamesScrollView({
   const getRecentGamesData = async (email: string) => {
     try {
       setIsLoading(true);
-      const games = await fetchRecentGames(
-        email,
-        numberOfMostRecentGamesToDisplay,
-        0
-      );
+      const games = await fetchRecentGames(email, numberOfMostRecentGamesToDisplay, 0);
       const recentGames: RecentGame[] = [];
       for (const game of games) {
         const levelId = game.levelId;
         const level = await getLevel(levelId);
         const topicName = _.startCase(level?.name ?? 'Unknown');
         const difficultyString = getDifficulty(game.difficulty, false);
-        const finishedAt = moment(game.finishedAt).format(
-          DateUtils.formats.gamePlayedAt
-        );
+        const finishedAt = moment(game.finishedAt).format(DateUtils.formats.gamePlayedAt);
         const totalScore = aggregateTotalScore(game.scores, game.difficulty);
         const totalDuration = aggregateTotalTimeTaken(game.scores);
         const totalRating = getOverallRating(totalScore);
@@ -85,8 +76,8 @@ export default function ProfileRecentGamesScrollView({
   };
 
   return (
-    <div className='w-full flex flex-col gap-2 justify-start'>
-      <div className='w-full flex flex-row gap-2 items-center'>
+    <div className='flex w-full flex-col justify-start gap-2'>
+      <div className='flex w-full flex-row items-center gap-2'>
         <h2 className='text-2xl'>Past Games</h2>
         <IconButton
           asChild
@@ -96,12 +87,10 @@ export default function ProfileRecentGamesScrollView({
             getRecentGamesData(user.email);
           }}
         >
-          <RefreshCcw
-            className={cn(isLoading ? 'animate-spin' : 'animate-none')}
-          />
+          <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
         </IconButton>
       </div>
-      <span className='text-muted-foreground italic mb-2'>
+      <span className='mb-2 italic text-muted-foreground'>
         {' '}
         Most Recent{' '}
         {numberOfMostRecentGamesToDisplay === 1
@@ -109,10 +98,10 @@ export default function ProfileRecentGamesScrollView({
           : `${numberOfMostRecentGamesToDisplay} Games`}
       </span>
       {user.customerPlanType === 'free' && (
-        <div className='italic text-sm leading-none text-muted-foreground'>
+        <div className='text-sm italic leading-none text-muted-foreground'>
           To view more past games, upgrade to PRO plan:{' '}
           <Button
-            className='underline p-0 animate-pulse'
+            className='animate-pulse p-0 underline'
             size='sm'
             variant='link'
             onClick={() => {
@@ -124,9 +113,9 @@ export default function ProfileRecentGamesScrollView({
         </div>
       )}
       {isLoading ? (
-        <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+        <Skeleton className='h-[350px] w-full' numberOfRows={12} />
       ) : (
-        <div className='w-full overflow-x-auto flex flex-row gap-4 p-4 justify-start rounded-lg border leading-snug snap-x'>
+        <div className='flex w-full snap-x flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-4 leading-snug'>
           {recentGames.map((game) => (
             <ProfileRecentGameCard key={game.id} game={game} />
           ))}

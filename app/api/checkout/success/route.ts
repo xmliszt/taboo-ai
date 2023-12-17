@@ -1,9 +1,12 @@
 import { plans } from '@/app/api/subscriptions/plans/route';
-import {} from '@/firebase/firebase-admin';
-import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
-import { firestore } from 'firebase-admin';
+
+import '@/firebase/firebase-admin';
+
 import { NextRequest, NextResponse } from 'next/server';
+import { firestore } from 'firebase-admin';
 import Stripe from 'stripe';
+
+import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
 
 const createStripeCustomerForUser = async (
   email: string,
@@ -39,10 +42,9 @@ export async function GET(req: NextRequest) {
   // Update user document with customerId
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    const customer = (await stripe.customers.retrieve(
-      session.customer as string,
-      { expand: ['subscriptions'] }
-    )) as Stripe.Customer;
+    const customer = (await stripe.customers.retrieve(session.customer as string, {
+      expand: ['subscriptions'],
+    })) as Stripe.Customer;
     if (!customer) {
       return NextResponse.json(
         {
@@ -66,11 +68,7 @@ export async function GET(req: NextRequest) {
       if (!subscribedPlan) {
         throw new Error('Subscribed plan not found');
       }
-      await createStripeCustomerForUser(
-        email,
-        customer.id,
-        subscribedPlan.type
-      );
+      await createStripeCustomerForUser(email, customer.id, subscribedPlan.type);
       return NextResponse.json({ success: true });
     } catch (error) {
       console.error(error);
@@ -90,10 +88,7 @@ export async function GET(req: NextRequest) {
       const { message } = error;
       return NextResponse.json({ message }, { status: error.statusCode });
     } else {
-      return NextResponse.json(
-        { message: 'Failed to retrieve stripe session' },
-        { status: 500 }
-      );
+      return NextResponse.json({ message: 'Failed to retrieve stripe session' }, { status: 500 });
     }
   }
 }

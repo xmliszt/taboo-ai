@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+
 import { IHighlight } from '../types/highlight.type';
 import ILevel from '../types/level.type';
 import { DateUtils } from './dateUtils';
@@ -21,15 +22,11 @@ export class LevelUtils {
     switch (sortType) {
       case 'a-z':
         return (a, b) => {
-          return _.trim(a.name.toLowerCase()).localeCompare(
-            _.trim(b.name.toLowerCase())
-          );
+          return _.trim(a.name.toLowerCase()).localeCompare(_.trim(b.name.toLowerCase()));
         };
       case 'z-a':
         return (a, b) => {
-          return _.trim(b.name.toLowerCase()).localeCompare(
-            _.trim(a.name.toLowerCase())
-          );
+          return _.trim(b.name.toLowerCase()).localeCompare(_.trim(a.name.toLowerCase()));
         };
       case 'create-new':
         return (a, b) => {
@@ -71,10 +68,7 @@ export class LevelUtils {
 
 export const getRegexPattern = (target: string): RegExp => {
   const magicSeparator = '[\\W_]*';
-  const magicMatchString = target
-    .replace(/\W/g, '')
-    .split('')
-    .join(magicSeparator);
+  const magicMatchString = target.replace(/\W/g, '').split('').join(magicSeparator);
   const groupRegexString =
     target.length === 1
       ? `^(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})[\\W_]+|[\\W_]+(${magicMatchString})$|^(${magicMatchString})$`
@@ -82,10 +76,7 @@ export const getRegexPattern = (target: string): RegExp => {
   return new RegExp(groupRegexString, 'gi');
 };
 
-export const getMatchedTabooWords = (
-  userInput: string,
-  matchers: string[]
-): string[] => {
+export const getMatchedTabooWords = (userInput: string, matchers: string[]): string[] => {
   const matchedTaboos: string[] = [];
   for (const matcher of matchers) {
     if (!matcher) continue;

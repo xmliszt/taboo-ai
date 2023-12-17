@@ -31,10 +31,7 @@ type Unbind = () => void;
  * @param {(value: T | null) => void} callback The callback to call when the persistence gets changed.
  * @returns {Unbind} The unbind function to unbind the event listener.
  */
-export const bindPersistence = <T>(
-  key: string,
-  callback: (value: T | null) => void
-): Unbind => {
+export const bindPersistence = <T>(key: string, callback: (value: T | null) => void): Unbind => {
   const listener = EventManager.bindEvent(
     CustomEventKey.STORAGE_UPDATE,
     (event: CustomEvent<{ key: string }>) => {

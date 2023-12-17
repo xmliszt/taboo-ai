@@ -1,11 +1,11 @@
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 
 interface ResultsContributionAlertDialogProps {
@@ -29,8 +29,7 @@ export default function ResutlsContributionAlertDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Enjoy the game so far? Would you like to contribute this
-            AI-generated topic to us?
+            Enjoy the game so far? Would you like to contribute this AI-generated topic to us?
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>

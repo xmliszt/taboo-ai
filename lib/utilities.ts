@@ -1,10 +1,11 @@
-import _ from 'lodash';
 import crypto from 'crypto';
+import html2canvas from 'html2canvas';
+import _ from 'lodash';
+import moment from 'moment';
+
 import { IHighlight } from './types/highlight.type';
 import IWord from './types/word.type';
-import moment from 'moment';
 import { DateUtils } from './utils/dateUtils';
-import html2canvas from 'html2canvas';
 
 export function generateHashedString(...items: string[]): string {
   const stringToHash = items.join('_');
@@ -16,9 +17,7 @@ export function generateHashedString(...items: string[]): string {
 export function getFormattedToday(): string {
   const date = new Date();
   const year = date.getFullYear();
-  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
-    date
-  );
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
   const day = ('0' + date.getDate()).slice(-2);
   return `${day}-${month}-${year}`;
 }
@@ -35,8 +34,7 @@ export const sanitizeHighlights = (highlights: IHighlight[]): IHighlight[] => {
     const start = highlight.start;
     if (start in highlightMap) {
       const currentHighlight = highlightMap[start];
-      highlightMap[start] =
-        highlight.end > currentHighlight.end ? highlight : currentHighlight;
+      highlightMap[start] = highlight.end > currentHighlight.end ? highlight : currentHighlight;
     } else {
       highlightMap[start] = highlight;
     }
@@ -60,10 +58,7 @@ export const sanitizeHighlights = (highlights: IHighlight[]): IHighlight[] => {
   return results;
 };
 
-export const formatResponseTextIntoArray = (
-  text: string,
-  target?: string
-): string[] => {
+export const formatResponseTextIntoArray = (text: string, target?: string): string[] => {
   let wordList: string[];
   const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
   try {
@@ -79,9 +74,7 @@ export const formatResponseTextIntoArray = (
         }
       }
       wordList = _.uniq(
-        wordList.map((text) =>
-          _.trim(text.replace(/\d/g, ''), punctuation).toLowerCase()
-        )
+        wordList.map((text) => _.trim(text.replace(/\d/g, ''), punctuation).toLowerCase())
       );
       wordList = wordList.filter((text) => text.length > 0);
     } catch {
@@ -127,10 +120,7 @@ export const getMockResponse = async (
   });
 };
 
-export const getMockVariations = async (
-  target: string,
-  shouldSucceed = true
-): Promise<IWord> => {
+export const getMockVariations = async (target: string, shouldSucceed = true): Promise<IWord> => {
   return new Promise<IWord>((res, rej) => {
     setTimeout(() => {
       shouldSucceed
@@ -153,10 +143,7 @@ export const formatStringForDisplay = (s: string) => {
   return _.startCase(_.trim(_.toLower(s)));
 };
 
-export const getDifficulty = (
-  difficulty: number,
-  withNumber = true
-): string => {
+export const getDifficulty = (difficulty: number, withNumber = true): string => {
   let s = '';
   switch (difficulty) {
     case 1:
@@ -197,11 +184,7 @@ export const getDisplayedTopicName = (name?: string): string => {
   return _.startCase(name) ?? 'Unknown';
 };
 
-export const b64toBlob = (
-  b64Data: string,
-  contentType = '',
-  sliceSize = 512
-) => {
+export const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];
 
@@ -233,12 +216,8 @@ export const shareImage = (source: HTMLDivElement): Promise<ShareResult> => {
       height: source.scrollHeight,
     })
       .then((canvas) => {
-        const href = canvas
-          .toDataURL('image/png')
-          .replace('image/png', 'image/octet-stream');
-        const downloadName = `taboo-ai-scores-${moment().format(
-          'DDMMYYYYHHmmss'
-        )}.png`;
+        const href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+        const downloadName = `taboo-ai-scores-${moment().format('DDMMYYYYHHmmss')}.png`;
         res({
           href,
           downloadName,

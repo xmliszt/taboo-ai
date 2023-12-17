@@ -1,7 +1,8 @@
+import Link from 'next/link';
+
 import { Separator } from '@/components/ui/separator';
 import { getAllLevels } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
-import Link from 'next/link';
 
 interface SitemapRoute {
   title: string;
@@ -9,9 +10,7 @@ interface SitemapRoute {
 }
 
 export default async function SitemapPage() {
-  const levels = (await getAllLevels()).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  const levels = (await getAllLevels()).sort((a, b) => a.name.localeCompare(b.name));
   const features: SitemapRoute[] = [
     { title: 'Home', href: '/' },
     { title: 'Choose A Topic', href: '/levels' },
@@ -60,14 +59,14 @@ export default async function SitemapPage() {
   ];
 
   return (
-    <main className='leading-snug text-center md:text-left w-full h-full pt-20 px-10 pb-10 flex flex-col gap-4 overflow-y-auto'>
+    <main className='flex h-full w-full flex-col gap-4 overflow-y-auto px-10 pb-10 pt-20 text-center leading-snug md:text-left'>
       <section id='features-section'>
-        <h3 className='text-xl font-extrabold text-center my-2'>Features</h3>
+        <h3 className='my-2 text-center text-xl font-extrabold'>Features</h3>
         <Separator />
-        <div className='mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-4'>
+        <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
           {features.map((feature) => (
             <Link
-              className='hover:underline overflow-clip text-ellipsis whitespace-nowrap'
+              className='overflow-clip text-ellipsis whitespace-nowrap hover:underline'
               key={feature.href}
               href={baseUrl + feature.href}
             >
@@ -77,12 +76,12 @@ export default async function SitemapPage() {
         </div>
       </section>
       <section id='all-topics-section'>
-        <h3 className='text-xl font-extrabold text-center my-2'>All Topics</h3>
+        <h3 className='my-2 text-center text-xl font-extrabold'>All Topics</h3>
         <Separator />
-        <div className='mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-4'>
+        <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
           {levels.map((level) => (
             <Link
-              className='hover:underline overflow-clip text-ellipsis whitespace-nowrap'
+              className='overflow-clip text-ellipsis whitespace-nowrap hover:underline'
               key={level.id}
               href={baseUrl + '/level/' + level.id}
             >
@@ -92,12 +91,12 @@ export default async function SitemapPage() {
         </div>
       </section>
       <section id='information-section'>
-        <h3 className='text-xl font-extrabold text-center my-2'>Information</h3>
+        <h3 className='my-2 text-center text-xl font-extrabold'>Information</h3>
         <Separator />
-        <div className='mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-4'>
+        <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
           {informations.map((info) => (
             <Link
-              className='hover:underline overflow-clip text-ellipsis whitespace-nowrap'
+              className='overflow-clip text-ellipsis whitespace-nowrap hover:underline'
               key={info.href}
               href={baseUrl + info.href}
             >
@@ -107,14 +106,12 @@ export default async function SitemapPage() {
         </div>
       </section>
       <section id='social-media-section'>
-        <h3 className='text-xl font-extrabold text-center my-2'>
-          Social Media
-        </h3>
+        <h3 className='my-2 text-center text-xl font-extrabold'>Social Media</h3>
         <Separator />
-        <div className='mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-4'>
+        <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
           {socialMedia.map((media) => (
             <Link
-              className='hover:underline overflow-clip text-ellipsis whitespace-nowrap'
+              className='overflow-clip text-ellipsis whitespace-nowrap hover:underline'
               key={media.href}
               href={media.href}
             >

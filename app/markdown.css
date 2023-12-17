@@ -9,7 +9,7 @@ article hr {
 }
 
 article strong {
-  @apply text-primary font-extrabold;
+  @apply font-extrabold text-primary;
 }
 
 article h1 {

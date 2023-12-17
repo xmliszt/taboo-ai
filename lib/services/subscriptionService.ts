@@ -1,11 +1,10 @@
 import { doc, updateDoc } from 'firebase/firestore';
-import {
-  ISubscriptionPlan,
-  IUserSubscriptionPlan,
-} from '../types/subscription-plan.type';
 import moment from 'moment';
-import { firestore } from '@/firebase/firebase-client';
 import Stripe from 'stripe';
+
+import { firestore } from '@/firebase/firebase-client';
+
+import { ISubscriptionPlan, IUserSubscriptionPlan } from '../types/subscription-plan.type';
 
 /**
  * Creates a checkout session for the given plan
@@ -79,10 +78,7 @@ export const fetchCustomerSubscriptions = async (
       await updateDoc(doc(firestore, 'users', email), {
         customerId: customerID,
       });
-      return buildUserSubscriptionPlanFromStripeSubscription(
-        email,
-        subscriptions
-      );
+      return buildUserSubscriptionPlanFromStripeSubscription(email, subscriptions);
     } catch (error) {
       console.error(error);
       return undefined;
@@ -90,15 +86,12 @@ export const fetchCustomerSubscriptions = async (
   }
   // Otherwise, we use customerId to fetch subscription (recommended way)
   try {
-    const response = await fetch(
-      '/api/subscriptions?customerId=' + customerId,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await fetch('/api/subscriptions?customerId=' + customerId, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     const { subscriptions } = await response.json();
     if (!Array.isArray(subscriptions)) {
       return undefined;
@@ -111,10 +104,7 @@ export const fetchCustomerSubscriptions = async (
       });
       return undefined;
     }
-    return buildUserSubscriptionPlanFromStripeSubscription(
-      email,
-      subscriptions
-    );
+    return buildUserSubscriptionPlanFromStripeSubscription(email, subscriptions);
   } catch (error) {
     console.error(error);
     return undefined;
@@ -125,9 +115,7 @@ export const fetchCustomerSubscriptions = async (
  * Fetches the subscription plans
  * @returns {Promise<ISubscriptionPlan[]>} - The subscription plans
  */
-export const fetchAvailableSubscriptionPlans = async (): Promise<
-  ISubscriptionPlan[]
-> => {
+export const fetchAvailableSubscriptionPlans = async (): Promise<ISubscriptionPlan[]> => {
   const response = await fetch('/api/subscriptions/plans');
   const plans = await response.json();
   return plans as ISubscriptionPlan[];
@@ -147,9 +135,7 @@ export const checkoutSuccess = async (sessionId: string) => {
  * Call this function when user has cancelled checkout session.
  * @param {string} subId - The id of the subscription to cancel
  */
-export const cancelSubscription = async (
-  subId: string
-): Promise<Stripe.Subscription> => {
+export const cancelSubscription = async (subId: string): Promise<Stripe.Subscription> => {
   const response = await fetch('/api/subscriptions/cancel?subId=' + subId);
   const json = await response.json();
   return json.subscription;
@@ -173,9 +159,7 @@ const buildUserSubscriptionPlanFromStripeSubscription = async (
     priceId: priceId,
     subId: subscription.id,
     status: subscription.status,
-    trialEndDate: subscription.trial_end
-      ? moment.unix(subscription.trial_end)
-      : undefined,
+    trialEndDate: subscription.trial_end ? moment.unix(subscription.trial_end) : undefined,
     nextBillingDate: moment.unix(subscription.current_period_end),
     currentBillingStartDate: moment.unix(subscription.current_period_start),
     subscription: subscription,

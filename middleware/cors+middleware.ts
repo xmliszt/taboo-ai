@@ -16,17 +16,10 @@ const checkOrigin = (
 ): { status: number; message: string } | undefined => {
   const origin = request.headers.get('origin');
   const host = request.headers.get('host');
-  if (
-    origin &&
-    allowedOrigins.some((allowedOrigin) => allowedOrigin.test(origin))
-  ) {
+  if (origin && allowedOrigins.some((allowedOrigin) => allowedOrigin.test(origin))) {
     // set response header
     response.headers.set('Access-Control-Allow-Origin', origin);
-  } else if (
-    !origin &&
-    host &&
-    allowedOrigins.some((allowedOrigin) => allowedOrigin.test(host))
-  ) {
+  } else if (!origin && host && allowedOrigins.some((allowedOrigin) => allowedOrigin.test(host))) {
     response.headers.set('Access-Control-Allow-Origin', host);
   } else {
     return {
@@ -34,10 +27,7 @@ const checkOrigin = (
       message: 'Forbidden',
     };
   }
-  response.headers.set(
-    'Access-Control-Allow-Methods',
-    'GET, POST, OPTIONS, PUT, DELETE'
-  );
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   response.headers.set(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
