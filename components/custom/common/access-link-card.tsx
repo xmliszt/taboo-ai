@@ -1,13 +1,9 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { Construction } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
 import { MouseEventHandler } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Construction } from 'lucide-react';
+
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface AccessLinkCardProps {
   idx: number;
@@ -45,7 +41,7 @@ export default function AccessLinkCard({
         item.highlight ? 'border-green-500' : '',
         pathname === item.path ? 'border-4 border-primary font-bold' : '',
         item.isUpcoming && 'opacity-20',
-        'hover:shadow-lg hover:cursor-pointer hover:scale-105 transition-all ease-in-out',
+        'transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg',
         className
       )}
       onClick={(e) => {

@@ -1,41 +1,30 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { StarRatingBar } from '../../star-rating-bar';
-import { Button } from '@/components/ui/button';
-import { isMobile, isTablet } from 'react-device-detect';
-import IUserLevel from '@/lib/types/userLevel.type';
-import { useRouter } from 'next/navigation';
-import { getDifficulty } from '@/lib/utilities';
-import moment from 'moment';
-import { DateUtils } from '@/lib/utils/dateUtils';
 import { useEffect, useState } from 'react';
-import { getLevel, getLevelStatById } from '@/lib/services/levelService';
-import ILevel from '@/lib/types/level.type';
-import { getOverallRating } from '@/lib/utils/gameUtils';
-import { cn } from '@/lib/utils';
-import { Skeleton } from '../../skeleton';
+import { useRouter } from 'next/navigation';
 import _ from 'lodash';
 import { Medal, RefreshCcw } from 'lucide-react';
+import moment from 'moment';
+import { isMobile, isTablet } from 'react-device-detect';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getLevel, getLevelStatById } from '@/lib/services/levelService';
+import ILevel from '@/lib/types/level.type';
+import IUserLevel from '@/lib/types/userLevel.type';
+import { getDifficulty } from '@/lib/utilities';
+import { cn } from '@/lib/utils';
+import { DateUtils } from '@/lib/utils/dateUtils';
+import { getOverallRating } from '@/lib/utils/gameUtils';
+
+import { Skeleton } from '../../skeleton';
+import { StarRatingBar } from '../../star-rating-bar';
 
 interface ProfileTopicsCardViewProps {
   userEmail: string;
   topic: IUserLevel;
 }
 
-export default function ProfileTopicsCardView({
-  userEmail,
-  topic,
-}: ProfileTopicsCardViewProps) {
+export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopicsCardViewProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -71,21 +60,18 @@ export default function ProfileTopicsCardView({
       <Tooltip key={topic.levelId}>
         <TooltipTrigger>
           <Card
-            className='text-left max-w-[250px] min-w-[250px] h-[300px] border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg border-red-500'
+            className='h-[300px] min-w-[250px] max-w-[250px] border border-red-500 text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
             onClick={() => {
               loadTopic(topic.levelId);
             }}
           >
-            <CardContent className='p-4 flex justify-center items-center h-full'>
+            <CardContent className='flex h-full items-center justify-center p-4'>
               {isLoading ? (
                 <Skeleton numberOfRows={8} />
               ) : (
-                <div className='flex flex-col text-center gap-3 justify-center items-center w-full h-full'>
+                <div className='flex h-full w-full flex-col items-center justify-center gap-3 text-center'>
                   <RefreshCcw size={50} strokeWidth={1} />
-                  <div>
-                    Sorry, we are having trouble loading this topic. Please try
-                    again.
-                  </div>
+                  <div>Sorry, we are having trouble loading this topic. Please try again.</div>
                 </div>
               )}
             </CardContent>
@@ -102,7 +88,7 @@ export default function ProfileTopicsCardView({
         <Card
           className={cn(
             isChampion ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
-            'text-left max-w-[250px] min-w-[250px] h-full border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg'
+            'h-full min-w-[250px] max-w-[250px] border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
           )}
           onClick={() => {
             goToTopic(topic.levelId);
@@ -113,9 +99,7 @@ export default function ProfileTopicsCardView({
               {_.startCase(topicDetails?.name ?? '--')}
             </CardTitle>
             <CardDescription>
-              {moment(topic.lastPlayedAt).format(
-                DateUtils.formats.gamePlayedAt
-              )}
+              {moment(topic.lastPlayedAt).format(DateUtils.formats.gamePlayedAt)}
             </CardDescription>
           </CardHeader>
           <CardContent className='flex flex-col gap-3'>
@@ -124,42 +108,29 @@ export default function ProfileTopicsCardView({
             ) : (
               <>
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>
-                    Difficulty:{' '}
-                  </span>
+                  <span className='italic text-muted-foreground'>Difficulty: </span>
                   <span className='font-bold'>
                     {getDifficulty(topicDetails?.difficulty ?? 1, false)}
                   </span>
                 </div>
                 {topic.attempts > 0 && (
                   <div className='flex flex-col'>
-                    <span className='italic text-muted-foreground'>
-                      Completed:{' '}
-                    </span>
+                    <span className='italic text-muted-foreground'>Completed: </span>
                     <span className='font-bold'>
                       {topic.attempts} {topic.attempts > 1 ? 'times' : 'time'}
                     </span>
                   </div>
                 )}
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>
-                    Best Score:
-                  </span>
-                  <span className='font-bold'>
-                    {topic.bestScore.toFixed(1)}
-                  </span>
+                  <span className='italic text-muted-foreground'>Best Score:</span>
+                  <span className='font-bold'>{topic.bestScore.toFixed(1)}</span>
                 </div>
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>
-                    Best Rating:{' '}
-                  </span>
-                  <StarRatingBar
-                    rating={getOverallRating(topic.bestScore, 6)}
-                    maxRating={6}
-                  />
+                  <span className='italic text-muted-foreground'>Best Rating: </span>
+                  <StarRatingBar rating={getOverallRating(topic.bestScore, 6)} maxRating={6} />
                 </div>
                 {isChampion && (
-                  <div className='flex flex-row gap-2 items-center justify-start'>
+                  <div className='flex flex-row items-center justify-start gap-2'>
                     <Medal size={50} />
                     <span className='italic text-muted-foreground'>
                       You are the <b>Top Scorer</b> for this topic!
@@ -167,9 +138,7 @@ export default function ProfileTopicsCardView({
                   </div>
                 )}
 
-                {(isMobile || isTablet) && (
-                  <Button variant='secondary'>Play Again</Button>
-                )}
+                {(isMobile || isTablet) && <Button variant='secondary'>Play Again</Button>}
               </>
             )}
           </CardContent>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { BiLink } from 'react-icons/bi';
+
 import { Button } from '../ui/button';
 
 interface SocialLinkButtonProps {
@@ -20,16 +21,9 @@ const SocialLinkButton = ({
   className = '',
 }: SocialLinkButtonProps) => {
   return (
-    <Button
-      className={`shadow-md ${className}`}
-      aria-label={`Link to ${content}`}
-    >
-      <Link
-        className='!no-underline'
-        href={href}
-        target={newTab ? '_blank' : ''}
-      >
-        <div className='flex flex-row gap-2 items-center justify-center'>
+    <Button className={`shadow-md ${className}`} aria-label={`Link to ${content}`}>
+      <Link className='!no-underline' href={href} target={newTab ? '_blank' : ''}>
+        <div className='flex flex-row items-center justify-center gap-2'>
           <span>{icon}</span>
           <span>{content}</span>
         </div>

@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 17 Dec 2023 - V3.1.3
+
+- Integrate Google Gemini Pro API into Taboo AI.
+- Bug fixes.
+
 ### 19 Nov 2023 - V3.1.2
 
 - Profile page has a new section for user to view the played topics and quick access to play them!

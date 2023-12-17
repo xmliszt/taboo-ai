@@ -1,7 +1,8 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+
 import IconButton from '../ui/icon-button';
 
 interface BackButtonProps {

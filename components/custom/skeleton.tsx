@@ -14,12 +14,7 @@ export function Skeleton({
   const renderRows = () => {
     const rows: React.ReactElement[] = [];
     for (let i = 0; i < numberOfRows; i++) {
-      rows.push(
-        <div
-          key={i}
-          className='w-full h-[24px] bg-accent rounded-lg animate-pulse'
-        ></div>
-      );
+      rows.push(<div key={i} className='h-[24px] w-full animate-pulse rounded-lg bg-accent'></div>);
     }
     return rows;
   };
@@ -27,9 +22,9 @@ export function Skeleton({
   return (
     <div className={cn(className, 'flex flex-col gap-2')}>
       {hasHeaderRow && (
-        <div className='w-full flex flex-row gap-2'>
-          <div className='h-[24px] aspect-square bg-accent rounded-full animate-pulse' />
-          <div className='flex-grow h-[24px] bg-accent rounded-lg animate-pulse'></div>
+        <div className='flex w-full flex-row gap-2'>
+          <div className='aspect-square h-[24px] animate-pulse rounded-full bg-accent' />
+          <div className='h-[24px] flex-grow animate-pulse rounded-lg bg-accent'></div>
         </div>
       )}
       {renderRows()}

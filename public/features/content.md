@@ -1,5 +1,5 @@
-# 🥇 v3.1.2: Profile Page & Rankings 🏆
-_new patch v3.1.2 on 19 Nov 2023_
+# 🥇 v3.1: Profile Page & Rankings 🏆
+_new patch v3.1.3 on 17 Dec 2023_
 
 Hi fellow Taboo AI enthusiasts and English Learners! We have some good news for you in this latest update (v3.1).
 
@@ -51,4 +51,4 @@ For _signed in user_, under profile, you can toggle some options related to your
 
 ![5](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-0-5.png?raw=true)
 
-With our improved AI using the latest ChatGPT model, you will receive better feedbacks in the results page. The AI will correct your grammar mistakes and suggest ways for improvements. We hope with this update, Taboo AI can take the next step further to assist learners with English learning 🎓
+With our improved AI using the latest AI model, you will receive better feedbacks in the results page. The AI will correct your grammar mistakes and suggest ways for improvements. We hope with this update, Taboo AI can take the next step further to assist learners with English learning 🎓

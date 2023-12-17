@@ -1,23 +1,21 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import _ from 'lodash';
+import { RefreshCcw } from 'lucide-react';
+import { isMobile } from 'react-device-detect';
+
 import IconButton from '@/components/ui/icon-button';
+import { getLevelStatistics } from '@/lib/services/levelService';
 import { getUser } from '@/lib/services/userService';
 import IUser from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
-import { RefreshCcw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
 import { Skeleton } from '../skeleton';
 import ProfileStatisticsSimpleCardView from './profile-statistics-simple-card';
-import { getLevelStatistics } from '@/lib/services/levelService';
-import _ from 'lodash';
-import { useRouter } from 'next/navigation';
-import { isMobile } from 'react-device-detect';
 
-export default function ProfileStatisticsCardView({
-  email,
-}: {
-  email: string;
-}) {
+export default function ProfileStatisticsCardView({ email }: { email: string }) {
   type Topic = { id?: string; name?: string };
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
@@ -52,8 +50,8 @@ export default function ProfileStatisticsCardView({
   };
 
   return (
-    <div className='w-full flex flex-col gap-2 justify-start'>
-      <div className='w-full flex flex-row gap-2 items-center'>
+    <div className='flex w-full flex-col justify-start gap-2'>
+      <div className='flex w-full flex-row items-center gap-2'>
         <h2 className='text-2xl'>Game Statistics</h2>
         <IconButton
           asChild
@@ -63,21 +61,19 @@ export default function ProfileStatisticsCardView({
             getUserData(email);
           }}
         >
-          <RefreshCcw
-            className={cn(isLoading ? 'animate-spin' : 'animate-none')}
-          />
+          <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
         </IconButton>
       </div>
       <div
         className={cn(
           isMobile
-            ? 'overflow-x-auto flex-nowrap'
-            : 'flex-wrap justify-start items-start max-h-[500px] overflow-y-auto',
-          'w-full flex gap-4 p-4 rounded-lg border leading-snug flex-row '
+            ? 'flex-nowrap overflow-x-auto'
+            : 'max-h-[500px] flex-wrap items-start justify-start overflow-y-auto',
+          'flex w-full flex-row gap-4 rounded-lg border p-4 leading-snug '
         )}
       >
         {isLoading ? (
-          <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+          <Skeleton className='h-[350px] w-full' numberOfRows={12} />
         ) : (
           <>
             {bestTopic?.name && (

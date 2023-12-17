@@ -1,7 +1,7 @@
-import { log } from '@/lib/logger';
+import { NextResponse, type NextRequest } from 'next/server';
 import { bold, yellow } from 'ansis';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+
+import { log } from '@/lib/logger';
 // import checkAuth from '@/middleware/auth+middleware';
 // import checkRateLimit from '@/middleware/rateLimit+middleware';
 import checkOrigin from '@/middleware/cors+middleware';

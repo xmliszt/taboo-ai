@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import RateLimiter from './rateLimiter';
 
 const aiRateLimiter = RateLimiter({
@@ -6,14 +7,9 @@ const aiRateLimiter = RateLimiter({
   uniqueTokenPerInterval: 500,
 });
 
-const checkRateLimit = (
-  req: NextRequest
-): { status: number; message: string } | undefined => {
+const checkRateLimit = (req: NextRequest): { status: number; message: string } | undefined => {
   // Apply the middleware function
-  const ipAddress =
-    req.headers.get('x-real-ip') ||
-    req.headers.get('x-forwarded-for') ||
-    req.ip;
+  const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || req.ip;
   if (!ipAddress) return;
   if (req.url) {
     const res = NextResponse.next(req);

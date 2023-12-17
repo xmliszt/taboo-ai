@@ -1,5 +1,5 @@
-import sgMail from '@sendgrid/mail';
 import { NextRequest } from 'next/server';
+import sgMail from '@sendgrid/mail';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 sendgridApiKey && sgMail.setApiKey(sendgridApiKey);

@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Dialog,
   DialogContent,
@@ -7,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { useEffect, useState } from 'react';
+
 import { Button } from '../ui/button';
 
 interface ShareScoreDialogProps {
@@ -43,11 +45,9 @@ export default function ShareScoreDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Share your scores!</DialogTitle>
-          <DialogDescription>
-            Choose how you want to share your scores...
-          </DialogDescription>
+          <DialogDescription>Choose how you want to share your scores...</DialogDescription>
         </DialogHeader>
-        <DialogFooter className='flex flex-row gap-2 items-center justify-center'>
+        <DialogFooter className='flex flex-row items-center justify-center gap-2'>
           <Button
             onClick={() => {
               setIsShareDialogOpen(false);

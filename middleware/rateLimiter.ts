@@ -1,5 +1,5 @@
-import LRU from 'lru-cache';
 import { NextResponse } from 'next/server';
+import LRU from 'lru-cache';
 
 type Options = {
   uniqueTokenPerInterval?: number;

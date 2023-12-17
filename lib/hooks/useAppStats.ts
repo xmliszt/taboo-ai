@@ -1,5 +1,6 @@
-import { DataSnapshot } from 'firebase/database';
 import { useCallback, useEffect, useState } from 'react';
+import { DataSnapshot } from 'firebase/database';
+
 import { listenToAppStats } from '../services/appService';
 
 export interface AppStatsProps {

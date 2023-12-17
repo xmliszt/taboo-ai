@@ -1,4 +1,5 @@
 import { Switch } from '@/components/ui/switch';
+
 import { InfoButton } from '../../info-button';
 
 interface ProfilePrivacyFeatureToggleProps {
@@ -15,7 +16,7 @@ export default function ProfilePrivacyFeatureToggle({
   onToggle,
 }: ProfilePrivacyFeatureToggleProps) {
   return (
-    <div className='flex flex-row justify-between items-center'>
+    <div className='flex flex-row items-center justify-between'>
       <div className='flex flex-row items-center'>
         {title}
         <InfoButton description={description} tooltip='More info' />

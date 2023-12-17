@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
 import HeaderLeftElements from './header-left-elements';
 import HeaderRightElements from './header-right-elements';
 
@@ -57,7 +59,7 @@ export default function Header() {
       id='header-section'
       className={cn(
         isTransparent ? '' : 'bg-card',
-        'w-full fixed top-0 h-16 gap-2 z-40 p-4 flex flex-row justify-between text-center items-center'
+        'fixed top-0 z-40 flex h-16 w-full flex-row items-center justify-between gap-2 p-4 text-center'
       )}
     >
       <HeaderLeftElements
@@ -69,7 +71,7 @@ export default function Header() {
       />
       <div
         data-testid='heading-rule-title'
-        className='absolute -z-10 left-0 w-full text-center text-lg'
+        className='absolute left-0 -z-10 w-full text-center text-lg'
       >
         {title}
       </div>

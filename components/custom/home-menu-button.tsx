@@ -1,6 +1,7 @@
-import { useRouter } from 'next/navigation';
 import { MouseEventHandler } from 'react';
-import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
+import { useRouter } from 'next/navigation';
+
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 interface HomeMenuButtonProps {
   icon: React.ReactElement;
@@ -24,7 +25,7 @@ export function HomeMenuButton({
   return (
     <Alert
       aria-label={ariaLabel}
-      className='shadow-lg border-primary border-2 hover:cursor-pointer hover:scale-[1.02] transition-all ease-in-out'
+      className='border-2 border-primary shadow-lg transition-all ease-in-out hover:scale-[1.02] hover:cursor-pointer'
       onClick={(e) => {
         onClick && onClick(e);
         href && router.push(href);

@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { LevelCard } from '@/components/custom/level-card';
-import { useLevels } from '@/lib/hooks/useLevels';
-import IconButton from '@/components/ui/icon-button';
-import { ChevronsUp } from 'lucide-react';
-import { Skeleton } from '@/components/custom/skeleton';
-import { LevelUtils, SortType } from '@/lib/utils/levelUtils';
-import LevelsSearchBar from '@/components/custom/levels/levels-search-bar';
 import { Unsubscribe } from 'firebase/auth';
+import { ChevronsUp } from 'lucide-react';
+
+import { LevelCard } from '@/components/custom/level-card';
+import LevelsSearchBar from '@/components/custom/levels/levels-search-bar';
+import { Skeleton } from '@/components/custom/skeleton';
+import IconButton from '@/components/ui/icon-button';
+import { useLevels } from '@/lib/hooks/useLevels';
 import { bindLevelRankingStatsListener } from '@/lib/services/levelService';
+import { LevelUtils, SortType } from '@/lib/utils/levelUtils';
 
 interface LevelRankingStat {
   topScore?: number;
@@ -18,8 +19,7 @@ interface LevelRankingStat {
 }
 
 export default function LevelsPage() {
-  const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] =
-    useState(false);
+  const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] = useState(false);
   const [selectedSorter, setSelectedSorter] = useState<SortType>('create-new');
   const levelSectionRef = useRef<HTMLDivElement | null>(null);
   const { filteredLevels, setFilterKeyword, isFetchingLevels } = useLevels();
@@ -61,8 +61,8 @@ export default function LevelsPage() {
   };
 
   return (
-    <section className='w-full h-full overflow-y-hidden'>
-      <div className='w-full h-44 pt-20 px-4 lg:px-12 bg-card border border-b-primary'>
+    <section className='h-full w-full overflow-y-hidden'>
+      <div className='h-44 w-full border border-b-primary bg-card px-4 pt-20 lg:px-12'>
         <LevelsSearchBar
           topicNumber={filteredLevels.length}
           setFilterKeyword={setFilterKeyword}
@@ -77,7 +77,7 @@ export default function LevelsPage() {
       <div
         id='level-section'
         ref={levelSectionRef}
-        className='flex flex-wrap gap-8 w-full h-[calc(100%-11rem)] py-10 px-4 justify-center content-start text-center overflow-auto'
+        className='flex h-[calc(100%-11rem)] w-full flex-wrap content-start justify-center gap-8 overflow-auto px-4 py-10 text-center'
         onScroll={onScrollChange}
       >
         {/* AI Mode Card */}

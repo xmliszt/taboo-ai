@@ -1,13 +1,16 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import _ from 'lodash';
+import { PlusCircle, RefreshCcw } from 'lucide-react';
+import moment from 'moment';
+import { isMobile, isTablet } from 'react-device-detect';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import IconButton from '@/components/ui/icon-button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { fetchRecentGames } from '@/lib/services/gameService';
 import { getLevel } from '@/lib/services/levelService';
 import IUser from '@/lib/types/user.type';
@@ -19,20 +22,9 @@ import {
   aggregateTotalTimeTaken,
   getOverallRating,
 } from '@/lib/utils/gameUtils';
-import _ from 'lodash';
-import { PlusCircle, RefreshCcw } from 'lucide-react';
-import moment from 'moment';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
 import { Skeleton } from '../skeleton';
 import { StarRatingBar } from '../star-rating-bar';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { isMobile, isTablet } from 'react-device-detect';
-import { Button } from '@/components/ui/button';
 
 type RecentGame = {
   id: string;
@@ -44,11 +36,7 @@ type RecentGame = {
   totalRating: number;
 };
 
-export default function ProfileRecentGamesScrollView({
-  user,
-}: {
-  user: IUser;
-}) {
+export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) {
   const [isLoading, setIsLoading] = useState(false);
   const [recentGames, setRecentGames] = useState<RecentGame[]>([]);
   const router = useRouter();
@@ -67,9 +55,7 @@ export default function ProfileRecentGamesScrollView({
         const level = await getLevel(levelId);
         const topicName = _.startCase(level?.name ?? 'Unknown');
         const difficultyString = getDifficulty(game.difficulty, false);
-        const finishedAt = moment(game.finishedAt).format(
-          DateUtils.formats.gamePlayedAt
-        );
+        const finishedAt = moment(game.finishedAt).format(DateUtils.formats.gamePlayedAt);
         const totalScore = aggregateTotalScore(game.scores, game.difficulty);
         const totalDuration = aggregateTotalTimeTaken(game.scores);
         const totalRating = getOverallRating(totalScore);
@@ -110,8 +96,8 @@ export default function ProfileRecentGamesScrollView({
   };
 
   return (
-    <div className='w-full flex flex-col gap-2 justify-start'>
-      <div className='w-full flex flex-row gap-2 items-center'>
+    <div className='flex w-full flex-col justify-start gap-2'>
+      <div className='flex w-full flex-row items-center gap-2'>
         <h2 className='text-2xl'>Past Games</h2>
         <IconButton
           asChild
@@ -121,21 +107,19 @@ export default function ProfileRecentGamesScrollView({
             getRecentGamesData(user.email);
           }}
         >
-          <RefreshCcw
-            className={cn(isLoading ? 'animate-spin' : 'animate-none')}
-          />
+          <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
         </IconButton>
       </div>
-      <span className='text-muted-foreground italic mb-2'> Most Recent 5</span>
-      <div className='w-full overflow-x-auto flex flex-row gap-4 p-4 justify-start rounded-lg border leading-snug'>
+      <span className='mb-2 italic text-muted-foreground'> Most Recent 5</span>
+      <div className='flex w-full flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-4 leading-snug'>
         {isLoading ? (
-          <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+          <Skeleton className='h-[350px] w-full' numberOfRows={12} />
         ) : (
           recentGames.map((game) => (
             <Tooltip key={game.id}>
               <TooltipTrigger>
                 <Card
-                  className='text-left max-w-[200px] min-w-[200px] h-full border shadow-none hover:scale-105 transition-all ease-in-out hover:cursor-pointer hover:shadow-lg'
+                  className='h-full min-w-[200px] max-w-[200px] border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
                   onClick={() => {
                     goToResult(game.id);
                   }}
@@ -155,43 +139,28 @@ export default function ProfileRecentGamesScrollView({
                     </CardDescription>
                   </CardHeader>
                   {game.id == 'play-more' ? (
-                    <CardContent className='flex justify-center items-center mt-16'>
+                    <CardContent className='mt-16 flex items-center justify-center'>
                       <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
                     </CardContent>
                   ) : (
                     <CardContent className='flex flex-col gap-3'>
                       <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>
-                          Difficulty:{' '}
-                        </span>
-                        <span className='font-bold'>
-                          {game.difficultyString}
-                        </span>
+                        <span className='italic text-muted-foreground'>Difficulty: </span>
+                        <span className='font-bold'>{game.difficultyString}</span>
                       </div>
                       <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>
-                          Total Time Taken:{' '}
-                        </span>
+                        <span className='italic text-muted-foreground'>Total Time Taken: </span>
                         <span className='font-bold'>{game.totalDuration}</span>
                       </div>
                       <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>
-                          Total Score:
-                        </span>
+                        <span className='italic text-muted-foreground'>Total Score:</span>
                         <span className='font-bold'>{game.totalScore}</span>
                       </div>
                       <div className='flex flex-col'>
-                        <span className='italic text-muted-foreground'>
-                          Overall Ratings:{' '}
-                        </span>
-                        <StarRatingBar
-                          rating={game.totalRating}
-                          maxRating={6}
-                        />
+                        <span className='italic text-muted-foreground'>Overall Ratings: </span>
+                        <StarRatingBar rating={game.totalRating} maxRating={6} />
                       </div>
-                      {(isMobile || isTablet) && (
-                        <Button variant='secondary'>View Results</Button>
-                      )}
+                      {(isMobile || isTablet) && <Button variant='secondary'>View Results</Button>}
                     </CardContent>
                   )}
                 </Card>

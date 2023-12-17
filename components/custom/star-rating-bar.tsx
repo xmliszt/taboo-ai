@@ -1,5 +1,6 @@
-import { cn } from '@/lib/utils';
 import { Star } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 
 interface StarRatingBarProps {
   rating: number;
@@ -23,9 +24,5 @@ export const StarRatingBar = (props: StarRatingBarProps) => {
     );
   }
 
-  return (
-    <div className={cn('flex flex-row gap-1 items-center', className)}>
-      {stars}
-    </div>
-  );
+  return <div className={cn('flex flex-row items-center gap-1', className)}>{stars}</div>;
 };
