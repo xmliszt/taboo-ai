@@ -1,4 +1,3 @@
-
 import { IChat } from '@/lib/types/score.type';
 
 /**
@@ -67,7 +66,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     try {
-      const googleAIError = tryParseErrorAsGoogleAIError(error)
+      const googleAIError = tryParseErrorAsGoogleAIError(error);
       console.log(googleAIError);
       return NextResponse.json(googleAIError, { status: 500 });
     } catch (error) {

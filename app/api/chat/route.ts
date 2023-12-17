@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 
-
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const prompts = body.prompt as IChat[];
@@ -15,7 +14,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     try {
-      const googleAIError = tryParseErrorAsGoogleAIError(error)
+      const googleAIError = tryParseErrorAsGoogleAIError(error);
       console.log(googleAIError);
       return NextResponse.json(googleAIError, { status: 500 });
     } catch (error) {

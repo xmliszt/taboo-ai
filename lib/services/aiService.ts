@@ -36,7 +36,7 @@ export async function askAITabooWordsForTarget(targetWord: string): Promise<IWor
   });
   if (!response.ok) {
     const error = await response.json();
-    if (error.class === 'GoogleGenerativeAI') { 
+    if (error.class === 'GoogleGenerativeAI') {
       throw new Error(error.message);
     } else {
       throw new Error('Error generating taboo words');
@@ -97,7 +97,7 @@ export async function askAIForCreativeTopic(
   });
   if (!response.ok) {
     const error = await response.json();
-    if (error.class === 'GoogleGenerativeAI') { 
+    if (error.class === 'GoogleGenerativeAI') {
       throw new Error(error.message);
     } else {
       return;
@@ -140,7 +140,7 @@ export async function fetchConversationCompletion(
   });
   if (!response.ok) {
     const error = await response.json();
-    if (error.class === 'GoogleGenerativeAI') { 
+    if (error.class === 'GoogleGenerativeAI') {
       throw new Error(error.message);
     }
   }

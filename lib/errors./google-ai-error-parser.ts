@@ -21,6 +21,6 @@ export function tryParseErrorAsGoogleAIError(error: Error): GoogleAIError {
   const { class: className, message: errorMessage } = match.groups;
   return {
     class: className,
-    message: errorMessage
+    message: errorMessage,
   };
 }
