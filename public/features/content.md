@@ -1,5 +1,5 @@
-# 🥇 v3.1.2: Profile Page & Rankings 🏆
-_new patch v3.1.2 on 19 Nov 2023_
+# 🥇 v3.1: Profile Page & Rankings 🏆
+_new patch v3.1.3 on 17 Dec 2023_
 
 Hi fellow Taboo AI enthusiasts and English Learners! We have some good news for you in this latest update (v3.1).
 
