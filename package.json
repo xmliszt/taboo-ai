@@ -7,7 +7,7 @@
     "dev:turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --debug --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ lib/ firebase/ components/ --fix && stylelint app/**/*.{css,scss} --fix ",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ lib/ firebase/ components/ --fix && stylelint app/**/*.{css,scss} --fix ",
     "style": "prettier --write * --no-error-on-unmatched-pattern",
     "prepare": "husky install",
     "test": "jest --passWithNoTests",
