@@ -16,11 +16,11 @@ export function Confetti() {
     resolvedTheme === 'dark' ? ['#ee2255', '#ffffff'] : ['#bb0000', '#000000'];
 
   const fire = useCallback(() => {
-    const startVelocity = isMobile ? 30 : 80;
+    const startVelocity = isMobile ? 30 : 70;
     const y = isMobile ? 0.3 : 0.8;
     const leftDrift = isMobile ? 0 : 1;
     const rightDrift = isMobile ? 0 : -1;
-    const particleCount = isMobile ? 30 : 50;
+    const particleCount = isMobile ? 30 : 88;
     const spread = isMobile ? 60 : 80;
     if (refAnimationInstance.current) {
       // Left side confetti
