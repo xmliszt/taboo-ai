@@ -12,7 +12,12 @@
     "prepare": "husky install",
     "test": "jest --passWithNoTests",
     "test:e2e": "playwright test",
-    "test:e2e:trace": "playwright test --trace on"
+    "test:e2e:trace": "playwright test --trace on",
+    "vercel:init": "vercel link && vercel pull",
+    "vercel:pull": "vercel pull",
+    "vercel:dev": "vercel dev --listen 3000",
+    "functions:deploy": "firebase use production && firebase deploy --only functions",
+    "functions:deploy:preview": "firebase use preview && firebase deploy --only functions"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.2",
