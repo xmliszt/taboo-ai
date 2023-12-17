@@ -68,6 +68,7 @@
     "openai": "^4.17.4",
     "raw-loader": "^0.5.1",
     "react": "^18.2.0",
+    "react-canvas-confetti": "^1.4.0",
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
