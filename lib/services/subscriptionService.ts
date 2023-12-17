@@ -128,7 +128,7 @@ export const fetchAvailableSubscriptionPlans = async (): Promise<ISubscriptionPl
  * @param {string} sessionId - The checkout session id
  */
 export const checkoutSuccess = async (sessionId: string) => {
-  await fetch('/api/checkout/success?session=' + sessionId);
+  return await fetch('/api/checkout/success?session=' + sessionId);
 };
 
 /**

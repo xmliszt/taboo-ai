@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import { Confetti } from './confetti';
-
 export async function generateMetadata({
   params: { sessionId },
 }: {
@@ -19,10 +17,5 @@ export async function generateMetadata({
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <main className='flex h-full w-full justify-center'>
-      <Confetti />
-      {children}
-    </main>
-  );
+  return <main className='flex h-full w-full justify-center'>{children}</main>;
 }
