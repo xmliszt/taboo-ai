@@ -1,20 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import _ from 'lodash';
 import { RefreshCcw } from 'lucide-react';
+import { isMobile } from 'react-device-detect';
 
+import { useAuth } from '@/components/auth-provider';
 import IconButton from '@/components/ui/icon-button';
+import { getLevelStatistics } from '@/lib/services/levelService';
 import { getUser } from '@/lib/services/userService';
 import IUser from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
 
 import { Skeleton } from '../skeleton';
 import ProfileStatisticsSimpleCardView from './profile-statistics-simple-card';
-import { getLevelStatistics } from '@/lib/services/levelService';
-import _ from 'lodash';
-import { useRouter } from 'next/navigation';
-import { isMobile } from 'react-device-detect';
-import { useAuth } from '@/components/auth-provider';
 
 export default function ProfileStatisticsCardView() {
   type Topic = { id?: string; name?: string };
@@ -63,21 +63,19 @@ export default function ProfileStatisticsCardView() {
             currentUser?.email && getUserData(currentUser.email);
           }}
         >
-          <RefreshCcw
-            className={cn(isLoading ? 'animate-spin' : 'animate-none')}
-          />
+          <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
         </IconButton>
       </div>
       <div
         className={cn(
           isMobile
-            ? 'overflow-x-auto flex-nowrap'
-            : 'flex-wrap justify-start items-start max-h-[500px] overflow-y-auto',
-          'w-full flex flex-row gap-4 p-4 rounded-lg border leading-snug snap-x'
+            ? 'flex-nowrap overflow-x-auto'
+            : 'max-h-[500px] flex-wrap items-start justify-start overflow-y-auto',
+          'flex w-full snap-x flex-row gap-4 rounded-lg border p-4 leading-snug'
         )}
       >
         {isLoading ? (
-          <Skeleton className='w-full h-[350px]' numberOfRows={12} />
+          <Skeleton className='h-[350px] w-full' numberOfRows={12} />
         ) : (
           <>
             {bestTopic?.name && (

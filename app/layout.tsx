@@ -5,25 +5,26 @@ import Script from 'next/script';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AnalyticsWrapper } from '@/components/analytics-wrapper';
-import FeaturePopup from '@/components/custom/globals/feature-popup';
-import Maintenance from '@/components/custom/maintenance';
-import PWAInstaller from '@/components/custom/pwa-installer';
 import { AuthProvider } from '@/components/auth-provider';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
-import SideMenu from '@/components/custom/side-menu';
-import { GlobalTooltipProvider } from '@/components/tooltip-provider';
+import FeaturePopup from '@/components/custom/globals/feature-popup';
 import { LoginErrorDialog } from '@/components/custom/globals/login-error-dialog';
 import LoginReminderDialog from '@/components/custom/globals/login-reminder-dialog';
+import Maintenance from '@/components/custom/maintenance';
+import PWAInstaller from '@/components/custom/pwa-installer';
+import SideMenu from '@/components/custom/side-menu';
+import { ThemeProvider } from '@/components/theme-provider';
+import { GlobalTooltipProvider } from '@/components/tooltip-provider';
+import { Toaster } from '@/components/ui/toaster';
+import { _meta } from '@/lib/metadata';
 
 import './markdown.css';
 import './globals.css';
-import Header from '@/components/header';
-import { NewsletterSignupDialog } from '@/components/custom/globals/newletter-signup-dialog';
-import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
+
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
-import { _meta } from '@/lib/metadata';
+import { NewsletterSignupDialog } from '@/components/custom/globals/newletter-signup-dialog';
+import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
+import Header from '@/components/header';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],

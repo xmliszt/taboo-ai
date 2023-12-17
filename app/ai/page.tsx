@@ -1,21 +1,22 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
-import { askAIForCreativeTopic } from '../../lib/services/aiService';
-import { CONSTANTS } from '../../lib/constants';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PenTool, SpellCheck2 } from 'lucide-react';
 
+import { useAuth } from '@/components/auth-provider';
 import { Spinner } from '@/components/custom/spinner';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { HASH } from '@/lib/hash';
-import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
+import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
+
+import { CONSTANTS } from '../../lib/constants';
+import { askAIForCreativeTopic } from '../../lib/services/aiService';
 
 export default function AiPage() {
   const { status, userPlan } = useAuth();
@@ -26,8 +27,7 @@ export default function AiPage() {
   const { toast } = useToast();
   const router = useRouter();
   const isLocked =
-    status === 'unauthenticated' ||
-    (status === 'authenticated' && userPlan?.type === 'free');
+    status === 'unauthenticated' || (status === 'authenticated' && userPlan?.type === 'free');
 
   useEffect(() => {
     if (isLocked) {
@@ -69,15 +69,13 @@ export default function AiPage() {
   };
 
   if (status === 'loading' || isLocked)
-    return (
-      <main className='w-full h-full flex flex-col items-center pt-20 px-10'></main>
-    );
+    return <main className='flex h-full w-full flex-col items-center px-10 pt-20'></main>;
 
   return (
     <>
       <main className='flex h-full w-full flex-col items-center px-10 pt-20'>
         {errorMessage !== undefined && (
-          <Alert className='mb-8 animate-fade-in text-center font-extrabold text-red-500 border-red-500'>
+          <Alert className='mb-8 animate-fade-in text-center text-2xl font-extrabold'>
             <SpellCheck2 color='red' />
             <AlertTitle className='leading-snug'>{errorMessage}</AlertTitle>
           </Alert>

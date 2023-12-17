@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +13,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { useEffect, useRef, useState } from 'react';
 
 type GenericAlertDialogProps = {
   title: string;
@@ -48,10 +49,7 @@ export default function GenericAlertDialog() {
       }
     );
     return () => {
-      EventManager.removeListener(
-        CustomEventKey.GENERIC_ALERT_DIALOG,
-        listener
-      );
+      EventManager.removeListener(CustomEventKey.GENERIC_ALERT_DIALOG, listener);
     };
   }, []);
 
@@ -65,9 +63,7 @@ export default function GenericAlertDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && (
-            <AlertDialogDescription>{description}</AlertDialogDescription>
-          )}
+          {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
@@ -94,8 +90,5 @@ export default function GenericAlertDialog() {
 }
 
 export function confirmAlert(options: GenericAlertDialogProps) {
-  EventManager.fireEvent<GenericAlertDialogProps>(
-    CustomEventKey.GENERIC_ALERT_DIALOG,
-    options
-  );
+  EventManager.fireEvent<GenericAlertDialogProps>(CustomEventKey.GENERIC_ALERT_DIALOG, options);
 }

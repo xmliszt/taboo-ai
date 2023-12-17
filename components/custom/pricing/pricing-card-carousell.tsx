@@ -1,10 +1,11 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import PricingCard from './pricing-card';
-import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
-import { Skeleton } from '../skeleton';
 import { useAuth } from '@/components/auth-provider';
+import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
+import { cn } from '@/lib/utils';
+
+import { Skeleton } from '../skeleton';
+import PricingCard from './pricing-card';
 
 export default function PricingCardCarousell({
   plans,
@@ -15,14 +16,13 @@ export default function PricingCardCarousell({
 }) {
   const { status } = useAuth();
 
-  if (status === 'loading')
-    return <Skeleton className='w-full px-16 py-10' numberOfRows={10} />;
+  if (status === 'loading') return <Skeleton className='w-full px-16 py-10' numberOfRows={10} />;
 
   return (
     <div
       className={cn(
         className,
-        'flex flex-row gap-8 lg:gap-16 overflow-x-auto overflow-y-hidden max-w-full snap-both'
+        'flex max-w-full snap-both flex-row gap-8 overflow-x-auto overflow-y-hidden lg:gap-16'
       )}
     >
       {plans.map((plan, index) => (

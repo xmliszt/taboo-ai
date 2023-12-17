@@ -62,7 +62,7 @@
   }
 
   body {
-    @apply bg-background text-foreground leading-snug;
+    @apply bg-background leading-snug text-foreground;
   }
 
   h1 {

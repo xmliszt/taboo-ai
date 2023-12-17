@@ -1,5 +1,5 @@
-import sgMail from '@sendgrid/mail';
 import { NextRequest, NextResponse } from 'next/server';
+import sgMail from '@sendgrid/mail';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
@@ -28,9 +28,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Email sent' });
   } catch (error) {
     console.log(error);
-    return NextResponse.json(
-      { message: 'Error sending email', details: error },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Error sending email', details: error }, { status: 500 });
   }
 }

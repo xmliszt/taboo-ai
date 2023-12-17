@@ -1,27 +1,19 @@
 'use client';
 
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { BookMarked, BookPlus, PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
-import {
-  BookMarked,
-  BookPlus,
-  PenSquare,
-  Quote,
-  ScrollText,
-  User,
-  View,
-} from 'lucide-react';
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from '../globals/login-reminder-dialog';
-import { isGameFinished } from '@/lib/utils/gameUtils';
+import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
+import { isGameFinished } from '@/lib/utils/gameUtils';
 
+import { LoginReminderProps } from '../globals/login-reminder-dialog';
 import { HomeMenuButton } from '../home-menu-button';
-import { HASH } from '@/lib/hash';
 
 interface HomeMenuButtonData {
   key: string;
@@ -113,8 +105,7 @@ export default function HomeMenuButtonArray() {
         key: 'upgrade plan',
         icon: <BookPlus size={20} />,
         title: 'Upgrade My Plan',
-        subtitle:
-          'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features.',
+        subtitle: 'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features.',
         ariaLabel: 'Click to upgrade your plan',
         href: '/pricing',
         visible: userPlan?.type === 'free' && status === 'authenticated',

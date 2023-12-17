@@ -2,18 +2,19 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { BookMarked, Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
-import {
-  BookMarked,
-  Construction,
-  LogIn,
-  LogOut,
-  PenTool,
-  ScrollText,
-  User,
-} from 'lucide-react';
-import { Spinner } from './spinner';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { HASH } from '@/lib/hash';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import { createCustomerPortalSession } from '@/lib/services/subscriptionService';
+import IGame from '@/lib/types/game.type';
+import { cn } from '@/lib/utils';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,15 +26,7 @@ import {
 import IconButton from '../ui/icon-button';
 import { toast } from '../ui/use-toast';
 import { LoginErrorEventProps } from './globals/login-error-dialog';
-import { isGameFinished } from '@/lib/utils/gameUtils';
-import IGame from '@/lib/types/game.type';
-import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import { HASH } from '@/lib/hash';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { cn } from '@/lib/utils';
-import { createCustomerPortalSession } from '@/lib/services/subscriptionService';
+import { Spinner } from './spinner';
 
 interface UserMenuItem {
   label: string;
@@ -81,8 +74,7 @@ export function UserLoginPortal() {
     } catch (error) {
       console.error(error);
       toast({
-        title:
-          'Sorry, we are unable to manage your subscription. Please try again!',
+        title: 'Sorry, we are unable to manage your subscription. Please try again!',
         variant: 'destructive',
       });
     }
@@ -157,11 +149,9 @@ export function UserLoginPortal() {
             </DropdownMenuLabel>
             {userPlan?.type && (
               <>
-                <Badge className='ml-2 mb-2'>
-                  {userPlan.type.toUpperCase()}
-                </Badge>
+                <Badge className='mb-2 ml-2'>{userPlan.type.toUpperCase()}</Badge>
                 {userPlan?.trialEndDate && (
-                  <Badge variant='secondary' className='ml-2 mb-2'>
+                  <Badge variant='secondary' className='mb-2 ml-2'>
                     Trial
                   </Badge>
                 )}
@@ -183,8 +173,7 @@ export function UserLoginPortal() {
               <>
                 <DropdownMenuSeparator />
                 <p className='p-2 text-sm font-semibold italic'>
-                  Trial ends on{' '}
-                  {userPlan.trialEndDate.format('DD MMM YYYY, hh:mm A')}
+                  Trial ends on {userPlan.trialEndDate.format('DD MMM YYYY, hh:mm A')}
                 </p>
               </>
             )}
