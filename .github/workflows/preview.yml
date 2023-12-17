@@ -1,10 +1,10 @@
 name: Vercel Preview Deployment
 env:
-  PREVIEW_GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.PREVIEW_GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
-  pull_request_target:
+  push:
     branches:
       - preview
   pull_request_target:
@@ -26,8 +26,6 @@ jobs:
       - name: Running Jest Tests
         run: npm test
   Firebase-Cloud-Functions-Preview-Deployment:
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: google-application-credentials.json
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -37,27 +35,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 19.x
-      - name: Install Dependencies
-        shell: bash
-        working-directory: ./functions
-        run: |
-          npm ci
+      - name: Install Node Dependencies
+        run: npm ci
       - name: Install Firebase CLI
         run: npm install --global firebase-tools
-      - name: Prepare Google Application Credentials
-        shell: bash
-        run: |
-          echo "${{ secrets.PREVIEW_GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}" | base64 --decode > "google-application-credentials.json"
-      - name: Use Firebase Preview
-        shell: bash
-        run: |
-          firebase use preview --debug
       - name: Deploy Firebase Cloud Functions
-        run: firebase deploy --only functions --non-interactive --debug
-      - name: Remove credentials file
-        if: success() || failure()
-        run: |
-          rm google-application-credentials.json
+        run: firebase use preview && firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
   Deploy-Preview:
     needs: Unit-Test
     timeout-minutes: 60
