@@ -34,6 +34,14 @@ export async function askAITabooWordsForTarget(targetWord: string): Promise<IWor
     }),
     cache: 'no-store',
   });
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.class === 'GoogleGenerativeAI') { 
+      throw new Error(error.message);
+    } else {
+      throw new Error('Error generating taboo words');
+    }
+  }
   const json = await response.json();
   const text = json.response;
   const variations = formatResponseTextIntoArray(text, target);
@@ -70,7 +78,7 @@ export async function askAIForCreativeTopic(
       difficultyString = 'well-known';
       break;
   }
-  const respone = await fetch('/api/chat', {
+  const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -87,7 +95,15 @@ export async function askAIForCreativeTopic(
       maxToken: 50,
     }),
   });
-  const json = await respone.json();
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.class === 'GoogleGenerativeAI') { 
+      throw new Error(error.message);
+    } else {
+      return;
+    }
+  }
+  const json = await response.json();
   const text = json.response;
   if (text) {
     const words = formatResponseTextIntoArray(text);
@@ -122,9 +138,19 @@ export async function fetchConversationCompletion(
       conversation: conversation,
     }),
   });
-  // Getting repsonse in terms of {run_id: "", thread_id: ""}
-  const json = await response.json();
-  return { conversation: json.conversation };
+  if (!response.ok) {
+    const error = await response.json();
+    if (error.class === 'GoogleGenerativeAI') { 
+      throw new Error(error.message);
+    }
+  }
+  try {
+    const json = await response.json();
+    return { conversation: json.conversation };
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error processing the conversation');
+  }
 }
 
 /**

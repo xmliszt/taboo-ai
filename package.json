@@ -7,12 +7,17 @@
     "dev:turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --debug --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ lib/ firebase/ components/ --fix && stylelint app/**/*.{css,scss} --fix ",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ lib/ firebase/ components/ --fix && stylelint app/**/*.{css,scss} --fix ",
     "style": "prettier --write * --no-error-on-unmatched-pattern",
     "prepare": "husky install",
     "test": "jest --passWithNoTests",
     "test:e2e": "playwright test",
-    "test:e2e:trace": "playwright test --trace on"
+    "test:e2e:trace": "playwright test --trace on",
+    "vercel:init": "vercel link && vercel pull",
+    "vercel:pull": "vercel pull",
+    "vercel:dev": "vercel dev --listen 3000",
+    "functions:deploy": "firebase use production && firebase deploy --only functions",
+    "functions:deploy:preview": "firebase use preview && firebase deploy --only functions"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.2",
@@ -73,6 +78,7 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.2.2",
     "use-timer": "^2.0.1",
+    "vercel": "^32.7.2",
     "zod": "^3.22.2"
   },
   "devDependencies": {

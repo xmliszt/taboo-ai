@@ -57,7 +57,7 @@ export default function AiPage() {
     <>
       <main className='flex h-full w-full flex-col items-center px-10 pt-20'>
         {errorMessage !== undefined && (
-          <Alert className='mb-8 animate-fade-in text-center text-2xl font-extrabold'>
+          <Alert className='mb-8 animate-fade-in text-center font-extrabold text-red-500 border-red-500'>
             <SpellCheck2 color='red' />
             <AlertTitle className='leading-snug'>{errorMessage}</AlertTitle>
           </Alert>

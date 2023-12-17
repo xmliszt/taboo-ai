@@ -14,6 +14,24 @@ Visit https://taboo-ai.vercel.app/
 
 ![Feature 04](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%204.png?raw=true)
 
+# Commands
+
+`npm run dev`: Start a local development with `.env.local`
+`npm dev:turbo`: Start a local development using experimental turbopack (not available for now)
+`npm run build`: Create a local build
+`npm run start`: Start the local server using local build
+`npm run lint`: Run eslint and stylelint on the codebase and auto-fix
+`npm run style`: Run prettier on the codebase and auto-format
+`npm run prepare`: Prepare for Husky integration (no need to run)
+`npm run test`: Run unit test
+`npm run test:e2e`: Run e2e test using Playwright
+`npm run test:e2e:trace`: Run e2e test using Playwright and generate a trace report
+`npm run vercel:init`: Login to your account in vercel, bind the project and then pull in development environment variables
+`npm run vercel:pull`: Required login to vercel. Pull in development environment variables.
+`npm run vercel:dev`: Start a local development using vercel cli pulled environment (found in `.vercel/` in project root)
+`functions:deploy`: Deploy firebase cloud functions in production environment. Required login to firebase.
+`functions:deploy:preview`: Deploy firebase cloud functions in preview environment. Required login to firebase.
+
 # Contribute
 
 Taboo AI is an open-source project. To contribute, simply fork the project into your own repository. Look at the [**Issues**](https://github.com/xmliszt/taboo-ai/issues) to find the one that you are interested in working with. Or raise your own issues. Once you are done, simply submit a pull request for review.

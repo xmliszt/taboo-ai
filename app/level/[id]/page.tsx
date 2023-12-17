@@ -239,7 +239,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         console.error(error);
         setConversation([
           ...inputConversation,
-          { role: 'error', content: CONSTANTS.errors.overloaded },
+          { role: 'error', content: error.message ?? CONSTANTS.errors.overloaded },
         ]);
       } finally {
         setIsWaitingForAIResponse(false);

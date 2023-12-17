@@ -1,5 +1,7 @@
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { IChat } from '@/lib/types/score.type';
+import { NextResponse } from 'next/server';
 
 /**
  * @api {post} /api/conversation Complete a conversation
@@ -66,7 +68,13 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    console.log(error);
-    return new Response('Error processing conversation', { status: 500 });
+    try {
+      const googleAIError = tryParseErrorAsGoogleAIError(error)
+      console.log(googleAIError);
+      return NextResponse.json(googleAIError, { status: 500 });
+    } catch (error) {
+      console.error(error);
+      return new Response('Error processing conversation', { status: 500 });
+    }
   }
 }
