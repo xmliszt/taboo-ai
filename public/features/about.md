@@ -50,7 +50,7 @@ Want to show off your English talents? You can easily share your amazing results
 
 ![5](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/smart-judge.png?raw=true)
 
-With the boost from GPT4, our AI judge can intelligently evaluate the quality of your clues during the game. It can even provide feedbacks for you so that you know which area can be improved further!
+With a boost in the AI model we use, our AI judge can intelligently evaluate the quality of your clues during the game. It can even provide feedbacks for you so that you know which area can be improved further!
 
 ---
 

@@ -26,10 +26,7 @@ export default function RulePage() {
       </div>
       <hr className='my-4' />
       <p className='text-justify text-gray text-xs leading-tight mt-2'>
-        Disclaimer: Please note that Taboo AI relies solely on{' '}
-        <a className='underline' href='https://openai.com/api/pricing/'>
-          OpenAI AI Model
-        </a>{' '}
+        Disclaimer: Please note that Taboo AI relies on third-party AI models
         for generating responses and taboo words. In the event that the API
         experiences overload due to high traffic, you may encounter some
         internet hiccups while playing the game. However, don&apos;t worry! Just

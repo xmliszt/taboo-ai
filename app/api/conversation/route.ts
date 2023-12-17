@@ -3,7 +3,7 @@ import { IChat } from '@/lib/types/score.type';
 
 /**
  * @api {post} /api/conversation Complete a conversation
- * @apiDescription Completes a conversation with the OpenAI API.
+ * @apiDescription Completes a conversation with the Google Gemini Pro API.
  * @apiParam {IChat[]} conversation The conversation to complete.
  * @apiSuccess {IChat[]} conversation The completed conversation.
  * @apiError (400) {String} Missing conversation.

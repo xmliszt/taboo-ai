@@ -19,7 +19,7 @@ const Maintenance = () => {
       <Alert>
         <AlertDescription className='font-bold animate-fade-in'>
           Taboo AI is working hard to resolve the unexpected issue {'>_<!'} It
-          might be because OpenAI API is currently experiencing an unexpected
+          might be because the AI services we are using are currently experiencing an unexpected
           outage. We will be back once the issue has been resolved. Thank you
           for your patience!
         </AlertDescription>

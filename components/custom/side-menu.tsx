@@ -246,6 +246,10 @@ export default function SideMenu() {
               <Link href='https://openai.com/api/' target='_blank'>
                 OpenAI
               </Link>
+              <i> &amp; </i>
+              <Link href='https://deepmind.google/technologies/gemini/#introduction' target='_blank'>
+                Gemini Pro
+              </Link>
             </p>
             <p>
               <i>Developed by </i>
