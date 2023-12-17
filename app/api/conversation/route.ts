@@ -16,7 +16,9 @@ export async function POST(request: Request) {
   }
   // Create a new chat completion with conversation supplied
   try {
-    const filteredConversation = conversation.filter((message) => ['user', 'assistant'].includes(message.role));
+    const filteredConversation = conversation.filter((message) =>
+      ['user', 'assistant'].includes(message.role)
+    );
     // pop the last item from chatCompletionMessages as the new user message
     const userMessage = filteredConversation.pop()?.content;
     const chatCompletionMessages = filteredConversation.map((message) => {
@@ -26,30 +28,33 @@ export async function POST(request: Request) {
       };
     });
     // Add the system message as first item
-    chatCompletionMessages.unshift({
-      role: 'user',
-      parts:
-        'You are a player in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. You will engage in a conversation with the human player. Player will be given a word that he is not allowed to say. There are also other related words the player is not allowed to say. Player will provide you with hints. You will reply the player by trying to guess what the word is. You are allowed to say the word because you need to guess it. You will answer in fluent American English in a casual manner.',
-    }, {
-      role: 'model',
-      parts: 'Ok, let\'s start the game.'
-    });
+    chatCompletionMessages.unshift(
+      {
+        role: 'user',
+        parts:
+          'You are a player in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. You will engage in a conversation with the human player. Player will be given a word that he is not allowed to say. There are also other related words the player is not allowed to say. Player will provide you with hints. You will reply the player by trying to guess what the word is. You are allowed to say the word because you need to guess it. You will answer in fluent American English in a casual manner.',
+      },
+      {
+        role: 'model',
+        parts: "Ok, let's start the game.",
+      }
+    );
     const chat = googleGeminiPro.startChat({
       history: chatCompletionMessages,
       generationConfig: {
-        maxOutputTokens: 100
-      }
-    })
+        maxOutputTokens: 100,
+      },
+    });
     if (!userMessage) {
       return new Response('Missing user message', { status: 400 });
     }
-    const completion = await chat.sendMessage(userMessage)
+    const completion = await chat.sendMessage(userMessage);
     const response = completion.response;
     const newConversation = [
       ...conversation,
       {
         role: 'assistant',
-        content: response.text()
+        content: response.text(),
       },
     ];
     return new Response(

@@ -1,25 +1,22 @@
 'use client';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '../ui/sheet';
-import { Separator } from '../ui/separator';
-import { isMobile } from 'react-device-detect';
-import { usePathname, useRouter } from 'next/navigation';
+
 import { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../auth-provider';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import Link from 'next/link';
-import { LoginErrorEventProps } from './login-error-dialog';
-import { LoginReminderProps } from './login-reminder-dialog';
-import AccessLinkCard, { MenuItem } from './common/access-link-card';
-import { isGameFinished } from '@/lib/utils/gameUtils';
+import { usePathname, useRouter } from 'next/navigation';
+import { isMobile } from 'react-device-detect';
+
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
-import { HASH } from '@/lib/hash';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+
+import { useAuth } from '../auth-provider';
+import { Separator } from '../ui/separator';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
+import AccessLinkCard, { MenuItem } from './common/access-link-card';
+import { LoginErrorEventProps } from './login-error-dialog';
+import { LoginReminderProps } from './login-reminder-dialog';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,9 +56,7 @@ export default function SideMenu() {
       0,
       menuItems.findIndex((item) => item.path === pathname)
     );
-    const currentSelectedElement = document.getElementById(
-      `menu-${currentSelectedIndex}`
-    );
+    const currentSelectedElement = document.getElementById(`menu-${currentSelectedIndex}`);
     currentSelectedElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
@@ -84,13 +79,10 @@ export default function SideMenu() {
     if (user && status === 'authenticated') {
       router.push('/add-level');
     } else {
-      EventManager.fireEvent<LoginReminderProps>(
-        CustomEventKey.LOGIN_REMINDER,
-        {
-          title: 'You need to login to contribute a topic',
-          redirectHref: '/add-level',
-        }
-      );
+      EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+        title: 'You need to login to contribute a topic',
+        redirectHref: '/add-level',
+      });
     }
   };
 
@@ -131,8 +123,7 @@ export default function SideMenu() {
       {
         path: '/result',
         title: 'See my last result',
-        subtitle:
-          'We found your last played result is cached in the app. You can revisit it here!',
+        subtitle: 'We found your last played result is cached in the app. You can revisit it here!',
         visible: status != 'authenticated' && isGameFinished(game),
         href: '/result',
       },
@@ -167,8 +158,7 @@ export default function SideMenu() {
       {
         path: '/pwa',
         title: 'Install Taboo AI',
-        subtitle:
-          'Taboo AI is available to install on your device as a PWA(Progressive Web App)!',
+        subtitle: 'Taboo AI is available to install on your device as a PWA(Progressive Web App)!',
         visible: true,
         href: '/pwa',
       },
@@ -210,12 +200,10 @@ export default function SideMenu() {
       >
         <SheetHeader>
           <SheetTitle>Menu</SheetTitle>
-          <SheetDescription>
-            Explore the various functionalities of Taboo AI!
-          </SheetDescription>
+          <SheetDescription>Explore the various functionalities of Taboo AI!</SheetDescription>
         </SheetHeader>
         <Separator className='mt-2' />
-        <div className='p-4 pb-16 flex flex-col gap-4 h-full overflow-y-scroll scrollbar-hide'>
+        <div className='flex h-full flex-col gap-4 overflow-y-scroll p-4 pb-16 scrollbar-hide'>
           {menuItems.map((item, idx) =>
             item.title === 'separator' ? (
               <Separator key={`sep-${idx}`} />
@@ -236,10 +224,7 @@ export default function SideMenu() {
           <article className='mt-4'>
             <p>
               <i>Powered by </i>
-              <Link
-                href='https://beta.nextjs.org/docs/getting-started'
-                target='_blank'
-              >
+              <Link href='https://beta.nextjs.org/docs/getting-started' target='_blank'>
                 NextJS
               </Link>
               <i> &amp; </i>
@@ -247,7 +232,10 @@ export default function SideMenu() {
                 OpenAI
               </Link>
               <i> &amp; </i>
-              <Link href='https://deepmind.google/technologies/gemini/#introduction' target='_blank'>
+              <Link
+                href='https://deepmind.google/technologies/gemini/#introduction'
+                target='_blank'
+              >
                 Gemini Pro
               </Link>
             </p>

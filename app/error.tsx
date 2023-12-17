@@ -1,26 +1,19 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) {
+import { Button } from '@/components/ui/button';
+
+export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {
     console.error(error);
   }, [error]);
 
   return (
-    <div className='w-full h-screen flex flex-col justify-center items-center gap-10 bg-card'>
-      <div className='w-full backdrop:flex flex-col justify-center gap-4 px-10'>
-        <h1 className='text-primary text-center animate-pulse'>
-          S̷̛̲͌̚o̷̻̳̣̐̚m̸̮̔̂́ė̷̪ţ̷̤̤̂̿h̶̘͈́ͅi̷͍̪͝n̶̛̬͉̰g̴̡͆̃̃ ̴̻̑͘͜͝W̶̥͉̏̉͝e̷̮̅ͅn̶̝̠͎̊t̸̛͎ ̵̙̻̊Ẁ̸̜͖͆͜r̷̹̘͎͒̈́o̶͚̓̄̚ṉ̴̱̅̍͑g̸͇̮͘ͅ
-        </h1>
-        <h4 className='mt-10 text-primary italic font-extralight leading-snug border-red-500 border-[1px] rounded-lg px-6 py-4 shadow-lg whitespace-normal break-words'>
+    <div className='flex h-screen w-full flex-col items-center justify-center gap-10 bg-card'>
+      <div className='w-full flex-col justify-center gap-4 px-10 backdrop:flex'>
+        <h1 className='animate-pulse text-center text-primary'>S̷̛̲͌̚o̷̻̳̣̐̚m̸̮̔̂́ė̷̪ţ̷̤̤̂̿h̶̘͈́ͅi̷͍̪͝n̶̛̬͉̰g̴̡͆̃̃ ̴̻̑͘͜͝W̶̥͉̏̉͝e̷̮̅ͅn̶̝̠͎̊t̸̛͎ ̵̙̻̊Ẁ̸̜͖͆͜r̷̹̘͎͒̈́o̶͚̓̄̚ṉ̴̱̅̍͑g̸͇̮͘ͅ</h1>
+        <h4 className='mt-10 whitespace-normal break-words rounded-lg border-[1px] border-red-500 px-6 py-4 font-extralight italic leading-snug text-primary shadow-lg'>
           {error.message}
         </h4>
       </div>

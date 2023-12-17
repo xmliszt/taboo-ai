@@ -9,10 +9,7 @@ export enum CustomEventKey {
 }
 
 export class EventManager {
-  static fireEvent<T>(
-    eventKey: CustomEventKey,
-    detail: T | undefined = undefined
-  ) {
+  static fireEvent<T>(eventKey: CustomEventKey, detail: T | undefined = undefined) {
     window.dispatchEvent(new CustomEvent(eventKey, { detail: detail }));
   }
 
@@ -28,10 +25,7 @@ export class EventManager {
     return bindedListener;
   }
 
-  static removeListener(
-    eventKey: CustomEventKey,
-    listener: (event: Event) => void
-  ) {
+  static removeListener(eventKey: CustomEventKey, listener: (event: Event) => void) {
     window.removeEventListener(eventKey, listener);
   }
 }

@@ -1,8 +1,10 @@
 'use client';
 
 import { HelpCircle } from 'lucide-react';
-import IconButton from '../ui/icon-button';
+
 import { cn } from '@/lib/utils';
+
+import IconButton from '../ui/icon-button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 interface InfoButtonProps {
@@ -21,18 +23,13 @@ export const InfoButton = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <IconButton
-          asChild
-          className={cn(className, '')}
-          variant='link'
-          tooltip={tooltip}
-        >
+        <IconButton asChild className={cn(className, '')} variant='link' tooltip={tooltip}>
           <HelpCircle color='black' size={20} />
         </IconButton>
       </PopoverTrigger>
-      <PopoverContent className='leading-snug bg-muted text-card-foreground'>
-        <h4 className='font-bold text-lg'>{title}</h4>
-        <p className='leading-tight text-base'>{description}</p>
+      <PopoverContent className='bg-muted leading-snug text-card-foreground'>
+        <h4 className='text-lg font-bold'>{title}</h4>
+        <p className='text-base leading-tight'>{description}</p>
       </PopoverContent>
     </Popover>
   );

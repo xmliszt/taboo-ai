@@ -1,5 +1,6 @@
-import { MoonStar, Sun, MonitorSmartphone } from 'lucide-react';
+import { MonitorSmartphone, MoonStar, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+
 import IconButton from '../ui/icon-button';
 
 export default function ThemeToggle() {
@@ -37,13 +38,7 @@ export default function ThemeToggle() {
 
   return (
     <IconButton tooltip={getToolTip(theme)} onClick={loopTheme}>
-      {theme === 'light' ? (
-        <Sun />
-      ) : theme === 'dark' ? (
-        <MoonStar />
-      ) : (
-        <MonitorSmartphone />
-      )}
+      {theme === 'light' ? <Sun /> : theme === 'dark' ? <MoonStar /> : <MonitorSmartphone />}
     </IconButton>
   );
 }

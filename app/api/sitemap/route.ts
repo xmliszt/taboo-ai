@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+
 import { getAllLevels } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
@@ -6,9 +7,7 @@ const generateTxtSitemap = async (): Promise<string> => {
   let sitemap = '';
   const staticRoutes = RouteManager.getStaticRoutes();
   const levels = await getAllLevels();
-  const dynamicRoutes = levels.map(
-    (level) => `${RouteManager.baseUrl}/level/${level.id}`
-  );
+  const dynamicRoutes = levels.map((level) => `${RouteManager.baseUrl}/level/${level.id}`);
   const routes = [...staticRoutes, ...dynamicRoutes];
   routes.forEach((r) => (sitemap += r + '\n'));
   return sitemap;

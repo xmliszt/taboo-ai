@@ -1,16 +1,18 @@
 'use client';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+
 import { AuthStatus } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
 import { firebaseAuth } from '@/firebase/firebase-client';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { signInWithGoogle } from '../services/authService';
 import {
-  updateUserFromAuth,
   getUser,
   signinUser,
   updateUIDIfNotExist,
+  updateUserFromAuth,
 } from '../services/userService';
 import IUser from '../types/user.type';
 
@@ -36,10 +38,7 @@ export function useFirebaseAuth() {
       }, TIMEOUT);
       await signInWithGoogle();
     } catch (error) {
-      if (
-        error.code === 'auth/popup-blocked' ||
-        error.code === 'auth/cancelled-popup-request'
-      ) {
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
         throw Error('Sign in popup was blocked by browser.');
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({ title: 'Sign in is cancelled.' });
@@ -66,46 +65,39 @@ export function useFirebaseAuth() {
     }
   }, []);
 
-  const handleAuthUser = useCallback(
-    async (currentUser: User | null | undefined) => {
-      if (currentUser && currentUser.email) {
-        try {
-          const user = await getUser(currentUser.email);
-          if (user) {
-            // existing user
-            await signinUser(user.email);
-            user.uid === undefined &&
-              (await updateUIDIfNotExist(user.email, currentUser.uid));
-            setUser(user);
-            setStatus('authenticated');
-            const username = user.nickname ?? user.name;
-            toast({
-              title: 'Welcome Back!' + (username ? ' ' + username : ''),
-            });
-          } else {
-            // new user
-            const newUser = await updateUserFromAuth(currentUser);
-            setUser(newUser);
-            setStatus('authenticated');
-            const username = newUser.nickname ?? newUser.name;
-            toast({
-              title:
-                'Hi' +
-                (username ? ' ' + username : '') +
-                '! Welcome to Taboo AI!',
-            });
-          }
-        } catch (error) {
-          console.log(error.message);
-          setStatus('unauthenticated');
+  const handleAuthUser = useCallback(async (currentUser: User | null | undefined) => {
+    if (currentUser && currentUser.email) {
+      try {
+        const user = await getUser(currentUser.email);
+        if (user) {
+          // existing user
+          await signinUser(user.email);
+          user.uid === undefined && (await updateUIDIfNotExist(user.email, currentUser.uid));
+          setUser(user);
+          setStatus('authenticated');
+          const username = user.nickname ?? user.name;
+          toast({
+            title: 'Welcome Back!' + (username ? ' ' + username : ''),
+          });
+        } else {
+          // new user
+          const newUser = await updateUserFromAuth(currentUser);
+          setUser(newUser);
+          setStatus('authenticated');
+          const username = newUser.nickname ?? newUser.name;
+          toast({
+            title: 'Hi' + (username ? ' ' + username : '') + '! Welcome to Taboo AI!',
+          });
         }
-      } else {
-        setUser(undefined);
+      } catch (error) {
+        console.log(error.message);
         setStatus('unauthenticated');
       }
-    },
-    []
-  );
+    } else {
+      setUser(undefined);
+      setStatus('unauthenticated');
+    }
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {

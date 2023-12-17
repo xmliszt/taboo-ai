@@ -17,13 +17,22 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'unused-imports'],
   rules: {
     'react-hooks/exhaustive-deps': 'off',
     'react/react-in-jsx-scope': 'off',
     'no-unused-vars': 'off',
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
     '@typescript-eslint/no-unused-vars': ['error'],
-    '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'require-jsdoc': 'off',
     'spaced-comment': 'off',

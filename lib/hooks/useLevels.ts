@@ -1,10 +1,12 @@
 'use client';
 
-import _ from 'lodash';
 import { useCallback, useDeferredValue, useEffect, useState } from 'react';
-import ILevel from '@/lib/types/level.type';
-import { getAllLevels } from '../services/levelService';
+import _ from 'lodash';
+
 import { useToast } from '@/components/ui/use-toast';
+import ILevel from '@/lib/types/level.type';
+
+import { getAllLevels } from '../services/levelService';
 
 export const useLevels = () => {
   const { toast } = useToast();

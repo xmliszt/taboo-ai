@@ -14,9 +14,7 @@ import { DateUtils } from '../utils/dateUtils';
  * @param {string} targetWord The target word to generate taboo words for.
  * @returns {Promise<IWord>} The taboo words generated.
  */
-export async function askAITabooWordsForTarget(
-  targetWord: string
-): Promise<IWord> {
+export async function askAITabooWordsForTarget(targetWord: string): Promise<IWord> {
   const target = _.toLower(_.trim(targetWord));
   const response = await fetch('/api/chat', {
     method: 'POST',

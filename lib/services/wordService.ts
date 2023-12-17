@@ -1,20 +1,13 @@
-import { firestore } from '@/firebase/firebase-client';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-} from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import _ from 'lodash';
 import moment from 'moment';
+
+import { firestore } from '@/firebase/firebase-client';
+
 import IWord from '../types/word.type';
 import { DateUtils } from '../utils/dateUtils';
 
-export const isTargetWordExists = async (
-  targetWord: string
-): Promise<boolean> => {
+export const isTargetWordExists = async (targetWord: string): Promise<boolean> => {
   const target = _.toLower(_.trim(targetWord));
   return (await getDoc(doc(firestore, 'words', target))).exists();
 };
@@ -58,9 +51,7 @@ export const verifyTabooWords = async (targetWord: string): Promise<void> => {
   });
 };
 
-export const getTabooWords = async (
-  targetWord: string
-): Promise<IWord | undefined> => {
+export const getTabooWords = async (targetWord: string): Promise<IWord | undefined> => {
   const target = _.toLower(_.trim(targetWord));
   const snapshot = await getDoc(doc(firestore, 'words', target));
   const data = snapshot.data();

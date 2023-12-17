@@ -1,10 +1,11 @@
-import { firebaseAuth } from '@/firebase/firebase-client';
 import {
   browserLocalPersistence,
   GoogleAuthProvider,
   setPersistence,
   signInWithPopup,
 } from 'firebase/auth';
+
+import { firebaseAuth } from '@/firebase/firebase-client';
 
 export const signInWithGoogle = async () => {
   await setPersistence(firebaseAuth, browserLocalPersistence);

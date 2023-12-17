@@ -1,34 +1,29 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
+
 import { useAuth } from '@/components/auth-provider';
-import {
-  Construction,
-  LogIn,
-  LogOut,
-  PenTool,
-  ScrollText,
-  User,
-} from 'lucide-react';
-import { Spinner } from './spinner';
-import IconButton from '../ui/icon-button';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { HASH } from '@/lib/hash';
+import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
+import IGame from '@/lib/types/game.type';
+import { cn } from '@/lib/utils';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { usePathname, useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import IconButton from '../ui/icon-button';
 import { toast } from '../ui/use-toast';
-import { useEffect, useMemo, useState } from 'react';
 import { LoginErrorEventProps } from './login-error-dialog';
-import { isGameFinished } from '@/lib/utils/gameUtils';
-import IGame from '@/lib/types/game.type';
-import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import { HASH } from '@/lib/hash';
+import { Spinner } from './spinner';
 
 interface UserMenuItem {
   label: string;
@@ -78,10 +73,7 @@ export function UserLoginPortal() {
       {
         label: 'My Last Result',
         icon: <ScrollText />,
-        isVisible:
-          status !== 'authenticated' &&
-          isGameFinished(game) &&
-          pathname !== '/result',
+        isVisible: status !== 'authenticated' && isGameFinished(game) && pathname !== '/result',
         onClick: () => {
           router.push('/result');
         },
@@ -117,19 +109,16 @@ export function UserLoginPortal() {
 
   const renderUserLoginComponent = () => {
     return user && status === 'authenticated' ? (
-      <div className='flex flex-row gap-2 items-center'>
+      <div className='flex flex-row items-center gap-2'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <IconButton
-              aria-label='Click to access user menu'
-              tooltip='Access user menu'
-            >
+            <IconButton aria-label='Click to access user menu' tooltip='Access user menu'>
               <User strokeWidth={1.5} />
             </IconButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent loop sideOffset={10} align='end'>
             <DropdownMenuLabel className='flex flex-col'>
-              <span className='italic font-light'>You are logged in as</span>
+              <span className='font-light italic'>You are logged in as</span>
               <span>{user.email}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -138,10 +127,7 @@ export function UserLoginPortal() {
                 item.isVisible === true && (
                   <DropdownMenuItem
                     key={item.label}
-                    className={cn(
-                      'gap-2 hover:cursor-pointer',
-                      item.isUpcoming && 'opacity-20'
-                    )}
+                    className={cn('gap-2 hover:cursor-pointer', item.isUpcoming && 'opacity-20')}
                     onSelect={(e) => {
                       if (item.isUpcoming) {
                         e.preventDefault();
@@ -151,9 +137,7 @@ export function UserLoginPortal() {
                     }}
                   >
                     {item.isUpcoming ? <Construction /> : item.icon}
-                    <span>
-                      {item.label + (item.isUpcoming ? ' (coming soon)' : '')}
-                    </span>
+                    <span>{item.label + (item.isUpcoming ? ' (coming soon)' : '')}</span>
                   </DropdownMenuItem>
                 )
             )}
@@ -164,11 +148,7 @@ export function UserLoginPortal() {
       <Spinner />
     ) : (
       <div>
-        <IconButton
-          aria-label='Click to login'
-          onClick={handleLogin}
-          tooltip='Login'
-        >
+        <IconButton aria-label='Click to login' onClick={handleLogin} tooltip='Login'>
           <LogIn />
         </IconButton>
       </div>

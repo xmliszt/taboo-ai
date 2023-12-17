@@ -1,6 +1,8 @@
 import _ from 'lodash';
-import { cn } from '@/lib/utils';
 import { Status } from 'use-timer/lib/types';
+
+import { cn } from '@/lib/utils';
+
 import { Badge } from '../ui/badge';
 
 interface TimerProps {
@@ -15,12 +17,12 @@ export default function Timer({ time, status, className = '' }: TimerProps) {
       id='timer'
       className={cn(
         className,
-        'transition-colors ease-in-out px-2 py-1 text-xl rounded-md border-2 border-primary',
+        'rounded-md border-2 border-primary px-2 py-1 text-xl transition-colors ease-in-out',
         time > 100
           ? 'bg-red-400  text-primary'
           : time > 50
-          ? 'bg-yellow-500 text-primary'
-          : 'bg-card text-primary'
+            ? 'bg-yellow-500 text-primary'
+            : 'bg-card text-primary'
       )}
     >
       <pre>

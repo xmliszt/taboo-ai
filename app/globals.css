@@ -66,21 +66,21 @@
   }
 
   h1 {
-    @apply font-extrabold text-2xl lg:text-3xl;
+    @apply text-2xl font-extrabold lg:text-3xl;
   }
 }
 
 @layer components {
   p[class^='chat-bubble-'] {
-    @apply px-4 py-2 w-fit leading-snug text-left rounded-lg shadow-md;
+    @apply w-fit rounded-lg px-4 py-2 text-left leading-snug shadow-md;
   }
 
   p.chat-bubble-right {
-    @apply self-end bg-primary text-primary-foreground ml-4 rounded-br-none;
+    @apply ml-4 self-end rounded-br-none bg-primary text-primary-foreground;
   }
 
   p.chat-bubble-left {
-    @apply self-start bg-secondary text-secondary-foreground mr-4 rounded-bl-none;
+    @apply mr-4 self-start rounded-bl-none bg-secondary text-secondary-foreground;
   }
 
   .unicorn-color {
@@ -117,11 +117,7 @@
   }
 
   .gradient-up {
-    background: linear-gradient(
-      0deg,
-      rgb(76 69 62 / 100%) 20%,
-      rgb(255 255 255 / 0%) 100%
-    );
+    background: linear-gradient(0deg, rgb(76 69 62 / 100%) 20%, rgb(255 255 255 / 0%) 100%);
   }
 
   .gradient-down {
@@ -150,7 +146,7 @@
   }
 
   .color-gradient-animated-background {
-    @apply transition-all bg-white text-black hover:text-primary hover:bg-primary rounded-tl-[2rem] rounded-br-[2rem];
+    @apply rounded-br-[2rem] rounded-tl-[2rem] bg-white text-black transition-all hover:bg-primary hover:text-primary;
 
     width: 100%;
     height: 100%;
@@ -158,7 +154,7 @@
   }
 
   .color-gradient-animated-background-golden {
-    @apply transition-all bg-white text-black hover:text-primary hover:bg-primary rounded-tl-[2rem] rounded-br-[2rem];
+    @apply rounded-br-[2rem] rounded-tl-[2rem] bg-white text-black transition-all hover:bg-primary hover:text-primary;
 
     width: 100%;
     height: 100%;
@@ -167,20 +163,13 @@
 
   .color-gradient-animated-background-golden::before,
   .color-gradient-animated-background-golden::after {
-    @apply !rounded-tl-[2rem] !rounded-br-[2rem];
+    @apply !rounded-br-[2rem] !rounded-tl-[2rem];
 
     content: '';
     position: absolute;
     left: -2px;
     top: -2px;
-    background: linear-gradient(
-      45deg,
-      #ff722b,
-      #ffef61,
-      #ffffa9,
-      #ffef61,
-      #ff722b
-    );
+    background: linear-gradient(45deg, #ff722b, #ffef61, #ffffa9, #ffef61, #ff722b);
     background-size: 500%;
     width: calc(100% + 4px);
     height: calc(100% + 4px);
@@ -194,20 +183,13 @@
 
   .color-gradient-animated-background::before,
   .color-gradient-animated-background::after {
-    @apply !rounded-tl-[2rem] !rounded-br-[2rem];
+    @apply !rounded-br-[2rem] !rounded-tl-[2rem];
 
     content: '';
     position: absolute;
     left: -2px;
     top: -2px;
-    background: linear-gradient(
-      45deg,
-      #fb0094,
-      #0088ff,
-      #5500ff,
-      #0088ff,
-      #fb0094
-    );
+    background: linear-gradient(45deg, #fb0094, #0088ff, #5500ff, #0088ff, #fb0094);
     background-size: 500%;
     width: calc(100% + 4px);
     height: calc(100% + 4px);

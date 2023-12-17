@@ -36,7 +36,7 @@ const homeSocialLinkButtonData: HomeSocialLinkButtonData[] = [
 
 export default function HomeSocialLinkButtonArray() {
   return (
-    <div className='px-4 my-2 w-full flex flex-col lg:flex-row gap-2 justify-center'>
+    <div className='my-2 flex w-full flex-col justify-center gap-2 px-4 lg:flex-row'>
       {homeSocialLinkButtonData.map((data) => (
         <SocialLinkButton
           key={data.key}

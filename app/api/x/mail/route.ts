@@ -1,5 +1,6 @@
-import sgMail from '@sendgrid/mail';
 import { NextRequest, NextResponse } from 'next/server';
+import sgMail from '@sendgrid/mail';
+
 import { checkAuth } from '@/lib/utils/authUtils';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;

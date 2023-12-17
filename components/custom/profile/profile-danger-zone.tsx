@@ -1,3 +1,8 @@
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { deleteUser, getAuth } from 'firebase/auth';
+import { Skull } from 'lucide-react';
+
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -8,29 +13,16 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { Skull } from 'lucide-react';
-import { useState } from 'react';
-import { deleteUser, getAuth } from 'firebase/auth';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { Spinner } from '../spinner';
 import { deleteUserFromFirebase } from '@/lib/services/userService';
-import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+
+import { Spinner } from '../spinner';
 
 const auth = getAuth();
 
-export default function ProfileDangerZone({
-  className,
-}: {
-  className?: string;
-}) {
+export default function ProfileDangerZone({ className }: { className?: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -48,8 +40,7 @@ export default function ProfileDangerZone({
     } catch (error) {
       console.error(error);
       toast({
-        title:
-          'Sorry, we are unable to delete the user right now. Please try again later!',
+        title: 'Sorry, we are unable to delete the user right now. Please try again later!',
         variant: 'destructive',
       });
     } finally {
@@ -61,13 +52,13 @@ export default function ProfileDangerZone({
     <>
       <Card className={cn(className, 'border-red-500 text-red-600')}>
         <CardContent>
-          <CardHeader className='p-0 my-4'>
+          <CardHeader className='my-4 p-0'>
             <Skull />
             <CardTitle>Danger Zone</CardTitle>
           </CardHeader>
           <CardDescription>
-            Once you delete your account, there is no going back. All your data
-            with us will be permanently deleted. Please be certain.
+            Once you delete your account, there is no going back. All your data with us will be
+            permanently deleted. Please be certain.
           </CardDescription>
           <Button
             className='mt-4'
@@ -92,8 +83,8 @@ export default function ProfileDangerZone({
               Are you absolutely sure?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              The action cannot be undone. This will permanently delete your
-              account and remove all your data from our servers.
+              The action cannot be undone. This will permanently delete your account and remove all
+              your data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

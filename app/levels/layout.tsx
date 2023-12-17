@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <main className='flex justify-center w-full h-full'>{children}</main>;
+  return <main className='flex h-full w-full justify-center'>{children}</main>;
 }

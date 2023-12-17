@@ -1,9 +1,10 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUp } from 'lucide-react';
+
 import { Badge } from '@/components/ui/badge';
 import { useAppStats } from '@/lib/hooks/useAppStats';
-import { ArrowUp } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
 
 export default function PageCounter() {
   const { stats } = useAppStats();
@@ -21,12 +22,9 @@ export default function PageCounter() {
   }, [stats, isViewsIncreasing, pageViewRef]);
 
   return (
-    <div className='flex flex-row gap-4 items-center relative'>
+    <div className='relative flex flex-row items-center gap-4'>
       {isViewsIncreasing && (
-        <ArrowUp
-          size={16}
-          className='absolute -right-4 -top-1 animate-ping-once'
-        />
+        <ArrowUp size={16} className='absolute -right-4 -top-1 animate-ping-once' />
       )}
       <Badge>Total Views: {stats?.views}</Badge>
     </div>

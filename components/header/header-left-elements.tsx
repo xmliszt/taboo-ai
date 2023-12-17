@@ -1,6 +1,6 @@
 import { BackButton } from '../custom/back-button';
-import { MenuButton } from '../custom/menu-button';
 import DevToggle from '../custom/dev-toggle';
+import { MenuButton } from '../custom/menu-button';
 import ThemeToggle from '../custom/theme-toggle';
 
 interface HeaderLeftElementsProps {

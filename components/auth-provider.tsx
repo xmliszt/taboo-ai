@@ -1,8 +1,9 @@
 'use client';
 
+import { createContext, Dispatch, SetStateAction, useContext } from 'react';
+
 import { useFirebaseAuth } from '@/lib/hooks/useFirebaseAuth';
 import IUser from '@/lib/types/user.type';
-import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -23,10 +24,7 @@ const authProviderContext = createContext<{
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
   const { user, status, setStatus, login, logout } = useFirebaseAuth();
   return (
-    <authProviderContext.Provider
-      {...props}
-      value={{ user, status, setStatus, login, logout }}
-    >
+    <authProviderContext.Provider {...props} value={{ user, status, setStatus, login, logout }}>
       {children}
     </authProviderContext.Provider>
   );

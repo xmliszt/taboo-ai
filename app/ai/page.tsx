@@ -1,18 +1,20 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
-import { askAIForCreativeTopic } from '../../lib/services/aiService';
-import { CONSTANTS } from '../../lib/constants';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle } from '@/components/ui/alert';
 import { PenTool, SpellCheck2 } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+
 import { Spinner } from '@/components/custom/spinner';
-import { setPersistence } from '@/lib/persistence/persistence';
+import { Alert, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { HASH } from '@/lib/hash';
+import { setPersistence } from '@/lib/persistence/persistence';
+
+import { CONSTANTS } from '../../lib/constants';
+import { askAIForCreativeTopic } from '../../lib/services/aiService';
 
 export default function AiPage() {
   const [topic, setTopic] = useState<string>('');
@@ -53,25 +55,24 @@ export default function AiPage() {
 
   return (
     <>
-      <main className='w-full h-full flex flex-col items-center pt-20 px-10'>
+      <main className='flex h-full w-full flex-col items-center px-10 pt-20'>
         {errorMessage !== undefined && (
-          <Alert className='text-center animate-fade-in font-extrabold text-2xl mb-8'>
+          <Alert className='mb-8 animate-fade-in text-center text-2xl font-extrabold'>
             <SpellCheck2 color='red' />
             <AlertTitle className='leading-snug'>{errorMessage}</AlertTitle>
           </Alert>
         )}
         <form onSubmit={submitForm}>
-          <div className='flex flex-col gap-6 justify-center items-center'>
+          <div className='flex flex-col items-center justify-center gap-6'>
             <label
               htmlFor='topicInput'
-              className='text-base text-center leading-normal'
+              className='text-center text-base leading-normal'
               aria-label='AI Mode Explanation'
             >
-              In &quot;AI Mode&quot;, the topic you give will be used by the AI
-              to come up with <b>guess words</b> for your Taboo game. This means
-              you&apos;re getting a custom-made game instead of using preset
-              topics. The <b>Difficulty Level</b> determine how hard the words
-              will be in the game.
+              In &quot;AI Mode&quot;, the topic you give will be used by the AI to come up with{' '}
+              <b>guess words</b> for your Taboo game. This means you&apos;re getting a custom-made
+              game instead of using preset topics. The <b>Difficulty Level</b> determine how hard
+              the words will be in the game.
             </label>
             <Input
               aria-label='topic input field'
@@ -97,15 +98,15 @@ export default function AiPage() {
               }}
               className='flex flex-row gap-2'
             >
-              <div className='flex flex-row gap-2 items-center'>
+              <div className='flex flex-row items-center gap-2'>
                 <RadioGroupItem id='difficulty-1' value='1' />
                 <Label htmlFor='difficulty-1'>Easy</Label>
               </div>
-              <div className='flex flex-row gap-2 items-center'>
+              <div className='flex flex-row items-center gap-2'>
                 <RadioGroupItem id='difficulty-2' value='2' />
                 <Label htmlFor='difficulty-2'>Medium</Label>
               </div>
-              <div className='flex flex-row gap-2 items-center'>
+              <div className='flex flex-row items-center gap-2'>
                 <RadioGroupItem id='difficulty-3' value='3' />
                 <Label htmlFor='difficulty-3'>Hard</Label>
               </div>
@@ -120,7 +121,7 @@ export default function AiPage() {
                 className='mt-8 w-full'
                 aria-label='Confirm to submit your input'
               >
-                <div className='flex flex-row gap-2 items-center'>
+                <div className='flex flex-row items-center gap-2'>
                   <PenTool />
                   Generate
                 </div>

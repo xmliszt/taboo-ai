@@ -1,24 +1,25 @@
 'use client';
 
-import { useAuth } from '@/components/auth-provider';
-import { useToast } from '@/components/ui/use-toast';
-import { Input } from '@/components/ui/input';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { updateUserFromUser } from '@/lib/services/userService';
-import { isMobile, isTablet } from 'react-device-detect';
-import { Spinner } from '@/components/custom/spinner';
 import { useRouter } from 'next/navigation';
+import { BookX } from 'lucide-react';
+import { isMobile, isTablet } from 'react-device-detect';
+
+import { useAuth } from '@/components/auth-provider';
 import ConstructionBlock from '@/components/custom/common/construction-block';
+import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
 import ProfileDangerZone from '@/components/custom/profile/profile-danger-zone';
+import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
 import ProfileRecentGamesScrollView from '@/components/custom/profile/profile-recent-games-scroll-view';
 import ProfileStatisticsCardView from '@/components/custom/profile/profile-statistics-card-view';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from '@/components/custom/login-reminder-dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { BookX } from 'lucide-react';
-import ProfilePrivacySettingsCard from '@/components/custom/profile/profile-privacy-settings-card';
 import ProfilePlayedTopicScrollView from '@/components/custom/profile/profile-topic-scroll-view';
+import { Spinner } from '@/components/custom/spinner';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+import { updateUserFromUser } from '@/lib/services/userService';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -34,13 +35,10 @@ export default function ProfilePage() {
       toast({
         title: 'You need to sign in to view your profile.',
       });
-      EventManager.fireEvent<LoginReminderProps>(
-        CustomEventKey.LOGIN_REMINDER,
-        {
-          title: 'You need to sign in to view your profile.',
-          redirectHref: '/profile',
-        }
-      );
+      EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+        title: 'You need to sign in to view your profile.',
+        redirectHref: '/profile',
+      });
       router.push('/');
       return;
     }
@@ -67,8 +65,7 @@ export default function ProfilePage() {
       } catch (error) {
         console.error(error);
         toast({
-          title:
-            'Sorry, we are unable to update your nickname. Please try again!',
+          title: 'Sorry, we are unable to update your nickname. Please try again!',
           variant: 'destructive',
         });
       } finally {
@@ -78,21 +75,21 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className='pt-20 px-10 py-32 bg-background text-foreground flex flex-col items-center gap-16 overflow-auto'>
-      <div className='flex flex-col gap-4 items-center'>
+    <main className='flex flex-col items-center gap-16 overflow-auto bg-background px-10 py-32 pt-20 text-foreground'>
+      <div className='flex flex-col items-center gap-4'>
         <Image
-          className='rounded-full shadow-md border-2 border-primary'
+          className='rounded-full border-2 border-primary shadow-md'
           src={user?.photoUrl ?? '/images/placeholder.png'}
           width={80}
           height={80}
           alt='Profile Photo'
         />
-        <div className='flex flex-col gap-2 justify-start'>
+        <div className='flex flex-col justify-start gap-2'>
           <Input
             id='nickname-edit-input'
             disabled={isNicknameUpdating}
             ref={nicknameInputRef}
-            className='h-14 !text-2xl font-extralight text-center border-[1px] hover:border-2 border-neutral-500 px-2 py-2 rounded-lg transition-all ease-in-out hover:cursor-text focus:outline-none focus:ring-0 focus:border-0 max-w-[300px]'
+            className='h-14 max-w-[300px] rounded-lg border-[1px] border-neutral-500 px-2 py-2 text-center !text-2xl font-extralight transition-all ease-in-out hover:cursor-text hover:border-2 focus:border-0 focus:outline-none focus:ring-0'
             placeholder='Edit Nickname'
             value={nickname}
             onChange={(e) => {
@@ -109,24 +106,24 @@ export default function ProfilePage() {
           />
           <label
             htmlFor='nickname-edit-input'
-            className='italic text-muted-foreground text-sm font-extra flex flex-row gap-2 items-center'
+            className='font-extra flex flex-row items-center gap-2 text-sm italic text-muted-foreground'
           >
-            {isNicknameUpdating && <Spinner size={12} />}{' '}
-            {isMobile || isTablet ? 'Tap' : 'Click'} to edit nickname
+            {isNicknameUpdating && <Spinner size={12} />} {isMobile || isTablet ? 'Tap' : 'Click'}{' '}
+            to edit nickname
           </label>
         </div>
       </div>
 
-      <Alert className='text-gray-500 border-gray-500 opacity-70 -mb-10'>
+      <Alert className='-mb-10 border-gray-500 text-gray-500 opacity-70'>
         <BookX size={20} />
         <AlertTitle className='leading-snug'>
           Custom AI generated games will not be included in the records.
         </AlertTitle>
         <AlertDescription>
-          If you would like to see your custom games here, first play the game
-          via AI Mode, and then follow the prompt to contribute your AI custom
-          topic to us. Then once your topic is officially added to Taboo AI, you
-          can play again and your game will be saved to your records.
+          If you would like to see your custom games here, first play the game via AI Mode, and then
+          follow the prompt to contribute your AI custom topic to us. Then once your topic is
+          officially added to Taboo AI, you can play again and your game will be saved to your
+          records.
         </AlertDescription>
       </Alert>
 
@@ -140,16 +137,9 @@ export default function ProfilePage() {
         className='w-full max-w-[500px]'
       />
 
-      {user && (
-        <ProfilePrivacySettingsCard
-          className='w-full max-w-[500px]'
-          user={user}
-        />
-      )}
+      {user && <ProfilePrivacySettingsCard className='w-full max-w-[500px]' user={user} />}
 
-      {user && status === 'authenticated' && (
-        <ProfileDangerZone className='w-full max-w-[500px]' />
-      )}
+      {user && status === 'authenticated' && <ProfileDangerZone className='w-full max-w-[500px]' />}
     </main>
   );
 }

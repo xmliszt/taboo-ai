@@ -1,13 +1,8 @@
-import { firestore } from '@/firebase/firebase-client';
-import {
-  collection,
-  doc,
-  DocumentReference,
-  getDoc,
-  getDocs,
-  setDoc,
-} from 'firebase/firestore';
+import { collection, doc, DocumentReference, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import moment from 'moment';
+
+import { firestore } from '@/firebase/firebase-client';
+
 import IGame from '../types/game.type';
 import { IHighlight } from '../types/highlight.type';
 import { IChat, IScore } from '../types/score.type';
@@ -18,11 +13,7 @@ import { IChat, IScore } from '../types/score.type';
  * @param {string} levelId The id of the level that was completed.
  * @param {IGame} game The game object to upload.
  */
-export const uploadCompletedGameForUser = async (
-  email: string,
-  levelId: string,
-  game: IGame
-) => {
+export const uploadCompletedGameForUser = async (email: string, levelId: string, game: IGame) => {
   // Check if the given game already exists
   const gameRef = doc(firestore, 'users', email, 'games', game.id);
   const existingGameRef = await getDoc(gameRef);

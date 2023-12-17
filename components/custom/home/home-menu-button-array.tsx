@@ -1,17 +1,19 @@
 'use client';
 
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
+
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
-import { PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
-import { HomeMenuButton } from '../home-menu-button';
-import { useRouter } from 'next/navigation';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { LoginReminderProps } from '../login-reminder-dialog';
-import { isGameFinished } from '@/lib/utils/gameUtils';
+import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
-import { HASH } from '@/lib/hash';
+import { isGameFinished } from '@/lib/utils/gameUtils';
+
+import { HomeMenuButton } from '../home-menu-button';
+import { LoginReminderProps } from '../login-reminder-dialog';
 
 interface HomeMenuButtonData {
   key: string;
@@ -42,13 +44,10 @@ export default function HomeMenuButtonArray() {
     if (status === 'authenticated') {
       router.push('/add-level');
     } else {
-      EventManager.fireEvent<LoginReminderProps>(
-        CustomEventKey.LOGIN_REMINDER,
-        {
-          title: 'You need to login to contribute a topic',
-          redirectHref: '/add-level',
-        }
-      );
+      EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+        title: 'You need to login to contribute a topic',
+        redirectHref: '/add-level',
+      });
     }
   };
 
@@ -77,8 +76,7 @@ export default function HomeMenuButtonArray() {
         key: 'see last result',
         icon: <ScrollText size={20} />,
         title: 'See my last result',
-        subtitle:
-          'We found your last played result is cached in the app. You can revisit it here!',
+        subtitle: 'We found your last played result is cached in the app. You can revisit it here!',
         ariaLabel: 'Click to revisit last game results',
         href: '/result',
         visible: isGameFinished(game) && status !== 'authenticated',
@@ -97,8 +95,7 @@ export default function HomeMenuButtonArray() {
         key: 'review topic and words',
         icon: <View size={20} />,
         title: 'Review Topics & Words',
-        subtitle:
-          'Review and verify topics and worlds submitted. Only available for admin!',
+        subtitle: 'Review and verify topics and worlds submitted. Only available for admin!',
         ariaLabel: 'Click to review topics as dev',
         href: '/x/review-words',
         visible: AdminManager.checkIsAdmin(user) && status === 'authenticated',
@@ -108,7 +105,7 @@ export default function HomeMenuButtonArray() {
   );
 
   return (
-    <section className='mt-4 mb-2 flex-col flex gap-4 mx-4 max-w-[400px]'>
+    <section className='mx-4 mb-2 mt-4 flex max-w-[400px] flex-col gap-4'>
       {homeMenuButtonData.map(
         (data) =>
           data.visible && (
