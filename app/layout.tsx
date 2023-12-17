@@ -25,6 +25,7 @@ import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-
 import { NewsletterSignupDialog } from '@/components/custom/globals/newletter-signup-dialog';
 import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
 import Header from '@/components/header';
+import { ReactQueryProvider } from '@/components/query-provider';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -43,39 +44,41 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const maintenanceMode = JSON.parse(process.env.NEXT_PUBLIC_MAINTENANCE || 'false');
   return (
-    <html lang='en' suppressHydrationWarning={true}>
-      <Script id='pwa-script' src='/js/pwa.js' />
-      <Script id='clarity-script' src='/js/clarity.js' />
-      <head />
-      <body className={`${font.className}`}>
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-          <GlobalTooltipProvider delayDuration={300}>
-            <AuthProvider>
-              {maintenanceMode ? (
-                <Maintenance />
-              ) : (
-                <>
-                  <Header />
-                  {children}
-                  {/* Below are floating components */}
-                  <SideMenu />
-                  <PWAInstaller />
-                  <LoginErrorDialog />
-                  <LoginReminderDialog />
-                  <SubscriptionLockDialog />
-                  <GenericAlertDialog />
-                  <GenericFeedbackDialog />
-                  <FeaturePopup />
-                  <NewsletterSignupDialog />
-                </>
-              )}
-              <AnalyticsWrapper />
-            </AuthProvider>
-          </GlobalTooltipProvider>
-          <Toaster />
-        </ThemeProvider>
-        <SpeedInsights />
-      </body>
-    </html>
+    <ReactQueryProvider>
+      <html lang='en' suppressHydrationWarning={true}>
+        <Script id='pwa-script' src='/js/pwa.js' />
+        <Script id='clarity-script' src='/js/clarity.js' />
+        <head />
+        <body className={`${font.className}`}>
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+            <GlobalTooltipProvider delayDuration={300}>
+              <AuthProvider>
+                {maintenanceMode ? (
+                  <Maintenance />
+                ) : (
+                  <>
+                    <Header />
+                    {children}
+                    {/* Below are floating components */}
+                    <SideMenu />
+                    <PWAInstaller />
+                    <LoginErrorDialog />
+                    <LoginReminderDialog />
+                    <SubscriptionLockDialog />
+                    <GenericAlertDialog />
+                    <GenericFeedbackDialog />
+                    <FeaturePopup />
+                    <NewsletterSignupDialog />
+                  </>
+                )}
+                <AnalyticsWrapper />
+              </AuthProvider>
+            </GlobalTooltipProvider>
+            <Toaster />
+          </ThemeProvider>
+          <SpeedInsights />
+        </body>
+      </html>
+    </ReactQueryProvider>
   );
 }

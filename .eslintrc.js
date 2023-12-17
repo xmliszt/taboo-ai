@@ -11,26 +11,27 @@ module.exports = {
     'google',
     'prettier',
     'next',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
   ],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'unused-imports'],
+  plugins: ['@typescript-eslint', 'unused-imports', '@tanstack/query'],
   rules: {
     'react-hooks/exhaustive-deps': 'off',
     'react/react-in-jsx-scope': 'off',
     'no-unused-vars': 'off',
-    "unused-imports/no-unused-imports": "error",
-    "unused-imports/no-unused-vars": [
-      "warn",
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
       {
-        "vars": "all",
-        "varsIgnorePattern": "^_",
-        "args": "after-used",
-        "argsIgnorePattern": "^_"
-      }
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
     ],
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-explicit-any': 'off',
@@ -39,6 +40,9 @@ module.exports = {
     'valid-jsdoc': 'off',
     'prefer-promise-reject-errors': 'off',
     'new-cap': 'off',
+    '@tanstack/query/exhaustive-deps': 'error',
+    '@tanstack/query/prefer-query-object-syntax': 'off',
+    '@tanstack/query/stable-query-client': 'error',
   },
   ignorePatterns: ['app/components/ui/*.ts', 'app/components/ui/*.tsx'],
 };
