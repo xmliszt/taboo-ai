@@ -7,9 +7,6 @@ on:
   push:
     branches:
       - preview
-  pull_request:
-    branches:
-      - main
   pull_request_target:
     branches:
       - main
@@ -20,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
@@ -35,7 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
@@ -68,6 +69,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
