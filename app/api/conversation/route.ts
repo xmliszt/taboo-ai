@@ -1,4 +1,4 @@
-import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors./google-ai-error-parser';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { IChat } from '@/lib/types/score.type';
 import { NextResponse } from 'next/server';

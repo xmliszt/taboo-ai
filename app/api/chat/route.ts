@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { googleGeminiPro } from '@/lib/google-ai';
 import { IChat } from '@/lib/types/score.type';
-import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors./google-ai-error-parser';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
