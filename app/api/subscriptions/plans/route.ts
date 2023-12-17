@@ -33,7 +33,7 @@ export const plans: ISubscriptionPlan[] = [
       },
       {
         id: 'feature-access-to-curated-topics',
-        title: 'No access to curated topics',
+        title: 'No access to Taboo AI curated topics',
         description:
           'Curated topics are organized and structured by Taboo AI, which are more effective for learning English from well-rounded aspects',
         status: 'absent',
@@ -85,7 +85,7 @@ export const plans: ISubscriptionPlan[] = [
       },
       {
         id: 'feature-access-to-curated-topics',
-        title: 'Unlimited access to curated topics',
+        title: 'Unlimited access to Taboo AI curated topics',
         description:
           'Curated topics are organized and structured by Taboo AI, which are more effective for learning English from well-rounded aspects',
         status: 'complete',
