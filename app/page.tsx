@@ -3,6 +3,7 @@ import Script from 'next/script';
 import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array';
 import HomeSocialLinkButtonArray from '@/components/custom/home/home-social-link-button-array';
 import PageCounter from '@/components/custom/home/page-counter';
+import { ProPlanIndicator } from '@/components/custom/home/pro-plan-indicator';
 
 import ContactMe from '../components/custom/home/contact-me';
 
@@ -21,6 +22,7 @@ export default function HomePage() {
           >
             {title}
           </h1>
+          <ProPlanIndicator />
           <span className='absolute -top-6 right-0 text-lg'>{versionNumber}</span>
         </div>
         <PageCounter />
