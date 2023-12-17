@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { useTheme } from 'next-themes';
 import ReactCanvasConfetti from 'react-canvas-confetti';
+import { isMobile } from 'react-device-detect';
 
 export function Confetti() {
   const { resolvedTheme } = useTheme();
@@ -12,36 +13,40 @@ export function Confetti() {
     refAnimationInstance.current = instance;
   }, []);
   const confettiColors: string[] =
-    resolvedTheme === 'dark' ? ['#fc6a89', '#ffffff'] : ['#bb0000', '#000000'];
+    resolvedTheme === 'dark' ? ['#ee2255', '#ffffff'] : ['#bb0000', '#000000'];
 
   const fire = useCallback(() => {
+    const startVelocity = isMobile ? 30 : 80;
+    const y = isMobile ? 0.3 : 0.8;
+    const leftDrift = isMobile ? 0 : 1;
+    const rightDrift = isMobile ? 0 : -1;
+    const particleCount = isMobile ? 30 : 50;
+    const spread = isMobile ? 60 : 80;
     if (refAnimationInstance.current) {
       // Left side confetti
       refAnimationInstance.current({
-        particleCount: 50,
+        particleCount: particleCount,
         angle: 45,
-        spread: 55,
-        startVelocity: 80,
+        spread: spread,
+        startVelocity: startVelocity,
         gravity: 2,
-        origin: { x: -0.1, y: 0.8 },
-        drift: 2,
+        origin: { x: -0.1, y: y },
+        drift: leftDrift,
         colors: confettiColors,
-        shapes: ['square', 'circle', 'star'],
       });
       // Right side confetti
       refAnimationInstance.current({
-        particleCount: 50,
+        particleCount: particleCount,
         angle: 135,
-        spread: 55,
-        startVelocity: 80,
+        spread: spread,
+        startVelocity: startVelocity,
         gravity: 2,
-        origin: { x: 1.1, y: 0.8 },
-        drift: -2,
+        origin: { x: 1.1, y: y },
+        drift: rightDrift,
         colors: confettiColors,
-        shapes: ['square', 'circle', 'star'],
       });
     }
-  }, [resolvedTheme]);
+  }, [resolvedTheme, isMobile]);
 
   useEffect(() => {
     const interval = setInterval(() => {
