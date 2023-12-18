@@ -180,12 +180,16 @@ export async function fetchConversationCompletion(
  * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
  */
 export async function performEvaluation(
-  evaluation: IEvaluation
+  evaluation: IEvaluation,
+  email?: string
 ): Promise<{ score: number; reasoning: string }> {
   const response = await fetch('/api/evaluation', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(evaluation),
+    body: JSON.stringify({
+      email: email,
+      evaluation: evaluation,
+    }),
   });
   // Get the run_id and thread_id from resposne
   const json = await response.json();
