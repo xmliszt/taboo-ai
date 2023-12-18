@@ -1,15 +1,29 @@
 import { NextRequest } from 'next/server';
 import { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
 
+import { firestore } from '@/firebase/firebase-admin';
 import { openai } from '@/lib/openai';
 import { IChat } from '@/lib/types/score.type';
 
 export async function POST(request: NextRequest) {
-  const { target, taboos, conversation } = (await request.json()) as {
-    target: string;
-    taboos: string[];
-    conversation: IChat[];
+  const { email: userEmail, evaluation } = (await request.json()) as {
+    email: string;
+    evaluation: {
+      target: string;
+      taboos: string[];
+      conversation: IChat[];
+    };
   };
+  const { target, taboos, conversation } = evaluation;
+  // Based on user's plan, determine which model to use
+  let gptModelToUse = 'gpt-3.5-turbo-1106';
+  if (userEmail) {
+    const userDoc = await firestore.doc(`users/${userEmail}`).get();
+    gptModelToUse =
+      userDoc.data()?.customerPlanType === 'pro' ? 'gpt-4-1106-preview' : 'gpt-3.5-turbo-1106';
+  }
+  console.log(`Using ${gptModelToUse} for evaluation`);
+
   // Filter out conversation messages whose role is not 'user' or 'assistant'
   const filteredConversation = conversation.filter(
     (message) => message.role === 'user' || message.role === 'assistant'
@@ -36,7 +50,7 @@ export async function POST(request: NextRequest) {
     };
     const completion = await openai.chat.completions.create({
       messages: [systemMessage, userMessage],
-      model: 'gpt-3.5-turbo-1106',
+      model: gptModelToUse,
       response_format: {
         type: 'json_object',
       },

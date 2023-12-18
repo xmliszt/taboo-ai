@@ -20,9 +20,9 @@ export const plans: ISubscriptionPlan[] = [
       },
       {
         id: 'feature-ai-evaluation',
-        title: 'GPT3 powered AI evaluation',
+        title: 'Basic AI Evaluation',
         description:
-          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. Free plan comes with GPT3 AI model, which is not as powerful as GPT4, but still provides great evaluation results as feedbacks.',
+          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. The free plan offers basic AI evaluation, delivering valuable albeit less accurate feedback.',
         status: 'partial',
       },
       {
@@ -72,9 +72,9 @@ export const plans: ISubscriptionPlan[] = [
       },
       {
         id: 'feature-ai-evaluation',
-        title: 'GPT4 powered AI evaluation',
+        title: 'Comprehensive AI evaluation',
         description:
-          'After completing a game, your performance will be evaluated by Taboo AI. AI evaluation serves as a great way to improve your English skills by pointing out your grammatical mistakes and suggesting improvements. Pro plan comes with GPT4 AI model, which is by far the most powerful AI model available, and it provides the best evaluation results as feedbacks.',
+          'After playing a game, Taboo AI evaluates your performance, aiding in enhancing your English skills by highlighting grammatical errors and offering suggestions for improvement. The Pro plan employs our cutting-edge AI model for evaluation, delivering precise feedback and constructive advice on grammar, vocabulary selection, sentence structure, creativity, and more.',
         status: 'complete',
       },
       {

@@ -9,6 +9,7 @@ import { isMobile, isTablet } from 'react-device-detect';
 
 import { useAuth } from '@/components/auth-provider';
 import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
+import { ResultsAiExplanationInfoDialog } from '@/components/custom/results/results-ai-explanation-info-dialog';
 import ResutlsContributionAlertDialog from '@/components/custom/results/results-contribution-alert-dialog';
 import { ResultsShareAlertDialog } from '@/components/custom/results/results-share-alert-dialog';
 import ResultsSummaryCard from '@/components/custom/results/results-summary-card';
@@ -250,11 +251,14 @@ export default function ResultPage() {
     if (aiScore === undefined || aiExplanation === undefined) {
       // Start the AI Evaluation
       try {
-        const { score: evaluationScore, reasoning } = await performEvaluation({
-          target: score.target,
-          taboos: score.taboos,
-          conversation: score.conversation,
-        });
+        const { score: evaluationScore, reasoning } = await performEvaluation(
+          {
+            target: score.target,
+            taboos: score.taboos,
+            conversation: score.conversation,
+          },
+          user?.email
+        );
         updateGameAIEvaluationAtIndex(idx, evaluationScore, reasoning);
       } catch (error) {
         console.error(error);
@@ -546,7 +550,10 @@ export default function ResultPage() {
     items.push({
       title: 'AI Evaluation',
       content: score.aiExplanation ? (
-        <span>{score.aiExplanation ?? CONSTANTS.errors.aiJudgeFail}</span>
+        <span>
+          <ResultsAiExplanationInfoDialog isAuthenticated={status === 'authenticated'} />
+          {score.aiExplanation ?? CONSTANTS.errors.aiJudgeFail}
+        </span>
       ) : (
         <Button
           className='ml-4'
