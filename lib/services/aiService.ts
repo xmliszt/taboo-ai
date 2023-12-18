@@ -2,6 +2,10 @@ import _, { uniqueId } from 'lodash';
 import moment from 'moment';
 
 import { CONSTANTS } from '../constants';
+import {
+  CONVERSATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
+  TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
+} from '../errors/google-ai-error-parser';
 import IEvaluation from '../types/evaluation.type';
 import ILevel from '../types/level.type';
 import { IChat } from '../types/score.type';
@@ -36,7 +40,7 @@ export async function askAITabooWordsForTarget(targetWord: string): Promise<IWor
   });
   if (!response.ok) {
     const error = await response.json();
-    if (error.class === 'GoogleGenerativeAI') { 
+    if (error.class === 'GoogleGenerativeAI') {
       throw new Error(error.message);
     } else {
       throw new Error('Error generating taboo words');
@@ -93,11 +97,21 @@ export async function askAIForCreativeTopic(
       ],
       temperature: 0.8,
       maxToken: 50,
+      safety: 'high',
     }),
   });
   if (!response.ok) {
     const error = await response.json();
-    if (error.class === 'GoogleGenerativeAI') { 
+    if (error.class === 'GoogleGenerativeAI') {
+      if (error.message.includes('SAFETY')) {
+        throw new Error(
+          TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES[
+            Math.floor(
+              Math.random() * TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES.length
+            )
+          ]
+        );
+      }
       throw new Error(error.message);
     } else {
       return;
@@ -140,7 +154,14 @@ export async function fetchConversationCompletion(
   });
   if (!response.ok) {
     const error = await response.json();
-    if (error.class === 'GoogleGenerativeAI') { 
+    if (error.class === 'GoogleGenerativeAI') {
+      if (error.message.includes('SAFETY')) {
+        throw new Error(
+          CONVERSATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES[
+            Math.floor(Math.random() * CONVERSATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES.length)
+          ]
+        );
+      }
       throw new Error(error.message);
     }
   }
