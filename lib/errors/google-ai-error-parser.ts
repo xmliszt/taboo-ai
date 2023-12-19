@@ -19,6 +19,13 @@ export function tryParseErrorAsGoogleAIError(error: Error): GoogleAIError {
     throw error;
   }
   const { class: className, message: errorMessage } = match.groups;
+  // If key is in the message, return something generic as error message
+  if (errorMessage.includes('key')) {
+    return {
+      class: className,
+      message: 'Taboo AI is experiencing high traffic. Please try again.',
+    };
+  }
   return {
     class: className,
     message: errorMessage,

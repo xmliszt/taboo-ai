@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 
 import { auth } from '@/firebase/firebase-admin';
 
+import { AdminManager } from '../admin-manager';
+
 export const checkAuth = async (
   request: NextRequest
 ): Promise<{ status: number; message: string } | undefined> => {
@@ -13,7 +15,7 @@ export const checkAuth = async (
     decodedToken = await auth.verifyIdToken(token);
     if (!decodedToken || !decodedToken.uid)
       return { status: 401, message: 'Not authenticated. Invalid user token.' };
-    if (decodedToken.uid !== 'BnlcfMNIvrf2XCxY73O5KXmYNkI3')
+    if (!AdminManager.WHITELIST_UIDS.includes(decodedToken.uid))
       return { status: 401, message: 'Not authenticated. Invalid user token.' };
   } catch (error) {
     console.log(error.errorInfo);
