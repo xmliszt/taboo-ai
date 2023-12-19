@@ -23,12 +23,12 @@ export async function POST(request: NextRequest) {
     // Use json_mode for chat completion to get instruction to call function
     const systemMessage = {
       role: 'user',
-      parts: EVALUATION_SYSTEM_MESSAGE,
+      parts: getEvaluationSystemMessage(target, taboos),
     };
     const modelMessage = {
       role: 'model',
       parts:
-        "Ok, I will be ready to evaluate the user's clue performance based on input JSON object, and output the score and reasoning in the requested JSON format.",
+        "Ok, I will be ready to evaluate the user's clue performance based on input JSON object, and output the score and reasoning in the requested JSON format. I will not mention the target word and taboo words in my suggestions and examples.",
     };
     const userMessage = JSON.stringify({
       target,
@@ -60,96 +60,22 @@ export async function POST(request: NextRequest) {
   }
 }
 
-const EVALUATION_SYSTEM_MESSAGE = `
-You are a judge and advisor in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. User engaged in a conversation with AI. Your job is to evaluate the performance of the user based on his clues. The users are English learners who are trying to improve their English skills. You will assess the messages given by the user based on the quality, descriptiveness, English correctness, and demonstration of good knowledge. You ignore the messages given by the assistant. Your evaluation score will output from 0 to 100. If user is found cheating, or try to ask for English translation in another language, you should penalise the player by giving 0. Using alternative method to reference the word is allowed. You will also output your reasoning about your scoring, and provide constructive feedbacks to the user how he can improve, if there are grammatical mistakes, give examples on how to correct them.
+const getEvaluationSystemMessage = (target: string, taboos: string[]) => {
+  return `
+  You are a judge and advisor in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. User engaged in a conversation with AI. Your job is to evaluate the performance of the user based on his clues. The users are English learners who are trying to improve their English skills. You will assess the messages given by the user based on the quality, descriptiveness, English correctness, and demonstration of good knowledge. Your evaluation score from 0 to 100. If user is found cheating, or try to ask for English translation in another language, you should penalise the player by giving 0. You will output your reasoning about your scoring, and provide constructive feedbacks to the user how the user can improve on the grammar, word choices, sentence structure, without using any of the target word and taboo words given.
+  
+  Remeber, the user is not allowed to say: ${[target, ...taboos].join(', ')}.
 
-You are given a single JSON object representing the full conversation, the target word, and other taboo words. JSON schema as follows:
-
-{
-  "type": "object",
-  "properties": {
-    "target": {
-      "type": "string",
-      "description": "the target word to be guessed"
-    },
-    "taboos": {
-      "type": "array",
-      "description": "list of taboo words related to target word"
-    },
-    "conversation": {
-      "type": "array",
-      "description": "list of messages in the conversation, only evaluate those with role == 'user'",
-      "items": [
-        {
-          "type": "object",
-          "properties": {
-            "role": {
-              "type": "string",
-              "description": "the role of the message sender",
-              "enum": [
-                "user",
-                "assistant"
-              ]
-            },
-            "content": {
-              "type": "string",
-              "description": "the content of the message. only evaluate if role is 'user'"
-            }
-          },
-          "required": [
-            "role",
-            "content"
-          ]
-        }
-      ]
-    }
-  }
-}
-
-Refer to the example below on how an evaluation process is executed.
-
-Example:
-
-Input:
-{
-  "target": "Tree",
-  "taboos": [
-    "Tree",
-    "Leaf",
-    "Green",
-    "Apple"
-  ],
-  "conversation": [
-    {
-      "role": "user",
-      "content": "Newton was hit by what?"
-    },
-    {
-      "role": "assistant",
-      "content": "Is it an apple?"
-    },
-    {
-      "role": "user",
-      "content": "Yes, so it is grown from what?"
-    },
-    {
-      "role": "assistant",
-      "content": "Tree?"
-    }
-  ]
-}
-
-Evaluation Process:
-1. First message in conversation has the role "user". So I evaluate the content. User uses historical event that "Newton was hit by an apple to disocver the gravity" to hint the AI about "Apple".
-2. Second message in conversation has the role "assistant". So I do not evaluate the content. The content only serves as contextual reference.
-3. Third message in conversation has the role "user". So I evaluate the content. User then follows AI's response of "Apple" to further direct AI into the target "Tree", by asking where the apple is grown from.
-4. Fourth message in conversation has the role "assistant". So I do not evaluate the content.
-
-Output as JSON:
-{
-  "score": 95.0,
-  "reasoning": "The user uses a creative way that circumvent the restrictions that \\"Apple\\" and \\"Tree\\" cannot be said. The user first indirectly hinted the AI about the object that could be grown from the tree. Once AI got it correctly, the user then moved on to deliver the final hint towards guessing the word \\"tree\\". Therefore I will give a very high score of 95 out of 100. The only improvement is the grammar in both clues given by the user. It will be better if the user changed them to: \\"What object did Newton get hit by historically?\\" and \\"Yes. So where is the object that you mentioned grown from?\\"."
-}
-
-Your output should not have any newline character. Keep it as a single line JSON stringified string.
-`;
+  You should teach the user how to create a better hint that does not use any of the taboo words: ${[
+    target,
+    ...taboos,
+  ].join(', ')}, and is grammatically correct, with better word choices and sentence structure.
+  
+  Output your score and reasoning in JSON stringified format: {"score": 100, "reasoning": ""}
+  
+  Example output with the correct format:
+  {"score": 95.0,"reasoning": "The user uses a very creative way of hinting the AI into guessing the target word without saying any of the taboo words. Therefore I will give a very high score of 95 out of 100."}
+  
+  Your output should not have any newline character or any escaping character. Keep it as a single line JSON stringified string.
+  `;
+};
