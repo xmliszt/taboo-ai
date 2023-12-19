@@ -1,7 +1,6 @@
-import { NextRequest } from 'next/server';
-import { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { openai } from '@/lib/openai';
+import { googleGeminiPro } from '@/lib/google-ai';
 import { IChat } from '@/lib/types/score.type';
 
 export async function POST(request: NextRequest) {
@@ -22,38 +21,42 @@ export async function POST(request: NextRequest) {
 
   try {
     // Use json_mode for chat completion to get instruction to call function
-    const systemMessage: ChatCompletionSystemMessageParam = {
-      role: 'system',
-      content: EVALUATION_SYSTEM_MESSAGE,
-    };
-    const userMessage: ChatCompletionUserMessageParam = {
+    const systemMessage = {
       role: 'user',
-      content: JSON.stringify({
-        target,
-        taboos,
-        conversation: filteredConversation,
-      }),
+      parts: EVALUATION_SYSTEM_MESSAGE,
     };
-    const completion = await openai.chat.completions.create({
-      messages: [systemMessage, userMessage],
-      model: 'gpt-3.5-turbo-1106',
-      response_format: {
-        type: 'json_object',
-      },
+    const modelMessage = {
+      role: 'model',
+      parts:
+        "Ok, I will be ready to evaluate the user's clue performance based on input JSON object, and output the score and reasoning in the requested JSON format.",
+    };
+    const userMessage = JSON.stringify({
+      target,
+      taboos,
+      conversation: filteredConversation,
     });
-    const { score, reasoning } = JSON.parse(completion.choices[0].message.content ?? '');
-    return new Response(
-      JSON.stringify({
+    const chat = googleGeminiPro.startChat({
+      history: [systemMessage, modelMessage],
+    });
+    const completion = await chat.sendMessage(userMessage);
+    const responseText = completion.response.text();
+    const { score, reasoning } = JSON.parse(responseText);
+    return NextResponse.json(
+      {
         score,
         reasoning,
-      }),
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
+      },
+      { status: 200 }
     );
   } catch (error) {
-    console.log(error);
-    return new Response('Error creating thread', { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      {
+        message: 'Error processing the evaluation',
+        error: error,
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -147,4 +150,6 @@ Output as JSON:
   "score": 95.0,
   "reasoning": "The user uses a creative way that circumvent the restrictions that \\"Apple\\" and \\"Tree\\" cannot be said. The user first indirectly hinted the AI about the object that could be grown from the tree. Once AI got it correctly, the user then moved on to deliver the final hint towards guessing the word \\"tree\\". Therefore I will give a very high score of 95 out of 100. The only improvement is the grammar in both clues given by the user. It will be better if the user changed them to: \\"What object did Newton get hit by historically?\\" and \\"Yes. So where is the object that you mentioned grown from?\\"."
 }
+
+Your output should not have any newline character. Keep it as a single line JSON stringified string.
 `;
