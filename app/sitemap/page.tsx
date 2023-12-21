@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { getAllLevels } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
+import _ from 'lodash'
 
 interface SitemapRoute {
   title: string;
@@ -84,7 +85,7 @@ export default async function SitemapPage() {
               key={level.id}
               href={baseUrl + '/level/' + level.id}
             >
-              {level.name} {level.author && <i>by {level.author}</i>}
+              {_.startCase(level.name)} {level.author && <i>by {level.author}</i>}
             </Link>
           ))}
         </div>
