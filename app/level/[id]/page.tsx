@@ -420,7 +420,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   if (!level) {
     return (
-      <section className='flex h-full justify-center px-4 pt-20'>
+      <section className='flex justify-center px-4 pt-8'>
         <h1 className='fixed top-3 z-20 flex w-full justify-center'>
           <div className='w-fit rounded-lg px-3 py-1 shadow-lg'>Taboo AI</div>
         </h1>
@@ -430,7 +430,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   }
 
   return (
-    <main className='flex h-full justify-center'>
+    <main className='flex justify-center'>
       {isCountingdown ? (
         <div
           className={cn(
@@ -456,8 +456,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         <></>
       )}
       <Timer className='fixed right-3 top-3 z-50 shadow-lg' time={time} status={timerStatus} />
-      <section className='flex h-full w-full flex-col gap-4 pt-20 text-center'>
-        <div className='flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 pb-4 scrollbar-hide'>
+      <section className='flex h-full w-full flex-col gap-0 text-center'>
+        <div className='flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 py-4 scrollbar-hide'>
           {conversation.map((prompt, idx) => (
             <p
               key={idx}
@@ -505,7 +505,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
           ))}
           <div id='chat-end'></div>
         </div>
-
         <section className='flex w-full flex-col border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
           <Progress
             className='h-1 rounded-none'

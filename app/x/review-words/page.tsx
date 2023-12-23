@@ -422,7 +422,7 @@ const DevReviewWordsPage = () => {
   }
 
   return (
-    <main className='flex flex-col items-center justify-center gap-4 py-20 leading-snug'>
+    <main className='flex flex-col items-center gap-4 py-4 leading-snug'>
       <div className='flex flex-wrap justify-center gap-2 p-2'>
         <Badge variant={selectedLevel?.isVerified ? 'default' : 'destructive'}>
           {selectedLevel?.isVerified ? 'Verified' : 'Not Verified'}
@@ -480,7 +480,7 @@ const DevReviewWordsPage = () => {
           type='text'
         />
       </div>
-      <div className='flex max-h-52 w-10/12 flex-wrap gap-4 overflow-y-auto rounded-lg p-8 shadow-lg'>
+      <div className='flex min-h-[200px] w-10/12 flex-wrap gap-4 overflow-y-auto rounded-lg p-8 shadow-lg'>
         {selectedLevel?.words.map((word, idx) => (
           <div key={idx} className='relative w-auto'>
             <Button

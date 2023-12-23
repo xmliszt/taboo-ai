@@ -1,9 +1,9 @@
 import Link from 'next/link';
+import _ from 'lodash';
 
 import { Separator } from '@/components/ui/separator';
 import { getAllLevels } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
-import _ from 'lodash'
 
 interface SitemapRoute {
   title: string;
@@ -59,7 +59,7 @@ export default async function SitemapPage() {
   ];
 
   return (
-    <main className='flex h-full w-full flex-col gap-4 overflow-y-auto px-10 pb-10 pt-20 text-center leading-snug md:text-left'>
+    <main className='flex h-full w-full flex-col gap-4 px-10 pb-10 text-center leading-snug md:text-left'>
       <section id='features-section'>
         <h3 className='my-2 text-center text-xl font-extrabold'>Features</h3>
         <Separator />

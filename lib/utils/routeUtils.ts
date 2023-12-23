@@ -29,7 +29,6 @@ export class RouteManager {
     switch (true) {
       case TabooPathname.HOME === route:
         return {
-          isTransparent: true,
           hideDevToggle: false,
         };
       case TabooPathname.ADD_LEVEL === route:
@@ -44,7 +43,7 @@ export class RouteManager {
         };
       case TabooPathname.BUY_ME_COFFEE === route:
         return {
-          isTransparent: true,
+          title: 'Buy Me A Coffee',
         };
       case /^\/level\//.test(route):
         return {
@@ -66,23 +65,23 @@ export class RouteManager {
         };
       case TabooPathname.PWA === route:
         return {
-          isTransparent: true,
+          title: 'Install Taboo AI',
         };
       case TabooPathname.ROADMAP === route:
         return {
-          isTransparent: true,
+          title: 'Roadmap',
         };
       case TabooPathname.RULE === route:
         return {
-          isTransparent: true,
+          title: 'Taboo AI Game Rules',
         };
       case TabooPathname.WHATSNEW === route:
         return {
-          isTransparent: true,
+          title: 'New Features',
         };
       case TabooPathname.ABOUT === route:
         return {
-          isTransparent: true,
+          title: 'About Taboo AI',
         };
       case TabooPathname.X_REVIEW_WORDS === route:
         return {
@@ -100,7 +99,6 @@ export class RouteManager {
         return {
           title: '',
           hideUserMenu: false,
-          isTransparent: false,
           hideMenu: false,
           hideThemeToggle: false,
           hideDevToggle: true,

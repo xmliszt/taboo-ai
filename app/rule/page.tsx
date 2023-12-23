@@ -4,13 +4,14 @@ import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 import ruleContent from './rule.md';
 
 export default function RulePage() {
   const router = useRouter();
   return (
-    <main className='flex h-full w-full flex-col px-8 pb-4 pt-20 lg:px-48 lg:pt-32'>
+    <main className='flex flex-col gap-4 px-8 py-8 lg:px-48'>
       <article className='leading-snug'>
         <ReactMarkdown>{ruleContent}</ReactMarkdown>
       </article>
@@ -26,7 +27,7 @@ export default function RulePage() {
           Choose Topics
         </Button>
       </div>
-      <hr className='my-4' />
+      <Separator />
       <p className='text-gray mt-2 text-justify text-xs leading-tight'>
         Disclaimer: Please note that Taboo AI relies on third-party AI models for generating
         responses and taboo words. In the event that the API experiences overload due to high

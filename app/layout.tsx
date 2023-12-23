@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Script id='pwa-script' src='/js/pwa.js' />
       <Script id='clarity-script' src='/js/clarity.js' />
       <head />
-      <body className={`${font.className} scrollbar-hide`}>
+      <body className={`${font.className}`}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <GlobalTooltipProvider delayDuration={300}>
             <AuthProvider>
@@ -54,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <>
                   <Header />
                   {children}
+                  {/* Below are floating components */}
                   <SideMenu />
                   <PWAInstaller />
                   <LoginErrorDialog />

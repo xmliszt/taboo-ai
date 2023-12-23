@@ -62,7 +62,7 @@ export default function LevelsPage() {
 
   return (
     <section className='h-full w-full overflow-y-hidden'>
-      <div className='h-44 w-full border border-b-primary bg-card px-4 pt-20 lg:px-12'>
+      <div className='h-30 w-full border border-b-primary bg-card px-4 py-4 lg:px-12'>
         <LevelsSearchBar
           topicNumber={filteredLevels.length}
           setFilterKeyword={setFilterKeyword}

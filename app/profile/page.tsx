@@ -75,7 +75,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className='flex flex-col items-center gap-16 overflow-auto bg-background px-10 py-32 pt-20 text-foreground'>
+    <main className='flex flex-col items-center gap-16 bg-background px-10 py-8 text-foreground'>
       <div className='flex flex-col items-center gap-4'>
         <Image
           className='rounded-full border-2 border-primary shadow-md'

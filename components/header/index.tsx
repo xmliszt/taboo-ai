@@ -16,7 +16,6 @@ export interface HeaderProps {
   hideThemeToggle?: boolean;
   hideDevToggle?: boolean;
   hideShareScoreButton?: boolean;
-  isTransparent?: boolean;
   hasBackButton?: boolean;
   customBackHref?: string;
 }
@@ -26,7 +25,6 @@ export default function Header() {
     {
       title,
       hideUserMenu,
-      isTransparent,
       hideMenu,
       hideThemeToggle,
       hideDevToggle,
@@ -38,7 +36,6 @@ export default function Header() {
   ] = useState<HeaderProps>({
     title: '',
     hideUserMenu: false,
-    isTransparent: false,
     hideMenu: false,
     hideThemeToggle: false,
     hideDevToggle: true,
@@ -58,8 +55,8 @@ export default function Header() {
     <header
       id='header-section'
       className={cn(
-        isTransparent ? '' : 'bg-card',
-        'fixed top-0 z-40 flex h-16 w-full flex-row items-center justify-between gap-2 p-4 text-center'
+        'flex h-16 w-full flex-row items-center justify-between gap-2 p-4 text-center',
+        'border-b bg-card'
       )}
     >
       <HeaderLeftElements
@@ -71,7 +68,7 @@ export default function Header() {
       />
       <div
         data-testid='heading-rule-title'
-        className='absolute left-0 -z-10 w-full text-center text-lg'
+        className='pointer-events-none absolute left-0 z-10 w-full text-center text-lg'
       >
         {title}
       </div>

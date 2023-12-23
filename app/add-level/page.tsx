@@ -419,7 +419,7 @@ const AddLevelPage = () => {
   }
 
   return (
-    <main className='flex h-full w-full flex-col items-center gap-4 p-4 pt-16'>
+    <main className='flex flex-col items-center gap-4 p-4'>
       {isScrollToTopButtonVisible && (
         <IconButton
           className='fixed bottom-8 right-8 z-40 animate-fade-in'
