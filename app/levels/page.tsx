@@ -61,7 +61,7 @@ export default function LevelsPage() {
   };
 
   return (
-    <section className='h-full w-full overflow-y-hidden'>
+    <section className='flex h-full w-full flex-col overflow-y-hidden'>
       <div className='h-30 w-full border border-b-primary bg-card px-4 py-4 lg:px-12'>
         <LevelsSearchBar
           topicNumber={filteredLevels.length}
@@ -77,7 +77,7 @@ export default function LevelsPage() {
       <div
         id='level-section'
         ref={levelSectionRef}
-        className='flex h-[calc(100%-11rem)] w-full flex-wrap content-start justify-center gap-8 overflow-auto px-4 py-10 text-center'
+        className='flex w-full flex-grow flex-wrap content-start justify-center gap-8 overflow-auto px-4 py-10 text-center'
         onScroll={onScrollChange}
       >
         {/* AI Mode Card */}
