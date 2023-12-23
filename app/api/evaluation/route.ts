@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import { Chat } from 'openai/resources';
+import { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
 
 import { firestore } from '@/firebase/firebase-admin';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { openai } from '@/lib/openai';
 import { IChat } from '@/lib/types/score.type';
-
-import ChatCompletionSystemMessageParam = OpenAI.ChatCompletionSystemMessageParam;
-
-import ChatCompletionUserMessageParam = Chat.ChatCompletionUserMessageParam;
 
 type AIEvaluationMode = 'basic' | 'advanced';
 
