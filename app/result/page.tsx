@@ -617,7 +617,7 @@ export default function ResultPage() {
 
   const renderResults = () => {
     return game ? (
-      <div className='mb-8 mt-20 flex w-full flex-col gap-6 px-4'>
+      <div className='mb-8 flex w-full flex-col gap-6 px-4'>
         {isUploadFailed && (
           <ResultsUploadAlert isUploading={isGameUploading} retryUpload={tryUploadGameToCloud} />
         )}
@@ -655,7 +655,7 @@ export default function ResultPage() {
     <>
       <main className='relative'>
         <LoadingMask key='loading-mask' isLoading={isLoading} message={loadingMessage} />
-        <section className='!leading-screenshot pb-24 pt-4 lg:pb-48' ref={screenshotRef}>
+        <section className='!leading-screenshot pb-24 pt-4' ref={screenshotRef}>
           {renderResults()}
         </section>
       </main>
