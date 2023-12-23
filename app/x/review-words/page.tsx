@@ -422,7 +422,7 @@ const DevReviewWordsPage = () => {
   }
 
   return (
-    <main className='flex flex-col items-center justify-center gap-4 py-20 leading-snug'>
+    <main className='flex flex-col items-center justify-center gap-4 py-4 leading-snug'>
       <div className='flex flex-wrap justify-center gap-2 p-2'>
         <Badge variant={selectedLevel?.isVerified ? 'default' : 'destructive'}>
           {selectedLevel?.isVerified ? 'Verified' : 'Not Verified'}

@@ -54,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <>
                   <Header />
                   {children}
+                  {/* Below are floating components */}
                   <SideMenu />
                   <PWAInstaller />
                   <LoginErrorDialog />

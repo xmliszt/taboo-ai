@@ -11,9 +11,9 @@ const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default function HomePage() {
   return (
-    <main className='h-full w-full'>
+    <main>
       <Script id='pwa-script' src='/js/pwa.js' />
-      <section className='flex w-full flex-col items-center justify-center gap-2 pb-4 pt-24 lg:pt-24'>
+      <section className='flex w-full flex-col items-center justify-center gap-2 pb-4 pt-8'>
         <div className='relative'>
           <h1
             data-testid='heading-title'

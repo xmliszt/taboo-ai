@@ -52,14 +52,19 @@
   }
 }
 
-html {
-  @apply scrollbar-hide;
+html,
+body {
+  @apply leading-snug scrollbar-hide;
 
   overflow: hidden;
 }
 
 body {
-  overflow: auto;
+  @apply flex h-full w-full flex-col;
+}
+
+body > main {
+  @apply w-full flex-grow overflow-y-auto;
 }
 
 @layer base {
@@ -226,12 +231,10 @@ body {
   }
 }
 
-html,
-body {
+html {
   max-width: 100vw;
   width: 100%;
   height: 100%;
-  line-height: 0.5 !important;
 }
 
 a {
