@@ -115,6 +115,22 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
   };
 
   const renderSubscriptionDetails = (status: Stripe.Subscription.Status | undefined) => {
+    function renderExpiryDuration() {
+      const diffDuration = moment.duration(userPlan?.trialEndDate?.diff(moment()));
+      const diffDays = diffDuration.days();
+      const diffHours = diffDuration.hours();
+      const diffMinutes = diffDuration.minutes();
+      if (diffDays > 1) {
+        return `${diffDays} days`;
+      } else if (diffDays === 1) {
+        return `${diffDays} day ${diffHours} hours ${diffMinutes} minutes`;
+      } else if (diffHours > 0) {
+        return `${diffHours} hours ${diffMinutes} minutes`;
+      } else {
+        return `${diffMinutes} minutes`;
+      }
+    }
+
     switch (status) {
       case 'trialing':
         return (
@@ -123,10 +139,9 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
               <div className='italic text-muted-foreground'>You are currently on free trial</div>
             </div>
             <div className='flex flex-row items-center justify-between leading-tight'>
-              <div>Your trial ends in: </div>
+              <div>Your trial ends in:</div>
               <div className='flex flex-row items-center gap-2'>
-                {userPlan?.trialEndDate?.diff(moment(), 'days')}
-                <span>days</span>
+                <span>{renderExpiryDuration()}</span>
               </div>
             </div>
           </>
@@ -135,7 +150,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
         if (subscriptionCancelDate) {
           return (
             <div className='flex flex-row items-center justify-between leading-tight'>
-              <div>Your subscription will end on: </div>
+              <div>Your subscription will end on:</div>
               <div className='flex flex-row items-center gap-2'>
                 {subscriptionCancelDate.format('DD MMM YYYY')}
               </div>
@@ -144,7 +159,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
         }
         return (
           <div className='flex flex-row items-center justify-between leading-tight'>
-            <div>Next billing cycle: </div>
+            <div>Next billing cycle:</div>
             <div className='flex flex-row items-center gap-2'>
               {userPlan?.nextBillingDate?.format('DD MMM YYYY')}
             </div>
