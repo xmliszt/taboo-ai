@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { cookies } from 'next/headers';
 import { useRouter } from 'next/navigation';
-import { getAuth } from 'firebase/auth';
 import { Skull } from 'lucide-react';
 
 import {
@@ -16,12 +16,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { cancelSubscription, fetchCustomerSubscriptions } from '@/lib/services/subscriptionService';
-import { deleteUserFromFirebase, getUser } from '@/lib/services/userService';
+import { deleteUserFromSupabase } from '@/lib/services/userService';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/utils/supabase/server';
 
 import { Spinner } from '../spinner';
-
-const auth = getAuth();
 
 export default function ProfileDangerZone({ className }: { className?: string }) {
   const router = useRouter();
@@ -30,20 +29,45 @@ export default function ProfileDangerZone({ className }: { className?: string })
   const [isDeleting, setIsDeleting] = useState(false);
 
   const proceedToDeleteUser = async () => {
-    const user = auth.currentUser;
-    if (!user || !user.email) {
+    const supabaseClient = createClient(cookies());
+    const userResponse = await supabaseClient.auth.getUser();
+    if (userResponse.error) {
       toast({
         title: 'We cannot identify the user to be deleted. Please retry login and try again.',
         variant: 'destructive',
       });
       return;
     }
-    const userDoc = await getUser(user.email);
-    const userSubscription = await fetchCustomerSubscriptions(user.email, userDoc?.customerId);
+    const user = userResponse.data.user;
+    const fetchUserSubscription = await supabaseClient
+      .from('subscriptions')
+      .select()
+      .eq('user_id', user.id)
+      .single();
+    if (fetchUserSubscription.error) {
+      toast({
+        title:
+          'We cannot identify the user subscription to be deleted. Please retry login and try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (!user.email) {
+      toast({
+        title: 'We cannot identify the user to be deleted. Please retry login and try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    const userSubscription = await fetchCustomerSubscriptions(
+      user.email,
+      fetchUserSubscription.data.customer_id
+    );
+
+    // Start deleting
     try {
       setIsDeleting(true);
-      user.email && (await deleteUserFromFirebase(user.email)); // Firebase db delete user
-      await user.delete(); // Firebase auth delete user
+      await deleteUserFromSupabase(user.id); // Supabase delete user
       userSubscription?.subId && (await cancelSubscription(userSubscription.subId)); // If subscription ID presents, cancel the subscription from Stripe
       toast({ title: 'Your account has been deleted.' });
       router.push('/');

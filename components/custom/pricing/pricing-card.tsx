@@ -48,7 +48,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         ? 'Current Plan' // If logged in, current plan is current plan
         : userPlan.tier ?? 0 > plan.tier
           ? 'Downgrade Plan' // If logged in and current plan is higher tier than this plan, downgrade plan
-          : user?.customerId === undefined
+          : userPlan?.customerId === undefined
             ? 'Start Free Trial' // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start free trial
             : 'Upgrade Plan'; // If logged in and current plan is lower tier than this plan, upgrade plan
   const isCurrentPlan = userPlan === undefined ? plan.type === 'free' : userPlan.type === plan.type;
@@ -114,7 +114,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
     // user logged in, selected paid plan and valid, create checkout session
     try {
       setIsLoading(true);
-      const redirectUrl = await createCheckoutSession(priceId, user?.email, user?.customerId);
+      const redirectUrl = await createCheckoutSession(priceId, user?.email, userPlan?.customerId);
       router.replace(redirectUrl);
     } catch (error) {
       toast({
@@ -172,7 +172,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       ref={cardRef}
       className={cn(
         /pro/i.test(plan.name) ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
-        user?.customerPlanType === plan.type ? 'border-[1px] border-primary' : '',
+        userPlan?.type === plan.type ? 'border-[1px] border-primary' : '',
         'relative my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center transition-transform ease-in-out hover:scale-105'
       )}
     >

@@ -4,33 +4,33 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { RefreshCcw } from 'lucide-react';
 
+import { useAuth } from '@/components/auth-provider';
 import IconButton from '@/components/ui/icon-button';
-import { getLevelsByUser } from '@/lib/services/levelService';
-import IUser from '@/lib/types/user.type';
-import IUserLevel from '@/lib/types/userLevel.type';
+import { getLevelsCompletedByUser } from '@/lib/services/levelService';
+import { IUserLevel } from '@/lib/types/userLevel.type';
 import { cn } from '@/lib/utils';
 
 import { Skeleton } from '../skeleton';
 import ProfileTopicsCardView from './topics/profile-topics-card-view';
 
-export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) {
+export default function ProfilePlayedTopicScrollView() {
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [playedTopics, setPlayedTopics] = useState<IUserLevel[]>([]);
 
   useEffect(() => {
-    getPlayedTopicsData(user.email);
+    user && getPlayedTopicsData(user.email);
   }, [user]);
 
   const getPlayedTopicsData = async (email: string) => {
     try {
       setIsLoading(true);
-      const playedTopics = await getLevelsByUser(email);
-      sortPlayedTopics(playedTopics);
+      const playedTopics = await getLevelsCompletedByUser(email);
       playedTopics.push({
-        levelId: 'play-more',
-        attempts: 0,
-        bestScore: 0,
-        lastPlayedAt: new Date(),
+        level_id: 'play-more',
+        completed_times: 0,
+        best_score: 0,
+        last_played_at: new Date().toISOString(),
       });
       setPlayedTopics(playedTopics);
     } catch (error) {
@@ -38,27 +38,6 @@ export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) 
     } finally {
       setIsLoading(false);
     }
-  };
-
-  /**
-   * Sort the given IUserLevel array.
-   * Firstly by attempts count (descending),
-   * Then by last played date (descending),
-   * Lastly by best score (descending)
-   */
-  const sortPlayedTopics = (playedTopics: IUserLevel[]) => {
-    playedTopics.sort((a, b) => {
-      if (a.attempts === b.attempts) {
-        if (a.lastPlayedAt && b.lastPlayedAt) {
-          if (a.lastPlayedAt === b.lastPlayedAt) {
-            return b.bestScore - a.bestScore;
-          }
-          return a.lastPlayedAt > b.lastPlayedAt ? -1 : 1;
-        }
-        return 0;
-      }
-      return b.attempts - a.attempts;
-    });
   };
 
   return (
@@ -70,7 +49,7 @@ export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) 
           tooltip='Refresh past games'
           variant='link'
           onClick={() => {
-            getPlayedTopicsData(user.email);
+            user && void getPlayedTopicsData(user.email);
           }}
         >
           <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
@@ -88,9 +67,7 @@ export default function ProfilePlayedTopicScrollView({ user }: { user: IUser }) 
             .
           </div>
         ) : (
-          playedTopics.map((topic) => (
-            <ProfileTopicsCardView key={topic.levelId} userEmail={user.email} topic={topic} />
-          ))
+          playedTopics.map((topic) => <ProfileTopicsCardView key={topic.level_id} topic={topic} />)
         )}
       </div>
     </div>

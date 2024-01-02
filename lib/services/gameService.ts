@@ -1,7 +1,9 @@
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { collection, doc, DocumentReference, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import moment from 'moment';
 
 import { firestore } from '@/firebase/firebase-client';
+import { Database } from '@/lib/supabase/extension/types';
 
 import IGame from '../types/game.type';
 import { IHighlight } from '../types/highlight.type';
@@ -143,3 +145,17 @@ export const fetchRecentGames = async (
   games.sort((a, b) => b.finishedAt.getTime() - a.finishedAt.getTime());
   return games.slice(offset, offset + limit);
 };
+
+/**
+ * Fetches all games completed by a user.
+ * @param uid The uid of the user to fetch games for.
+ */
+export async function getAllGamesCompletedByUser(uid: string) {
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchAllGamesCompletedByUserResponse = await supabaseClient
+    .from('games')
+    .select()
+    .eq('user_id', uid);
+  if (fetchAllGamesCompletedByUserResponse.error) throw fetchAllGamesCompletedByUserResponse.error;
+  return fetchAllGamesCompletedByUserResponse.data;
+}

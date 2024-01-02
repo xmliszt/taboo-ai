@@ -2,8 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { IHighlight } from '../types/highlight.type';
-import ILevel from '../types/level.type';
-import { DateUtils } from './dateUtils';
+import { ILevel } from '../types/level.type';
 
 export type SortType =
   | 'a-z'
@@ -30,17 +29,11 @@ export class LevelUtils {
         };
       case 'create-new':
         return (a, b) => {
-          return (
-            moment(b.createdAt, DateUtils.formats.levelCreatedAt).unix() -
-            moment(a.createdAt, DateUtils.formats.levelCreatedAt).unix()
-          );
+          return moment(b.created_at).unix() - moment(a.created_at).unix();
         };
       case 'create-old':
         return (a, b) => {
-          return (
-            moment(a.createdAt, DateUtils.formats.levelCreatedAt).unix() -
-            moment(b.createdAt, DateUtils.formats.levelCreatedAt).unix()
-          );
+          return moment(a.created_at).unix() - moment(b.created_at).unix();
         };
       case 'most-popular':
         return (a, b) => {

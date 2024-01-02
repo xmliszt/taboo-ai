@@ -2,48 +2,54 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import _ from 'lodash';
 import { RefreshCcw } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
+import { AsyncReturnType } from 'type-fest';
 
 import { useAuth } from '@/components/auth-provider';
 import IconButton from '@/components/ui/icon-button';
-import { getLevelStatistics } from '@/lib/services/levelService';
-import { getUser } from '@/lib/services/userService';
-import IUser from '@/lib/types/user.type';
+import { getAllGamesCompletedByUser } from '@/lib/services/gameService';
+import {
+  getBestPerformingLevelSummary,
+  getLevelsCompletedByUser,
+  getMostFreqPlayedLevelsSummary,
+} from '@/lib/services/levelService';
 import { cn } from '@/lib/utils';
 
 import { Skeleton } from '../skeleton';
 import ProfileStatisticsSimpleCardView from './profile-statistics-simple-card';
 
 export default function ProfileStatisticsCardView() {
-  type Topic = { id?: string; name?: string };
   const { user: currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<IUser | null>(null);
-  const [bestTopic, setBestTopic] = useState<Topic>();
-  const [mostFreqTopic, setMostFreqTopic] = useState<Topic>();
+  const [bestPerformingTopic, setBestPerformingTopic] =
+    useState<AsyncReturnType<typeof getBestPerformingLevelSummary>[number]>();
+  const [mostFreqPlayedTopics, setMostFreqPlayedTopics] =
+    useState<AsyncReturnType<typeof getMostFreqPlayedLevelsSummary>>();
+  const [allPlayedLevels, setAllPlayedLevels] =
+    useState<AsyncReturnType<typeof getLevelsCompletedByUser>>();
+  const [allPlayedGames, setAllPlayedGames] =
+    useState<AsyncReturnType<typeof getAllGamesCompletedByUser>>();
   const router = useRouter();
 
   useEffect(() => {
-    currentUser?.email && getUserData(currentUser.email);
+    currentUser && void getUserStats(currentUser.id);
   }, [currentUser]);
 
-  const getUserData = async (email: string) => {
+  const getUserStats = async (uid: string) => {
     try {
       setIsLoading(true);
-      const user = await getUser(email);
-      const stats = await getLevelStatistics(email);
-      setBestTopic({
-        id: stats.bestPerformingLevel?.id,
-        name: _.startCase(stats.bestPerformingLevel?.name ?? ''),
-      });
-      setMostFreqTopic({
-        id: stats.mostFrequentlyPlayedLevel?.id,
-        name: _.startCase(stats.mostFrequentlyPlayedLevel?.name ?? ''),
-      });
-      if (user) setUser(user);
-      else throw new Error('User not found');
+      const [bestPerformingLevels, mostFreqPlayedLevels, allLevelsCompleted, allGamesCompleted] =
+        await Promise.all([
+          getBestPerformingLevelSummary(uid),
+          getMostFreqPlayedLevelsSummary(uid),
+          getLevelsCompletedByUser(uid),
+          getAllGamesCompletedByUser(uid),
+        ]);
+      setBestPerformingTopic(bestPerformingLevels[0]);
+      setMostFreqPlayedTopics(mostFreqPlayedLevels);
+      setAllPlayedLevels(allLevelsCompleted);
+      setAllPlayedGames(allGamesCompleted);
     } catch (error) {
       console.error(error);
     } finally {
@@ -60,7 +66,7 @@ export default function ProfileStatisticsCardView() {
           tooltip='Refresh statistics'
           variant='link'
           onClick={() => {
-            currentUser?.email && getUserData(currentUser.email);
+            currentUser && getUserStats(currentUser.id);
           }}
         >
           <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
@@ -78,42 +84,39 @@ export default function ProfileStatisticsCardView() {
           <Skeleton className='h-[350px] w-full' numberOfRows={12} />
         ) : (
           <>
-            {bestTopic?.name && (
+            {bestPerformingTopic?.level_name && (
               <ProfileStatisticsSimpleCardView
                 key='best-performing-topic'
                 title='Best Performing Topic'
-                value={bestTopic.name}
+                value={bestPerformingTopic.level_name}
                 tooltip='Play Again'
                 onClick={() => {
-                  router.push(`/level/${bestTopic.id}`);
+                  router.push(`/level/${bestPerformingTopic.level_id}`);
                 }}
               />
             )}
-            {mostFreqTopic?.name && (
-              <ProfileStatisticsSimpleCardView
-                key='most-frequently-played-topic'
-                title='Most Frequently Played Topic'
-                value={mostFreqTopic.name}
-                tooltip='Play Again'
-                onClick={() => {
-                  router.push(`/level/${mostFreqTopic.id}`);
-                }}
-              />
-            )}
+            {mostFreqPlayedTopics &&
+              mostFreqPlayedTopics.length > 0 &&
+              mostFreqPlayedTopics.map((mostFreqPlayedTopic) => (
+                <ProfileStatisticsSimpleCardView
+                  key={mostFreqPlayedTopic.level_id}
+                  title='Most Frequently Played Topic'
+                  value={mostFreqPlayedTopic.level_name}
+                  tooltip='Play Again'
+                  onClick={() => {
+                    router.push(`/level/${mostFreqPlayedTopic.level_id}`);
+                  }}
+                />
+              ))}
             <ProfileStatisticsSimpleCardView
               key='attempted-level-count'
               title='# of Topics Attempted'
-              value={`${user?.levelPlayedCount ?? 0}`}
-            />
-            <ProfileStatisticsSimpleCardView
-              key='total-game-attempted-count'
-              title='# of Games Attempted'
-              value={`${user?.gameAttemptedCount ?? 0}`}
+              value={`${allPlayedLevels?.length ?? 0}`}
             />
             <ProfileStatisticsSimpleCardView
               key='total-game-completed-count'
               title='# of Games Completed'
-              value={`${user?.gamePlayedCount ?? 0}`}
+              value={`${allPlayedGames?.length ?? 0}`}
             />
             <ProfileStatisticsSimpleCardView
               key='coming-soon'

@@ -6,11 +6,11 @@ import _ from 'lodash';
 import { RefreshCcw } from 'lucide-react';
 import moment from 'moment';
 
+import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import IconButton from '@/components/ui/icon-button';
 import { fetchRecentGames } from '@/lib/services/gameService';
 import { getLevel } from '@/lib/services/levelService';
-import IUser from '@/lib/types/user.type';
 import { getDifficulty } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { DateUtils } from '@/lib/utils/dateUtils';
@@ -23,14 +23,15 @@ import {
 import { Skeleton } from '../skeleton';
 import ProfileRecentGameCard, { RecentGame } from './profile-recent-game-card';
 
-export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) {
-  const numberOfMostRecentGamesToDisplay = user.customerPlanType === 'free' ? 1 : 10;
+export default function ProfileRecentGamesScrollView() {
+  const { user, userPlan } = useAuth();
+  const numberOfMostRecentGamesToDisplay = userPlan?.type === 'free' ? 1 : 10;
   const [isLoading, setIsLoading] = useState(false);
   const [recentGames, setRecentGames] = useState<RecentGame[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    getRecentGamesData(user.email);
+    user && getRecentGamesData(user.email);
   }, [user]);
 
   const getRecentGamesData = async (email: string) => {
@@ -84,7 +85,7 @@ export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) 
           tooltip='Refresh past games'
           variant='link'
           onClick={() => {
-            getRecentGamesData(user.email);
+            user && getRecentGamesData(user.email);
           }}
         >
           <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />
@@ -97,7 +98,7 @@ export default function ProfileRecentGamesScrollView({ user }: { user: IUser }) 
           ? 'Game'
           : `${numberOfMostRecentGamesToDisplay} Games`}
       </span>
-      {user.customerPlanType === 'free' && (
+      {userPlan?.type === 'free' && (
         <div className='text-sm italic leading-none text-muted-foreground'>
           To view more past games, upgrade to PRO plan:{' '}
           <Button

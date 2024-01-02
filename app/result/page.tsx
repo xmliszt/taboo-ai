@@ -33,14 +33,9 @@ import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { performEvaluation } from '@/lib/services/aiService';
 import { fetchGameForUser, uploadCompletedGameForUser } from '@/lib/services/gameService';
-import {
-  getLevel,
-  isLevelExists,
-  updateRealtimeDBLevelRecord,
-  uploadPlayedLevelForUser,
-} from '@/lib/services/levelService';
+import { getLevel, isLevelExists } from '@/lib/services/levelService';
 import IGame from '@/lib/types/game.type';
-import ILevel from '@/lib/types/level.type';
+import { ILevel } from '@/lib/types/level.type';
 import { b64toBlob, getDifficultyMultipliers, shareImage } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
@@ -110,7 +105,7 @@ export default function ResultPage() {
 
   // First render: check if level is AI and user logged in, prompt for topic submission if yes
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
-    if (level && level.isAIGenerated) {
+    if (level && level.is_ai_generated) {
       const exists = await isLevelExists(level.name, user?.email);
       setHasTopicSubmitted(exists);
       if (exists) return;
@@ -177,8 +172,6 @@ export default function ResultPage() {
     try {
       setIsGameUploading(true);
       await uploadCompletedGameForUser(user.email, level.id, game);
-      await uploadPlayedLevelForUser(user.email, level, game.finishedAt, game.totalScore);
-      await updateRealtimeDBLevelRecord(level.id, user, game.totalScore);
       setIsUploadFailed(false);
     } catch (error) {
       console.error(error);
@@ -667,7 +660,7 @@ export default function ResultPage() {
         </section>
       </main>
       <div className='fixed bottom-2 z-40 flex w-full flex-col items-center gap-2 px-4 py-4 md:flex-row md:justify-center'>
-        {!hasTopicSubmitted && level?.isAIGenerated && (
+        {!hasTopicSubmitted && level?.is_ai_generated && (
           <Button
             className='w-4/5 shadow-xl'
             onClick={() => {
@@ -687,7 +680,7 @@ export default function ResultPage() {
           <Button
             className='w-4/5 shadow-xl'
             onClick={() => {
-              router.push(`/level/${level.isAIGenerated ? 'ai' : level.id}`);
+              router.push(`/level/${level.is_ai_generated ? 'ai' : level.id}`);
             }}
           >
             Play This Topic Again
@@ -749,7 +742,7 @@ export default function ResultPage() {
           onTopicSubmitted={() => {
             setHasTopicSubmitted(true);
           }}
-          isAIGenerated={level.isAIGenerated}
+          isAIGenerated={level.is_ai_generated}
         />
       )}
     </>

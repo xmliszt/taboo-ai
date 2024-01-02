@@ -24,6 +24,7 @@ export interface ISubscriptionPlan {
  * The representation of the user's subscription plan, for display in profile
  */
 export interface IUserSubscriptionPlan {
+  customerId?: string; // customer ID from Stripe. free plan does not have customerId
   type?: SubscriptionPlanType; // if undefined, user is default under free plan
   tier?: number; // The tier of the plan, 1 is the lowest, 2 is the second lowest, etc. This is for determining downgrade or upgrade
   status?: Stripe.Subscription.Status; // free plan does not have status

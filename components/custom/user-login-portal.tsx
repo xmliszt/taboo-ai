@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { BookMarked, Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import { createCustomerPortalSession } from '@/lib/services/subscriptionService';
@@ -25,7 +24,6 @@ import {
 } from '../ui/dropdown-menu';
 import IconButton from '../ui/icon-button';
 import { toast } from '../ui/use-toast';
-import { LoginErrorEventProps } from './globals/login-error-dialog';
 import { Spinner } from './spinner';
 
 interface UserMenuItem {
@@ -64,10 +62,10 @@ export function UserLoginPortal() {
   };
 
   const handleManageSubscription = async () => {
-    if (!user?.customerId) return;
+    if (!userPlan?.customerId) return;
     try {
       const portalSessionUrl = await createCustomerPortalSession(
-        user.customerId,
+        userPlan.customerId,
         `${window.location.origin}/profile?anchor=subscription`
       );
       router.push(portalSessionUrl);
@@ -85,7 +83,7 @@ export function UserLoginPortal() {
       {
         label: 'Manage Billing & Plan',
         icon: <BookMarked />,
-        isVisible: user?.customerId !== undefined,
+        isVisible: userPlan?.customerId !== undefined,
         onClick: handleManageSubscription,
       },
       {
@@ -119,19 +117,7 @@ export function UserLoginPortal() {
         onClick: handleLogout,
       },
     ];
-  }, [pathname, game, status, user?.customerId]);
-
-  const handleLogin = async () => {
-    if (!login) return;
-    try {
-      await login();
-    } catch (error) {
-      console.error(error);
-      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
-        error: error.message,
-      });
-    }
-  };
+  }, [pathname, game, status, userPlan?.customerId]);
 
   const renderUserLoginComponent = () => {
     return user && status === 'authenticated' ? (
@@ -180,7 +166,7 @@ export function UserLoginPortal() {
             <DropdownMenuSeparator />
             {userMenuItems.map(
               (item) =>
-                item.isVisible === true && (
+                item.isVisible && (
                   <DropdownMenuItem
                     key={item.label}
                     className={cn('gap-2 hover:cursor-pointer', item.isUpcoming && 'opacity-20')}
@@ -204,7 +190,7 @@ export function UserLoginPortal() {
       <Spinner />
     ) : (
       <div>
-        <IconButton aria-label='Click to login' onClick={handleLogin} tooltip='Login'>
+        <IconButton aria-label='Click to login' onClick={login} tooltip='Login'>
           <LogIn />
         </IconButton>
       </div>

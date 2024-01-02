@@ -45,7 +45,7 @@ export const createCheckoutSession = async (
  */
 export const fetchCustomerSubscriptions = async (
   email: string,
-  customerId?: string
+  customerId: string | null
 ): Promise<IUserSubscriptionPlan | undefined> => {
   // If customerId is not provided, we use user's email instead to try
   if (!customerId) {
@@ -64,13 +64,13 @@ export const fetchCustomerSubscriptions = async (
         return undefined;
       }
       if (subscriptions.length === 0) {
-        // if user has no subscription in stripe, update user's plan to free in firebase
+        // if a user has no subscription in stripe, update user's plan to free in firebase
         await updateDoc(doc(firestore, 'users', email), {
           customerPlanType: 'free',
         });
         return undefined;
       }
-      // If we get subscription from user using email,
+      // If we get a subscription from user using email,
       // We can get the customer id from the subscription object
       // and update our db with the customer id
       const subscription: Stripe.Subscription = subscriptions[0];
@@ -153,7 +153,8 @@ const buildUserSubscriptionPlanFromStripeSubscription = async (
     availablePlans.find((plan) => plan.priceId === priceId) ??
     availablePlans.find((plan) => plan.type === 'free');
   // The user subscription plan model that will be available in the app.
-  const userSubscriptionPlan: IUserSubscriptionPlan = {
+  return {
+    customerId: subscription.customer as string,
     type: planSubscribed?.type,
     tier: planSubscribed?.tier,
     priceId: priceId,
@@ -164,7 +165,6 @@ const buildUserSubscriptionPlanFromStripeSubscription = async (
     currentBillingStartDate: moment.unix(subscription.current_period_start),
     subscription: subscription,
   };
-  return userSubscriptionPlan;
 };
 
 /**

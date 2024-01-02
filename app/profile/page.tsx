@@ -22,12 +22,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { updateUserFromUser } from '@/lib/services/userService';
+import { updateUserNickname } from '@/lib/services/userService';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, status, refreshUserSubscriptionPlan } = useAuth();
+  const { user, status, userPlan, refreshUserSubscriptionPlan } = useAuth();
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
   const [isNicknameUpdating, setIsNicknameUpdating] = useState(false);
@@ -70,18 +70,13 @@ export default function ProfilePage() {
     }
   }, [user, status]);
 
-  const refreshNickname = async () => {
+  const updateUserNicknameIfNeeded = async () => {
     if (user?.email && nickname && nickname !== oldNickname.current) {
       try {
         setIsNicknameUpdating(true);
-        const updatedUser = await updateUserFromUser({
-          email: user.email,
-          nickname,
-        });
-        if (updatedUser.nickname) {
-          setNickname(updatedUser.nickname);
-          oldNickname.current = updatedUser.nickname;
-        }
+        await updateUserNickname(user.id, nickname);
+        setNickname(nickname);
+        oldNickname.current = nickname;
         toast({ title: 'Nickname updated!' });
       } catch (error) {
         console.error(error);
@@ -100,7 +95,7 @@ export default function ProfilePage() {
       <div className='flex flex-col items-center gap-4'>
         <Image
           className='rounded-full border-2 border-primary shadow-md'
-          src={user?.photoUrl ?? '/images/placeholder.png'}
+          src={user?.photo_url ?? '/images/placeholder.png'}
           width={80}
           height={80}
           alt='Profile Photo'
@@ -117,7 +112,7 @@ export default function ProfilePage() {
               setNickname(e.target.value);
             }}
             onBlur={() => {
-              refreshNickname();
+              updateUserNicknameIfNeeded();
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -156,9 +151,9 @@ export default function ProfilePage() {
         </Alert>
       )}
 
-      {user && <ProfileRecentGamesScrollView user={user} />}
-      {user && <ProfilePlayedTopicScrollView user={user} />}
-      {user?.customerPlanType === 'free' ? (
+      {user && <ProfileRecentGamesScrollView />}
+      {user && <ProfilePlayedTopicScrollView />}
+      {userPlan?.type === 'free' ? (
         <Card className='w-full max-w-[500px]'>
           <CardContent>
             <CardHeader className='my-4 p-0'>

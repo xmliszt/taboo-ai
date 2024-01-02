@@ -23,7 +23,7 @@ import { incrementGameAttemptedCount } from '@/lib/services/userService';
 import { getTabooWords } from '@/lib/services/wordService';
 import IGame from '@/lib/types/game.type';
 import { IHighlight } from '@/lib/types/highlight.type';
-import ILevel from '@/lib/types/level.type';
+import { ILevel } from '@/lib/types/level.type';
 import { IChat, IScore } from '@/lib/types/score.type';
 import IWord from '@/lib/types/word.type';
 import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';

@@ -3,7 +3,7 @@ import { VenetianMask } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { updateUserAnonymity } from '@/lib/services/userService';
-import IUser from '@/lib/types/user.type';
+import { IUser } from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
 
 import ProfilePrivacyFeatureToggle from './privacy/profile-privacy-feature-toggle';
@@ -17,7 +17,7 @@ export default function ProfilePrivacySettingsCard({
   user,
   className,
 }: ProfilePrivacySettingsCardProps) {
-  const [isAnonymous, setIsAnonymous] = useState(user.anonymity ?? false);
+  const [isAnonymous, setIsAnonymous] = useState(user.is_anonymous ?? false);
 
   useEffect(() => {
     updateUserAnonymity(user.email, isAnonymous);

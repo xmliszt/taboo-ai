@@ -7,7 +7,7 @@ import {
   TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
 } from '../errors/google-ai-error-parser';
 import IEvaluation from '../types/evaluation.type';
-import ILevel from '../types/level.type';
+import { ILevel } from '../types/level.type';
 import { IChat } from '../types/score.type';
 import IWord from '../types/word.type';
 import { formatResponseTextIntoArray } from '../utilities';
@@ -122,13 +122,16 @@ export async function askAIForCreativeTopic(
   if (text) {
     const words = formatResponseTextIntoArray(text);
     return {
+      created_at: new Date().toISOString(),
+      created_by: null,
+      is_new: false,
       id: uniqueId(topic),
       name: topic,
       difficulty: difficulty,
       words: words,
-      isVerified: true,
+      is_verified: true,
       popularity: 0,
-      isAIGenerated: true,
+      is_ai_generated: true,
     };
   } else {
     return;

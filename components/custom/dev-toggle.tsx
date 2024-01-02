@@ -10,7 +10,7 @@ import { CONSTANTS } from '@/lib/constants';
 import { getHash, HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import IGame from '@/lib/types/game.type';
-import ILevel from '@/lib/types/level.type';
+import { ILevel } from '@/lib/types/level.type';
 import { IScore } from '@/lib/types/score.type';
 import { getRandomInt } from '@/lib/utilities';
 import {

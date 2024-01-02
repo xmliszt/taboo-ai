@@ -1,4 +1,4 @@
-import IUser from './types/user.type';
+import { IUser } from './types/user.type';
 
 export class AdminManager {
   static WHITELIST_UIDS = [
@@ -9,8 +9,8 @@ export class AdminManager {
   ];
 
   static checkIsAdmin(user: IUser | null | undefined): boolean {
-    if (user?.uid) {
-      return this.WHITELIST_UIDS.includes(user.uid);
+    if (user?.id) {
+      return this.WHITELIST_UIDS.includes(user.id);
     }
     return false;
   }

@@ -4,9 +4,8 @@ import { useCallback, useDeferredValue, useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import { useToast } from '@/components/ui/use-toast';
-import ILevel from '@/lib/types/level.type';
-
-import { getAllLevels } from '../services/levelService';
+import { getAllLevels } from '@/lib/services/levelService';
+import { ILevel } from '@/lib/types/level.type';
 
 export const useLevels = () => {
   const { toast } = useToast();
@@ -40,9 +39,9 @@ export const useLevels = () => {
       .filter(
         (level) =>
           _.lowerCase(level.name).includes(_.lowerCase(deferredSearchTerm)) ||
-          _.lowerCase(level.author).includes(_.lowerCase(deferredSearchTerm))
+          _.lowerCase(level.created_by ?? '').includes(_.lowerCase(deferredSearchTerm))
       )
-      .filter((level) => level.isVerified);
+      .filter((level) => level.is_verified);
     setFilteredLevels(filtered);
   }, [deferredSearchTerm, levels]);
 

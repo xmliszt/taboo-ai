@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Unsubscribe } from 'firebase/auth';
 import { ChevronsUp } from 'lucide-react';
 
 import { LevelCard } from '@/components/custom/level-card';
@@ -9,14 +8,8 @@ import LevelsSearchBar from '@/components/custom/levels/levels-search-bar';
 import { Skeleton } from '@/components/custom/skeleton';
 import IconButton from '@/components/ui/icon-button';
 import { useLevels } from '@/lib/hooks/useLevels';
-import { bindLevelRankingStatsListener } from '@/lib/services/levelService';
+import { getLevelTopScorerStats } from '@/lib/services/levelService';
 import { LevelUtils, SortType } from '@/lib/utils/levelUtils';
-
-interface LevelRankingStat {
-  topScore?: number;
-  topScorer?: string;
-  topScorerName?: string;
-}
 
 export default function LevelsPage() {
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] = useState(false);
@@ -27,23 +20,19 @@ export default function LevelsPage() {
     () => [...filteredLevels].sort(LevelUtils.getCompareFn(selectedSorter)),
     [selectedSorter, filteredLevels]
   );
-  const unSubsribeLevelRankingListener = useRef<Unsubscribe | null>(null);
   const [levelRankingStats, setLevelRankingStats] = useState<{
-    [key: string]: LevelRankingStat;
+    [key: string]: { level_id: string; player_ids: string[]; total_score: number };
   }>();
 
   const [isRankingModeOn, setIsRankingModeOn] = useState(false);
 
   useEffect(() => {
-    if (isRankingModeOn) {
-      const unsubscribe = bindLevelRankingStatsListener((snapshot) => {
-        const stats = snapshot.val();
-        setLevelRankingStats(stats);
-      });
-      unSubsribeLevelRankingListener.current = unsubscribe;
-    } else {
-      unSubsribeLevelRankingListener.current?.();
+    async function getLevelsRankStats() {
+      const stats = await getLevelTopScorerStats();
+      setLevelRankingStats(stats);
     }
+
+    if (isRankingModeOn) void getLevelsRankStats();
   }, [isRankingModeOn]);
 
   const handleScrollToTop = () => {
@@ -92,9 +81,8 @@ export default function LevelsPage() {
               key={idx}
               level={level}
               isShowingRank={isRankingModeOn}
-              topScore={levelRankingStats?.[level.id]?.topScore}
-              topScorerEmail={levelRankingStats?.[level.id]?.topScorer}
-              topScorerName={levelRankingStats?.[level.id]?.topScorerName}
+              topScore={levelRankingStats?.[level.id]?.total_score}
+              topScorerIds={levelRankingStats?.[level.id]?.player_ids}
             />
           ))
         )}

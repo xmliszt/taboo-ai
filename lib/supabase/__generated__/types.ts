@@ -493,8 +493,9 @@ export interface Database {
           _level_id: string
         }
         Returns: {
-          player_name: string
           game_id: string
+          player_id: string
+          player_name: string
           total_score: number
         }[]
       }

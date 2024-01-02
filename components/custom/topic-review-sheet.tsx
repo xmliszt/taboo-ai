@@ -4,9 +4,8 @@ import _ from 'lodash';
 
 import { sendEmail } from '@/lib/services/emailService';
 import { addLevel, isLevelExists } from '@/lib/services/levelService';
-import { updateUserFromUser } from '@/lib/services/userService';
 import { addTabooWords } from '@/lib/services/wordService';
-import IUser from '@/lib/types/user.type';
+import { IUser } from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
 
 import { Badge } from '../ui/badge';
@@ -60,13 +59,7 @@ export function TopicReviewSheet({
         name: topicName,
         difficulty: Number(difficultyLevel),
         words: targetWords.map((w) => _.toLower(_.trim(w))),
-        author: nickname,
-        authorEmail: user.email,
-        isNew: true,
-      });
-      await updateUserFromUser({
-        email: user.email,
-        nickname: nickname,
+        createdBy: user.id,
       });
       if (!shouldUseAIForTabooWords)
         for (let i = 0; i < tabooWords.length; i++) {

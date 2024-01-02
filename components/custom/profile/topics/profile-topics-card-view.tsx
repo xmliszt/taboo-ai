@@ -5,12 +5,13 @@ import { Medal, PlusCircle, RefreshCcw } from 'lucide-react';
 import moment from 'moment';
 import { isMobile, isTablet } from 'react-device-detect';
 
+import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { getLevel, getLevelStatById } from '@/lib/services/levelService';
-import ILevel from '@/lib/types/level.type';
-import IUserLevel from '@/lib/types/userLevel.type';
+import { ILevel } from '@/lib/types/level.type';
+import { IUserLevel } from '@/lib/types/userLevel.type';
 import { getDifficulty } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { DateUtils } from '@/lib/utils/dateUtils';
@@ -20,11 +21,11 @@ import { Skeleton } from '../../skeleton';
 import { StarRatingBar } from '../../star-rating-bar';
 
 interface ProfileTopicsCardViewProps {
-  userEmail: string;
   topic: IUserLevel;
 }
 
-export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopicsCardViewProps) {
+export default function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
+  const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -32,7 +33,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
   const [topicDetails, setTopicDetails] = useState<ILevel>();
 
   useEffect(() => {
-    topic.levelId !== 'play-more' && loadTopic(topic.levelId);
+    topic.level_id !== 'play-more' && loadTopic(topic.level_id);
   }, []);
 
   const loadTopic = async (levelId: string) => {
@@ -41,7 +42,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
       const topicDetails = await getLevel(levelId);
       const topicStats = await getLevelStatById(levelId);
       setTopicDetails(topicDetails);
-      setIsChampion(topicStats?.topScorer === userEmail);
+      setIsChampion(topicStats?.topScorerId === user?.id);
       setHasError(false);
     } catch (error) {
       setHasError(true);
@@ -57,12 +58,12 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
 
   if (hasError) {
     return (
-      <Tooltip key={topic.levelId}>
+      <Tooltip key={topic.level_id}>
         <TooltipTrigger>
           <Card
             className='h-[300px] min-w-[250px] max-w-[250px] snap-center border border-red-500 text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
             onClick={() => {
-              loadTopic(topic.levelId);
+              void loadTopic(topic.level_id);
             }}
           >
             <CardContent className='flex h-full items-center justify-center p-4'>
@@ -83,13 +84,13 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
   }
 
   return (
-    <Tooltip key={topic.levelId}>
+    <Tooltip key={topic.level_id}>
       <TooltipTrigger>
-        {topic.levelId === 'play-more' ? (
+        {topic.level_id === 'play-more' ? (
           <Card
             className='h-full min-w-[250px] max-w-[250px] snap-center border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
             onClick={() => {
-              goToTopic(topic.levelId);
+              goToTopic(topic.level_id);
             }}
           >
             <CardHeader>
@@ -106,7 +107,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
               'h-full min-w-[250px] max-w-[250px] snap-center border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'
             )}
             onClick={() => {
-              goToTopic(topic.levelId);
+              goToTopic(topic.level_id);
             }}
           >
             <CardHeader>
@@ -114,7 +115,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
                 {_.startCase(topicDetails?.name ?? '--')}
               </CardTitle>
               <CardDescription>
-                {moment(topic.lastPlayedAt).format(DateUtils.formats.gamePlayedAt)}
+                {moment(topic.last_played_at).format(DateUtils.formats.gamePlayedAt)}
               </CardDescription>
             </CardHeader>
             <CardContent className='flex flex-col gap-3'>
@@ -128,21 +129,21 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
                       {getDifficulty(topicDetails?.difficulty ?? 1, false)}
                     </span>
                   </div>
-                  {topic.attempts > 0 && (
+                  {topic.completed_times > 0 && (
                     <div className='flex flex-col'>
                       <span className='italic text-muted-foreground'>Completed: </span>
                       <span className='font-bold'>
-                        {topic.attempts} {topic.attempts > 1 ? 'times' : 'time'}
+                        {topic.completed_times} {topic.completed_times > 1 ? 'times' : 'time'}
                       </span>
                     </div>
                   )}
                   <div className='flex flex-col'>
                     <span className='italic text-muted-foreground'>Best Score:</span>
-                    <span className='font-bold'>{topic.bestScore.toFixed(1)}</span>
+                    <span className='font-bold'>{topic.best_score.toFixed(1)}</span>
                   </div>
                   <div className='flex flex-col'>
                     <span className='italic text-muted-foreground'>Best Rating: </span>
-                    <StarRatingBar rating={getOverallRating(topic.bestScore, 6)} maxRating={6} />
+                    <StarRatingBar rating={getOverallRating(topic.best_score, 6)} maxRating={6} />
                   </div>
                   {isChampion && (
                     <div className='flex flex-row items-center justify-start gap-2'>
@@ -161,7 +162,7 @@ export default function ProfileTopicsCardView({ userEmail, topic }: ProfileTopic
         )}
       </TooltipTrigger>
       <TooltipContent>
-        {topic.levelId === 'play-more' ? 'Play More Topics' : 'Play Again'}
+        {topic.level_id === 'play-more' ? 'Play More Topics' : 'Play Again'}
       </TooltipContent>
     </Tooltip>
   );

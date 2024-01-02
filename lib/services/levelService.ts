@@ -1,295 +1,198 @@
-import { child, DataSnapshot, get, onValue, ref, Unsubscribe, update } from 'firebase/database';
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  DocumentReference,
-  getCountFromServer,
-  getDoc,
-  getDocs,
-  increment,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
-import moment from 'moment';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-import { firestore, realtime } from '@/firebase/firebase-client';
+import { Database } from '@/lib/supabase/extension/types';
 
-import ILevel from '../types/level.type';
-import ILevelStats from '../types/levelStats.type';
-import IUser from '../types/user.type';
-import IUserLevel from '../types/userLevel.type';
-import { DateUtils } from '../utils/dateUtils';
+import { ILevel } from '../types/level.type';
+import { IUserLevel } from '../types/userLevel.type';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {
-  const snapshot = await getDocs(collection(firestore, 'levels'));
-  const allLevels: ILevel[] = [];
-  snapshot.forEach((result) => {
-    const level = result.data() as ILevel;
-    level.id = result.id;
-    allLevels.push(level);
-  });
-  return allLevels;
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchAllLevelsResponse = await supabaseClient.from('levels').select();
+  if (fetchAllLevelsResponse.error) {
+    throw fetchAllLevelsResponse.error;
+  }
+  return fetchAllLevelsResponse.data.map((level) => ({ ...level, is_ai_generated: false }));
 };
 
 export const addLevel = async ({
   name,
   difficulty,
   words,
-  author = undefined,
-  authorEmail = undefined,
-  isNew = undefined,
-  isVerified = false,
-  createdAt = moment().format(DateUtils.formats.levelCreatedAt),
+  createdBy,
 }: {
-  name: string; // Name could be the same
+  name: string;
   difficulty: number;
   words: string[];
-  author?: string;
-  authorEmail?: string;
-  isNew?: boolean;
-  isVerified?: boolean;
-  createdAt?: string;
+  createdBy: string;
 }) => {
-  await addDoc(collection(firestore, 'levels'), {
+  const supabaseClient = createClientComponentClient<Database>();
+  const insertNewLevelResponse = await supabaseClient.from('levels').insert({
     name,
     difficulty,
     words,
-    isVerified,
-    author,
-    authorEmail,
-    isNew,
-    createdAt,
-    popularity: 0,
+    created_by: createdBy,
   });
+  if (insertNewLevelResponse.error) throw insertNewLevelResponse.error;
 };
 
 export const getLevel = async (id: string): Promise<ILevel | undefined> => {
-  const snapshot = await getDoc(doc(firestore, 'levels', id));
-  const level = snapshot.data() as ILevel;
-  if (level) {
-    level.id = snapshot.id;
-    return level;
-  }
-  return undefined;
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchSingleLevelResponse = await supabaseClient
+    .from('levels')
+    .select()
+    .eq('id', id)
+    .single();
+  if (fetchSingleLevelResponse.error) throw fetchSingleLevelResponse.error;
+  return { ...fetchSingleLevelResponse.data, is_ai_generated: false };
 };
 
 export const isLevelExists = async (topicName?: string, authorEmail?: string): Promise<boolean> => {
   if (!topicName || !authorEmail) {
     return false;
   }
-  const snapshot = await getCountFromServer(
-    query(
-      collection(firestore, 'levels'),
-      where('authorEmail', '==', authorEmail),
-      where('name', '==', topicName)
-    )
-  );
-  return snapshot.data().count > 0;
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchSingleUserResponse = await supabaseClient
+    .from('users')
+    .select()
+    .eq('email', authorEmail)
+    .single();
+  if (fetchSingleUserResponse.error) throw fetchSingleUserResponse.error;
+  const fetchSingleLevelResponse = await supabaseClient
+    .from('levels')
+    .select()
+    .eq('name', topicName)
+    .single();
+  if (fetchSingleLevelResponse.error) throw fetchSingleLevelResponse.error;
+  return fetchSingleLevelResponse.data.created_by === fetchSingleUserResponse.data.id;
 };
 
 export const updateLevelTargetWords = async (id: string, words: string[]): Promise<void> => {
-  await updateDoc(doc(firestore, 'levels', id), { words: words });
+  const supabaseClient = createClientComponentClient<Database>();
+  const updateLevelResponse = await supabaseClient.from('levels').update({ words }).eq('id', id);
+  if (updateLevelResponse.error) throw updateLevelResponse.error;
 };
 
 export const updateLevelIsNew = async (id: string, isNew: boolean): Promise<void> => {
-  await updateDoc(doc(firestore, 'levels', id), { isNew: isNew });
+  const supabaseClient = createClientComponentClient<Database>();
+  const updateLevelResponse = await supabaseClient
+    .from('levels')
+    .update({ is_new: isNew })
+    .eq('id', id);
+  if (updateLevelResponse.error) throw updateLevelResponse.error;
 };
 
 export const deleteLevel = async (id: string): Promise<void> => {
-  await deleteDoc(doc(firestore, 'levels', id));
+  const supabaseClient = createClientComponentClient<Database>();
+  const deleteLevelResponse = await supabaseClient.from('levels').delete().eq('id', id);
+  if (deleteLevelResponse.error) throw deleteLevelResponse.error;
 };
 
 export const verifyLevel = async (id: string): Promise<void> => {
-  await updateDoc(doc(firestore, 'levels', id), { isVerified: true });
+  const supabaseClient = createClientComponentClient<Database>();
+  const verifyLevelResponse = await supabaseClient
+    .from('levels')
+    .update({ is_verified: true })
+    .eq('id', id);
+  if (verifyLevelResponse.error) throw verifyLevelResponse.error;
 };
 
 export const incrementLevelPopularity = async (id: string) => {
-  await updateDoc(doc(firestore, 'levels', id), { popularity: increment(1) });
+  const supabaseClient = createClientComponentClient<Database>();
+  const incrementLevelPopularityResponse = await supabaseClient.rpc('increment', {
+    _table_name: 'levels',
+    _row_id: id,
+    _field_name: 'popularity',
+    _x: 1,
+  });
+  if (incrementLevelPopularityResponse.error) throw incrementLevelPopularityResponse.error;
 };
 
 /**
- * Create the level document in users/{email}/levels if not exists, otherwise,
- * update the score if score is the highest, update the playedAt if playedAt is the latest.
- * @param {string} email: the user email
- * @param {ILevel} level: the level attempted
- * @param {Date} playedAt: the date the level is attempted
- * @param {number} score: the total score of the level
+ * Get the most frequently played levels for a user
+ * @param uid - user id
  */
-export const uploadPlayedLevelForUser = async (
-  email: string,
-  level: ILevel,
-  playedAt: Date,
-  score: number
-) => {
-  const levelRef = doc(firestore, 'users', email, 'levels', level.id);
-  const levelSnapshot = await getDoc(levelRef);
-  if (!levelSnapshot.exists()) {
-    await setDoc(
-      levelRef,
-      {
-        lastPlayedAt: playedAt,
-        bestScore: score,
-        ref: doc(firestore, 'levels', level.id),
-      },
-      { merge: true }
-    );
-  } else {
-    const levelData = levelSnapshot.data();
-    if (levelData) {
-      const lastPlayedAt = levelData.lastPlayedAt;
-      const bestScore = levelData.bestScore;
-      await updateDoc(levelRef, {
-        lastPlayedAt: lastPlayedAt > playedAt ? lastPlayedAt : playedAt,
-        bestScore: bestScore > score ? bestScore : score,
-      });
+export const getMostFreqPlayedLevelsSummary = async (
+  uid: string
+): Promise<Database['public']['Functions']['get_most_freq_played_levels_for_user']['Returns']> => {
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchMostFreqPlayedLevelsResponse = await supabaseClient.rpc(
+    'get_most_freq_played_levels_for_user',
+    {
+      _user_id: uid,
     }
-  }
+  );
+  if (fetchMostFreqPlayedLevelsResponse.error) throw fetchMostFreqPlayedLevelsResponse.error;
+  return fetchMostFreqPlayedLevelsResponse.data;
 };
 
 /**
- * Update Realtime Database level record with the current scorer.
- * If such level ID does not exist, create a new record, the scorer automatically
- * becomes the top scorer. If exists, then we compare if the scorer has higher score
- * than the current top score, if yes, we overwrite and udpate the top scorer. If not, we
- * ignore, simply increase the attemp count only.
- * @param {string} levelID: the level ID
- * @param {IUser} scorer: the user who scored
- * @param {number} score: the score of the scorer
- * @returns {Promise<void>}
+ * Get the best performing level for a user
+ * @param uid - user id
  */
-export const updateRealtimeDBLevelRecord = async (
-  levelID: string,
-  scorer: IUser,
-  score: number
-): Promise<void> => {
-  const currentRecord = await get(child(ref(realtime, 'levelStats'), levelID));
-  const prevTopScore = currentRecord.val()?.topScore ?? -Infinity;
-  const prevTopScorerEmail = currentRecord.val()?.topScorer ?? scorer.email;
-  const prevTopScorerNickname =
-    currentRecord.val()?.topScorerName ?? scorer.nickname ?? 'Anonymous';
-  const levelStat = {
-    topScore: Math.max(prevTopScore, score),
-    topScorer: prevTopScore > score ? prevTopScorerEmail : scorer.email,
-    topScorerName:
-      prevTopScore > score
-        ? prevTopScorerNickname
-        : scorer.anonymity
-          ? 'Anonymous'
-          : scorer.nickname ?? scorer.name ?? 'Anonymous',
-  };
-  await update(child(ref(realtime, 'levelStats'), levelID), levelStat);
+export const getBestPerformingLevelSummary = async (
+  uid: string
+): Promise<Database['public']['Functions']['get_best_performing_level_for_user']['Returns']> => {
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchBestPerformingLevelResponse = await supabaseClient.rpc(
+    'get_best_performing_level_for_user',
+    {
+      _user_id: uid,
+    }
+  );
+  if (fetchBestPerformingLevelResponse.error) throw fetchBestPerformingLevelResponse.error;
+  return fetchBestPerformingLevelResponse.data;
 };
 
 /**
- * Get the statistical data for levels played by the user.
- * This is a PRO feature, so we check if the user has non-free plan.
- * @param {string} email: the user email
- * @returns {Promise<ILevelStats>} the level statistical data for the user
+ * Get the levels completed by a user
+ * @param uid - user id
  */
-export const getLevelStatistics = async (email: string): Promise<ILevelStats> => {
-  // Check if user has non-free plan
-  const userDoc = await getDoc(doc(firestore, 'users', email));
-  const user = userDoc.data();
-  if (!user) {
-    throw new Error('User not found');
-  }
-  if (user.customerPlanType === 'free') {
-    throw new Error('User has free plan');
-  }
-  const snapshot = await getDocs(collection(firestore, 'users', email, 'levels'));
-  const levelRefs: {
-    ref: DocumentReference;
-    score: number;
-    attempts: number;
-  }[] = [];
-  snapshot.forEach((result) => {
-    levelRefs.push({
-      ref: result.data().ref,
-      score: result.data().bestScore as number,
-      attempts: result.data().attempts as number,
-    });
-  });
-  if (levelRefs.length === 0)
-    return {
-      bestPerformingLevel: undefined,
-      mostFrequentlyPlayedLevel: undefined,
-    };
-  const levels: {
-    id: string;
-    name: string;
-    difficulty: number;
-    score: number;
-    attempts: number;
-  }[] = [];
-  for (const levelRef of levelRefs) {
-    const levelSnapshot = await getDoc(levelRef.ref);
-    const level = levelSnapshot.data() as ILevel;
-    level.id = levelSnapshot.id;
-    levels.push({
-      id: levelSnapshot.id,
-      name: level.name,
-      difficulty: level.difficulty,
-      score: levelRef.score,
-      attempts: levelRef.attempts,
-    });
-  }
-  // Get the best performing level
-  const bestPerformingLevel = levels.reduce((prev, current) => {
-    return prev.score > current.score ? prev : current;
-  });
-  const mostFrequentlyPlayedLevel = levels.reduce((prev, current) => {
-    return prev.attempts > current.attempts ? prev : current;
-  });
-  return {
-    bestPerformingLevel: {
-      id: bestPerformingLevel.id,
-      name: bestPerformingLevel.name,
-      difficulty: bestPerformingLevel.difficulty,
-      score: bestPerformingLevel.score,
-    },
-    mostFrequentlyPlayedLevel: {
-      id: mostFrequentlyPlayedLevel.id,
-      name: mostFrequentlyPlayedLevel.name,
-      difficulty: mostFrequentlyPlayedLevel.difficulty,
-      attempts: mostFrequentlyPlayedLevel.attempts,
-    },
-  };
-};
-
-/**
- * Listen to the level ranking stats from Firebase Realtime Database
- * @param {function} onLevelRankingStatsUpdated: the callback function to be called when the level ranking stats is updated
- * @returns {Unsubscribe} the unsubscribe function
- */
-export const bindLevelRankingStatsListener = (
-  onLevelRankingStatsUpdated: (snapshot: DataSnapshot) => unknown
-): Unsubscribe => {
-  const unbind = onValue(ref(realtime, 'levelStats/'), onLevelRankingStatsUpdated);
-  return unbind;
-};
-
-export const getLevelsByUser = async (email: string): Promise<IUserLevel[]> => {
-  const snapshot = await getDocs(collection(firestore, 'users', email, 'levels'));
-  const levels: IUserLevel[] = [];
-  snapshot.forEach((result) => {
-    const levelData = result.data() as IUserLevel;
-    levelData.levelId = result.id;
-    levels.push(levelData);
-  });
-  return levels;
+export const getLevelsCompletedByUser = async (uid: string): Promise<IUserLevel[]> => {
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchLevelsCompletedByUserResponse = await supabaseClient.rpc(
+    'get_user_played_levels_summary',
+    {
+      _user_id: uid,
+    }
+  );
+  if (fetchLevelsCompletedByUserResponse.error) throw fetchLevelsCompletedByUserResponse.error;
+  return fetchLevelsCompletedByUserResponse.data;
 };
 
 export const getLevelStatById = async (
   levelId: string
 ): Promise<{
   topScore: number;
-  topScorer: string;
   topScorerName: string;
+  topScorerId: string;
 }> => {
-  const snapshot = await get(child(ref(realtime, 'levelStats'), levelId));
-  return snapshot.val();
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchLevelStatResponse = await supabaseClient.rpc('get_game_ranks_desc_for_level', {
+    _level_id: levelId,
+  });
+  if (fetchLevelStatResponse.error) throw fetchLevelStatResponse.error;
+  const topPerformance = fetchLevelStatResponse.data[0];
+  return {
+    topScore: topPerformance.total_score,
+    topScorerName: topPerformance.player_name,
+    topScorerId: topPerformance.player_id,
+  };
 };
+
+/**
+ * Get the top scorer stats for each level
+ */
+export async function getLevelTopScorerStats() {
+  const supabaseClient = createClientComponentClient<Database>();
+  const fetchLevelTopScorerStatsResponse = await supabaseClient
+    .from('level_top_scorer_stats')
+    .select('*');
+  if (fetchLevelTopScorerStatsResponse.error) throw fetchLevelTopScorerStatsResponse.error;
+  const levelTopScorerStats: {
+    [key: string]: { level_id: string; player_ids: string[]; total_score: number };
+  } = {};
+  for (const row of fetchLevelTopScorerStatsResponse.data) {
+    levelTopScorerStats[row.level_id] = row;
+  }
+  return levelTopScorerStats;
+}

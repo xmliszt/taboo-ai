@@ -86,7 +86,7 @@ export default async function SitemapPage() {
               key={level.id}
               href={baseUrl + '/level/' + level.id}
             >
-              {_.startCase(level.name)} {level.author && <i>by {level.author}</i>}
+              {_.startCase(level.name)}
             </Link>
           ))}
         </div>

@@ -3,6 +3,7 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SelectGroup } from '@radix-ui/react-select';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import _ from 'lodash';
 import { Plus, RefreshCcw, Trash } from 'lucide-react';
 
@@ -45,7 +46,8 @@ import {
   verifyLevel,
 } from '@/lib/services/levelService';
 import { addTabooWords, getTabooWords, isTargetWordExists } from '@/lib/services/wordService';
-import ILevel from '@/lib/types/level.type';
+import { Database } from '@/lib/supabase/extension/types';
+import { ILevel } from '@/lib/types/level.type';
 import IWord from '@/lib/types/word.type';
 import { cn } from '@/lib/utils';
 import { LevelUtils } from '@/lib/utils/levelUtils';
@@ -53,6 +55,7 @@ import { LevelUtils } from '@/lib/utils/levelUtils';
 const DevReviewWordsPage = () => {
   const { user, status } = useAuth();
   const { levels, isFetchingLevels, refetch } = useLevels();
+  const [author, setAuthor] = useState<Database['public']['Tables']['users']['Row']>();
   const [isLoading, setIsLoading] = useState(false);
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<ILevel | undefined>();
@@ -87,8 +90,24 @@ const DevReviewWordsPage = () => {
   const router = useRouter();
 
   useEffect(() => {
+    async function fetchAuthor(id: string) {
+      const supabaseClient = createClientComponentClient<Database>();
+      const fetchAuthorResponse = await supabaseClient.from('users').select().eq('id', id).single();
+      if (fetchAuthorResponse.error) {
+        toast({
+          title: 'Unable to fetch author: ' + fetchAuthorResponse.error.message,
+          variant: 'destructive',
+        });
+        return;
+      }
+      setAuthor(fetchAuthorResponse.data);
+    }
+
     const level = levels.find((level) => level.id === selectedLevelId);
     setSelectedLevel(level);
+    if (level && level.created_by) {
+      fetchAuthor(level.created_by);
+    }
   }, [selectedLevelId]);
 
   useEffect(() => {
@@ -102,15 +121,17 @@ const DevReviewWordsPage = () => {
   }, [user, status]);
 
   const getCachedWordList = useCallback(async () => {
-    selectedLevel?.words.forEach(async (word) => {
-      if (word.length <= 0 || fullWordList.includes(word)) {
-        return;
+    if (selectedLevel) {
+      for (const word of selectedLevel.words) {
+        if (word.length <= 0 || fullWordList.includes(word)) {
+          continue;
+        }
+        const exists = await isTargetWordExists(word);
+        if (exists) {
+          setFullWordList((wordList) => [...wordList, word]);
+        }
       }
-      const exists = await isTargetWordExists(word);
-      if (exists) {
-        setFullWordList((wordList) => [...wordList, word]);
-      }
-    });
+    }
   }, [selectedLevel, setFullWordList]);
 
   useEffect(() => {
@@ -236,7 +257,10 @@ const DevReviewWordsPage = () => {
         try {
           await autoGenerateWithDelay(1000, words[i]);
         } catch {
-          continue;
+          toast({
+            title: 'Failed to generate for: ' + words[i],
+            variant: 'destructive',
+          });
         }
       }
     }
@@ -307,12 +331,12 @@ const DevReviewWordsPage = () => {
         setCurrentEditingTabooWordIndex(undefined);
         setTabooWords(undefined);
         toast({ title: 'Level deleted successfully!' });
-        if (selectedLevel.authorEmail) {
+        if (author?.email) {
           try {
             const token = await firebaseAuth.currentUser?.getIdToken();
             await sendEmailX(
               selectedLevel.name ?? 'unknown',
-              selectedLevel.authorEmail,
+              author.email,
               'reject',
               rejectionReason,
               token
@@ -346,16 +370,10 @@ const DevReviewWordsPage = () => {
 
   const resendVerifyEmail = async (level: ILevel | undefined = undefined) => {
     const copyLevel = level ?? { ...selectedLevel };
-    if (copyLevel.authorEmail) {
+    if (author?.email) {
       try {
         const token = await firebaseAuth.currentUser?.getIdToken();
-        await sendEmailX(
-          copyLevel.name ?? 'unknown',
-          copyLevel.authorEmail,
-          'verify',
-          undefined,
-          token
-        );
+        await sendEmailX(copyLevel.name ?? 'unknown', author.email, 'verify', undefined, token);
         toast({ title: 'Verification success email sent successfully!' });
       } catch (error) {
         console.error(error);
@@ -372,7 +390,7 @@ const DevReviewWordsPage = () => {
       try {
         setIsLoading(true);
         const copyLevel = { ...selectedLevel };
-        copyLevel.isVerified = true;
+        copyLevel.is_verified = true;
         await verifyLevel(copyLevel.id);
         toast({ title: 'Level verified successfully!' });
         resendVerifyEmail(copyLevel);
@@ -400,7 +418,7 @@ const DevReviewWordsPage = () => {
       try {
         setIsLoading(true);
         const copyLevel = { ...selectedLevel };
-        copyLevel.isNew = isNew;
+        copyLevel.is_new = isNew;
         await updateLevelIsNew(copyLevel.id, isNew);
         toast({ title: 'Level updated successfully!' });
         setSelectedLevel(copyLevel);
@@ -424,25 +442,27 @@ const DevReviewWordsPage = () => {
   return (
     <main className='flex flex-col items-center gap-4 py-4 leading-snug'>
       <div className='flex flex-wrap justify-center gap-2 p-2'>
-        <Badge variant={selectedLevel?.isVerified ? 'default' : 'destructive'}>
-          {selectedLevel?.isVerified ? 'Verified' : 'Not Verified'}
+        <Badge variant={selectedLevel?.is_verified ? 'default' : 'destructive'}>
+          {selectedLevel?.is_verified ? 'Verified' : 'Not Verified'}
         </Badge>
-        <Badge>{selectedLevel?.author ? `by: ${selectedLevel.author}` : 'No Author'}</Badge>
+        <Badge>
+          {author?.nickname || author?.name ? `by: ${author.nickname ?? author.name}` : 'No Author'}
+        </Badge>
         <Badge>Difficulty: {selectedLevel?.difficulty}</Badge>
-        {selectedLevel?.isNew && <Badge>NEW</Badge>}
+        {selectedLevel?.is_new && <Badge>NEW</Badge>}
       </div>
       <div className='flex flex-wrap justify-center gap-2 p-2'>
-        <div>From: {selectedLevel?.authorEmail}</div>
+        <div>From: {author?.email}</div>
       </div>
       <div className='w-full px-8'>
         <Select name='level' value={selectedLevel?.name} onValueChange={onLevelSelected}>
           <SelectTrigger>
             <SelectValue placeholder='Select A Topic to Review' className='text-primary'>
               <b>{selectedLevel?.name}</b>
-              {selectedLevel?.author && (
+              {(author?.nickname || author?.name) && (
                 <span>
                   {' - '}
-                  {selectedLevel.author}
+                  {author.name ?? author.nickname}
                 </span>
               )}
             </SelectValue>
@@ -451,10 +471,10 @@ const DevReviewWordsPage = () => {
             {sortedLevels.map((level, idx) => (
               <SelectItem key={idx} value={level.id}>
                 <b>{level?.name}</b>
-                {level?.author && (
+                {(author?.nickname || author?.name) && (
                   <span>
                     {' - '}
-                    {level.author}
+                    {author.name ?? author.nickname}
                   </span>
                 )}
               </SelectItem>
@@ -658,7 +678,7 @@ const DevReviewWordsPage = () => {
         >
           SET NOT NEW
         </Button>
-        {!selectedLevel?.isVerified ? (
+        {!selectedLevel?.is_verified ? (
           <Button disabled={!isPageInteractive} className='flex-grow' onClick={setVerifyLevel}>
             VERIFY
           </Button>

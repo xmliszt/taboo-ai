@@ -81,10 +81,10 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
   };
 
   const handleManageBilling = async () => {
-    if (!user?.customerId) return;
+    if (!userPlan?.customerId) return;
     try {
       const portalSessionUrl = await createCustomerPortalSession(
-        user?.customerId,
+        userPlan?.customerId,
         `${window.location.origin}/profile?anchor=subscription`
       );
       router.push(portalSessionUrl);
@@ -206,7 +206,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
               </div>
               {renderSubscriptionDetails(userPlan?.status)}
               <div className='h-4'></div>
-              {user?.customerId !== undefined && (
+              {userPlan?.customerId !== undefined && (
                 <Button onClick={handleManageBilling}>Manage Billing & Plan</Button>
               )}
               {!userHasCancelledSubscription && (
