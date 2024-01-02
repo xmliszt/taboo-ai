@@ -17,7 +17,9 @@
     "vercel:pull": "vercel pull",
     "vercel:dev": "vercel dev --listen 3000",
     "functions:deploy": "firebase use production && firebase deploy --only functions",
-    "functions:deploy:preview": "firebase use preview && firebase deploy --only functions"
+    "functions:deploy:preview": "firebase use preview && firebase deploy --only functions",
+    "gen-types:preview": "supabase gen types typescript --project-id qbjkpfyfmnkerzcmmjbk --schema public > lib/supabase/__generated__/types.ts --debug",
+    "gen-types": "supabase gen types typescript --project-id avosfnqiscrmxpqmhswp --schema public > lib/supabase/__generated__/types.ts --debug"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.2",
@@ -42,6 +44,9 @@
     "@radix-ui/react-tooltip": "^1.0.6",
     "@sendgrid/mail": "^7.7.0",
     "@stripe/stripe-js": "^2.2.0",
+    "@supabase/auth-helpers-nextjs": "^0.8.7",
+    "@supabase/ssr": "^0.0.10",
+    "@supabase/supabase-js": "^2.39.1",
     "@tanstack/react-query": "^5.14.0",
     "@types/node": "18.11.18",
     "@types/react": "^18.2.37",
@@ -80,6 +85,7 @@
     "tailwind-merge": "^1.14.0",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss-animate": "^1.0.7",
+    "type-fest": "^4.9.0",
     "typescript": "^5.2.2",
     "use-timer": "^2.0.1",
     "vercel": "^32.7.2",
