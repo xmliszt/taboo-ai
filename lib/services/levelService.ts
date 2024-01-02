@@ -1,12 +1,11 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
 import { Database } from '@/lib/supabase/extension/types';
+import { createClient } from '@/lib/utils/supabase/client';
 
 import { ILevel } from '../types/level.type';
 import { IUserLevel } from '../types/userLevel.type';
 
 export const getAllLevels = async (): Promise<ILevel[]> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchAllLevelsResponse = await supabaseClient.from('levels').select();
   if (fetchAllLevelsResponse.error) {
     throw fetchAllLevelsResponse.error;
@@ -25,7 +24,7 @@ export const addLevel = async ({
   words: string[];
   createdBy: string;
 }) => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const insertNewLevelResponse = await supabaseClient.from('levels').insert({
     name,
     difficulty,
@@ -36,7 +35,7 @@ export const addLevel = async ({
 };
 
 export const getLevel = async (id: string): Promise<ILevel | undefined> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchSingleLevelResponse = await supabaseClient
     .from('levels')
     .select()
@@ -50,7 +49,7 @@ export const isLevelExists = async (topicName?: string, authorEmail?: string): P
   if (!topicName || !authorEmail) {
     return false;
   }
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchSingleUserResponse = await supabaseClient
     .from('users')
     .select()
@@ -67,13 +66,13 @@ export const isLevelExists = async (topicName?: string, authorEmail?: string): P
 };
 
 export const updateLevelTargetWords = async (id: string, words: string[]): Promise<void> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const updateLevelResponse = await supabaseClient.from('levels').update({ words }).eq('id', id);
   if (updateLevelResponse.error) throw updateLevelResponse.error;
 };
 
 export const updateLevelIsNew = async (id: string, isNew: boolean): Promise<void> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const updateLevelResponse = await supabaseClient
     .from('levels')
     .update({ is_new: isNew })
@@ -82,13 +81,13 @@ export const updateLevelIsNew = async (id: string, isNew: boolean): Promise<void
 };
 
 export const deleteLevel = async (id: string): Promise<void> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const deleteLevelResponse = await supabaseClient.from('levels').delete().eq('id', id);
   if (deleteLevelResponse.error) throw deleteLevelResponse.error;
 };
 
 export const verifyLevel = async (id: string): Promise<void> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const verifyLevelResponse = await supabaseClient
     .from('levels')
     .update({ is_verified: true })
@@ -97,7 +96,7 @@ export const verifyLevel = async (id: string): Promise<void> => {
 };
 
 export const incrementLevelPopularity = async (id: string) => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const incrementLevelPopularityResponse = await supabaseClient.rpc('increment', {
     _table_name: 'levels',
     _row_id: id,
@@ -114,7 +113,7 @@ export const incrementLevelPopularity = async (id: string) => {
 export const getMostFreqPlayedLevelsSummary = async (
   uid: string
 ): Promise<Database['public']['Functions']['get_most_freq_played_levels_for_user']['Returns']> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchMostFreqPlayedLevelsResponse = await supabaseClient.rpc(
     'get_most_freq_played_levels_for_user',
     {
@@ -132,7 +131,7 @@ export const getMostFreqPlayedLevelsSummary = async (
 export const getBestPerformingLevelSummary = async (
   uid: string
 ): Promise<Database['public']['Functions']['get_best_performing_level_for_user']['Returns']> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchBestPerformingLevelResponse = await supabaseClient.rpc(
     'get_best_performing_level_for_user',
     {
@@ -148,7 +147,7 @@ export const getBestPerformingLevelSummary = async (
  * @param uid - user id
  */
 export const getLevelsCompletedByUser = async (uid: string): Promise<IUserLevel[]> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchLevelsCompletedByUserResponse = await supabaseClient.rpc(
     'get_user_played_levels_summary',
     {
@@ -166,7 +165,7 @@ export const getLevelStatById = async (
   topScorerName: string;
   topScorerId: string;
 }> => {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchLevelStatResponse = await supabaseClient.rpc('get_game_ranks_desc_for_level', {
     _level_id: levelId,
   });
@@ -183,7 +182,7 @@ export const getLevelStatById = async (
  * Get the top scorer stats for each level
  */
 export async function getLevelTopScorerStats() {
-  const supabaseClient = createClientComponentClient<Database>();
+  const supabaseClient = createClient();
   const fetchLevelTopScorerStatsResponse = await supabaseClient
     .from('level_top_scorer_stats')
     .select('*');

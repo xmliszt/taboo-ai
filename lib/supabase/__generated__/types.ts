@@ -369,6 +369,7 @@ export interface Database {
           id: string
           is_anonymous: boolean
           last_login_at: string
+          login_times: number
           name: string
           nickname: string | null
           photo_url: string | null
@@ -379,6 +380,7 @@ export interface Database {
           id?: string
           is_anonymous?: boolean
           last_login_at?: string
+          login_times?: number
           name: string
           nickname?: string | null
           photo_url?: string | null
@@ -389,6 +391,7 @@ export interface Database {
           id?: string
           is_anonymous?: boolean
           last_login_at?: string
+          login_times?: number
           name?: string
           nickname?: string | null
           photo_url?: string | null

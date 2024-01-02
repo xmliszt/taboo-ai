@@ -41,7 +41,6 @@ export default function HomePage() {
             height='550'
             style={{ fontFamily: 'lora' }}
             className='w-full rounded-lg border-[1px] bg-card text-card-foreground shadow-lg'
-            scrolling='no'
           ></iframe>
         </div>
         <HomeSocialLinkButtonArray />

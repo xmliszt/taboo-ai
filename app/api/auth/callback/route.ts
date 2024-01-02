@@ -8,10 +8,14 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
 
   if (code) {
-    const cookieStore = cookies();
-    const supabaseClient = createClient(cookieStore);
+    const supabaseClient = createClient(cookies());
     await supabaseClient.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(new URL(request.url).origin);
+  // If request.url is localhost, use http instead of https
+  const url = new URL(request.url);
+  const protocol = url.hostname === 'localhost' ? 'http' : 'https';
+  const redirectUrl = `${protocol}://${url.hostname}:${url.port}`;
+  console.log('redirectUrl', redirectUrl);
+  return NextResponse.redirect(redirectUrl);
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AuthStatus } from '@/components/auth-provider';
 import { useToast } from '@/components/ui/use-toast';
@@ -16,6 +16,76 @@ export function useSupabaseAuth() {
   const [userPlan, setUserPlan] = useState<IUserSubscriptionPlan>();
   const [status, setStatus] = useState<AuthStatus>('loading');
 
+  useEffect(() => {
+    async function checkAuth() {
+      const supabaseClient = createClient();
+      const userResponse = await supabaseClient.auth.getUser();
+      if (!userResponse.error) {
+        // If logged-in session detected, setup user and user subscription
+        await setupUserAndSubscription(userResponse.data.user.id);
+      } else {
+        setStatus('unauthenticated');
+      }
+    }
+
+    void checkAuth();
+  }, []);
+
+  async function setupUserAndSubscription(uid: string) {
+    const supabaseClient = createClient();
+
+    // fetch user in a database
+    const fetchUserResponse = await supabaseClient.from('users').select().eq('id', uid).single();
+    if (fetchUserResponse.error) {
+      console.error(fetchUserResponse.error);
+      toast({ title: 'Failed to sign in!', variant: 'destructive' });
+      setStatus('unauthenticated');
+      return;
+    }
+    const user = fetchUserResponse.data;
+    setUser(user);
+
+    // fetch subscription plan
+    const fetchUserSubscriptionResponse = await supabaseClient
+      .from('subscriptions')
+      .select()
+      .eq('user_id', uid)
+      .single();
+    const userSubscription = fetchUserSubscriptionResponse.data;
+    const userPlan = await fetchCustomerSubscriptions(user.email, userSubscription?.customer_id);
+    if (userPlan === undefined) {
+      // set free plan
+      setUserPlan({
+        type: 'free',
+      });
+      // async update user subscription plan
+      supabaseClient.from('subscriptions').upsert({
+        user_id: uid,
+        customer_plan_type: 'free',
+      });
+    } else {
+      setUserPlan(userPlan);
+      // async update user subscription plan
+      supabaseClient.from('subscriptions').upsert({
+        user_id: uid,
+        customer_id: userPlan.customerId,
+        customer_plan_type: userPlan.type,
+      });
+    }
+
+    // set authenticated and show toast
+    setStatus('authenticated');
+    if (user.login_times <= 1) {
+      toast({
+        title: 'Welcome to Taboo AI!',
+      });
+    } else {
+      toast({
+        title: `Welcome back! ${user.nickname ?? user.name}`,
+      });
+    }
+  }
+
   async function login() {
     setStatus('loading');
     const supabaseClient = createClient();
@@ -24,7 +94,7 @@ export function useSupabaseAuth() {
     const oauthResponse = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: '/api/auth/callback',
+        redirectTo: `${window.location.origin}/api/auth/callback`,
       },
     });
     if (oauthResponse.error) {
@@ -33,56 +103,6 @@ export function useSupabaseAuth() {
       setStatus('unauthenticated');
       return;
     }
-
-    // Get the current auth user object
-    const authUserResponse = await supabaseClient.auth.getUser();
-    if (authUserResponse.error) {
-      console.error(authUserResponse.error);
-      toast({ title: 'Failed to sign in!', variant: 'destructive' });
-      setStatus('unauthenticated');
-      return;
-    }
-
-    // If auth success, fetch user and update state
-    const fetchUserResponse = await supabaseClient
-      .from('users')
-      .select()
-      .eq('id', authUserResponse.data.user.id)
-      .single();
-    if (fetchUserResponse.error) {
-      console.error(fetchUserResponse.error);
-      toast({ title: 'Failed to sign in!', variant: 'destructive' });
-      setStatus('unauthenticated');
-      return;
-    }
-
-    // fetch subscription plan
-    const user = fetchUserResponse.data;
-    const fetchUserSubscriptionResponse = await supabaseClient
-      .from('subscriptions')
-      .select()
-      .eq('user_id', fetchUserResponse.data.id)
-      .single();
-    if (fetchUserSubscriptionResponse.error) {
-      console.error(fetchUserSubscriptionResponse.error);
-      toast({ title: 'Failed to sign in!', variant: 'destructive' });
-      setStatus('unauthenticated');
-      return;
-    }
-    const userSubscription = fetchUserSubscriptionResponse.data;
-    const userPlan = await fetchCustomerSubscriptions(user.email, userSubscription.customer_id);
-    if (userPlan === undefined) {
-      // set free plan
-      setUserPlan({
-        type: 'free',
-      });
-    } else {
-      setUserPlan(userPlan);
-    }
-
-    // auth success, set user, set user subscription plan
-    setUser(fetchUserResponse.data);
-    setStatus('authenticated');
   }
 
   async function logout() {

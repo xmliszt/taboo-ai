@@ -1,8 +1,7 @@
-import { doc, updateDoc } from 'firebase/firestore';
 import moment from 'moment';
 import Stripe from 'stripe';
 
-import { firestore } from '@/firebase/firebase-client';
+import { createClient } from '@/lib/utils/supabase/client';
 
 import { ISubscriptionPlan, IUserSubscriptionPlan } from '../types/subscription-plan.type';
 
@@ -45,8 +44,19 @@ export const createCheckoutSession = async (
  */
 export const fetchCustomerSubscriptions = async (
   email: string,
-  customerId: string | null
+  customerId: string | null | undefined
 ): Promise<IUserSubscriptionPlan | undefined> => {
+  const supabaseClient = createClient();
+  const getUserResponse = await supabaseClient
+    .from('users')
+    .select('id')
+    .eq('email', email)
+    .single();
+  if (getUserResponse.error) {
+    console.error(getUserResponse.error);
+    return undefined;
+  }
+  const { id: userId } = getUserResponse.data;
   // If customerId is not provided, we use user's email instead to try
   if (!customerId) {
     try {
@@ -64,10 +74,13 @@ export const fetchCustomerSubscriptions = async (
         return undefined;
       }
       if (subscriptions.length === 0) {
-        // if a user has no subscription in stripe, update user's plan to free in firebase
-        await updateDoc(doc(firestore, 'users', email), {
-          customerPlanType: 'free',
-        });
+        // if a user has no subscription in stripe, update user's plan to free
+        await supabaseClient
+          .from('subscriptions')
+          .update({
+            customer_plan_type: 'free',
+          })
+          .eq('user_id', userId);
         return undefined;
       }
       // If we get a subscription from user using email,
@@ -75,9 +88,12 @@ export const fetchCustomerSubscriptions = async (
       // and update our db with the customer id
       const subscription: Stripe.Subscription = subscriptions[0];
       const customerID = subscription.customer;
-      await updateDoc(doc(firestore, 'users', email), {
-        customerId: customerID,
-      });
+      await supabaseClient
+        .from('subscriptions')
+        .update({
+          customer_id: customerID as string,
+        })
+        .eq('user_id', userId);
       return buildUserSubscriptionPlanFromStripeSubscription(email, subscriptions);
     } catch (error) {
       console.error(error);
@@ -97,10 +113,10 @@ export const fetchCustomerSubscriptions = async (
       return undefined;
     }
     if (subscriptions.length === 0) {
-      // if user has no subscription in stripe, update user's plan to free in firebase
-      await updateDoc(doc(firestore, 'users', email), {
-        customerId: customerId,
-        customerPlanType: 'free',
+      // if a user has no subscription in stripe, update user's plan to free in firebase
+      await supabaseClient.from('subscriptions').update({
+        customer_id: customerId,
+        customer_plan_type: 'free',
       });
       return undefined;
     }
@@ -148,7 +164,7 @@ const buildUserSubscriptionPlanFromStripeSubscription = async (
   const subscription = subscriptions[0];
   const priceId = subscription.items.data[0].plan.id;
   const availablePlans = await fetchAvailableSubscriptionPlans();
-  // find the plan subscribed by user based on priceId, if not found, default get the free plan object
+  // find the plan subscribed by user based on priceId, if not found, default gets the free plan object
   const planSubscribed =
     availablePlans.find((plan) => plan.priceId === priceId) ??
     availablePlans.find((plan) => plan.type === 'free');

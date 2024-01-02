@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, Dispatch, SetStateAction, useContext, useEffect } from 'react';
+import React, { createContext, Dispatch, SetStateAction, useContext } from 'react';
 
 import { useSupabaseAuth } from '@/lib/hooks/useSupabaseAuth';
 import { IUserSubscriptionPlan } from '@/lib/types/subscription-plan.type';
@@ -27,10 +27,6 @@ const authProviderContext = createContext<{
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
   const { user, userPlan, status, setStatus, login, logout, refreshUserSubscriptionPlan } =
     useSupabaseAuth();
-
-  useEffect(() => {
-    login && login();
-  }, []);
 
   return (
     <authProviderContext.Provider

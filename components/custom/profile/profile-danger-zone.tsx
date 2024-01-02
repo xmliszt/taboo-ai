@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { cookies } from 'next/headers';
 import { useRouter } from 'next/navigation';
 import { Skull } from 'lucide-react';
 
@@ -18,7 +17,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { cancelSubscription, fetchCustomerSubscriptions } from '@/lib/services/subscriptionService';
 import { deleteUserFromSupabase } from '@/lib/services/userService';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/lib/utils/supabase/server';
+import { createClient } from '@/lib/utils/supabase/client';
 
 import { Spinner } from '../spinner';
 
@@ -29,7 +28,7 @@ export default function ProfileDangerZone({ className }: { className?: string })
   const [isDeleting, setIsDeleting] = useState(false);
 
   const proceedToDeleteUser = async () => {
-    const supabaseClient = createClient(cookies());
+    const supabaseClient = createClient();
     const userResponse = await supabaseClient.auth.getUser();
     if (userResponse.error) {
       toast({

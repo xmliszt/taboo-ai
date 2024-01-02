@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { BookMarked, Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
+import moment from 'moment';
 
 import { useAuth } from '@/components/auth-provider';
 import { HASH } from '@/lib/hash';
@@ -119,83 +120,79 @@ export function UserLoginPortal() {
     ];
   }, [pathname, game, status, userPlan?.customerId]);
 
-  const renderUserLoginComponent = () => {
-    return user && status === 'authenticated' ? (
-      <div className='flex flex-row items-center gap-2'>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <IconButton aria-label='Click to access user menu' tooltip='Access user menu'>
-              <User strokeWidth={1.5} />
-            </IconButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent loop sideOffset={10} align='end'>
-            <DropdownMenuLabel className='flex flex-col'>
-              <span className='font-light italic'>You are logged in as</span>
-              <span>{user.email}</span>
-            </DropdownMenuLabel>
-            {userPlan?.type && (
-              <>
-                <Badge className='mb-2 ml-2'>{userPlan.type.toUpperCase()}</Badge>
-                {userPlan?.trialEndDate && (
-                  <Badge variant='secondary' className='mb-2 ml-2'>
-                    Trial
-                  </Badge>
-                )}
-              </>
-            )}
-            {userPlan?.type === 'free' && (
-              <Button
-                variant='link'
-                size='sm'
-                className='h-auto animate-pulse underline'
-                onClick={() => {
-                  router.push('/pricing');
-                }}
-              >
-                Upgrade My Plan
-              </Button>
-            )}
-            {userPlan?.trialEndDate && (
-              <>
-                <DropdownMenuSeparator />
-                <p className='p-2 text-sm font-semibold italic'>
-                  Trial ends on {userPlan.trialEndDate.format('DD MMM YYYY, hh:mm A')}
-                </p>
-              </>
-            )}
-            <DropdownMenuSeparator />
-            {userMenuItems.map(
-              (item) =>
-                item.isVisible && (
-                  <DropdownMenuItem
-                    key={item.label}
-                    className={cn('gap-2 hover:cursor-pointer', item.isUpcoming && 'opacity-20')}
-                    onSelect={(e) => {
-                      if (item.isUpcoming) {
-                        e.preventDefault();
-                        return;
-                      }
-                      item.onClick(e);
-                    }}
-                  >
-                    {item.isUpcoming ? <Construction /> : item.icon}
-                    <span>{item.label + (item.isUpcoming ? ' (coming soon)' : '')}</span>
-                  </DropdownMenuItem>
-                )
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ) : status === 'loading' ? (
-      <Spinner />
-    ) : (
-      <div>
-        <IconButton aria-label='Click to login' onClick={login} tooltip='Login'>
-          <LogIn />
-        </IconButton>
-      </div>
-    );
-  };
-
-  return renderUserLoginComponent();
+  return user && status === 'authenticated' ? (
+    <div className='flex flex-row items-center gap-2'>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <IconButton aria-label='Click to access user menu' tooltip='Access user menu'>
+            <User strokeWidth={1.5} />
+          </IconButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent loop sideOffset={10} align='end'>
+          <DropdownMenuLabel className='flex flex-col'>
+            <span className='font-light italic'>You are logged in as</span>
+            <span>{user.email}</span>
+          </DropdownMenuLabel>
+          {userPlan?.type && (
+            <>
+              <Badge className='mb-2 ml-2'>{userPlan.type.toUpperCase()}</Badge>
+              {userPlan?.trialEndDate?.isAfter(moment()) && (
+                <Badge variant='secondary' className='mb-2 ml-2'>
+                  Trial
+                </Badge>
+              )}
+            </>
+          )}
+          {userPlan?.type === 'free' && (
+            <Button
+              variant='link'
+              size='sm'
+              className='h-auto animate-pulse underline'
+              onClick={() => {
+                router.push('/pricing');
+              }}
+            >
+              Upgrade My Plan
+            </Button>
+          )}
+          {userPlan?.trialEndDate?.isAfter(moment()) && (
+            <>
+              <DropdownMenuSeparator />
+              <p className='p-2 text-sm font-semibold italic'>
+                Trial ends on {userPlan.trialEndDate.format('DD MMM YYYY, hh:mm A')}
+              </p>
+            </>
+          )}
+          <DropdownMenuSeparator />
+          {userMenuItems.map(
+            (item) =>
+              item.isVisible && (
+                <DropdownMenuItem
+                  key={item.label}
+                  className={cn('gap-2 hover:cursor-pointer', item.isUpcoming && 'opacity-20')}
+                  onSelect={(e) => {
+                    if (item.isUpcoming) {
+                      e.preventDefault();
+                      return;
+                    }
+                    item.onClick(e);
+                  }}
+                >
+                  {item.isUpcoming ? <Construction /> : item.icon}
+                  <span>{item.label + (item.isUpcoming ? ' (coming soon)' : '')}</span>
+                </DropdownMenuItem>
+              )
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  ) : status === 'loading' ? (
+    <Spinner />
+  ) : (
+    <div>
+      <IconButton aria-label='Click to login' onClick={login} tooltip='Login'>
+        <LogIn />
+      </IconButton>
+    </div>
+  );
 }
