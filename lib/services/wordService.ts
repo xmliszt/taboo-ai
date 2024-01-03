@@ -1,63 +1,46 @@
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import _ from 'lodash';
-import moment from 'moment';
 
-import { firestore } from '@/firebase/firebase-client';
+import { createClient } from '@/lib/utils/supabase/client';
 
-import IWord from '../types/word.type';
-import { DateUtils } from '../utils/dateUtils';
+import { IWord } from '../types/word.type';
 
 export const isTargetWordExists = async (targetWord: string): Promise<boolean> => {
+  const supabaseClient = createClient();
   const target = _.toLower(_.trim(targetWord));
-  return (await getDoc(doc(firestore, 'words', target))).exists();
-};
-
-export const getAllTargetWords = async (): Promise<IWord[]> => {
-  const snapshots = await getDocs(collection(firestore, 'words'));
-  const results: IWord[] = [];
-  snapshots.forEach((snapshot) => {
-    const data = snapshot.data();
-    const word: IWord = {
-      target: data.target,
-      taboos: data.taboos as string[],
-      isVerified: data.isVerified,
-      updatedAt: data.updatedAt,
-    };
-    results.push(word);
-  });
-  return results;
+  const isTargetExistsResponse = await supabaseClient
+    .from('words')
+    .select()
+    .eq('word', target)
+    .maybeSingle();
+  if (isTargetExistsResponse.error) return false;
+  else return isTargetExistsResponse.data !== null;
 };
 
 export const addTabooWords = async (
   targetWord: string,
   taboos: string[],
   isVerified = false,
-  creatorEmail: string | undefined = undefined
+  userId: string | undefined = undefined
 ): Promise<void> => {
+  const supabaseClient = createClient();
   const target = _.toLower(_.trim(targetWord));
-  await setDoc(doc(firestore, 'words', target), {
-    target: target,
+  const insertNewTabooWordsResponse = await supabaseClient.from('words').insert({
+    word: target,
     taboos: taboos.map(_.trim).map(_.toLower),
-    isVerified: isVerified,
-    updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
-    creatorEmail,
+    is_verified: isVerified,
+    created_by: userId,
   });
+  if (insertNewTabooWordsResponse.error) throw insertNewTabooWordsResponse.error;
 };
 
-export const verifyTabooWords = async (targetWord: string): Promise<void> => {
+export const fetchTabooWords = async (targetWord: string): Promise<IWord | undefined> => {
+  const supabaseClient = createClient();
   const target = _.toLower(_.trim(targetWord));
-  await updateDoc(doc(firestore, 'words', target), {
-    isVerified: true,
-  });
-};
-
-export const getTabooWords = async (targetWord: string): Promise<IWord | undefined> => {
-  const target = _.toLower(_.trim(targetWord));
-  const snapshot = await getDoc(doc(firestore, 'words', target));
-  const data = snapshot.data();
-  if (data) {
-    return data as IWord;
-  } else {
-    return undefined;
-  }
+  const fetchTabooWordsResponse = await supabaseClient
+    .from('words')
+    .select()
+    .eq('word', target)
+    .maybeSingle();
+  if (fetchTabooWordsResponse.error) return undefined;
+  else return fetchTabooWordsResponse.data ?? undefined;
 };

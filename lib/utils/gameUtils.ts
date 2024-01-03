@@ -16,7 +16,7 @@ export const calculateTimeScore = (score: IScore): number => {
 
 export const getCalculatedScore = (score: IScore, difficulty: number): number => {
   const multipliers = getDifficultyMultipliers(difficulty);
-  const timeScore = calculateTimeScore(score) * multipliers.timeMultipler;
+  const timeScore = calculateTimeScore(score) * multipliers.timeMultiplier;
   const aiScore = (score.aiScore ?? 0) * multipliers.promptMultiplier;
   return _.round(timeScore + aiScore, 1);
 };

@@ -21,12 +21,11 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error(error.message);
     try {
       const googleAIError = tryParseErrorAsGoogleAIError(error);
-      console.log(googleAIError);
       return NextResponse.json(googleAIError, { status: 500 });
     } catch (error) {
-      console.error(error);
       return new Response(error.message, { status: 500 });
     }
   }

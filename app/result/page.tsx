@@ -474,7 +474,7 @@ export default function ResultPage() {
   };
 
   const generateStatsItems = (score: IScore, difficulty: number): StatItem[] => {
-    const timeMultipler = level ? getDifficultyMultipliers(level.difficulty).timeMultipler : null;
+    const timeMultipler = level ? getDifficultyMultipliers(level.difficulty).timeMultiplier : null;
     const promptMultiplier = level
       ? getDifficultyMultipliers(level.difficulty).promptMultiplier
       : null;

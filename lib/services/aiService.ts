@@ -1,5 +1,4 @@
 import _, { uniqueId } from 'lodash';
-import moment from 'moment';
 
 import { CONSTANTS } from '../constants';
 import {
@@ -9,9 +8,8 @@ import {
 import IEvaluation from '../types/evaluation.type';
 import { ILevel } from '../types/level.type';
 import { IChat } from '../types/score.type';
-import IWord from '../types/word.type';
+import { IWord } from '../types/word.type';
 import { formatResponseTextIntoArray } from '../utilities';
-import { DateUtils } from '../utils/dateUtils';
 
 /**
  * Ask the AI for a list of taboo words for a given target word.
@@ -50,10 +48,11 @@ export async function askAITabooWordsForTarget(targetWord: string): Promise<IWor
   const text = json.response;
   const variations = formatResponseTextIntoArray(text, target);
   return {
-    target: target,
+    word: target,
     taboos: variations,
-    isVerified: false,
-    updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
+    is_verified: false,
+    updated_at: new Date().toISOString(),
+    created_by: null,
   };
 }
 
@@ -67,7 +66,7 @@ export async function askAIForCreativeTopic(
   topic: string,
   difficulty: number
 ): Promise<ILevel | undefined> {
-  let difficultyString = '';
+  let difficultyString;
   switch (difficulty) {
     case 1:
       difficultyString = 'well-known';
@@ -180,6 +179,7 @@ export async function fetchConversationCompletion(
 /**
  * Perform evaluation
  * @param {IEvaluation} evaluation The evaluation to start.
+ * @param {string} email The email of the user.
  * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
  */
 export async function performEvaluation(
@@ -194,7 +194,6 @@ export async function performEvaluation(
       evaluation: evaluation,
     }),
   });
-  // Get the run_id and thread_id from resposne
-  const json = await response.json();
-  return json;
+  // Get the run_id and thread_id from response
+  return await response.json();
 }

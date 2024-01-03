@@ -20,12 +20,12 @@ import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
 import { getLevel, incrementLevelPopularity } from '@/lib/services/levelService';
 import { incrementGameAttemptedCount } from '@/lib/services/userService';
-import { getTabooWords } from '@/lib/services/wordService';
+import { fetchTabooWords } from '@/lib/services/wordService';
 import IGame from '@/lib/types/game.type';
 import { IHighlight } from '@/lib/types/highlight.type';
 import { ILevel } from '@/lib/types/level.type';
 import { IChat, IScore } from '@/lib/types/score.type';
-import IWord from '@/lib/types/word.type';
+import { IWord } from '@/lib/types/word.type';
 import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
@@ -299,8 +299,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
         const variations = await getMockVariations(target, true);
         callback(variations);
       } else {
-        const taboo = await getTabooWords(target);
-        if (taboo && taboo.taboos.length > 1 && taboo.isVerified) {
+        const taboo = await fetchTabooWords(target);
+        if (taboo && taboo.taboos.length > 1 && taboo.is_verified) {
           callback(taboo);
         } else {
           const variations = await askAITabooWordsForTarget(target);
@@ -309,7 +309,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       }
     } catch {
       if (retries > 0) {
-        generateVariationsForTarget(retries - 1, target, callback);
+        await generateVariationsForTarget(retries - 1, target, callback);
       } else {
         callback();
       }
@@ -322,11 +322,11 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setVariations([target]);
       setConversation([]);
       setIsGeneratingVariations(true);
-      generateVariationsForTarget(5, target, (variations) => {
+      void generateVariationsForTarget(5, target, (variations) => {
         setTimeout(() => {
           setIsGeneratingVariations(false);
           let _variations = [target];
-          if (variations && _.toLower(variations.target) === _.toLower(target)) {
+          if (variations && _.toLower(variations.word) === _.toLower(target)) {
             _variations = variations.taboos;
           }
           setVariations(_variations.map(formatStringForDisplay));

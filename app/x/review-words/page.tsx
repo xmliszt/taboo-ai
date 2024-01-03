@@ -45,10 +45,10 @@ import {
   updateLevelTargetWords,
   verifyLevel,
 } from '@/lib/services/levelService';
-import { addTabooWords, getTabooWords, isTargetWordExists } from '@/lib/services/wordService';
+import { addTabooWords, fetchTabooWords, isTargetWordExists } from '@/lib/services/wordService';
 import { Database } from '@/lib/supabase/extension/types';
 import { ILevel } from '@/lib/types/level.type';
-import IWord from '@/lib/types/word.type';
+import { IWord } from '@/lib/types/word.type';
 import { cn } from '@/lib/utils';
 import { LevelUtils } from '@/lib/utils/levelUtils';
 
@@ -151,7 +151,7 @@ const DevReviewWordsPage = () => {
         return;
       }
       try {
-        const taboo = await getTabooWords(word);
+        const taboo = await fetchTabooWords(word);
         if (taboo && taboo.taboos.length > 0) {
           setTabooWords(taboo);
           return taboo;
@@ -212,7 +212,7 @@ const DevReviewWordsPage = () => {
   const onVerifyTargetWord = (checked: boolean) => {
     if (taboos) {
       const currentTarget: IWord = { ...taboos };
-      currentTarget.isVerified = checked;
+      currentTarget.is_verified = checked;
       setTabooWords(currentTarget);
     }
   };
@@ -225,7 +225,7 @@ const DevReviewWordsPage = () => {
     }
     if (taboos) {
       const copyTaboos: IWord = { ...taboos };
-      copyTaboos.target = e.target.value;
+      copyTaboos.word = e.target.value;
       setTabooWords(copyTaboos);
     }
   };
@@ -233,13 +233,13 @@ const DevReviewWordsPage = () => {
   const onSave = async () => {
     if (taboos) {
       await addTabooWords(
-        taboos.target,
+        taboos.word,
         taboos.taboos.map((w) => _.trim(_.toLower(w))),
-        taboos.isVerified,
+        taboos.is_verified,
         user?.email
       );
       selectedLevel && (await updateLevelTargetWords(selectedLevel.id, selectedLevel.words));
-      setFullWordList((wordList) => [...wordList, _.trim(_.toLower(taboos.target))]);
+      setFullWordList((wordList) => [...wordList, _.trim(_.toLower(taboos.word))]);
       toast({ title: 'Saved successfully!' });
     } else {
       toast({
@@ -271,15 +271,15 @@ const DevReviewWordsPage = () => {
     return new Promise((res, rej) => {
       setTimeout(async () => {
         try {
-          const taboo = await getTabooWords(target);
+          const taboo = await fetchTabooWords(target);
           if (taboo?.taboos.length ?? 0 > 0) {
             res();
           } else {
-            const taboos = await askAITabooWordsForTarget(target);
-            if (target && taboos) {
+            const word = await askAITabooWordsForTarget(target);
+            if (target && word) {
               await addTabooWords(
                 target,
-                taboos.taboos.map((w) => _.trim(_.toLower(w))),
+                word.taboos.map((w) => _.trim(_.toLower(w))),
                 false,
                 user?.email
               );
@@ -636,7 +636,7 @@ const DevReviewWordsPage = () => {
       </div>
       {(taboos?.taboos.length ?? 0) > 0 && isPageInteractive && (
         <div>
-          Verified: <Switch checked={taboos?.isVerified} onCheckedChange={onVerifyTargetWord} />
+          Verified: <Switch checked={taboos?.is_verified} onCheckedChange={onVerifyTargetWord} />
         </div>
       )}
       <Separator />

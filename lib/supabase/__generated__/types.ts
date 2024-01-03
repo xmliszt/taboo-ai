@@ -400,24 +400,35 @@ export interface Database {
       }
       words: {
         Row: {
+          created_by: string | null
           is_verified: boolean
           taboos: string[]
           updated_at: string
           word: string
         }
         Insert: {
+          created_by?: string | null
           is_verified?: boolean
           taboos: string[]
           updated_at?: string
           word: string
         }
         Update: {
+          created_by?: string | null
           is_verified?: boolean
           taboos?: string[]
           updated_at?: string
           word?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "words_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
