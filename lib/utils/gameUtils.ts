@@ -52,9 +52,7 @@ export const getIndividualRating = (score: number, starCounts = 5, maxScore = 10
 export const isGameFinished = (game: IGame | undefined | null): boolean => {
   if (!game) return false;
   if (game.scores.length !== CONSTANTS.numberOfQuestionsPerGame) return false;
-  if (game.scores.some((score) => score.aiScore === undefined || !score.aiExplanation))
-    return false;
-  return true;
+  return !game.scores.some((score) => score.aiScore === undefined || !score.aiExplanation);
 };
 
 /**
@@ -65,7 +63,5 @@ export const isGameFinished = (game: IGame | undefined | null): boolean => {
 export const isGameAIJudged = (game: IGame | undefined | null): boolean => {
   if (!game) return false;
   if (!game.scores) return false;
-  if (game.scores.some((score) => score.aiScore === undefined || !score.aiExplanation))
-    return false;
-  return true;
+  return !game.scores.some((score) => score.aiScore === undefined || !score.aiExplanation);
 };

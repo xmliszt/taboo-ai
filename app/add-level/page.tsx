@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import _, { zip } from 'lodash';
 import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
 
+import { useAuth } from '@/components/auth-provider';
 import { InfoButton } from '@/components/custom/info-button';
 import { Skeleton } from '@/components/custom/skeleton';
 import { Spinner } from '@/components/custom/spinner';
@@ -36,8 +37,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { sendEmail } from '@/lib/services/emailService';
 import { fetchTabooWords } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
-
-import { useAuth } from '../../components/auth-provider';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
@@ -329,7 +328,7 @@ const AddLevelPage = () => {
   };
 
   const isAllValid = useMemo(() => {
-    let _isAllValid = false;
+    let _isAllValid;
     if (shouldUseAIForTabooWords) {
       _isAllValid =
         !topicNameErrorMessage &&
@@ -616,7 +615,7 @@ const AddLevelPage = () => {
                       <AccordionItem
                         key={i}
                         value={String(i)}
-                        disabled={tabooWordsCheckingStatus.some((s) => s === true)}
+                        disabled={tabooWordsCheckingStatus.some((s) => s)}
                       >
                         <AccordionTrigger>
                           <div>

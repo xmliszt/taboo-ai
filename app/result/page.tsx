@@ -28,6 +28,7 @@ import {
 import { Button } from '@/components/ui/button';
 import IconButton from '@/components/ui/icon-button';
 import { useToast } from '@/components/ui/use-toast';
+import { CONSTANTS } from '@/lib/constants';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
@@ -35,7 +36,9 @@ import { performEvaluation } from '@/lib/services/aiService';
 import { fetchGameForUser, uploadCompletedGameForUser } from '@/lib/services/gameService';
 import { getLevel, isLevelExists } from '@/lib/services/levelService';
 import IGame from '@/lib/types/game.type';
+import { IHighlight } from '@/lib/types/highlight.type';
 import { ILevel } from '@/lib/types/level.type';
+import { IChat, IScore } from '@/lib/types/score.type';
 import { b64toBlob, getDifficultyMultipliers, shareImage } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
@@ -50,9 +53,6 @@ import {
 } from '@/lib/utils/gameUtils';
 
 import LoadingMask from '../../components/custom/loading-mask';
-import { CONSTANTS } from '../../lib/constants';
-import { IHighlight } from '../../lib/types/highlight.type';
-import { IChat, IScore } from '../../lib/types/score.type';
 
 interface StatItem {
   title: string;
