@@ -1,6 +1,6 @@
 'use client';
 
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CircleUser, PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
 
@@ -109,7 +109,7 @@ export default function HomeMenuButtonArray() {
         icon: <User size={20} />,
         title: 'View My Profile',
         subtitle:
-          'Access your personal profile to see your game history, game statistics, edit your nickname, manage privacy settings, delete yoru account, and more!',
+          'Access your game history, statistics, edit nickname, manage privacy settings, and more!',
         ariaLabel: 'Click to visit your personal profile',
         href: '/profile',
         visible: user !== undefined && status === 'authenticated',
