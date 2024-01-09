@@ -2,9 +2,10 @@
 
 import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
+import { CircleUser, PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
+import { LoginErrorEventProps } from '@/components/custom/login-error-dialog';
 import { AdminManager } from '@/lib/admin-manager';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
@@ -27,7 +28,7 @@ interface HomeMenuButtonData {
 }
 
 export default function HomeMenuButtonArray() {
-  const { user, status } = useAuth();
+  const { user, status, login } = useAuth();
   const router = useRouter();
   const [game, setGame] = useState<IGame | null>(null);
 
@@ -51,8 +52,30 @@ export default function HomeMenuButtonArray() {
     }
   };
 
+  const handleLogin = async () => {
+    if (!login) return;
+    try {
+      await login();
+    } catch (error) {
+      console.error(error);
+      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
+        error: error.message,
+      });
+    }
+  };
+
   const homeMenuButtonData = useMemo<HomeMenuButtonData[]>(
     () => [
+      {
+        key: 'log in',
+        icon: <CircleUser size={20} />,
+        title: 'Log In',
+        subtitle:
+          'Log in to Taboo AI to unlock your personal profile, game history, and contribute a topic to us!',
+        ariaLabel: 'Click to log in',
+        onClick: handleLogin,
+        visible: status !== 'authenticated',
+      },
       {
         key: 'play a topic',
         icon: <Quote size={20} />,
