@@ -1,10 +1,20 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
+import {
+  AlignJustify,
+  CircleUser,
+  Construction,
+  LogOut,
+  PenTool,
+  ScrollText,
+  User,
+} from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
+import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
@@ -112,9 +122,21 @@ export function UserLoginPortal() {
       <div className='flex flex-row items-center gap-2'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <IconButton aria-label='Click to access user menu' tooltip='Access user menu'>
-              <User strokeWidth={1.5} />
-            </IconButton>
+            <Button
+              aria-label='Click to access user menu'
+              className='flex h-[32px] flex-row items-center gap-1 p-1'
+            >
+              {user.photoUrl && (
+                <Image
+                  className='rounded-[7px]'
+                  src={user.photoUrl}
+                  alt='user avatar'
+                  width={23}
+                  height={23}
+                />
+              )}
+              <AlignJustify size={20} />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent loop sideOffset={10} align='end'>
             <DropdownMenuLabel className='flex flex-col'>
@@ -124,7 +146,7 @@ export function UserLoginPortal() {
             <DropdownMenuSeparator />
             {userMenuItems.map(
               (item) =>
-                item.isVisible === true && (
+                item.isVisible && (
                   <DropdownMenuItem
                     key={item.label}
                     className={cn('gap-2 hover:cursor-pointer', item.isUpcoming && 'opacity-20')}
@@ -148,9 +170,18 @@ export function UserLoginPortal() {
       <Spinner />
     ) : (
       <div>
-        <IconButton aria-label='Click to login' onClick={handleLogin} tooltip='Login'>
-          <LogIn />
-        </IconButton>
+        {pathname === '/' || pathname === '/levels' ? (
+          <Button aria-label='Click to login' onClick={handleLogin} className='h-[32px] px-2 py-1'>
+            <div className='flex flex-row items-center gap-1'>
+              <CircleUser size='23' />
+              Log in
+            </div>
+          </Button>
+        ) : (
+          <IconButton aria-label='Click to login' tooltip='Log in' onClick={handleLogin}>
+            <CircleUser />
+          </IconButton>
+        )}
       </div>
     );
   };
