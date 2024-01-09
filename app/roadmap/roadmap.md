@@ -2,6 +2,11 @@
 
 ## Release Notes (V3.0)
 
+### 01 Jan 2023 - V3.1.4
+
+- Improve log in experience.
+- Bug fixes.
+
 ### 17 Dec 2023 - V3.1.3
 
 - Integrate Google Gemini Pro API into Taboo AI.
@@ -86,16 +91,21 @@
 
 ### 16 Sep 2023 - V3.0.4
 
-- Convenient way to allow topic generated from AI Mode to be contributed by providing logged in user the option to submit the level.
-- Logged in user is able to view his/her last result from Home, Menu or User Menu. The last result is restored from browser cache, therefore, logging out and log back in, or switch user, or clear browser cache, will remove the saved result and unable to view.
+- Convenient way to allow topic generated from AI Mode to be contributed by providing logged in user the option to
+  submit the level.
+- Logged in user is able to view his/her last result from Home, Menu or User Menu. The last result is restored from
+  browser cache, therefore, logging out and log back in, or switch user, or clear browser cache, will remove the saved
+  result and unable to view.
 - Greatly improve the performance of Taboo AI. Now it loads much faster.
 - Some UI improvements. E.g. AI prompt when thinking is animated, etc.
 
 ### 13 Sep 2023 - V3.0.3
 
 - Add more sorting methods: sort by easiest or hardest level first.
-- Results page accordion component is added with indications for user to expand / fold. Default the first item will be opened.
-- User login that is blocked by browser will now alerted with a popup, providing "try again" option to attempt again (usually second attempt will not be blocked by browser anymore...)
+- Results page accordion component is added with indications for user to expand / fold. Default the first item will be
+  opened.
+- User login that is blocked by browser will now alerted with a popup, providing "try again" option to attempt again (
+  usually second attempt will not be blocked by browser anymore...)
 - Some bug fixes.
 
 ### 12 Sep 2023 - V3.0.2
@@ -109,13 +119,22 @@
 
 ### 10 Sep 2023 - V3.0.0
 
-- **Revamped UI/UX**: Say hello to a sleek and intuitive interface that makes navigating Taboo AI a breeze. Experience the charm of classic typography brought to life! Our new design invokes a sense of nostalgia while providing a seamless and intuitive experience. Enjoy a seamless and engaging experience from start to finish.
-- **Dark/Light Mode**: Tailor your gaming environment to suit your style. Whether you prefer a dark or light backdrop, Taboo AI now supports both modes for your convenience.
-- **Dynamic Gameplay**: Engage in "conversation mode" with the AI, turning your sessions into dynamic exchanges. No more one-question-one-answer routines. Keep the conversation flowing while cleverly coaxing out the 'taboo word'.
-- **Detailed Results**: The results page now offers comprehensive logs of your conversations. Save and share your entire gaming session with friends to relive those memorable moments.
-- **User Login and Authentication**: For those eager to contribute topics, now you can! Securely log in with your Google Account (more platforms will be included in later releases...) and share your creative ideas with the Taboo AI community.
-- **Enhanced Topic Selection**: Finding your preferred topics has never been easier. Sort by various criteria, and see which topics are most popular. Discover what fellow players are diving into!
-- **Streamlined Menu**: Everything you need is right at your fingertips. Navigate through a comprehensive menu that covers every functionality Taboo AI has to offer.
+- **Revamped UI/UX**: Say hello to a sleek and intuitive interface that makes navigating Taboo AI a breeze. Experience
+  the charm of classic typography brought to life! Our new design invokes a sense of nostalgia while providing a
+  seamless and intuitive experience. Enjoy a seamless and engaging experience from start to finish.
+- **Dark/Light Mode**: Tailor your gaming environment to suit your style. Whether you prefer a dark or light backdrop,
+  Taboo AI now supports both modes for your convenience.
+- **Dynamic Gameplay**: Engage in "conversation mode" with the AI, turning your sessions into dynamic exchanges. No more
+  one-question-one-answer routines. Keep the conversation flowing while cleverly coaxing out the 'taboo word'.
+- **Detailed Results**: The results page now offers comprehensive logs of your conversations. Save and share your entire
+  gaming session with friends to relive those memorable moments.
+- **User Login and Authentication**: For those eager to contribute topics, now you can! Securely log in with your Google
+  Account (more platforms will be included in later releases...) and share your creative ideas with the Taboo AI
+  community.
+- **Enhanced Topic Selection**: Finding your preferred topics has never been easier. Sort by various criteria, and see
+  which topics are most popular. Discover what fellow players are diving into!
+- **Streamlined Menu**: Everything you need is right at your fingertips. Navigate through a comprehensive menu that
+  covers every functionality Taboo AI has to offer.
 
 ## 28 Aug - Release Notes (V2.10)
 
@@ -168,9 +187,11 @@
 
 ## 06 Apr - Release Notes (V2.1)
 
-- **New scoring system** ensures that players will be rewarded for their **overall performance**, rather than just their speed.
+- **New scoring system** ensures that players will be rewarded for their **overall performance**, rather than just their
+  speed.
 - Added **topic name** for daily challenge in the Wall of Fame (leaderboard).
-- In **result** page, now user can unfold/fold the result of each stage, so that the overview will not be too long to scroll. User can expand and see the details if want to.
+- In **result** page, now user can unfold/fold the result of each stage, so that the overview will not be too long to
+  scroll. User can expand and see the details if want to.
 - In **result** page, added button with question mark to review the new scoring system rules.
 - Remove **word carousell background** as it is CPU intensive. Will replace with light video in the future.
 - In game **timer** will flash **yellow** and **red** color based on time lapsed.
@@ -179,7 +200,8 @@
 
 - **Brand New Daily Challenge mode** with **Wall of Fame (Leaderboard)** for players to compete.
 - **Nickname creation** for players to create their unique nicknames.
-- **Recovery mode** for players who want to restore their game records on **new devices** or when they **switch to new browsers** or clear cache in existing browser.
+- **Recovery mode** for players who want to restore their game records on **new devices** or when they **switch to new
+  browsers** or clear cache in existing browser.
 - **Search** function added to "Topic Selection" page.
 - **Anti-Cheat** measures are implemented to ensure fairness of the daily challenge compeition.
 - Improved UI.
@@ -195,8 +217,11 @@
 ## 19 Feb - Release Notes (V1.3)
 
 - Version number indicator to inform players about version updates.
-- **OpenAI API free trial ended**. Started paid subscription to continue use the Curie model to provide users with smooth gameplay experience.
-- Added **"Buy Me Coffee"** to call for kind supports from the players. If you like this game, can buy me a coffee so that I can continue to maintain the game and update it to bring more fun and exciting features to you! **Thank you for your kind support** ❤️!
+- **OpenAI API free trial ended**. Started paid subscription to continue use the Curie model to provide users with
+  smooth gameplay experience.
+- Added **"Buy Me Coffee"** to call for kind supports from the players. If you like this game, can buy me a coffee so
+  that I can continue to maintain the game and update it to bring more fun and exciting features to you! **Thank you for
+  your kind support** ❤️!
 - Disclaimer for possible internet hiccups due to the **overloaded OpenAI service**.
 - AI prompts improvements.
 - Overall fonts update.
@@ -204,9 +229,11 @@
 ## 16 Feb - Release Notes (V1.2)
 
 - Improve user experience.
-- Use AI to generate a list of **relevant taboo words** associated with the target word, making Taboo more **fun** and more **challenging**!
+- Use AI to generate a list of **relevant taboo words** associated with the target word, making Taboo more **fun** and
+  more **challenging**!
 - **Countdown timer** for player to prepare while AI is generating the list of taboo words.
-- Result scoreboard supports **target word highlighting**. Better **sharing mechanism**. Fix text gets offset when taking the screenshots.
+- Result scoreboard supports **target word highlighting**. Better **sharing mechanism**. Fix text gets offset when
+  taking the screenshots.
 - **Timer status indicator** to inform players.
 - **More descriptive messages** for alerts, input placeholders.
 - **Clear button** for input to easily clear the prompt.
@@ -229,7 +256,8 @@
 
 - Taboo AI **first release**!
 - **Pre-defined topics** of taboo words.
-- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more **customization** to the game.
+- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more *
+  *customization** to the game.
 - **Timer** scoring system.
 - Integrated with **ChatGPT AI** to respond your questions.
 - Smart system to **match** and **verify** if you hit the taboo words or AI hits the taboo words.

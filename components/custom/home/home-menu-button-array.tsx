@@ -71,10 +71,10 @@ export default function HomeMenuButtonArray() {
         icon: <CircleUser size={20} />,
         title: 'Log In',
         subtitle:
-          'Log in to Taboo AI to unlock your personal profile, game history, and contribute a topic to us!',
+          'Unlock personal profile, game history, join topic rankings, and contribute new topics!',
         ariaLabel: 'Click to log in',
         onClick: handleLogin,
-        visible: status !== 'authenticated',
+        visible: status === 'unauthenticated',
       },
       {
         key: 'play a topic',
