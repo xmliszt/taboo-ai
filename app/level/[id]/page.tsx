@@ -6,7 +6,6 @@ import _, { uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
 import { useTimer } from 'use-timer';
 
-import { useAuth } from '@/components/auth-provider';
 import { Skeleton } from '@/components/custom/skeleton';
 import Timer from '@/components/custom/timer';
 import IconButton from '@/components/ui/icon-button';
@@ -15,20 +14,18 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { CONSTANTS } from '@/lib/constants';
-import { getHash, HASH } from '@/lib/hash';
+import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
 import { getLevel, incrementLevelPopularity } from '@/lib/services/levelService';
 import { fetchTabooWords } from '@/lib/services/wordService';
-import IGame from '@/lib/types/game.type';
-import { IHighlight } from '@/lib/types/highlight.type';
+import { IGame } from '@/lib/types/game.type';
 import { ILevel } from '@/lib/types/level.type';
-import { IChat, IScore } from '@/lib/types/score.type';
+import { IHighlight, IScore, IScoreConversation } from '@/lib/types/score.type';
 import { IWord } from '@/lib/types/word.type';
 import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
-import { aggregateTotalScore, aggregateTotalTimeTaken } from '@/lib/utils/gameUtils';
 import { generateHighlights, getMatchedTabooWords } from '@/lib/utils/levelUtils';
 
 interface LevelPageProps {
@@ -41,10 +38,12 @@ let isCustomGame = false;
 // The words for this topic
 let words: string[] = [];
 
+// Game started_at
+let startedAt = new Date();
+
 export default function LevelPage({ params: { id } }: LevelPageProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useAuth();
 
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
@@ -57,8 +56,8 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const [isGeneratingVariations, setIsGeneratingVariations] = useState<boolean>(false);
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isCountingdown, setIsCountdown] = useState<boolean>(false);
-  const [conversation, setConversation] = useState<IChat[]>([]);
+  const [isCountingDown, setIsCountdown] = useState<boolean>(false);
+  const [conversation, setConversation] = useState<IScoreConversation[]>([]);
   const [savedScores, setSavedScores] = useState<IScore[]>([]);
   const [isFetchingLevel, setIsFetchingLevel] = useState(false);
 
@@ -97,7 +96,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     const fetchedLevel = await getLevel(id);
     if (fetchedLevel) {
       setLevel(fetchedLevel);
-      incrementLevelPopularity(fetchedLevel.id);
+      await incrementLevelPopularity(fetchedLevel.id);
       setPersistence(HASH.level, fetchedLevel);
       startGame(fetchedLevel);
     }
@@ -116,13 +115,14 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       }
     } else if (!isFetchingLevel) {
       isCustomGame = false;
-      fetchLevel(id);
+      void fetchLevel(id);
     }
   }, [id, isFetchingLevel]);
 
   const startGame = (level: ILevel) => {
     resetTimer();
     // removePersistence(HASH.game);
+    startedAt = new Date();
     words = level.words.map((word) => formatStringForDisplay(word));
     const newTarget = generateNewTarget();
     setTarget(newTarget);
@@ -166,9 +166,9 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     if (userInputMatchedTabooWords.length > 0) return;
     // Get the submitted value
     const userInput = event.currentTarget['user-input'].value as string;
-    // Immediately show user input in UI.
+    // Immediately show user input in the UI.
     // Remove any message that has role == 'error' and also its previous message if it has role == 'user'.
-    const updatedConversation: IChat[] = [];
+    const updatedConversation: IScoreConversation[] = [];
     for (let i = 0; i < conversation.length; i++) {
       const current = conversation[i];
       if (current.role === 'user' || current.role === 'assistant') {
@@ -211,7 +211,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     }
 
     // Remove the last message from conversation if it is from assistant and does not have any content
-    const inputConversation: IChat[] = [...updatedConversation];
+    const inputConversation: IScoreConversation[] = [...updatedConversation];
     if (
       inputConversation[inputConversation.length - 1].role === 'assistant' &&
       inputConversation[inputConversation.length - 1].content.length <= 0
@@ -244,17 +244,18 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     document.getElementById('chat-end')?.scrollIntoView({ behavior: 'smooth' });
   }, [conversation]);
 
-  // Move on to next question, save the scores to cache. Delay and set the current progress to next one
+  // Move on to the next question, save the scores to cache. Delay and set the current progress to the next one
   const nextQuestion = async (highlights: IHighlight[]) => {
     pauseTimer();
     const copySavedScores = [...savedScores];
     copySavedScores.push({
-      id: currentProgress,
-      target: target ?? '',
+      score_index: currentProgress,
+      target_word: target ?? '',
       taboos: variations,
       conversation: conversation,
-      completion: time,
-      responseHighlights: highlights,
+      duration: time,
+      highlights: highlights,
+      ai_evaluation: null,
     });
     setSavedScores(copySavedScores);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
@@ -273,7 +274,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       const highlights = generateHighlights(target, lastAssistantMessage.content, true);
       if (highlights.length > 0) {
         toast({ title: "That's a hit! Well done!", duration: 1000 });
-        nextQuestion(highlights);
+        void nextQuestion(highlights);
       }
     }
   }, [conversation]);
@@ -331,17 +332,14 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   useEffect(() => {
     const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      // Game Finsihed. Save game to cache
+      // Game Finished. Save game to cache
       const completedAt = new Date();
       const game: IGame = {
-        id: getHash(`${user?.email ?? 'guest'}-${level?.id}-${completedAt.toISOString()}`),
-        levelId: level?.id ?? '',
-        totalScore: aggregateTotalScore(savedScores, level?.difficulty ?? 1),
-        totalDuration: aggregateTotalTimeTaken(savedScores),
-        difficulty: level?.difficulty ?? 1,
-        finishedAt: completedAt,
+        level_id: level ? level.id : null,
+        started_at: startedAt.toISOString(),
+        finished_at: completedAt.toISOString(),
         scores: savedScores,
-        isCustomGame: isCustomGame,
+        is_custom_game: isCustomGame,
       };
       setPersistence(HASH.game, game);
       router.push('/result');
@@ -353,14 +351,14 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       setVariations([newTarget]);
       setUserInput('');
     }
-  }, [currentProgress]);
+  }, [currentProgress, level]);
 
   // Timer control
   useEffect(() => {
-    if (isCountingdown) {
+    if (isCountingDown) {
       resetTimer();
     }
-  }, [isCountingdown]);
+  }, [isCountingDown]);
 
   // user input validated against taboo words.
   const matchers = target == null ? variations : [...variations, target];
@@ -387,18 +385,18 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       // No highlights found, just return message in normal style
       parts = [<span key={message}>{message}</span>];
     } else {
-      // Highlights found, generate higlights for message matches
+      // Highlights found, generate highlights for message matches
       let startIndex = 0;
       let endIndex = 0;
       for (const highlight of highlights) {
-        endIndex = highlight.start;
+        endIndex = highlight.start_position;
         while (/[\W_]/g.test(message[endIndex])) {
           endIndex++;
         }
         // Normal part
         parts.push(renderNormalMessageSpan(message.substring(startIndex, endIndex)));
         startIndex = endIndex;
-        endIndex = highlight.end;
+        endIndex = highlight.end_position;
         // Highlighted part
         parts.push(renderHighlightMessageSpan(message.substring(startIndex, endIndex)));
         startIndex = endIndex;
@@ -421,7 +419,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   return (
     <main className='flex justify-center'>
-      {isCountingdown ? (
+      {isCountingDown ? (
         <div
           className={cn(
             'fixed top-1/2 z-50 w-full animate-bounce text-center',
@@ -514,7 +512,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                 tooltip='Clear input'
                 aria-label='Clear input button'
                 asChild
-                disabled={!level || isLoading || isCountingdown || isGeneratingVariations}
+                disabled={!level || isLoading || isCountingDown || isGeneratingVariations}
                 className='absolute right-20 z-10 !h-[20px] !w-[20px] rounded-full shadow-lg'
                 onClick={() => {
                   setUserInput('');
@@ -531,7 +529,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                 placeholder={
                   isGeneratingVariations
                     ? 'Generating taboo words...'
-                    : isCountingdown
+                    : isCountingDown
                       ? 'Ready to ask questions?'
                       : 'Enter your prompt...'
                 }
@@ -555,7 +553,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
                 disabled={
                   !level ||
                   isGeneratingVariations ||
-                  isCountingdown ||
+                  isCountingDown ||
                   isEmptyInput ||
                   userInputMatchedTabooWords.length > 0 ||
                   isLoading

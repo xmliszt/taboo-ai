@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { googleGeminiPro, HIGH_SAFETY_SETTINGS } from '@/lib/google-ai';
-import { IChat } from '@/lib/types/score.type';
+import { IScoreConversation } from '@/lib/types/score.type';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const prompts = body.prompt as IChat[];
+  const prompts = body.prompt as IScoreConversation[];
   const safety = body.safety;
   if (!prompts || prompts.length === 0) {
     return new Response('Missing prompts', { status: 400 });

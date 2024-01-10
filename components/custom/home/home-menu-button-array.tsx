@@ -9,7 +9,7 @@ import { AdminManager } from '@/lib/admin-manager';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import IGame from '@/lib/types/game.type';
+import { IGame } from '@/lib/types/game.type';
 import { isGameFinished } from '@/lib/utils/gameUtils';
 
 import { LoginReminderProps } from '../globals/login-reminder-dialog';
@@ -79,7 +79,7 @@ export default function HomeMenuButtonArray() {
         subtitle: 'We found your last played result is cached in the app. You can revisit it here!',
         ariaLabel: 'Click to revisit last game results',
         href: '/result',
-        visible: isGameFinished(game) && status !== 'authenticated',
+        visible: game !== null && isGameFinished(game) && status !== 'authenticated',
       },
       {
         key: 'view pricing',

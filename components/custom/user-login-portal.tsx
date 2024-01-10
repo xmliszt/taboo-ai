@@ -9,7 +9,7 @@ import { useAuth } from '@/components/auth-provider';
 import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import { createCustomerPortalSession } from '@/lib/services/subscriptionService';
-import IGame from '@/lib/types/game.type';
+import { IGame } from '@/lib/types/game.type';
 import { cn } from '@/lib/utils';
 import { isGameFinished } from '@/lib/utils/gameUtils';
 
@@ -98,7 +98,11 @@ export function UserLoginPortal() {
       {
         label: 'My Last Result',
         icon: <ScrollText />,
-        isVisible: status !== 'authenticated' && isGameFinished(game) && pathname !== '/result',
+        isVisible:
+          status !== 'authenticated' &&
+          game !== null &&
+          isGameFinished(game) &&
+          pathname !== '/result',
         onClick: () => {
           router.push('/result');
         },

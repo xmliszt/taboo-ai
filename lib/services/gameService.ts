@@ -62,6 +62,7 @@ export const uploadCompletedGameForUser = async (userId: string, levelId: string
       if (insertConversationResponse.error) throw insertConversationResponse.error;
     }
     // insert ai evaluations
+    if (!score.ai_evaluation) throw new Error('AI evaluation is missing');
     const insertAIEvaluationResponse = await supabaseClient.from('game_ai_evaluations').insert({
       score_id: insertedScore.id,
       ai_score: score.ai_evaluation.ai_score,

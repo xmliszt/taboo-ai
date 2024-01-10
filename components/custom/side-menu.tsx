@@ -8,7 +8,7 @@ import { isMobile } from 'react-device-detect';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import IGame from '@/lib/types/game.type';
+import { IGame } from '@/lib/types/game.type';
 import { isGameFinished } from '@/lib/utils/gameUtils';
 
 import { useAuth } from '../auth-provider';
@@ -124,7 +124,7 @@ export default function SideMenu() {
         path: '/result',
         title: 'See my last result',
         subtitle: 'We found your last played result is cached in the app. You can revisit it here!',
-        visible: status != 'authenticated' && isGameFinished(game),
+        visible: status != 'authenticated' && game !== null && isGameFinished(game),
         href: '/result',
       },
       {

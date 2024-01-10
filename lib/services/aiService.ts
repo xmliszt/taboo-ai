@@ -6,7 +6,7 @@ import {
   TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
 } from '../errors/google-ai-error-parser';
 import { ILevel } from '../types/level.type';
-import { IAIEvaluation, IScoreConversation } from '../types/score.type';
+import { IScore, IScoreConversation } from '../types/score.type';
 import { IWord } from '../types/word.type';
 import { formatResponseTextIntoArray } from '../utilities';
 
@@ -175,23 +175,24 @@ export async function fetchConversationCompletion(
 }
 
 /**
- * Perform evaluation
- * @param {IAIEvaluation} evaluation The evaluation to start.
- * @param {string} email The email of the user.
- * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
+ * Perform evaluation on the given score.
+ * @param userId The user ID. It is used to check user's subscription status so to choose a different AI model to perform evaluation.
+ * @param gameScore The score to perform evaluation on.
+ * @returns {Promise<{score: number, reasoning: string}>} The score and reasoning.
  */
 export async function performEvaluation(
-  evaluation: IAIEvaluation,
-  email?: string
+  userId: string,
+  gameScore: IScore
 ): Promise<{ score: number; reasoning: string }> {
   const response = await fetch('/api/evaluation', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: email,
-      evaluation: evaluation,
+      userId: userId,
+      target: gameScore.target_word,
+      taboos: gameScore.taboos,
+      conversation: gameScore.conversation,
     }),
   });
-  // Get the run_id and thread_id from response
   return await response.json();
 }

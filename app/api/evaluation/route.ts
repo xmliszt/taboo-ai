@@ -1,29 +1,35 @@
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
 
-import { firestore } from '@/firebase/firebase-admin';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { openai } from '@/lib/openai';
-import { IChat } from '@/lib/types/score.type';
+import { IScoreConversation } from '@/lib/types/score.type';
+import { createClient } from '@/lib/utils/supabase/server';
 
 type AIEvaluationMode = 'basic' | 'advanced';
 
 export async function POST(request: NextRequest) {
-  const { email: userEmail, evaluation } = (await request.json()) as {
-    email: string;
-    evaluation: {
-      target: string;
-      taboos: string[];
-      conversation: IChat[];
-    };
+  const { userId, target, taboos, conversation } = (await request.json()) as {
+    userId: string;
+    target: string;
+    taboos: string[];
+    conversation: IScoreConversation[];
   };
-  const { target, taboos, conversation } = evaluation;
   // Based on user's plan, determine which model to use
   let evaluationMode: AIEvaluationMode = 'basic';
-  if (userEmail) {
-    const userDoc = await firestore.doc(`users/${userEmail}`).get();
-    evaluationMode = userDoc.data()?.customerPlanType === 'pro' ? 'advanced' : 'basic';
+  const supabaseClient = createClient(cookies());
+  const getUserSubscriptionResponse = await supabaseClient
+    .from('subscriptions')
+    .select()
+    .eq('user_id', userId)
+    .single();
+  if (getUserSubscriptionResponse.error) {
+    console.error(getUserSubscriptionResponse.error);
+    return new Response('Error getting user subscription', { status: 500 });
   }
+  const userSubscription = getUserSubscriptionResponse.data;
+  evaluationMode = userSubscription.customer_plan_type === 'pro' ? 'advanced' : 'basic';
   console.log(`Using ${evaluationMode} mode for evaluation`);
 
   // Filter out conversation messages whose role is not 'user' or 'assistant'

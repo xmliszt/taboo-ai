@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import copy from 'clipboard-copy';
 import _ from 'lodash';
@@ -33,20 +33,20 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { performEvaluation } from '@/lib/services/aiService';
-import { fetchGameForUser, uploadCompletedGameForUser } from '@/lib/services/gameService';
+import { fetchGame, uploadCompletedGameForUser } from '@/lib/services/gameService';
 import { getLevel, isLevelExists } from '@/lib/services/levelService';
-import IGame from '@/lib/types/game.type';
-import { IHighlight } from '@/lib/types/highlight.type';
+import { IGame } from '@/lib/types/game.type';
 import { ILevel } from '@/lib/types/level.type';
-import { IChat, IScore } from '@/lib/types/score.type';
+import { IHighlight, IScore, IScoreConversation } from '@/lib/types/score.type';
 import { b64toBlob, getDifficultyMultipliers, shareImage } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import {
-  aggregateTotalScore,
   calculateTimeScore,
   getCalculatedScore,
   getCompletionSeconds,
+  getGameTotalDuration,
+  getGameTotalScore,
   getIndividualRating,
   isGameAIJudged,
   isGameFinished,
@@ -87,10 +87,13 @@ export default function ResultPage() {
   const shareCardRef = useRef<HTMLDivElement>(null);
   const evaluationStarted = useRef<boolean>(false);
 
+  const totalScore = game && level ? getGameTotalScore(game, level.difficulty) : 0;
+  const totalDuration = game ? getGameTotalDuration(game) : 0;
+
   // First render: bind the SHARE_SCORE event listener
   useEffect(() => {
     const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
-      if (!isGameFinished(game)) {
+      if (game === null || !isGameFinished(game)) {
         toast({
           title: 'Sorry we are not able to share your scores because they are incomplete.',
         });
@@ -114,37 +117,48 @@ export default function ResultPage() {
   }, [level, user, status]);
 
   useEffect(() => {
-    checkIfEligibleForLevelSubmission();
+    void checkIfEligibleForLevelSubmission();
   }, [checkIfEligibleForLevelSubmission]);
 
   // First render: wait until user auth is loaded
   useEffect(() => {
     if (status === 'loading') return;
     if (status === 'authenticated' && gameID) {
-      checkOnlineGame();
+      void checkOnlineGame();
     } else {
-      checkCachedGame();
+      void checkCachedGame();
     }
   }, [status, gameID]);
 
   const checkOnlineGame = async () => {
+    // guard: gameID
+    if (!gameID) return;
     try {
       setIsCheckingOnline(true);
-      const game = await fetchGameForUser(user?.email, gameID);
+      const game = await fetchGame(gameID);
       if (!game) {
         toast({ title: 'Sorry, it seems like this result does not exist.' });
         gameExistedInCloud = false;
-        checkCachedGame();
+        await checkCachedGame();
         return;
       }
-      const level = await getLevel(game.levelId);
+      if (!game.level_id) {
+        toast({
+          title: 'Sorry, this result is not compatible with the current version of Taboo AI.',
+          variant: 'destructive',
+        });
+        gameExistedInCloud = false;
+        await checkCachedGame();
+        return;
+      }
+      const level = await getLevel(game.level_id);
       if (level) {
         gameExistedInCloud = true;
         setGame(game);
         setLevel(level);
       } else {
         gameExistedInCloud = false;
-        checkCachedGame();
+        await checkCachedGame();
       }
     } catch (error) {
       console.error(error);
@@ -153,7 +167,7 @@ export default function ResultPage() {
         variant: 'destructive',
       });
       gameExistedInCloud = false;
-      checkCachedGame();
+      await checkCachedGame();
     } finally {
       setIsCheckingOnline(false);
     }
@@ -164,14 +178,14 @@ export default function ResultPage() {
       level === null ||
       user === undefined ||
       game === null ||
-      game.isCustomGame ||
+      game.is_custom_game ||
       !isGameFinished(game) ||
       gameExistedInCloud
     )
       return;
     try {
       setIsGameUploading(true);
-      await uploadCompletedGameForUser(user.email, level.id, game);
+      await uploadCompletedGameForUser(user.id, level.id, game);
       setIsUploadFailed(false);
     } catch (error) {
       console.error(error);
@@ -192,13 +206,13 @@ export default function ResultPage() {
     if (!game || !level) return;
     if (!isGameAIJudged(game) && !isLoading && !evaluationStarted.current) {
       evaluationStarted.current = true;
-      startEvaluation(game);
+      await startEvaluation(game);
     }
   };
 
-  // When game object changed
+  // When a game object changed
   useEffect(() => {
-    if (isGameFinished(game)) tryUploadGameToCloud();
+    if (game && isGameFinished(game)) void tryUploadGameToCloud();
   }, [game]);
 
   const startEvaluation = async (game: IGame) => {
@@ -217,11 +231,11 @@ export default function ResultPage() {
       `Stay tuned! Taboo AI is evaluating your performance... [${idx + 1}/${game.scores.length}]`
     );
     const score = game.scores[idx];
-    const aiScore = score.aiScore;
-    const aiExplanation = score.aiExplanation;
+    const aiScore = score.ai_evaluation?.ai_score;
+    const aiExplanation = score.ai_evaluation?.ai_explanation;
     if (isDevMode()) {
-      let aiMockScore: number | undefined;
-      let aiMockReasoning: string | undefined;
+      let aiMockScore;
+      let aiMockReasoning;
       switch (getDevMode()) {
         case '1':
         case '2':
@@ -237,21 +251,16 @@ export default function ResultPage() {
           aiMockScore = _.random(0, 100);
           aiMockReasoning = 'This is a test run.';
       }
-      updateGameAIEvaluationAtIndex(idx, aiMockScore, aiMockReasoning);
+      aiMockScore !== undefined &&
+        aiMockReasoning !== undefined &&
+        updateGameAIEvaluationAtIndex(idx, aiMockScore, aiMockReasoning);
       setIsScoring(false);
       return;
     }
-    if (aiScore === undefined || aiExplanation === undefined) {
+    if (user && (aiScore === undefined || aiExplanation === undefined)) {
       // Start the AI Evaluation
       try {
-        const { score: evaluationScore, reasoning } = await performEvaluation(
-          {
-            target: score.target,
-            taboos: score.taboos,
-            conversation: score.conversation,
-          },
-          user?.email
-        );
+        const { score: evaluationScore, reasoning } = await performEvaluation(user.id, score);
         updateGameAIEvaluationAtIndex(idx, evaluationScore, reasoning);
       } catch (error) {
         console.error(error);
@@ -265,13 +274,15 @@ export default function ResultPage() {
     setIsScoring(false);
   };
 
-  const updateGameAIEvaluationAtIndex = (idx: number, aiScore?: number, aiReasoning?: string) => {
+  const updateGameAIEvaluationAtIndex = (idx: number, aiScore: number, aiReasoning: string) => {
     const game = getPersistence<IGame>(HASH.game);
     if (!game || !game.scores) return;
-    game.scores[idx].aiScore = aiScore;
-    game.scores[idx].aiExplanation = aiReasoning;
-    game.scores.sort((a, b) => a.id - b.id);
-    game.totalScore = aggregateTotalScore(game.scores, game.difficulty);
+    game.scores[idx].ai_evaluation = {
+      ai_score: aiScore,
+      ai_explanation: aiReasoning,
+      ai_suggestion: null,
+    };
+    game.scores.sort((a, b) => a.score_index - b.score_index);
     setGame(game);
     setPersistence(HASH.game, game);
   };
@@ -331,8 +342,8 @@ export default function ResultPage() {
         navigator
           .share({
             title:
-              game.totalScore > 0
-                ? `I scored ${game.totalScore} in Taboo AI!`
+              totalScore > 0
+                ? `I scored ${totalScore} in Taboo AI!`
                 : 'Look at my results at Taboo AI!',
             text: title,
           })
@@ -395,7 +406,7 @@ export default function ResultPage() {
       let startIndex = 0;
       let endIndex = 0;
       for (const highlight of highlights) {
-        endIndex = highlight.start;
+        endIndex = highlight.start_position;
         while (/[\W_]/g.test(message[endIndex])) {
           endIndex++;
         }
@@ -407,7 +418,7 @@ export default function ResultPage() {
           )
         );
         startIndex = endIndex;
-        endIndex = highlight.end;
+        endIndex = highlight.end_position;
         // Highlighted part
         parts.push(
           onHighlightMessagePart(
@@ -433,10 +444,15 @@ export default function ResultPage() {
     );
   };
 
-  const renderMessageBubble = (idx: number, chat: IChat, score: IScore, isLastBubble = false) => {
+  const renderMessageBubble = (
+    idx: number,
+    chat: IScoreConversation,
+    score: IScore,
+    isLastBubble = false
+  ) => {
     if (chat.role === 'assistant') {
       return isLastBubble
-        ? generateHighlightedMessage(idx, chat.content, score.responseHighlights)
+        ? generateHighlightedMessage(idx, chat.content, score.highlights)
         : chat.content;
     } else if (chat.role === 'error') {
       return <span className='text-slate-500'>{chat.content}</span>;
@@ -473,18 +489,17 @@ export default function ResultPage() {
     );
   };
 
-  const generateStatsItems = (score: IScore, difficulty: number): StatItem[] => {
-    const timeMultipler = level ? getDifficultyMultipliers(level.difficulty).timeMultiplier : null;
-    const promptMultiplier = level
-      ? getDifficultyMultipliers(level.difficulty).promptMultiplier
-      : null;
+  const generateStatsItems = (score: IScore): StatItem[] => {
+    if (!level) return [];
+    const timeMultiplier = getDifficultyMultipliers(level.difficulty).timeMultiplier;
+    const promptMultiplier = getDifficultyMultipliers(level.difficulty).promptMultiplier;
     const items: StatItem[] = [
       {
         title: 'Ratings',
         content: (
           <StarRatingBar
             className='inline-flex'
-            rating={getIndividualRating(getCalculatedScore(score, difficulty))}
+            rating={getIndividualRating(getCalculatedScore(score, level.difficulty))}
             maxRating={5}
             size={15}
           />
@@ -492,46 +507,40 @@ export default function ResultPage() {
       },
       {
         title: 'Total Score',
-        content:
-          score.aiScore !== undefined ? (
-            <span>{getCalculatedScore(score, difficulty).toString()}</span>
-          ) : (
-            <span>N/A</span>
-          ),
+        content: score.ai_evaluation ? <span>{totalScore.toString()}</span> : <span>N/A</span>,
       },
       {
         title: 'Total Time Taken',
-        content: <span>{`${getCompletionSeconds(score.completion)} seconds`}</span>,
+        content: <span>{`${getCompletionSeconds(score.duration)} seconds`}</span>,
       },
       {
-        title: `Time Score (${(timeMultipler ?? 0) * 100}%)`,
+        title: `Time Score (${timeMultiplier * 100}%)`,
         content: (
-          <span>{`${calculateTimeScore(score).toString()} x ${
-            (timeMultipler ?? 0) * 100
-          }% = ${_.round(calculateTimeScore(score) * (timeMultipler ?? 0), 1)}`}</span>
+          <span>{`${calculateTimeScore(score).toString()} x ${timeMultiplier * 100}% = ${_.round(
+            calculateTimeScore(score) * timeMultiplier,
+            1
+          )}`}</span>
         ),
       },
       {
-        title: `Clue Score (${(promptMultiplier ?? 0) * 100}%)`,
-        content:
-          score.aiScore !== undefined ? (
-            <span>{`${score.aiScore.toString()} x ${(promptMultiplier ?? 0) * 100}% = ${_.round(
-              score.aiScore * (promptMultiplier ?? 0),
-              1
-            )}`}</span>
-          ) : (
-            <Button
-              className='ml-4'
-              size='sm'
-              variant='outline'
-              onClick={() => {
-                retryScoring(score.id);
-              }}
-              disabled={isScoring}
-            >
-              {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
-            </Button>
-          ),
+        title: `Clue Score (${promptMultiplier * 100}%)`,
+        content: score.ai_evaluation ? (
+          <span>{`${score.ai_evaluation.ai_score.toString()} x ${
+            promptMultiplier * 100
+          }% = ${_.round(score.ai_evaluation.ai_score * promptMultiplier, 1)}`}</span>
+        ) : (
+          <Button
+            className='ml-4'
+            size='sm'
+            variant='outline'
+            onClick={async () => {
+              await retryScoring(score.score_index);
+            }}
+            disabled={isScoring}
+          >
+            {isScoring ? <Spinner /> : 'Something went wrong! Re-Score'}
+          </Button>
+        ),
       },
     ];
     if (score.taboos.length > 0) {
@@ -542,18 +551,18 @@ export default function ResultPage() {
     }
     items.push({
       title: 'AI Evaluation',
-      content: score.aiExplanation ? (
+      content: score.ai_evaluation ? (
         <span>
           <ResultsAiExplanationInfoDialog isAuthenticated={status === 'authenticated'} />
-          {score.aiExplanation ?? CONSTANTS.errors.aiJudgeFail}
+          {score.ai_evaluation.ai_explanation ?? CONSTANTS.errors.aiJudgeFail}
         </span>
       ) : (
         <Button
           className='ml-4'
           size='sm'
           variant='outline'
-          onClick={() => {
-            retryScoring(score.id);
+          onClick={async () => {
+            await retryScoring(score.score_index);
           }}
           disabled={isScoring}
         >
@@ -571,7 +580,7 @@ export default function ResultPage() {
         <AccordionTrigger key={`accordion-trigger-${score.id}`}>
           <div className='flex w-full flex-row items-center justify-between gap-2 text-primary'>
             <div className='flex flex-grow flex-row items-center justify-between gap-2'>
-              <span className='text-left leading-snug'>{_.startCase(score.target)}</span>
+              <span className='text-left leading-snug'>{_.startCase(score.target_word)}</span>
               <div className='flex max-w-[120px] animate-pulse flex-row items-center gap-1 whitespace-nowrap text-xs text-muted-foreground'>
                 {isMobile || isTablet ? <Hand size={15} /> : <MousePointerClick size={15} />}{' '}
                 {isMobile || isTablet ? 'Tap' : 'Click'} to{' '}
@@ -579,9 +588,9 @@ export default function ResultPage() {
               </div>
             </div>
             <div className='flex flex-row items-center'>
-              {score.aiScore !== undefined ? (
+              {score.ai_evaluation ? (
                 <span className='font-extrabold leading-snug' key={score.id}>
-                  {getCalculatedScore(score, game.difficulty)}/{100}
+                  {totalScore}/{100}
                 </span>
               ) : (
                 <IconButton
@@ -589,9 +598,9 @@ export default function ResultPage() {
                   aria-label='Re-Score'
                   tooltip='Re-Score'
                   size='sm'
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation();
-                    retryScoring(score.id);
+                    await retryScoring(score.score_index);
                   }}
                   disabled={isScoring}
                 >
@@ -603,7 +612,7 @@ export default function ResultPage() {
         </AccordionTrigger>
         <AccordionContent key={`accordion-content-${score.id}`} className='rounded-lg bg-secondary'>
           {generateConversation(score)}
-          {generateStatsItems(score, game.difficulty).map((item, idx) => {
+          {generateStatsItems(score).map((item, idx) => {
             return generateMobileStatsRow(
               `accordion-mobile-stats-row-${score.id}-${idx}`,
               item.title,
@@ -621,10 +630,10 @@ export default function ResultPage() {
         {isUploadFailed && (
           <ResultsUploadAlert isUploading={isGameUploading} retryUpload={tryUploadGameToCloud} />
         )}
-        {level && (
+        {level && game && (
           <ResultsSummaryCard
-            total={game.totalDuration}
-            totalScore={game.totalScore}
+            total={totalDuration}
+            totalScore={totalScore}
             topicName={level.name}
             difficulty={level.difficulty}
           />
@@ -715,13 +724,13 @@ export default function ResultPage() {
           onOpenChange={(open) => {
             setIsShareCardOpen(open);
           }}
-          totalScore={game.totalScore}
+          totalScore={totalScore}
           topicName={level.name}
           scores={game.scores.map((score) => {
             return {
-              key: `${score.id}-${score.target}`,
-              target: score.target,
-              calculatedScore: getCalculatedScore(score, game.difficulty),
+              key: `${score.id}-${score.target_word}`,
+              target: score.target_word,
+              calculatedScore: getCalculatedScore(score, level.difficulty),
             };
           })}
           onGenerateShareCardImage={generateShareCardImage}

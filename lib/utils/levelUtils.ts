@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import { IHighlight } from '../types/highlight.type';
-import { ILevel } from '../types/level.type';
+import { ILevel } from '@/lib/types/level.type';
+import { IHighlight } from '@/lib/types/score.type';
 
 export type SortType =
   | 'a-z'
@@ -102,9 +102,10 @@ export const generateHighlights = (
       if (result.index === regex.lastIndex) {
         regex.lastIndex++;
       }
-      const startIndex = result.index;
-      const endIndex = regex.lastIndex;
-      const highlight = { start: startIndex, end: endIndex };
+      const highlight: IHighlight = {
+        start_position: result.index,
+        end_position: regex.lastIndex,
+      };
       highlights.push(highlight);
     }
   }

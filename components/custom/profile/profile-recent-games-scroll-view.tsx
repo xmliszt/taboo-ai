@@ -31,23 +31,26 @@ export default function ProfileRecentGamesScrollView() {
   const router = useRouter();
 
   useEffect(() => {
-    user && getRecentGamesData(user.email);
+    user && getRecentGamesData(user.id);
   }, [user]);
 
-  const getRecentGamesData = async (email: string) => {
+  const getRecentGamesData = async (userId: string) => {
     try {
       setIsLoading(true);
-      const games = await fetchRecentGames(email, numberOfMostRecentGamesToDisplay, 0);
+      const games = await fetchRecentGames(userId, numberOfMostRecentGamesToDisplay, 0);
       const recentGames: RecentGame[] = [];
       for (const game of games) {
-        const levelId = game.levelId;
+        const levelId = game.level_id;
+        if (!levelId) continue;
         const level = await getLevel(levelId);
-        const topicName = _.startCase(level?.name ?? 'Unknown');
-        const difficultyString = getDifficulty(game.difficulty, false);
-        const finishedAt = moment(game.finishedAt).format(DateUtils.formats.gamePlayedAt);
-        const totalScore = aggregateTotalScore(game.scores, game.difficulty);
+        if (!level) continue;
+        const topicName = _.startCase(level.name);
+        const difficultyString = getDifficulty(level.difficulty, false);
+        const finishedAt = moment(game.finished_at).format(DateUtils.formats.gamePlayedAt);
+        const totalScore = aggregateTotalScore(game.scores, level.difficulty);
         const totalDuration = aggregateTotalTimeTaken(game.scores);
         const totalRating = getOverallRating(totalScore);
+        if (!game.id) continue;
         recentGames.push({
           id: game.id,
           topicName,

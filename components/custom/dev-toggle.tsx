@@ -7,9 +7,9 @@ import { Bot } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
 import { CONSTANTS } from '@/lib/constants';
-import { getHash, HASH } from '@/lib/hash';
+import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
-import IGame from '@/lib/types/game.type';
+import { IGame } from '@/lib/types/game.type';
 import { ILevel } from '@/lib/types/level.type';
 import { IScore } from '@/lib/types/score.type';
 import { getRandomInt } from '@/lib/utilities';
@@ -21,7 +21,6 @@ import {
   setDevModeOff,
   setDevModeOn,
 } from '@/lib/utils/devUtils';
-import { aggregateTotalScore, aggregateTotalTimeTaken } from '@/lib/utils/gameUtils';
 
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
@@ -72,32 +71,37 @@ const DevToggle = () => {
       for (let i = 1; i <= CONSTANTS.numberOfQuestionsPerGame; i++) {
         const target = level.words[i - 1];
         savedScores.push({
-          id: i,
-          target: target,
-          taboos: [],
-          conversation: [
-            { role: 'user', content: 'Sample user input: ' + target },
-            { role: 'assistant', content: 'Sample response: ' + target },
-          ],
-          completion: getRandomInt(1, 100),
-          responseHighlights: [
+          score_index: i,
+          duration: getRandomInt(1, 100),
+          target_word: target,
+          taboos: [target],
+          highlights: [
             {
-              start: 17,
-              end: 17 + target.length,
+              start_position: 17,
+              end_position: 17 + target.length,
             },
           ],
+          conversation: [
+            { role: 'user', content: 'Sample user input: ' + target },
+            {
+              role: 'assistant',
+              content: 'Sample response: ' + target,
+            },
+          ],
+          ai_evaluation: {
+            ai_explanation: 'Sample AI evaluation',
+            ai_score: getRandomInt(0, 100),
+            ai_suggestion: 'Sample AI suggestion',
+          },
         });
       }
       // Create IGame object
-      const completedAt = new Date();
       const game: IGame = {
-        id: getHash(`admin-${level.id}-${completedAt.toISOString()}`),
-        levelId: level.id,
-        totalScore: aggregateTotalScore(savedScores, level.difficulty),
-        totalDuration: aggregateTotalTimeTaken(savedScores),
-        difficulty: level.difficulty,
-        finishedAt: completedAt,
+        level_id: level.id,
         scores: savedScores,
+        started_at: new Date().toISOString(),
+        finished_at: new Date().toISOString(),
+        is_custom_game: false,
       };
       setPersistence(HASH.game, game);
     }

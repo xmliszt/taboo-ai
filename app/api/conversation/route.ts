@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { googleGeminiPro } from '@/lib/google-ai';
-import { IChat } from '@/lib/types/score.type';
+import { IScoreConversation } from '@/lib/types/score.type';
 
 /**
  * @api {post} /api/conversation Complete a conversation
@@ -13,7 +13,7 @@ import { IChat } from '@/lib/types/score.type';
  * @apiError (500) {String} Error processing conversation.
  */
 export async function POST(request: Request) {
-  const conversation = (await request.json()).conversation as IChat[];
+  const conversation = (await request.json()).conversation as IScoreConversation[];
   if (!conversation) {
     return new Response('Missing conversation', { status: 400 });
   }
