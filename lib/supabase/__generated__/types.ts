@@ -178,18 +178,21 @@ export interface Database {
           duration: number
           game_id: string
           id: string
+          score_index: number
           target_word: string
         }
         Insert: {
           duration?: number
           game_id: string
           id?: string
+          score_index?: number
           target_word: string
         }
         Update: {
           duration?: number
           game_id?: string
           id?: string
+          score_index?: number
           target_word?: string
         }
         Relationships: [

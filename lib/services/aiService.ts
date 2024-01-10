@@ -5,9 +5,8 @@ import {
   CONVERSATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
   TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
 } from '../errors/google-ai-error-parser';
-import IEvaluation from '../types/evaluation.type';
 import { ILevel } from '../types/level.type';
-import { IChat } from '../types/score.type';
+import { IAIEvaluation, IScoreConversation } from '../types/score.type';
 import { IWord } from '../types/word.type';
 import { formatResponseTextIntoArray } from '../utilities';
 
@@ -139,12 +138,11 @@ export async function askAIForCreativeTopic(
 
 /**
  * Fetch chat completion from conversation
- * @param {IChat[]} conversation The conversation to complete.
- * @returns {Promise<{conversation: IChat[]}>} The completed conversation.
+ * @param {IScoreConversation[]} conversation The conversation to complete.
  */
 export async function fetchConversationCompletion(
-  conversation: IChat[]
-): Promise<{ conversation: IChat[] }> {
+  conversation: IScoreConversation[]
+): Promise<{ conversation: IScoreConversation[] }> {
   const response = await fetch('/api/conversation', {
     method: 'POST',
     headers: {
@@ -178,12 +176,12 @@ export async function fetchConversationCompletion(
 
 /**
  * Perform evaluation
- * @param {IEvaluation} evaluation The evaluation to start.
+ * @param {IAIEvaluation} evaluation The evaluation to start.
  * @param {string} email The email of the user.
  * @returns {Promise<{score: number, reasoning: string}>} The runId and threadId of the evaluation.
  */
 export async function performEvaluation(
-  evaluation: IEvaluation,
+  evaluation: IAIEvaluation,
   email?: string
 ): Promise<{ score: number; reasoning: string }> {
   const response = await fetch('/api/evaluation', {

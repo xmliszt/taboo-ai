@@ -1,23 +1,14 @@
-import { IHighlight } from './highlight.type';
+import { Database } from '@/lib/supabase/extension/types';
 
-// {id} {word} {your question} {ai response} {completion time in seconds} {the higlights for word matches}
-export interface IScore {
-  id: number;
-  target: string;
+export type IScore = Database['public']['Tables']['game_scores']['Row'] & {
   taboos: string[];
-  conversation: IChat[];
-  completion: number;
-  aiScore?: number;
-  aiExplanation?: string;
-  responseHighlights: IHighlight[];
-}
+  conversation: IScoreConversation[];
+  highlights: IHighlight[];
+  ai_evaluation: IAIEvaluation;
+};
 
-export interface IAIScore {
-  score?: number;
-  explanation?: string;
-}
+export type IAIEvaluation = Database['public']['Tables']['game_ai_evaluations']['Row'];
 
-export interface IChat {
-  role: 'user' | 'assistant' | 'system' | 'error';
-  content: string;
-}
+export type IScoreConversation = Database['public']['Tables']['game_score_conversations']['Row'];
+
+export type IHighlight = Database['public']['Tables']['game_score_highlights']['Row'];

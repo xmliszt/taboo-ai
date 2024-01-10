@@ -19,7 +19,6 @@ import { getHash, HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
 import { getLevel, incrementLevelPopularity } from '@/lib/services/levelService';
-import { incrementGameAttemptedCount } from '@/lib/services/userService';
 import { fetchTabooWords } from '@/lib/services/wordService';
 import IGame from '@/lib/types/game.type';
 import { IHighlight } from '@/lib/types/highlight.type';
@@ -49,7 +48,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
 
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
-  const hasIncrementedGameAttemptedCount = useRef<boolean>(false);
 
   const [isWaitingForAIResponse, setIsWaitingForAIResponse] = useState(false);
   const [level, setLevel] = useState<ILevel | null>(null);
@@ -84,20 +82,12 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     },
   });
 
-  // When timer starts running, we focus on the textfield input
+  // When the timer starts running, we focus on the text field input
   useEffect(() => {
     if (timerStatus === 'RUNNING') {
       inputTextField.current?.focus();
     }
   }, [timerStatus]);
-
-  // When user is authenticated, we increment the game attempted count
-  useEffect(() => {
-    if (!hasIncrementedGameAttemptedCount.current && user && id !== 'ai') {
-      hasIncrementedGameAttemptedCount.current = true;
-      incrementGameAttemptedCount(user.email);
-    }
-  }, [user]);
 
   const isEmptyInput = userInput.length <= 0;
 
