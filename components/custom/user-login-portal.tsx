@@ -1,11 +1,23 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { BookMarked, Construction, LogIn, LogOut, PenTool, ScrollText, User } from 'lucide-react';
-import moment from 'moment';
+import {
+  AlignJustify,
+  BookMarked,
+  CircleUser,
+  Construction,
+  LogOut,
+  PenTool,
+  ScrollText,
+  User,
+} from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
+import { LoginErrorEventProps } from '@/components/custom/globals/login-error-dialog';
+import { Button } from '@/components/ui/button';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
 import { createCustomerPortalSession } from '@/lib/services/subscriptionService';
@@ -13,8 +25,6 @@ import { IGame } from '@/lib/types/game.type';
 import { cn } from '@/lib/utils';
 import { isGameFinished } from '@/lib/utils/gameUtils';
 
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -124,49 +134,43 @@ export function UserLoginPortal() {
     ];
   }, [pathname, game, status, userPlan?.customerId]);
 
+  const handleLogin = async () => {
+    if (!login) return;
+    try {
+      await login();
+    } catch (error) {
+      console.error(error);
+      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
+        error: error.message,
+      });
+    }
+  };
+
   return user && status === 'authenticated' ? (
     <div className='flex flex-row items-center gap-2'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <IconButton aria-label='Click to access user menu' tooltip='Access user menu'>
-            <User strokeWidth={1.5} />
-          </IconButton>
+          <Button
+            aria-label='Click to access user menu'
+            className='flex h-[32px] flex-row items-center gap-1 p-1'
+          >
+            {user.photo_url && (
+              <Image
+                className='rounded-[7px]'
+                src={user.photo_url}
+                alt='user avatar'
+                width={23}
+                height={23}
+              />
+            )}
+            <AlignJustify size={20} />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent loop sideOffset={10} align='end'>
           <DropdownMenuLabel className='flex flex-col'>
             <span className='font-light italic'>You are logged in as</span>
             <span>{user.email}</span>
           </DropdownMenuLabel>
-          {userPlan?.type && (
-            <>
-              <Badge className='mb-2 ml-2'>{userPlan.type.toUpperCase()}</Badge>
-              {userPlan?.trialEndDate?.isAfter(moment()) && (
-                <Badge variant='secondary' className='mb-2 ml-2'>
-                  Trial
-                </Badge>
-              )}
-            </>
-          )}
-          {userPlan?.type === 'free' && (
-            <Button
-              variant='link'
-              size='sm'
-              className='h-auto animate-pulse underline'
-              onClick={() => {
-                router.push('/pricing');
-              }}
-            >
-              Upgrade My Plan
-            </Button>
-          )}
-          {userPlan?.trialEndDate?.isAfter(moment()) && (
-            <>
-              <DropdownMenuSeparator />
-              <p className='p-2 text-sm font-semibold italic'>
-                Trial ends on {userPlan.trialEndDate.format('DD MMM YYYY, hh:mm A')}
-              </p>
-            </>
-          )}
           <DropdownMenuSeparator />
           {userMenuItems.map(
             (item) =>
@@ -194,9 +198,18 @@ export function UserLoginPortal() {
     <Spinner />
   ) : (
     <div>
-      <IconButton aria-label='Click to login' onClick={login} tooltip='Login'>
-        <LogIn />
-      </IconButton>
+      {pathname === '/' || pathname === '/levels' ? (
+        <Button aria-label='Click to login' onClick={handleLogin} className='h-[32px] px-2 py-1'>
+          <div className='flex flex-row items-center gap-1'>
+            <CircleUser size='23' />
+            Log in
+          </div>
+        </Button>
+      ) : (
+        <IconButton aria-label='Click to login' tooltip='Log in' onClick={handleLogin}>
+          <CircleUser />
+        </IconButton>
+      )}
     </div>
   );
 }

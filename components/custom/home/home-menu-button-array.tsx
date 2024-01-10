@@ -1,10 +1,20 @@
 'use client';
 
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookMarked, BookPlus, PenSquare, Quote, ScrollText, User, View } from 'lucide-react';
+import {
+  BookMarked,
+  BookPlus,
+  CircleUser,
+  PenSquare,
+  Quote,
+  ScrollText,
+  User,
+  View,
+} from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
+import { LoginErrorEventProps } from '@/components/custom/globals/login-error-dialog';
 import { AdminManager } from '@/lib/admin-manager';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
@@ -27,7 +37,7 @@ interface HomeMenuButtonData {
 }
 
 export default function HomeMenuButtonArray() {
-  const { user, userPlan, status } = useAuth();
+  const { user, userPlan, status, login } = useAuth();
   const router = useRouter();
   const [game, setGame] = useState<IGame | null>(null);
 
@@ -51,8 +61,31 @@ export default function HomeMenuButtonArray() {
     }
   };
 
+  const handleLogin = async () => {
+    if (!login) return;
+    try {
+      await login();
+    } catch (error) {
+      console.error(error);
+      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
+        error: error.message,
+      });
+    }
+  };
+
   const homeMenuButtonData = useMemo<HomeMenuButtonData[]>(
     () => [
+      {
+        key: 'log in',
+        // eslint-disable-next-line react/jsx-no-undef
+        icon: <CircleUser size={20} />,
+        title: 'Log In',
+        subtitle:
+          'Unlock personal profile, game history, join topic rankings, and contribute new topics!',
+        ariaLabel: 'Click to log in',
+        onClick: handleLogin,
+        visible: status === 'unauthenticated',
+      },
       {
         key: 'play a topic',
         icon: <Quote size={20} />,
@@ -96,7 +129,7 @@ export default function HomeMenuButtonArray() {
         icon: <User size={20} />,
         title: 'View My Profile',
         subtitle:
-          'Access your personal profile to see your game history, game statistics, edit your nickname, manage privacy settings, delete yoru account, and more!',
+          'Access your game history, statistics, edit nickname, manage privacy settings, and more!',
         ariaLabel: 'Click to visit your personal profile',
         href: '/profile',
         visible: user !== undefined && status === 'authenticated',
