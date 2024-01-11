@@ -185,7 +185,7 @@ export async function getLevelTopScorerStats() {
   const supabaseClient = createClient();
   const fetchLevelTopScorerStatsResponse = await supabaseClient
     .from('level_top_scorer_stats')
-    .select('*');
+    .select();
   if (fetchLevelTopScorerStatsResponse.error) throw fetchLevelTopScorerStatsResponse.error;
   const levelTopScorerStats: {
     [key: string]: { level_id: string; player_ids: string[]; total_score: number };

@@ -507,7 +507,11 @@ export default function ResultPage() {
       },
       {
         title: 'Total Score',
-        content: score.ai_evaluation ? <span>{totalScore.toString()}</span> : <span>N/A</span>,
+        content: score.ai_evaluation ? (
+          <span>{getCalculatedScore(score, level.difficulty).toString()}</span>
+        ) : (
+          <span>N/A</span>
+        ),
       },
       {
         title: 'Total Time Taken',
@@ -574,7 +578,7 @@ export default function ResultPage() {
   };
 
   const generateMobileScoreStack = () => {
-    if (!game) return <></>;
+    if (!game || !level) return <></>;
     return game.scores.map((score) => (
       <AccordionItem key={`word-${score.id}`} value={`word-${score.id}`} className='pb-1'>
         <AccordionTrigger key={`accordion-trigger-${score.id}`}>
@@ -590,7 +594,7 @@ export default function ResultPage() {
             <div className='flex flex-row items-center'>
               {score.ai_evaluation ? (
                 <span className='font-extrabold leading-snug' key={score.id}>
-                  {totalScore}/{100}
+                  {getCalculatedScore(score, level.difficulty)}/{100}
                 </span>
               ) : (
                 <IconButton

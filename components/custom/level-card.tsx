@@ -170,9 +170,9 @@ export function LevelCard({
           </div>
           <div className='flex flex-col items-center gap-2'>
             {topScorerNames.length > 1 ? (
-              <div className='italic'>by Top Scorer</div>
-            ) : (
               <div className='italic'>by Top Scorers</div>
+            ) : (
+              <div className='italic'>by Top Scorer</div>
             )}
             <div className='text-2xl font-extrabold'>{topScorerNames.join(' & ')}</div>
           </div>
