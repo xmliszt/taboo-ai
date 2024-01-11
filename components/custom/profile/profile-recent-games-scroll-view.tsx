@@ -88,7 +88,7 @@ export default function ProfileRecentGamesScrollView() {
           tooltip='Refresh past games'
           variant='link'
           onClick={() => {
-            user && getRecentGamesData(user.email);
+            user && getRecentGamesData(user.id);
           }}
         >
           <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />

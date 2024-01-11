@@ -65,7 +65,7 @@ export function TopicReviewSheet({
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
           const targetWord = targetWords[i];
-          await addTabooWords(targetWord, wordList, false, user.email);
+          await addTabooWords(targetWord, wordList, false, user.id);
         }
 
       await sendMyselfEmail();

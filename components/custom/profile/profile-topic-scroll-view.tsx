@@ -19,13 +19,13 @@ export default function ProfilePlayedTopicScrollView() {
   const [playedTopics, setPlayedTopics] = useState<IUserLevel[]>([]);
 
   useEffect(() => {
-    user && getPlayedTopicsData(user.email);
+    user && getPlayedTopicsData(user.id);
   }, [user]);
 
-  const getPlayedTopicsData = async (email: string) => {
+  const getPlayedTopicsData = async (userId: string) => {
     try {
       setIsLoading(true);
-      const playedTopics = await getLevelsCompletedByUser(email);
+      const playedTopics = await getLevelsCompletedByUser(userId);
       playedTopics.push({
         level_id: 'play-more',
         completed_times: 0,
@@ -49,7 +49,7 @@ export default function ProfilePlayedTopicScrollView() {
           tooltip='Refresh past games'
           variant='link'
           onClick={() => {
-            user && void getPlayedTopicsData(user.email);
+            user && void getPlayedTopicsData(user.id);
           }}
         >
           <RefreshCcw className={cn(isLoading ? 'animate-spin' : 'animate-none')} />

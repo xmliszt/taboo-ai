@@ -20,7 +20,7 @@ export default function ProfilePrivacySettingsCard({
   const [isAnonymous, setIsAnonymous] = useState(user.is_anonymous ?? false);
 
   useEffect(() => {
-    updateUserAnonymity(user.email, isAnonymous);
+    void updateUserAnonymity(user.id, isAnonymous);
   }, [isAnonymous]);
 
   return (
