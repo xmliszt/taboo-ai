@@ -1,6 +1,9 @@
+'use server';
+
 import 'server-only';
 
 import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
 import { AsyncReturnType } from 'type-fest';
 
 import { createClient } from '@/lib/utils/supabase/server';
@@ -24,3 +27,19 @@ export const fetchAllLevelsAndRanks = async () => {
 export type FetchAllLevelsAndRanksReturnTypeSingle = AsyncReturnType<
   typeof fetchAllLevelsAndRanks
 >[number];
+
+/**
+ * Fetches all levels
+ */
+export const fetchAllLevels = async () => {
+  const supabaseClient = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {},
+    }
+  );
+  const fetchAllLevelsResponse = await supabaseClient.from('levels').select();
+  if (fetchAllLevelsResponse.error) throw fetchAllLevelsResponse.error;
+  return fetchAllLevelsResponse.data;
+};

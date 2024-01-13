@@ -26,7 +26,7 @@ interface LevelCardProps {
   allowedPlanType?: SubscriptionPlanType[];
 }
 
-export async function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
+export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
   const router = useRouter();
   const { user, userPlan, status } = useAuth();
   const [pointHasDown, setPointHasDown] = useState(false);

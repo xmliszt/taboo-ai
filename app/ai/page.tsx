@@ -47,7 +47,7 @@ export default function AiPage() {
           setPersistence(HASH.level, level);
           router.push('/level/ai');
         } else {
-          throw new Error(CONSTANTS.errors.overloaded);
+          setErrorMessage(CONSTANTS.errors.overloaded);
         }
       } catch (error) {
         setErrorMessage(error.message ?? 'Something went wrong.');

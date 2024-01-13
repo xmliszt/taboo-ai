@@ -15,8 +15,8 @@ export default async function LevelsPage(props: LevelsPageProps) {
   const levels = await fetchAllLevelsAndRanks();
   const { rank, search, sort } = props.searchParams;
   const isRankingModeOn = rank === 'true';
-  const searchTerm = search || '';
-  const selectedSorter = sort || 'create-new';
+  const searchTerm = search ?? '';
+  const selectedSorter = sort ?? 'create-new';
 
   // filter levels by search term
   const filteredLevels = levels.filter((level) => {
