@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { toast } from 'sonner';
 
 import { sendEmail } from '@/lib/services/emailService';
-import { addLevel, isLevelExists } from '@/lib/services/levelService';
+import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
 import { addTabooWords } from '@/lib/services/wordService';
 import { IUser } from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
@@ -48,7 +48,7 @@ export function TopicReviewSheet({
   const submitNewTopic = async () => {
     setisCreatingLevel(true);
     try {
-      const exists = await isLevelExists(topicName, user.email);
+      const exists = await isLevelWithSameNameSubmittedBySameUser(topicName, user.id);
       if (exists) {
         toast.info('You have already submitted this topic.');
         onTopicSubmitted && onTopicSubmitted();

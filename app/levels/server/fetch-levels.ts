@@ -3,7 +3,6 @@
 import 'server-only';
 
 import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
 import { AsyncReturnType } from 'type-fest';
 
 import { createClient } from '@/lib/utils/supabase/server';
@@ -30,15 +29,10 @@ export type FetchAllLevelsAndRanksReturnTypeSingle = AsyncReturnType<
 
 /**
  * Fetches all levels
+ * FIXME: cookies() not available when called in generateStaticParams()
  */
 export const fetchAllLevels = async () => {
-  const supabaseClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {},
-    }
-  );
+  const supabaseClient = createClient(cookies());
   const fetchAllLevelsResponse = await supabaseClient.from('levels').select();
   if (fetchAllLevelsResponse.error) throw fetchAllLevelsResponse.error;
   return fetchAllLevelsResponse.data;

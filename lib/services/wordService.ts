@@ -4,18 +4,6 @@ import { createClient } from '@/lib/utils/supabase/client';
 
 import { IWord } from '../types/word.type';
 
-export const isTargetWordExists = async (targetWord: string): Promise<boolean> => {
-  const supabaseClient = createClient();
-  const target = _.toLower(_.trim(targetWord));
-  const isTargetExistsResponse = await supabaseClient
-    .from('words')
-    .select()
-    .eq('word', target)
-    .maybeSingle();
-  if (isTargetExistsResponse.error) return false;
-  else return isTargetExistsResponse.data !== null;
-};
-
 export const addTabooWords = async (
   targetWord: string,
   taboos: string[],
@@ -24,12 +12,15 @@ export const addTabooWords = async (
 ): Promise<void> => {
   const supabaseClient = createClient();
   const target = _.toLower(_.trim(targetWord));
-  const insertNewTabooWordsResponse = await supabaseClient.from('words').insert({
-    word: target,
-    taboos: taboos.map(_.trim).map(_.toLower),
-    is_verified: isVerified,
-    created_by: userId,
-  });
+  const insertNewTabooWordsResponse = await supabaseClient.from('words').upsert(
+    {
+      word: target,
+      taboos: taboos.map(_.trim).map(_.toLower),
+      is_verified: isVerified,
+      created_by: userId,
+    },
+    { onConflict: 'word', ignoreDuplicates: false }
+  );
   if (insertNewTabooWordsResponse.error) throw insertNewTabooWordsResponse.error;
 };
 

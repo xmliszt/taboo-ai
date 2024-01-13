@@ -74,13 +74,10 @@ export default function ProfilePage() {
         await updateUserNickname(user.id, nickname);
         setNickname(nickname);
         oldNickname.current = nickname;
-        toast({ title: 'Nickname updated!' });
+        toast.success('Nickname updated!');
       } catch (error) {
         console.error(error);
-        toast({
-          title: 'Sorry, we are unable to update your nickname. Please try again!',
-          variant: 'destructive',
-        });
+        toast.error('Sorry, we are unable to update your nickname. Please try again!');
       } finally {
         setIsNicknameUpdating(false);
       }
@@ -109,7 +106,7 @@ export default function ProfilePage() {
               setNickname(e.target.value);
             }}
             onBlur={() => {
-              updateUserNicknameIfNeeded();
+              void updateUserNicknameIfNeeded();
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {

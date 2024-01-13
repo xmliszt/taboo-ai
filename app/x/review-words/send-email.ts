@@ -1,13 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
+'use server';
+
+import 'server-only';
+
+import { cookies } from 'next/headers';
 import sgMail from '@sendgrid/mail';
 
-import { checkAuth } from '@/lib/utils/authUtils';
+import { createClient } from '@/lib/utils/supabase/server';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
 
 export type RejectionReason =
-  | 'inapproriate-content'
+  | 'inappropriate-content'
   | 'ambiguous'
   | 'duplicate'
   | 'insufficient-word-variety';
@@ -22,7 +26,7 @@ const sendExternalEmailVerificationSuccess = async (
     from: fromEmail,
     subject: `Congratulations! Your Topic Submitted: "${topicName}" is Now Live 🎉`,
     html: `<article>
-        <h1>Congratulations! Your Topic Submitted: "${topicName}" is Now Live 🎉</h1>
+        <h1>Congratulations! Your Topic Submitted: "${topicName}" is Now Live. 🎉</h1>
         <p>Your creativity has hit the mark, and we&apos;re delighted to inform you that your topic contribution has been accepted for Taboo AI. 🌟🎉</p>
         <p>Your unique topic, with its cleverly crafted target words and well-thought-out taboo words, has been added to our collection, and players worldwide can now enjoy the challenges you&apos;ve created. We applaud your contribution and believe your topic will add a fantastic twist to the Taboo AI experience.</p>
         <p>Thank you for being part of our growing community and for sharing your passion for wordplay with us. Your involvement has made Taboo AI even more vibrant and engaging. 🌍💬</p>
@@ -55,7 +59,7 @@ const sendExternalEmailVerificationRejection = async (
       reasonContent =
         'We already have a similar topic in our database, and to avoid repetition, we have decided not to accept duplicate entries. We encourage you to explore other unique topics to share with the Taboo AI community.';
       break;
-    case 'inapproriate-content':
+    case 'inappropriate-content':
       reasonString = 'Inappropriate Content';
       reasonContent =
         'We strive to maintain a friendly and inclusive environment for players of all ages. Unfortunately, your topic contains content that may not align with our community standards. Please feel free to submit other topics that are suitable for a wider audience.';
@@ -78,7 +82,7 @@ const sendExternalEmailVerificationRejection = async (
         <p>${reasonContent}</p>
         <br/>
         <p>We value your contribution and encourage you to continue sharing your ideas with us. We welcome you to resubmit your custom topic with necessary adjustments based on the provided feedback.</p>
-        <p>Thank you once again for being part of the Taboo AI community. Your support is essential to our continuous improvement. Should you have any questions or require further assistance, feel free to reach out.</p>
+        <p>Thank you once again for being part of the Taboo AI community. Your support is essential to our continuous improvement. If you require any further assistance, feel free to reach out.</p>
         <p>To further help you with topic creation, here are some good examples for you to refer to:</p>
         <h3>Examples:</h3>
         <ul>
@@ -104,45 +108,21 @@ const sendExternalEmailVerificationRejection = async (
   await sgMail.send(msg);
 };
 
-export async function POST(request: NextRequest) {
+export async function sendSecureEmail(
+  topic: string,
+  to: string,
+  type: 'reject' | 'verify',
+  reason?: RejectionReason
+) {
+  const supabaseClient = createClient(cookies());
+  const authUserResponse = await supabaseClient.auth.getUser();
+  if (authUserResponse.error) throw new Error(authUserResponse.error.message);
   const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
-  const error = await checkAuth(request);
-  if (error) return new NextResponse(error.message, { status: error.status });
   if (FROM_EMAIL === undefined)
-    return NextResponse.json({ error: 'Error sending email' }, { status: 500 });
-  const {
-    topic,
-    type,
-    to,
-    reason,
-  }: {
-    topic: string;
-    type: 'verify' | 'reject';
-    to: string;
-    reason?: RejectionReason;
-  } = await request.json();
-  try {
-    if (type === 'verify') {
-      await sendExternalEmailVerificationSuccess(topic, to, FROM_EMAIL);
-      return NextResponse.json({
-        message: 'Email is sent successfully!',
-      });
-    } else if (type === 'reject' && reason !== undefined) {
-      await sendExternalEmailVerificationRejection(to, FROM_EMAIL, reason);
-      return NextResponse.json({
-        message: 'Email is sent successfully!',
-      });
-    } else {
-      return NextResponse.json(
-        {
-          error: 'Error sending email',
-          details: 'Type mismatched or reason empty',
-        },
-        { status: 400 }
-      );
-    }
-  } catch (error) {
-    console.log(error);
-    return new Response('Error sending email', { status: 500 });
+    throw new Error('Error sending email because no source email is provided');
+  if (type === 'verify') {
+    await sendExternalEmailVerificationSuccess(topic, to, FROM_EMAIL);
+  } else if (type === 'reject' && reason !== undefined) {
+    await sendExternalEmailVerificationRejection(to, FROM_EMAIL, reason);
   }
 }
