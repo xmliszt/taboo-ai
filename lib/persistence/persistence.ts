@@ -8,8 +8,7 @@ import { CustomEventKey, EventManager } from '../event-manager';
 export const getPersistence = <T>(key: string): T | null => {
   const resultAsString = localStorage.getItem(key);
   if (!resultAsString) return null;
-  const result = JSON.parse(resultAsString) as T;
-  return result;
+  return JSON.parse(resultAsString) as T;
 };
 
 /**

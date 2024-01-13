@@ -6,6 +6,7 @@ import copy from 'clipboard-copy';
 import _ from 'lodash';
 import { CircleSlash, Hand, MousePointerClick, RefreshCcw } from 'lucide-react';
 import { isMobile, isTablet } from 'react-device-detect';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
@@ -27,7 +28,6 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import IconButton from '@/components/ui/icon-button';
-import { useToast } from '@/components/ui/use-toast';
 import { CONSTANTS } from '@/lib/constants';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
@@ -64,7 +64,6 @@ let gameExistedInCloud = false;
 
 export default function ResultPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const { user, status } = useAuth();
   const searchParams = useSearchParams();
   const gameID = searchParams?.get('id') ?? null;
@@ -94,9 +93,7 @@ export default function ResultPage() {
   useEffect(() => {
     const listener = EventManager.bindEvent(CustomEventKey.SHARE_SCORE, () => {
       if (game === null || !isGameFinished(game)) {
-        toast({
-          title: 'Sorry we are not able to share your scores because they are incomplete.',
-        });
+        toast.warning('Sorry we are not able to share your scores because they are incomplete.');
         return;
       }
       setIsShareCardOpen(true);
@@ -137,16 +134,13 @@ export default function ResultPage() {
       setIsCheckingOnline(true);
       const game = await fetchGame(gameID);
       if (!game) {
-        toast({ title: 'Sorry, it seems like this result does not exist.' });
+        toast.warning('Sorry, it seems like this result does not exist.');
         gameExistedInCloud = false;
         await checkCachedGame();
         return;
       }
       if (!game.level_id) {
-        toast({
-          title: 'Sorry, this result is not compatible with the current version of Taboo AI.',
-          variant: 'destructive',
-        });
+        toast.error('Sorry, this result is not compatible with the current version of Taboo AI.');
         gameExistedInCloud = false;
         await checkCachedGame();
         return;
@@ -162,10 +156,7 @@ export default function ResultPage() {
       }
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to load your result at this moment.',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to load your result at this moment.');
       gameExistedInCloud = false;
       await checkCachedGame();
     } finally {
@@ -189,9 +180,7 @@ export default function ResultPage() {
       setIsUploadFailed(false);
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to upload your game at this moment.',
-      });
+      toast.error('Sorry, we are unable to upload your game at this moment.');
       setIsUploadFailed(true);
     } finally {
       setIsGameUploading(false);
@@ -264,11 +253,9 @@ export default function ResultPage() {
         updateGameAIEvaluationAtIndex(idx, evaluationScore, reasoning);
       } catch (error) {
         console.error(error);
-        toast({
-          title:
-            'Sorry, we are unable to evaluate your performance at the moment. Please try again later.',
-          variant: 'destructive',
-        });
+        toast.error(
+          'Sorry, we are unable to evaluate your performance at the moment. Please try again later.'
+        );
       }
     }
     setIsScoring(false);
@@ -299,19 +286,13 @@ export default function ResultPage() {
       performNavigatorShare('', shareResult.href, shareResult.downloadName);
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to perform sharing at the moment. Please try again later.',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to perform sharing at the moment. Please try again later.');
     }
   };
 
   const performNavigatorShare = (title: string, imageLink?: string, imageName?: string) => {
     if (!game || !isGameFinished(game)) {
-      toast({
-        title: 'Sorry we are not able to share your scores because they are incomplete.',
-        variant: 'destructive',
-      });
+      toast.error('Sorry we are not able to share your scores because they are incomplete.');
       return;
     }
     const link = document.createElement('a');
@@ -357,9 +338,7 @@ export default function ResultPage() {
       }
       copy(title)
         .then(() => {
-          toast({
-            title: 'Sharing content has been copied to clipboard!',
-          });
+          toast.success('Sharing content has been copied to clipboard!');
         })
         .catch((error) => {
           throw error;

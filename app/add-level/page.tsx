@@ -4,6 +4,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { zip } from 'lodash';
 import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { InfoButton } from '@/components/custom/info-button';
@@ -33,7 +34,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
 import { sendEmail } from '@/lib/services/emailService';
 import { fetchTabooWords } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
@@ -71,14 +71,11 @@ const AddLevelPage = () => {
 
   //ANCHOR - States for component control
   const [expandedAccItem, setExpandedAccItem] = useState<string>('');
-  const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      toast({
-        title: 'You need to sign in to contribute a topic',
-      });
+      toast.warning('You need to sign in to contribute a topic');
       router.push('/');
     }
   }, [status]);
@@ -385,16 +382,12 @@ const AddLevelPage = () => {
         appealReasons,
         `Taboo AI Taboo Words Appeal Request for [${forTarget}] from ${user.email}`
       );
-      toast({
-        title: 'Appeal submitted successfully! We will get in touch with you soon!',
-      });
+      toast.success('Appeal submitted successfully! We will get in touch with you soon!');
       setAppealReasons('');
     } catch (error) {
-      toast({
-        title:
-          'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!',
-        variant: 'destructive',
-      });
+      toast.error(
+        'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!'
+      );
       console.error(error);
     } finally {
       setIsSubmittingAppeal(false);

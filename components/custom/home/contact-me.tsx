@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { sendEmail } from '@/lib/services/emailService';
@@ -14,7 +15,6 @@ import { Card, CardContent, CardHeader } from '../../ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Input } from '../../ui/input';
 import { Textarea } from '../../ui/textarea';
-import { useToast } from '../../ui/use-toast';
 import { Spinner } from '../spinner';
 
 const contactFormSchema = z.object({
@@ -36,7 +36,6 @@ const ContactMe = () => {
       message: '',
     },
   });
-  const { toast } = useToast();
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   useEffect(() => {
@@ -52,10 +51,10 @@ const ContactMe = () => {
     try {
       setIsSendingEmail(true);
       await sendEmail(values.nickname, values.email, values.message);
-      toast({ title: 'Email is sent successfully!' });
+      toast.info('Email is sent successfully!');
       form.reset();
     } catch (error) {
-      toast({ title: error.message });
+      toast.error(error.message);
     } finally {
       setIsSendingEmail(false);
     }

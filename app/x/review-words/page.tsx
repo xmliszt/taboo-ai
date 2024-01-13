@@ -6,6 +6,7 @@ import { SelectGroup } from '@radix-ui/react-select';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import _ from 'lodash';
 import { Plus, RefreshCcw, Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { RejectionReason } from '@/app/api/x/mail/route';
 import { useAuth } from '@/components/auth-provider';
@@ -33,10 +34,8 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/components/ui/use-toast';
 import { firebaseAuth } from '@/firebase/firebase-client';
 import { AdminManager } from '@/lib/admin-manager';
-import { useLevels } from '@/lib/hooks/useLevels';
 import { askAITabooWordsForTarget } from '@/lib/services/aiService';
 import { sendEmailX } from '@/lib/services/emailService';
 import {
@@ -67,7 +66,6 @@ const DevReviewWordsPage = () => {
   const [sortedLevels, setSortedLevels] = useState<ILevel[]>([]);
   const [rejectionReason, setRejectionReason] = useState<RejectionReason>('inapproriate-content');
   const [rejectConfirmationOpen, setRejectConfirmationOpen] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     const copyLevels = [...levels];
@@ -94,10 +92,7 @@ const DevReviewWordsPage = () => {
       const supabaseClient = createClientComponentClient<Database>();
       const fetchAuthorResponse = await supabaseClient.from('users').select().eq('id', id).single();
       if (fetchAuthorResponse.error) {
-        toast({
-          title: 'Unable to fetch author: ' + fetchAuthorResponse.error.message,
-          variant: 'destructive',
-        });
+        toast.error('Unable to fetch author: ' + fetchAuthorResponse.error.message);
         return;
       }
       setAuthor(fetchAuthorResponse.data);
@@ -112,10 +107,7 @@ const DevReviewWordsPage = () => {
 
   useEffect(() => {
     if (status === 'unauthenticated' || !AdminManager.checkIsAdmin(user)) {
-      toast({
-        title: 'You are not authorized to view this page!',
-        variant: 'destructive',
-      });
+      toast.error('You are not authorized to view this page!');
       router.push('/');
     }
   }, [user, status]);
@@ -162,10 +154,7 @@ const DevReviewWordsPage = () => {
         }
       } catch (error) {
         console.error(error);
-        toast({
-          title: 'Unable to get taboo words for: ' + `"${word}"`,
-          variant: 'destructive',
-        });
+        toast.error('Unable to get taboo words for: ' + `"${word}"`);
       }
     },
     [setTabooWords]
@@ -240,11 +229,9 @@ const DevReviewWordsPage = () => {
       );
       selectedLevel && (await updateLevelTargetWords(selectedLevel.id, selectedLevel.words));
       setFullWordList((wordList) => [...wordList, _.trim(_.toLower(taboos.word))]);
-      toast({ title: 'Saved successfully!' });
+      toast.success('Saved successfully!');
     } else {
-      toast({
-        title: 'No target word or variations available!',
-      });
+      toast.info('No target word or variations available!');
     }
   };
 
@@ -257,10 +244,7 @@ const DevReviewWordsPage = () => {
         try {
           await autoGenerateWithDelay(1000, words[i]);
         } catch {
-          toast({
-            title: 'Failed to generate for: ' + words[i],
-            variant: 'destructive',
-          });
+          toast.error('Failed to generate for: ' + words[i]);
         }
       }
     }
@@ -284,11 +268,9 @@ const DevReviewWordsPage = () => {
                 user?.email
               );
               setFullWordList((wordList) => [...wordList, target]);
-              toast({ title: 'Saved successfully!' });
+              toast.success('Saved successfully!');
             } else {
-              toast({
-                title: 'No target word or variations available!',
-              });
+              toast.info('No target word or variations available!');
             }
             res();
           }
@@ -330,7 +312,7 @@ const DevReviewWordsPage = () => {
         setCurrentEditingTargetWordIndex(undefined);
         setCurrentEditingTabooWordIndex(undefined);
         setTabooWords(undefined);
-        toast({ title: 'Level deleted successfully!' });
+        toast.success('Level deleted successfully!');
         if (author?.email) {
           try {
             const token = await firebaseAuth.currentUser?.getIdToken();
@@ -341,30 +323,21 @@ const DevReviewWordsPage = () => {
               rejectionReason,
               token
             );
-            toast({ title: 'Verification rejection email sent successfully!' });
+            toast.success('Verification rejection email sent successfully!');
           } catch (error) {
             console.error(error);
-            toast({
-              title: 'Failed to send verification rejection email: ' + error.message,
-              variant: 'destructive',
-            });
+            toast.error('Failed to send verification rejection email: ' + error.message);
           }
         }
         await refetch();
       } catch (error) {
         console.error(error);
-        toast({
-          title: `Unable to reject level: ${error.message}`,
-          variant: 'destructive',
-        });
+        toast.error(`Unable to reject level: ${error.message}`);
       } finally {
         setIsLoading(false);
       }
     } else {
-      toast({
-        title: 'Unable to reject level as no level is selected!',
-        variant: 'destructive',
-      });
+      toast.error('Unable to reject level as no level is selected!');
     }
   };
 
@@ -374,13 +347,10 @@ const DevReviewWordsPage = () => {
       try {
         const token = await firebaseAuth.currentUser?.getIdToken();
         await sendEmailX(copyLevel.name ?? 'unknown', author.email, 'verify', undefined, token);
-        toast({ title: 'Verification success email sent successfully!' });
+        toast.success('Verification success email sent successfully!');
       } catch (error) {
         console.error(error);
-        toast({
-          title: 'Failed to send verification success email: ' + error.message,
-          variant: 'destructive',
-        });
+        toast.error('Failed to send verification success email: ' + error.message);
       }
     }
   };
@@ -392,24 +362,18 @@ const DevReviewWordsPage = () => {
         const copyLevel = { ...selectedLevel };
         copyLevel.is_verified = true;
         await verifyLevel(copyLevel.id);
-        toast({ title: 'Level verified successfully!' });
+        toast.success('Level verified successfully!');
         resendVerifyEmail(copyLevel);
         setSelectedLevel(copyLevel);
         await refetch();
       } catch (error) {
         console.error(error);
-        toast({
-          title: `Unable to verify level: ${error.message}`,
-          variant: 'destructive',
-        });
+        toast.error(`Unable to verify level: ${error.message}`);
       } finally {
         setIsLoading(false);
       }
     } else {
-      toast({
-        title: 'Unable to verify level as no level is selected!',
-        variant: 'destructive',
-      });
+      toast.error('Unable to verify level as no level is selected!');
     }
   };
 
@@ -420,15 +384,12 @@ const DevReviewWordsPage = () => {
         const copyLevel = { ...selectedLevel };
         copyLevel.is_new = isNew;
         await updateLevelIsNew(copyLevel.id, isNew);
-        toast({ title: 'Level updated successfully!' });
+        toast.success('Level updated successfully!');
         setSelectedLevel(copyLevel);
         await refetch();
       } catch (error) {
         console.error(error);
-        toast({
-          title: `Unable to update level: ${error.message}`,
-          variant: 'destructive',
-        });
+        toast.error(`Unable to update level: ${error.message}`);
       } finally {
         setIsLoading(false);
       }

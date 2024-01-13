@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, X } from 'lucide-react';
 import moment from 'moment';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +18,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { cancelSubscription, createCheckoutSession } from '@/lib/services/subscriptionService';
 import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
@@ -34,7 +34,6 @@ interface PricingCardProps {
 
 export default function PricingCard({ index, plan }: PricingCardProps) {
   const { user, status, userPlan, refreshUserSubscriptionPlan } = useAuth();
-  const { toast } = useToast();
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -117,11 +116,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       const redirectUrl = await createCheckoutSession(priceId, user?.email, userPlan?.customerId);
       router.replace(redirectUrl);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -129,10 +124,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
 
   const downgradeToFreePlan = async () => {
     if (!userPlan?.subId) {
-      return toast({
-        title: 'We could not fetch an active subscription to cancel.',
-        variant: 'destructive',
-      });
+      return toast.error('We could not fetch an active subscription to cancel.');
     }
     try {
       setIsLoading(true);
@@ -149,10 +141,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       });
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Something went wrong. We could not downgrade your plan.',
-        variant: 'destructive',
-      });
+      toast.error('Something went wrong. We could not downgrade your plan.');
     } finally {
       setIsLoading(false);
     }

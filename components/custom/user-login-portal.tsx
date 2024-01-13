@@ -13,6 +13,7 @@ import {
   ScrollText,
   User,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { LoginErrorEventProps } from '@/components/custom/globals/login-error-dialog';
@@ -34,7 +35,6 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import IconButton from '../ui/icon-button';
-import { toast } from '../ui/use-toast';
 import { Spinner } from './spinner';
 
 interface UserMenuItem {
@@ -65,10 +65,7 @@ export function UserLoginPortal() {
       logout && (await logout());
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to log you out. Please try again!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to log you out. Please try again!');
     }
   };
 
@@ -82,10 +79,7 @@ export function UserLoginPortal() {
       router.push(portalSessionUrl);
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to manage your subscription. Please try again!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to manage your subscription. Please try again!');
     }
   };
 

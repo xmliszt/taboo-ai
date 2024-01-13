@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PenTool, SpellCheck2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { Spinner } from '@/components/custom/spinner';
@@ -11,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useToast } from '@/components/ui/use-toast';
 import { CONSTANTS } from '@/lib/constants';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
@@ -23,16 +23,13 @@ export default function AiPage() {
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { toast } = useToast();
   const router = useRouter();
   const isLocked =
     status === 'unauthenticated' || (status === 'authenticated' && userPlan?.type === 'free');
 
   useEffect(() => {
     if (isLocked) {
-      toast({
-        title: 'You need a paid subscription to access this feature',
-      });
+      toast.info('You need a paid subscription to access this feature');
       router.push('/pricing');
     }
   }, [isLocked]);

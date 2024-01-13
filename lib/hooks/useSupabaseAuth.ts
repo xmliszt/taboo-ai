@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { AuthStatus } from '@/components/auth-provider';
-import { useToast } from '@/components/ui/use-toast';
 import { createClient } from '@/lib/utils/supabase/client';
 
 import { fetchCustomerSubscriptions } from '../services/subscriptionService';
@@ -11,7 +11,6 @@ import { IUserSubscriptionPlan } from '../types/subscription-plan.type';
 import { IUser } from '../types/user.type';
 
 export function useSupabaseAuth() {
-  const { toast } = useToast();
   const [user, setUser] = useState<IUser>();
   const [userPlan, setUserPlan] = useState<IUserSubscriptionPlan>();
   const [status, setStatus] = useState<AuthStatus>('loading');
@@ -38,7 +37,7 @@ export function useSupabaseAuth() {
     const fetchUserResponse = await supabaseClient.from('users').select().eq('id', uid).single();
     if (fetchUserResponse.error) {
       console.error(fetchUserResponse.error);
-      toast({ title: 'Failed to sign in!', variant: 'destructive' });
+      toast.error('Failed to sign in!');
       setStatus('unauthenticated');
       return;
     }
@@ -76,13 +75,9 @@ export function useSupabaseAuth() {
     // set authenticated and show toast
     setStatus('authenticated');
     if (user.login_times <= 1) {
-      toast({
-        title: 'Welcome to Taboo AI!',
-      });
+      toast('Welcome to Taboo AI!');
     } else {
-      toast({
-        title: `Welcome back! ${user.nickname ?? user.name}`,
-      });
+      toast(`Welcome back! ${user.nickname ?? user.name}`);
     }
   }
 
@@ -99,7 +94,7 @@ export function useSupabaseAuth() {
     });
     if (oauthResponse.error) {
       console.error(oauthResponse.error);
-      toast({ title: 'Failed to sign in!', variant: 'destructive' });
+      toast.error('Failed to sign in!');
       setStatus('unauthenticated');
       return;
     }
@@ -110,7 +105,7 @@ export function useSupabaseAuth() {
     setStatus('loading');
     try {
       await supabaseClient.auth.signOut();
-      toast({ title: 'You are logged out.' });
+      toast('You are logged out.');
     } catch (error) {
       console.error(error);
     } finally {

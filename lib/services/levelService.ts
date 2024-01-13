@@ -1,7 +1,5 @@
 import { createClient } from '@/lib/utils/supabase/client';
 
-import { ILevel } from '../types/level.type';
-
 export const addLevel = async ({
   name,
   difficulty,
@@ -21,17 +19,6 @@ export const addLevel = async ({
     created_by: createdBy,
   });
   if (insertNewLevelResponse.error) throw insertNewLevelResponse.error;
-};
-
-export const getLevel = async (id: string): Promise<ILevel | undefined> => {
-  const supabaseClient = createClient();
-  const fetchSingleLevelResponse = await supabaseClient
-    .from('levels')
-    .select()
-    .eq('id', id)
-    .single();
-  if (fetchSingleLevelResponse.error) throw fetchSingleLevelResponse.error;
-  return { ...fetchSingleLevelResponse.data, is_ai_generated: false };
 };
 
 export const updateLevelTargetWords = async (id: string, words: string[]): Promise<void> => {
@@ -62,15 +49,4 @@ export const verifyLevel = async (id: string): Promise<void> => {
     .update({ is_verified: true })
     .eq('id', id);
   if (verifyLevelResponse.error) throw verifyLevelResponse.error;
-};
-
-export const incrementLevelPopularity = async (id: string) => {
-  const supabaseClient = createClient();
-  const incrementLevelPopularityResponse = await supabaseClient.rpc('increment', {
-    _table_name: 'levels',
-    _row_id: id,
-    _field_name: 'popularity',
-    _x: 1,
-  });
-  if (incrementLevelPopularityResponse.error) throw incrementLevelPopularityResponse.error;
 };

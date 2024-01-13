@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import _ from 'lodash';
 
+import { fetchAllLevelsAndRanks } from '@/app/levels/server/fetch-levels';
 import { Separator } from '@/components/ui/separator';
-import { fetchAllLevelsAndRanks } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
 interface SitemapRoute {

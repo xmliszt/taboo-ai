@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BookMarked } from 'lucide-react';
 import moment from 'moment';
+import { toast } from 'sonner';
 import Stripe from 'stripe';
 
 import { useAuth } from '@/components/auth-provider';
@@ -20,7 +21,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/components/ui/use-toast';
 import {
   cancelSubscription,
   createCustomerPortalSession,
@@ -42,7 +42,6 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const { user, userPlan, status, refreshUserSubscriptionPlan } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
 
   const subscriptionCancelledAt = userPlan?.subscription?.cancel_at;
   const subscriptionCancelDate = subscriptionCancelledAt
@@ -71,10 +70,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
       }
     } catch (error) {
       console.error(error);
-      toast({
-        title: "Something went wrong. We couldn't cancel your subscription.",
-        variant: 'destructive',
-      });
+      toast.error("Something went wrong. We couldn't cancel your subscription.");
     } finally {
       setIsCancellingSubscription(false);
     }
@@ -90,10 +86,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
       router.push(portalSessionUrl);
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we cannot open your billing portal at the moment. Please try again!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we cannot open your billing portal at the moment. Please try again!');
     }
   };
 

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BookX, X } from 'lucide-react';
 import { isMobile, isTablet } from 'react-device-detect';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import ConstructionBlock from '@/components/custom/common/construction-block';
@@ -20,13 +21,11 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { updateUserNickname } from '@/lib/services/userService';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { toast } = useToast();
   const { user, status, userPlan, refreshUserSubscriptionPlan } = useAuth();
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const [nickname, setNickname] = useState<string>('');
@@ -53,9 +52,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      toast({
-        title: 'You need to sign in to view your profile.',
-      });
+      toast.info('You need to sign in to view your profile.');
       EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
         title: 'You need to sign in to view your profile.',
         redirectHref: '/profile',

@@ -1,13 +1,15 @@
+import React from 'react';
 import { Metadata } from 'next';
 
-import { fetchAllLevelsAndRanks, getLevel } from '@/lib/services/levelService';
+import { fetchLevel } from '@/app/level/server/fetch-level';
+import { fetchAllLevelsAndRanks } from '@/app/levels/server/fetch-levels';
 
 export async function generateMetadata({
   params: { id },
 }: {
   params: { id: string };
 }): Promise<Metadata> {
-  const level = await getLevel(id);
+  const level = await fetchLevel(id);
   return {
     title: level?.name ?? 'Level',
     alternates: {
@@ -19,6 +21,7 @@ export async function generateMetadata({
   };
 }
 
+// Static generation of dynamic level route at build time instead of on request
 export async function generateStaticParams() {
   return (await fetchAllLevelsAndRanks()).map((level) => ({ id: level.id }));
 }

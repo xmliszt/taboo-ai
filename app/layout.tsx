@@ -14,7 +14,7 @@ import PWAInstaller from '@/components/custom/pwa-installer';
 import SideMenu from '@/components/custom/side-menu';
 import { ThemeProvider } from '@/components/theme-provider';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { _meta } from '@/lib/metadata';
 
 import './markdown.css';
@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <AnalyticsWrapper />
               </AuthProvider>
             </GlobalTooltipProvider>
-            <Toaster />
+            <Toaster closeButton />
           </ThemeProvider>
           <SpeedInsights />
         </body>

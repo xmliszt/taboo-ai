@@ -1,23 +1,21 @@
-'use client';
-
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import _, { uniqueId } from 'lodash';
+import _, { remove, uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { useTimer } from 'use-timer';
 
+import { fetchLevel } from '@/app/level/server/fetch-level';
 import { Skeleton } from '@/components/custom/skeleton';
 import Timer from '@/components/custom/timer';
 import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/components/ui/use-toast';
 import { CONSTANTS } from '@/lib/constants';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
-import { getLevel, incrementLevelPopularity } from '@/lib/services/levelService';
 import { fetchTabooWords } from '@/lib/services/wordService';
 import { IGame } from '@/lib/types/game.type';
 import { ILevel } from '@/lib/types/level.type';
@@ -35,21 +33,40 @@ interface LevelPageProps {
 // If is AI level, then it is true
 let isCustomGame = false;
 
-// The words for this topic
-let words: string[] = [];
-
 // Game started_at
 let startedAt = new Date();
 
-export default function LevelPage({ params: { id } }: LevelPageProps) {
+export default async function LevelPage({ params: { id } }: LevelPageProps) {
+  // if id is 'ai', then it is played in AI mode
+  if (id === 'ai') {
+    isCustomGame = true;
+    // FIXME: getPersistence uses localStorage, which is not available in server side rendering
+    const cachedLevel = getPersistence<ILevel>(HASH.level);
+    startGame(cachedLevel);
+  }
+  // fetch level for playing
+  const level = await fetchLevel(id);
+
+  // generate target word for playing
+  const words = level.words.map((word) => formatStringForDisplay(word));
+  const newTarget = words[Math.floor(Math.random() * words.length)];
+  // Remove from words so that it doesn't get picked again
+  remove(words, (word) => word === newTarget);
+
+  // start the game
+
+  // FIXME: the following cannot be called in server side rendering
+  resetTimer();
+  startedAt = new Date();
+  setTarget(newTarget);
+  setCurrentProgress(1);
+
   const router = useRouter();
-  const { toast } = useToast();
 
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
 
   const [isWaitingForAIResponse, setIsWaitingForAIResponse] = useState(false);
-  const [level, setLevel] = useState<ILevel | null>(null);
   const [userInput, setUserInput] = useState<string>('');
   const [target, setTarget] = useState<string | null>(null);
   const [variations, setVariations] = useState<string[]>([]);
@@ -59,7 +76,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   const [isCountingDown, setIsCountdown] = useState<boolean>(false);
   const [conversation, setConversation] = useState<IScoreConversation[]>([]);
   const [savedScores, setSavedScores] = useState<IScore[]>([]);
-  const [isFetchingLevel, setIsFetchingLevel] = useState(false);
 
   const {
     time,
@@ -89,60 +105,6 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
   }, [timerStatus]);
 
   const isEmptyInput = userInput.length <= 0;
-
-  const fetchLevel = async (id: string) => {
-    if (level) return;
-    setIsFetchingLevel(true);
-    const fetchedLevel = await getLevel(id);
-    if (fetchedLevel) {
-      setLevel(fetchedLevel);
-      await incrementLevelPopularity(fetchedLevel.id);
-      setPersistence(HASH.level, fetchedLevel);
-      startGame(fetchedLevel);
-    }
-  };
-
-  useEffect(() => {
-    if (id === 'ai') {
-      isCustomGame = true;
-      const cachedLevel = getPersistence<ILevel>(HASH.level);
-      setLevel(cachedLevel);
-      if (cachedLevel) {
-        startGame(cachedLevel);
-      } else {
-        toast({ title: 'Sorry we cannot find the topic to start the game. ' });
-        router.back();
-      }
-    } else if (!isFetchingLevel) {
-      isCustomGame = false;
-      void fetchLevel(id);
-    }
-  }, [id, isFetchingLevel]);
-
-  const startGame = (level: ILevel) => {
-    resetTimer();
-    // removePersistence(HASH.game);
-    startedAt = new Date();
-    words = level.words.map((word) => formatStringForDisplay(word));
-    const newTarget = generateNewTarget();
-    setTarget(newTarget);
-    setCurrentProgress(1);
-  };
-
-  const generateNewTarget = (): string => {
-    if (words.length <= 0) {
-      toast({
-        title:
-          'Sorry something went wrong suddenly! We apologize for the inconvenience. Please try play the topic again.',
-        variant: 'destructive',
-      });
-      router.back();
-    }
-    const newTarget = words[Math.floor(Math.random() * words.length)];
-    // Remove from words so that it doesn't get picked again
-    _.remove(words, (word) => word === newTarget);
-    return newTarget;
-  };
 
   const renderWaitingMessageForVariations = () => {
     switch (retryCount.current) {
@@ -259,9 +221,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
     });
     setSavedScores(copySavedScores);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
-      toast({
-        title: 'Game Over! Generating Results...',
-      });
+      toast('Game Over! Generating Results...');
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
@@ -273,7 +233,7 @@ export default function LevelPage({ params: { id } }: LevelPageProps) {
       const lastAssistantMessage = conversation[conversation.length - 1];
       const highlights = generateHighlights(target, lastAssistantMessage.content, true);
       if (highlights.length > 0) {
-        toast({ title: "That's a hit! Well done!", duration: 1000 });
+        toast("That's a hit! Well done!");
         void nextQuestion(highlights);
       }
     }
