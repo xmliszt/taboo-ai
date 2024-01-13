@@ -1,6 +1,6 @@
-import { fetchAllWords } from '@/app/x/review-words/fetch-all-words';
-import { fetchAllLevelsAndAuthors } from '@/app/x/review-words/fetch-levels';
 import ReviewWordsClientProvider from '@/app/x/review-words/review-words-client-provider';
+import { fetchAllWords } from '@/app/x/review-words/server/fetch-all-words';
+import { fetchAllLevelsAndAuthors } from '@/app/x/review-words/server/fetch-levels';
 import { LevelUtils } from '@/lib/utils/levelUtils';
 
 export default async function ReviewWordsPage() {

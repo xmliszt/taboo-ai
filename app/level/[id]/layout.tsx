@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 
 import { fetchLevel } from '@/app/level/server/fetch-level';
-import { fetchAllLevels } from '@/app/levels/server/fetch-levels';
+import { fetchAllLevelsWithoutCookies } from '@/app/levels/server/fetch-levels';
 
 export async function generateMetadata({
   params: { id },
@@ -34,7 +34,7 @@ export async function generateMetadata({
 
 // Static generation of dynamic level route at build time instead of on request
 export async function generateStaticParams() {
-  return (await fetchAllLevels()).map((level) => ({ id: level.id }));
+  return (await fetchAllLevelsWithoutCookies()).map((level) => ({ id: level.id }));
 }
 
 export default async function Layout({ children }: { children: React.ReactNode }) {

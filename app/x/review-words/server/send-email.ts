@@ -16,11 +16,11 @@ export type RejectionReason =
   | 'duplicate'
   | 'insufficient-word-variety';
 
-const sendExternalEmailVerificationSuccess = async (
+async function sendExternalEmailVerificationSuccess(
   topicName: string,
   toEmail: string,
   fromEmail: string
-) => {
+) {
   const msg = {
     to: toEmail,
     from: fromEmail,
@@ -39,13 +39,13 @@ const sendExternalEmailVerificationSuccess = async (
         </article>`,
   };
   await sgMail.send(msg);
-};
+}
 
-const sendExternalEmailVerificationRejection = async (
+async function sendExternalEmailVerificationRejection(
   toEmail: string,
   fromEmail: string,
   reason: RejectionReason
-) => {
+) {
   let reasonString = '';
   let reasonContent = '';
   switch (reason) {
@@ -106,7 +106,7 @@ const sendExternalEmailVerificationRejection = async (
         </article>`,
   };
   await sgMail.send(msg);
-};
+}
 
 export async function sendSecureEmail(
   topic: string,
