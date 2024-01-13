@@ -25,7 +25,7 @@ export const fetchGame = async (gameId: string) => {
   const supabaseClient = createClient();
   const fetchGameResponse = await supabaseClient
     .from('v_game_level_info')
-    .select()
+    .select('*,level:levels!inner(*)')
     .eq('game_id', gameId)
     .single();
   if (fetchGameResponse.error) throw fetchGameResponse.error;

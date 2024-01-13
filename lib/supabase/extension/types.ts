@@ -50,6 +50,7 @@ export type Database = MergeDeep<
           Row: {
             game_id: string;
             level_difficulty: number;
+            level_id: string;
             level_name: string;
             total_score: number;
             total_time_taken: number;

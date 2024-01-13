@@ -288,6 +288,13 @@ export interface Database {
             foreignKeyName: "games_level_id_fkey"
             columns: ["level_id"]
             isOneToOne: false
+            referencedRelation: "v_game_level_info"
+            referencedColumns: ["level_id"]
+          },
+          {
+            foreignKeyName: "games_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
             referencedRelation: "v_level_with_best_score_and_top_scorers"
             referencedColumns: ["level_id"]
           },
@@ -430,6 +437,13 @@ export interface Database {
             foreignKeyName: "user_attempted_levels_level_id_fkey"
             columns: ["level_id"]
             isOneToOne: false
+            referencedRelation: "v_game_level_info"
+            referencedColumns: ["level_id"]
+          },
+          {
+            foreignKeyName: "user_attempted_levels_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
             referencedRelation: "v_level_with_best_score_and_top_scorers"
             referencedColumns: ["level_id"]
           },
@@ -544,6 +558,7 @@ export interface Database {
         Row: {
           game_id: string | null
           level_difficulty: number | null
+          level_id: string | null
           level_name: string | null
           total_score: number | null
           total_time_taken: number | null

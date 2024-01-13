@@ -34,7 +34,7 @@ import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { performEvaluation } from '@/lib/services/aiService';
 import { fetchGame, uploadCompletedGameForUser } from '@/lib/services/gameService';
-import { getLevel, isLevelExists } from '@/lib/services/levelService';
+import { isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
 import { IGame } from '@/lib/types/game.type';
 import { ILevel } from '@/lib/types/level.type';
 import { IHighlight, IScore, IScoreConversation } from '@/lib/types/score.type';
@@ -105,8 +105,8 @@ export default function ResultPage() {
 
   // First render: check if level is AI and user logged in, prompt for topic submission if yes
   const checkIfEligibleForLevelSubmission = useCallback(async () => {
-    if (level && level.is_ai_generated) {
-      const exists = await isLevelExists(level.name, user?.email);
+    if (level && level.is_ai_generated && user) {
+      const exists = await isLevelWithSameNameSubmittedBySameUser(level.name, user.id);
       setHasTopicSubmitted(exists);
       if (exists) return;
       setContributionDialogOpen(true);
@@ -133,19 +133,13 @@ export default function ResultPage() {
     try {
       setIsCheckingOnline(true);
       const game = await fetchGame(gameID);
+      console.log(game);
       if (!game) {
         toast.warning('Sorry, it seems like this result does not exist.');
         gameExistedInCloud = false;
         await checkCachedGame();
         return;
       }
-      if (!game.level_id) {
-        toast.error('Sorry, this result is not compatible with the current version of Taboo AI.');
-        gameExistedInCloud = false;
-        await checkCachedGame();
-        return;
-      }
-      const level = await getLevel(game.level_id);
       if (level) {
         gameExistedInCloud = true;
         setGame(game);
