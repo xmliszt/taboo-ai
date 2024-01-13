@@ -2,7 +2,7 @@ import Link from 'next/link';
 import _ from 'lodash';
 
 import { Separator } from '@/components/ui/separator';
-import { getAllLevels } from '@/lib/services/levelService';
+import { fetchAllLevelsAndRanks } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
 interface SitemapRoute {
@@ -11,7 +11,7 @@ interface SitemapRoute {
 }
 
 export default async function SitemapPage() {
-  const levels = (await getAllLevels()).sort((a, b) => a.name.localeCompare(b.name));
+  const levels = (await fetchAllLevelsAndRanks()).sort((a, b) => a.name.localeCompare(b.name));
   const features: SitemapRoute[] = [
     { title: 'Home', href: '/' },
     { title: 'Choose A Topic', href: '/levels' },

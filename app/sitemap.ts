@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next';
 
-import { getAllLevels } from '@/lib/services/levelService';
+import { fetchAllLevelsAndRanks } from '@/lib/services/levelService';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = RouteManager.getStaticRoutes();
-  const levels = await getAllLevels();
+  const levels = await fetchAllLevelsAndRanks();
   const staticSites = staticRoutes.map((route) => {
     return {
       url: route,

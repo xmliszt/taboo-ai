@@ -6,7 +6,7 @@ import { RefreshCcw } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
 import IconButton from '@/components/ui/icon-button';
-import { getLevelsCompletedByUser } from '@/lib/services/levelService';
+import { fetchGamesCompletedByUser } from '@/lib/services/levelService';
 import { IUserLevel } from '@/lib/types/userLevel.type';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +25,7 @@ export default function ProfilePlayedTopicScrollView() {
   const getPlayedTopicsData = async (userId: string) => {
     try {
       setIsLoading(true);
-      const playedTopics = await getLevelsCompletedByUser(userId);
+      const playedTopics = await fetchGamesCompletedByUser(userId);
       playedTopics.push({
         level_id: 'play-more',
         completed_times: 0,

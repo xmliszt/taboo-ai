@@ -1,17 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Lock, Medal, Trophy } from 'lucide-react';
 
+import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetch-levels';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
-import { Database } from '@/lib/supabase/extension/types';
-import { ILevel } from '@/lib/types/level.type';
 import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
-import { IUser } from '@/lib/types/user.type';
 import { getDifficulty } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
@@ -24,59 +21,19 @@ import { LoginReminderProps } from './globals/login-reminder-dialog';
 import { StarRatingBar } from './star-rating-bar';
 
 interface LevelCardProps {
+  level?: FetchAllLevelsAndRanksReturnTypeSingle;
   isShowingRank?: boolean;
-  level?: ILevel;
-  topScore?: number;
-  topScorerIds?: string[];
   allowedPlanType?: SubscriptionPlanType[];
 }
 
-export function LevelCard({
-  isShowingRank,
-  level,
-  topScore,
-  topScorerIds,
-  allowedPlanType,
-}: LevelCardProps) {
-  const { user, userPlan, status } = useAuth();
+export async function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
   const router = useRouter();
+  const { user, userPlan, status } = useAuth();
   const [pointHasDown, setPointHasDown] = useState(false);
-  const [author, setAuthor] = useState<IUser>();
   const isAIMode = !level;
   const isLocked =
     isAIMode &&
     (status !== 'authenticated' || !allowedPlanType?.includes(userPlan?.type ?? 'free'));
-
-  const [topScorerNames, setTopScorerNames] = useState<string[]>([]);
-
-  useEffect(() => {
-    async function fetchAuthor(id: string) {
-      const supabaseClient = createClientComponentClient<Database>();
-      const fetchUserResponse = await supabaseClient.from('users').select().eq('id', id).single();
-      if (!fetchUserResponse.error) {
-        setAuthor(fetchUserResponse.data);
-      }
-    }
-
-    if (level && level.created_by) void fetchAuthor(level.created_by);
-  }, [level]);
-
-  useEffect(() => {
-    async function fetchTopScorerNames(uids: string[]) {
-      const supabaseClient = createClientComponentClient<Database>();
-      const fetchUsersResponse = await supabaseClient.from('users').select().in('id', uids);
-      if (!fetchUsersResponse.error) {
-        setTopScorerNames(
-          fetchUsersResponse.data.map((user) => {
-            if (user.is_anonymous) return 'Anonymous';
-            else return user.nickname ?? user.name;
-          })
-        );
-      }
-    }
-
-    if (topScorerIds && topScorerIds.length > 0) void fetchTopScorerNames(topScorerIds);
-  }, [topScorerIds]);
 
   const goToLevel = () => {
     if (isLocked) {
@@ -159,23 +116,25 @@ export function LevelCard({
   };
 
   const renderRankingContent = () => {
-    if (topScore) {
+    if (level?.best_score) {
       return (
         <section className='flex flex-col items-center gap-4'>
           <Medal size={25} />
           <div className='flex flex-col items-center gap-2'>
             <div>Best Score</div>
-            <div className='text-2xl font-extrabold'>{topScore.toFixed(1)}</div>
-            <StarRatingBar rating={getOverallRating(topScore, 6)} maxRating={6} />
+            <div className='text-2xl font-extrabold'>{level.best_score.toFixed(1)}</div>
+            <StarRatingBar rating={getOverallRating(level.best_score, 6)} maxRating={6} />
           </div>
-          <div className='flex flex-col items-center gap-2'>
-            {topScorerNames.length > 1 ? (
-              <div className='italic'>by Top Scorers</div>
-            ) : (
-              <div className='italic'>by Top Scorer</div>
-            )}
-            <div className='text-2xl font-extrabold'>{topScorerNames.join(' & ')}</div>
-          </div>
+          {level?.top_scorer_names && (
+            <div className='flex flex-col items-center gap-2'>
+              {level.top_scorer_names.length > 1 ? (
+                <div className='italic'>by Top Scorers</div>
+              ) : (
+                <div className='italic'>by Top Scorer</div>
+              )}
+              <div className='text-2xl font-extrabold'>{level.top_scorer_names.join(' & ')}</div>
+            </div>
+          )}
         </section>
       );
     } else {
@@ -203,7 +162,7 @@ export function LevelCard({
         }
       }}
       className={cn(
-        isShowingRank && user && topScorerIds?.includes(user.id)
+        isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
           ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
           : '',
         isAIMode ? 'unicorn-color' : '',
@@ -225,10 +184,10 @@ export function LevelCard({
         {isShowingRank ? renderRankingContent() : renderCardContent()}
       </CardContent>
       <div className='h-auto w-full flex-grow'></div>
-      {author && (
+      {level?.created_by && (
         <CardFooter>
           <div className='w-full text-right italic leading-snug'>
-            by <span className='font-extrabold'>{author.nickname ?? author.name}</span>
+            by <span className='font-extrabold'>{level.created_by}</span>
           </div>
         </CardFooter>
       )}

@@ -112,6 +112,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "game_scores"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_ai_evaluations_score_id_fkey"
+            columns: ["score_id"]
+            isOneToOne: false
+            referencedRelation: "v_score_with_ai_evaluations"
+            referencedColumns: ["score_id"]
           }
         ]
       }
@@ -141,6 +148,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "game_scores"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_score_conversations_score_id_fkey"
+            columns: ["score_id"]
+            isOneToOne: false
+            referencedRelation: "v_score_with_ai_evaluations"
+            referencedColumns: ["score_id"]
           }
         ]
       }
@@ -170,6 +184,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "game_scores"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_score_highlights_score_id_fkey"
+            columns: ["score_id"]
+            isOneToOne: false
+            referencedRelation: "v_score_with_ai_evaluations"
+            referencedColumns: ["score_id"]
           }
         ]
       }
@@ -202,6 +223,27 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "games"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_scores_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "v_game_level_info"
+            referencedColumns: ["game_id"]
+          },
+          {
+            foreignKeyName: "game_scores_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "v_score_with_ai_evaluations"
+            referencedColumns: ["game_id"]
+          },
+          {
+            foreignKeyName: "game_scores_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["game_id"]
           },
           {
             foreignKeyName: "game_scores_target_word_fkey"
@@ -239,15 +281,29 @@ export interface Database {
             foreignKeyName: "games_level_id_fkey"
             columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: "level_top_scorer_stats"
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "v_level_with_best_score_and_top_scorers"
             referencedColumns: ["level_id"]
           },
           {
             foreignKeyName: "games_level_id_fkey"
             columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: "levels"
+            referencedRelation: "v_levels_with_created_by_and_ranks"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["level_id"]
           },
           {
             foreignKeyName: "games_user_id_fkey"
@@ -255,6 +311,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["user_id"]
           }
         ]
       }
@@ -299,6 +362,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "levels_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["user_id"]
           }
         ]
       }
@@ -325,6 +395,13 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["user_id"]
           }
         ]
       }
@@ -346,15 +423,29 @@ export interface Database {
             foreignKeyName: "user_attempted_levels_level_id_fkey"
             columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: "level_top_scorer_stats"
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempted_levels_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "v_level_with_best_score_and_top_scorers"
             referencedColumns: ["level_id"]
           },
           {
             foreignKeyName: "user_attempted_levels_level_id_fkey"
             columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: "levels"
+            referencedRelation: "v_levels_with_created_by_and_ranks"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempted_levels_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["level_id"]
           },
           {
             foreignKeyName: "user_attempted_levels_user_id_fkey"
@@ -362,6 +453,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempted_levels_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["user_id"]
           }
         ]
       }
@@ -430,16 +528,90 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "words_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["user_id"]
           }
         ]
       }
     }
     Views: {
-      level_top_scorer_stats: {
+      v_game_level_info: {
         Row: {
-          level_id: string | null
-          player_ids: string[] | null
+          game_id: string | null
+          level_difficulty: number | null
+          level_name: string | null
           total_score: number | null
+          total_time_taken: number | null
+        }
+        Relationships: []
+      }
+      v_level_with_best_score_and_top_scorers: {
+        Row: {
+          best_score: number | null
+          level_id: string | null
+          top_scorer_ids: string[] | null
+          top_scorer_names: string[] | null
+        }
+        Relationships: []
+      }
+      v_levels_with_created_by_and_ranks: {
+        Row: {
+          best_score: number | null
+          created_at: string | null
+          created_by: string | null
+          difficulty: number | null
+          id: string | null
+          is_new: boolean | null
+          name: string | null
+          popularity: number | null
+          top_scorer_ids: string[] | null
+          top_scorer_names: string[] | null
+          words: string[] | null
+        }
+        Relationships: []
+      }
+      v_score_with_ai_evaluations: {
+        Row: {
+          ai_explanation: string | null
+          ai_score: number | null
+          ai_suggestion: string | null
+          conversations: Json | null
+          duration: number | null
+          game_id: string | null
+          highlights: Json | null
+          score_id: string | null
+          score_index: number | null
+          taboo_words: string[] | null
+          target_word: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_scores_target_word_fkey"
+            columns: ["target_word"]
+            isOneToOne: false
+            referencedRelation: "words"
+            referencedColumns: ["word"]
+          }
+        ]
+      }
+      v_user_played_level_game_with_scores_and_completed_times: {
+        Row: {
+          completed_times: number | null
+          game_finished_at: string | null
+          game_id: string | null
+          is_best_score: boolean | null
+          level_difficulty: number | null
+          level_id: string | null
+          level_name: string | null
+          total_score: number | null
+          total_time_taken: number | null
+          user_email: string | null
+          user_id: string | null
         }
         Relationships: []
       }
@@ -494,57 +666,13 @@ export interface Database {
         }
         Returns: string
       }
-      get_best_performing_level_for_user: {
+      f_upload_a_game: {
         Args: {
           _user_id: string
-        }
-        Returns: {
-          level_id: string
-          level_name: string
-          difficulty: number
-          score: number
-        }[]
-      }
-      get_game_ranks_desc_for_level: {
-        Args: {
           _level_id: string
+          _game: Json
         }
-        Returns: {
-          game_id: string
-          player_id: string
-          player_name: string
-          total_score: number
-        }[]
-      }
-      get_most_freq_played_levels_for_user: {
-        Args: {
-          _user_id: string
-        }
-        Returns: {
-          level_id: string
-          level_name: string
-          difficulty: number
-          completed_times: number
-        }[]
-      }
-      get_total_score_for_game: {
-        Args: {
-          _game_id: string
-        }
-        Returns: {
-          total_score: number
-        }[]
-      }
-      get_user_played_levels_summary: {
-        Args: {
-          _user_id: string
-        }
-        Returns: {
-          level_id: string
-          completed_times: number
-          last_played_at: string
-          best_score: number
-        }[]
+        Returns: undefined
       }
       increment: {
         Args: {

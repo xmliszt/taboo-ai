@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import { ILevel } from '@/lib/types/level.type';
+import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetch-levels';
 import { IHighlight } from '@/lib/types/score.type';
 
 export type SortType =
@@ -17,7 +17,12 @@ export type SortType =
   | 'easy-first';
 
 export class LevelUtils {
-  static getCompareFn(sortType: SortType): (a: ILevel, b: ILevel) => number {
+  static getCompareFn(
+    sortType: SortType
+  ): (
+    a: FetchAllLevelsAndRanksReturnTypeSingle,
+    b: FetchAllLevelsAndRanksReturnTypeSingle
+  ) => number {
     switch (sortType) {
       case 'a-z':
         return (a, b) => {

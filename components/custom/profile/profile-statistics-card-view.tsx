@@ -10,8 +10,8 @@ import { useAuth } from '@/components/auth-provider';
 import IconButton from '@/components/ui/icon-button';
 import { getAllGamesCompletedByUser } from '@/lib/services/gameService';
 import {
+  fetchGamesCompletedByUser,
   getBestPerformingLevelSummary,
-  getLevelsCompletedByUser,
   getMostFreqPlayedLevelsSummary,
 } from '@/lib/services/levelService';
 import { cn } from '@/lib/utils';
@@ -27,7 +27,7 @@ export default function ProfileStatisticsCardView() {
   const [mostFreqPlayedTopics, setMostFreqPlayedTopics] =
     useState<AsyncReturnType<typeof getMostFreqPlayedLevelsSummary>>();
   const [allPlayedLevels, setAllPlayedLevels] =
-    useState<AsyncReturnType<typeof getLevelsCompletedByUser>>();
+    useState<AsyncReturnType<typeof fetchGamesCompletedByUser>>();
   const [allPlayedGames, setAllPlayedGames] =
     useState<AsyncReturnType<typeof getAllGamesCompletedByUser>>();
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function ProfileStatisticsCardView() {
         await Promise.all([
           getBestPerformingLevelSummary(uid),
           getMostFreqPlayedLevelsSummary(uid),
-          getLevelsCompletedByUser(uid),
+          fetchGamesCompletedByUser(uid),
           getAllGamesCompletedByUser(uid),
         ]);
       setBestPerformingTopic(bestPerformingLevels[0]);
