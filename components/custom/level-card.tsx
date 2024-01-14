@@ -23,7 +23,7 @@ import { StarRatingBar } from './star-rating-bar';
 interface LevelCardProps {
   level?: FetchAllLevelsAndRanksReturnTypeSingle;
   isShowingRank?: boolean;
-  allowedPlanType?: Database['public']['Enums']['customer_plan_type'];
+  allowedPlanType?: Database['public']['Enums']['customer_plan_type'][];
 }
 
 export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
