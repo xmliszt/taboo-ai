@@ -8,7 +8,7 @@ import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetc
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
-import { SubscriptionPlanType } from '@/lib/types/subscription-plan.type';
+import { Database } from '@/lib/supabase/extension/types';
 import { getDifficulty } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
@@ -23,7 +23,7 @@ import { StarRatingBar } from './star-rating-bar';
 interface LevelCardProps {
   level?: FetchAllLevelsAndRanksReturnTypeSingle;
   isShowingRank?: boolean;
-  allowedPlanType?: SubscriptionPlanType[];
+  allowedPlanType?: Database['public']['Enums']['customer_plan_type'];
 }
 
 export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
