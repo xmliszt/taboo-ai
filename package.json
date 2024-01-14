@@ -16,8 +16,6 @@
     "vercel:init": "vercel link && vercel pull",
     "vercel:pull": "vercel pull",
     "vercel:dev": "vercel dev --listen 3000",
-    "functions:deploy": "firebase use production && firebase deploy --only functions",
-    "functions:deploy:preview": "firebase use preview && firebase deploy --only functions",
     "gen-types:preview": "supabase gen types typescript --project-id qbjkpfyfmnkerzcmmjbk --schema public > lib/supabase/__generated__/types.ts --debug",
     "gen-types": "supabase gen types typescript --project-id avosfnqiscrmxpqmhswp --schema public > lib/supabase/__generated__/types.ts --debug"
   },
@@ -60,8 +58,6 @@
     "dateformat": "^5.0.3",
     "eslint-config-next": "^13.5.3",
     "file-loader": "^1.1.6",
-    "firebase": "^10.3.0",
-    "firebase-admin": "^11.10.1",
     "framer-motion": "^10.12.16",
     "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",

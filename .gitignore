@@ -47,10 +47,6 @@ next-env.d.ts
 
 .eslintcache
 
-# firebase
-functions/*
-**/*.log
-
 # IntelliJ IDEA
 /.idea
 *.iml
