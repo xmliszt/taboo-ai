@@ -3,10 +3,10 @@ import { DialogProps } from '@radix-ui/react-dialog';
 import _ from 'lodash';
 import { toast } from 'sonner';
 
+import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { sendEmail } from '@/lib/services/emailService';
 import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
 import { addTabooWords } from '@/lib/services/wordService';
-import { IUser } from '@/lib/types/user.type';
 import { cn } from '@/lib/utils';
 
 import { Badge } from '../ui/badge';
@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet';
 import { Spinner } from './spinner';
 
 interface TopicReviewSheet extends DialogProps {
-  user: IUser;
+  user: UserProfile;
   topicName: string;
   difficultyLevel: string;
   shouldUseAIForTabooWords: boolean;

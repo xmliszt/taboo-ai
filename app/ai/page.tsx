@@ -18,14 +18,13 @@ import { setPersistence } from '@/lib/persistence/persistence';
 import { askAIForCreativeTopic } from '@/lib/services/aiService';
 
 export default function AiPage() {
-  const { status, userPlan } = useAuth();
+  const { user } = useAuth();
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const isLocked =
-    status === 'unauthenticated' || (status === 'authenticated' && userPlan?.type === 'free');
+  const isLocked = !user || user.subscription?.customer_plan_type === 'free';
 
   useEffect(() => {
     if (isLocked) {
@@ -64,7 +63,7 @@ export default function AiPage() {
     setErrorMessage(undefined);
   };
 
-  if (status === 'loading' || isLocked)
+  if (isLocked)
     return <main className='flex h-full w-full flex-col items-center px-10 pt-20'></main>;
 
   return (

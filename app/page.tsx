@@ -10,7 +10,7 @@ import ContactMe from '../components/custom/home/contact-me';
 const title = 'Taboo AI';
 const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <main>
       <Script id='pwa-script' src='/js/pwa.js' />

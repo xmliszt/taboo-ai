@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { round } from 'lodash';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { getDifficulty, getDisplayedTopicName } from '@/lib/utilities';
@@ -19,7 +19,7 @@ export default function ResultsSummaryCard({
   difficulty: number;
 }) {
   const rating = totalScore ? getOverallRating(totalScore) : undefined;
-  const roundedTotalScore = totalScore ? _.round(totalScore, 1) : undefined;
+  const roundedTotalScore = totalScore ? round(totalScore, 1) : undefined;
   const displayTopicName = getDisplayedTopicName(topicName);
   const difficultyName = getDifficulty(difficulty, false);
 
@@ -42,7 +42,7 @@ export default function ResultsSummaryCard({
         <div className='flex flex-row justify-between'>
           <span>Total Score:</span>
           <div className='flex flex-row items-center'>
-            <ScoreInfoButton asChild />
+            <ScoreInfoButton />
             {roundedTotalScore ? (
               <span className='font-bold'>{roundedTotalScore} / 300</span>
             ) : (

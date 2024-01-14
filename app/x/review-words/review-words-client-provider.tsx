@@ -51,7 +51,7 @@ type DevReviewWordsPageProps = {
   words: string[];
 };
 const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
-  const { user, status } = useAuth();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<FetchAllLevelsAndAuthorsReturnTypeSingle>();
@@ -66,8 +66,8 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   const [isSendingRejectingEmail, startRejectingEmailTransition] = useTransition();
 
   const isPageInteractive = useMemo(() => {
-    return !isLoading && !isAutoGenerating && selectedLevel && user && status === 'authenticated';
-  }, [isLoading, isAutoGenerating, selectedLevel, user, status]);
+    return !isLoading && !isAutoGenerating && selectedLevel && user;
+  }, [isLoading, isAutoGenerating, selectedLevel, user]);
 
   const router = useRouter();
 
@@ -77,11 +77,11 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   }, [selectedLevelId]);
 
   useEffect(() => {
-    if (status === 'unauthenticated' || !AdminManager.checkIsAdmin(user)) {
+    if (!user || !AdminManager.checkIsAdmin(user)) {
       toast.error('You are not authorized to view this page!');
       router.push('/');
     }
-  }, [user, status]);
+  }, [user]);
 
   const getCachedWordList = useCallback(async () => {
     if (selectedLevel) {
@@ -377,7 +377,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
     }
   };
 
-  if (!user || status !== 'authenticated' || !AdminManager.checkIsAdmin(user)) {
+  if (!user || !AdminManager.checkIsAdmin(user)) {
     return <section className='flex h-full w-full items-center justify-center'></section>;
   }
 

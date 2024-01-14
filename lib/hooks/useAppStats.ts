@@ -15,7 +15,7 @@ export const useAppStats = () => {
   }, []);
 
   useEffect(() => {
-    listenToAppStats(onSnapshotUpdated);
+    listenToAppStats();
   }, [onSnapshotUpdated]);
 
   return { stats };

@@ -44,6 +44,8 @@ export type Database = MergeDeep<
             total_score: number;
             user_email: string;
             user_id: string;
+            game_finished_at: string;
+            total_time_taken: number;
           };
         };
         v_game_level_info: {

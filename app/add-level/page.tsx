@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { zip } from 'lodash';
 import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
@@ -46,7 +46,7 @@ const INVALID_WORD_ERROR =
   'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty. e.g.: invalid - "Mc-Donalds", valid - "McDonald\'s"';
 
 const AddLevelPage = () => {
-  const { user, status } = useAuth();
+  const { user } = useAuth();
   const [reviewSheetOpen, setReviewSheetOpen] = useState(false);
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] = useState(false);
   const [topicName, setTopicName] = useState('');
@@ -63,7 +63,7 @@ const AddLevelPage = () => {
   const [tabooWordsErrorIndexs, setTabooWordsErrorIndexs] = useState<number[][]>([]);
 
   //ANCHOR - States for appeal
-  const [selectedWordForAppeal, setselectedWordForAppeal] = useState('');
+  const [selectedWordForAppeal, setSelectedWordForAppeal] = useState('');
   const [isAppealModalOpen, setIsAppealModalOpen] = useState(false);
   const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
   const [appealReasons, setAppealReasons] = useState('');
@@ -74,11 +74,11 @@ const AddLevelPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!user) {
       toast.warning('You need to sign in to contribute a topic');
       router.push('/');
     }
-  }, [status]);
+  }, [user]);
 
   useEffect(() => {
     validateTargetWords();
@@ -367,7 +367,7 @@ const AddLevelPage = () => {
   };
 
   const openAppeal = (forTarget: string) => {
-    setselectedWordForAppeal(forTarget);
+    setSelectedWordForAppeal(forTarget);
     setIsAppealModalOpen(true);
   };
 
@@ -406,9 +406,7 @@ const AddLevelPage = () => {
     setTabooWordsExistedStatus([]);
   };
 
-  if (!user || status !== 'authenticated') {
-    return <section className='flex h-full w-full items-center justify-center'></section>;
-  }
+  if (!user) return <section className='flex h-full w-full items-center justify-center'></section>;
 
   return (
     <main className='flex flex-col items-center gap-4 p-4'>
@@ -599,7 +597,7 @@ const AddLevelPage = () => {
                       (tabooWordsExistedStatus[expandedIndex] === true &&
                         tabooWords[expandedIndex].length === 0)
                     ) {
-                      checkIfTabooWordsExistedForTarget(expandedIndex);
+                      void checkIfTabooWordsExistedForTarget(expandedIndex);
                     }
                   }}
                 >
@@ -793,7 +791,7 @@ const AddLevelPage = () => {
               <Button
                 disabled={appealReasons.length <= 0 || appealReasonErrorMessage.length > 0}
                 onClick={() => {
-                  submitAppeal(selectedWordForAppeal);
+                  void submitAppeal(selectedWordForAppeal);
                 }}
               >
                 Submit Appeal

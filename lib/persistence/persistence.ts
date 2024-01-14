@@ -52,10 +52,3 @@ export const bindPersistence = <T>(key: string, callback: (value: T | null) => v
     window.removeEventListener('storage', windowListener);
   };
 };
-
-/**
- * Remove the persistence with the given key.
- */
-export const removePersistence = (key: string): void => {
-  localStorage.removeItem(key);
-};

@@ -1,19 +1,11 @@
-import ShareScoreButton from '../custom/share-score-button';
-import { UserLoginPortal } from '../custom/user-login-portal';
+'use client';
 
-interface HeaderRightElementsProps {
-  hideUserMenu?: boolean;
-  hideShareScoreButton?: boolean;
-}
+import React from 'react';
 
-export default function HeaderRightElements({
-  hideUserMenu,
-  hideShareScoreButton = true,
-}: HeaderRightElementsProps) {
+export default function HeaderRightElements({ children }: { children: React.ReactNode }) {
   return (
     <div id='right-header-slot' className='flex justify-end gap-1'>
-      {!hideShareScoreButton && <ShareScoreButton />}
-      {!hideUserMenu && <UserLoginPortal />}
+      {children}
     </div>
   );
 }

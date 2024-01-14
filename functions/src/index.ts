@@ -1,8 +1,5 @@
+import { database as adminDatabase, firestore as adminFirestore } from 'firebase-admin';
 import { initializeApp } from 'firebase-admin/app';
-import {
-  firestore as adminFirestore,
-  database as adminDatabase,
-} from 'firebase-admin';
 import { firestore } from 'firebase-functions';
 import * as logger from 'firebase-functions/logger';
 
@@ -20,7 +17,7 @@ const db = adminDatabase();
  * collection for the matching level, incrementing it by 1.
  */
 exports.onUserGameAdded = firestore
-  .document('users/{userId}/games/{gameId}')
+  .document('users/{userId}/recent-games/{gameId}')
   .onCreate(async (snapshot, context) => {
     logger.info('onUserGameAdded', snapshot, context);
     await fs.doc(`users/${context.params.userId}`).update({
@@ -30,10 +27,7 @@ exports.onUserGameAdded = firestore
     if (levelId) {
       await fs
         .doc(`users/${context.params.userId}/levels/${levelId}`)
-        .set(
-          { attempts: adminFirestore.FieldValue.increment(1) },
-          { merge: true }
-        );
+        .set({ attempts: adminFirestore.FieldValue.increment(1) }, { merge: true });
     }
   });
 
@@ -97,27 +91,23 @@ exports.onUserAnonymityChanged = firestore
  * This will also delete the user's record from the
  * users collection.
  */
-exports.onUserDeleted = firestore
-  .document('users/{userId}')
-  .onDelete(async (snapshot, context) => {
-    logger.info('onUserDeleted', snapshot, context);
-    const levelsAttemptedByUser = await fs
-      .collection(`users/${context.params.userId}/levels`)
-      .get();
-    const levelIdsAttempted = levelsAttemptedByUser.docs.map((doc) => doc.id);
-    const updates: { [key: string]: unknown } = {};
-    for (const levelId of levelIdsAttempted) {
-      const levelStatsRef = db.ref(`levelStats/${levelId}`);
-      const levelStatsSnapshot = await levelStatsRef.get();
-      if (levelStatsSnapshot.val()?.topScorer === snapshot.data()?.email) {
-        // Delete the record
-        updates[levelId] = null;
-      }
+exports.onUserDeleted = firestore.document('users/{userId}').onDelete(async (snapshot, context) => {
+  logger.info('onUserDeleted', snapshot, context);
+  const levelsAttemptedByUser = await fs.collection(`users/${context.params.userId}/levels`).get();
+  const levelIdsAttempted = levelsAttemptedByUser.docs.map((doc) => doc.id);
+  const updates: { [key: string]: unknown } = {};
+  for (const levelId of levelIdsAttempted) {
+    const levelStatsRef = db.ref(`levelStats/${levelId}`);
+    const levelStatsSnapshot = await levelStatsRef.get();
+    if (levelStatsSnapshot.val()?.topScorer === snapshot.data()?.email) {
+      // Delete the record
+      updates[levelId] = null;
     }
-    await db.ref('levelStats').update(updates);
-    // Recursively delete everything in user's document
-    await fs.recursiveDelete(fs.doc(`users/${context.params.userId}`));
-  });
+  }
+  await db.ref('levelStats').update(updates);
+  // Recursively delete everything in user's document
+  await fs.recursiveDelete(fs.doc(`users/${context.params.userId}`));
+});
 
 /**
  * Triggerred when user's customerId field is updated.
@@ -135,10 +125,7 @@ exports.onUserCustomerIdChanged = firestore
     const newCustomerPlanType: string = newUserData.customerPlanType;
 
     // If nothing changed, return
-    if (
-      oldCustomerId === newCustomerId &&
-      oldCustomerPlanType === newCustomerPlanType
-    ) {
+    if (oldCustomerId === newCustomerId && oldCustomerPlanType === newCustomerPlanType) {
       return;
     }
 
@@ -156,20 +143,18 @@ exports.onUserCustomerIdChanged = firestore
 /**
  * Triggerred when user is created.
  */
-exports.onUserCreated = firestore
-  .document('users/{userId}')
-  .onCreate(async (snapshot, context) => {
-    logger.info('onUserCreated', snapshot, context);
-    const userID = context.params.userId;
+exports.onUserCreated = firestore.document('users/{userId}').onCreate(async (snapshot, context) => {
+  logger.info('onUserCreated', snapshot, context);
+  const userID = context.params.userId;
 
-    // Search for user in '/subscriptions' collection, if found, copy
-    // customerId and customerPlanType to user document
-    const subscriptionSnapshot = await fs.doc(`subscriptions/${userID}`).get();
-    if (subscriptionSnapshot.exists) {
-      const subscriptionData = subscriptionSnapshot.data();
-      await fs.doc(`users/${userID}`).update({
-        customerId: subscriptionData?.customerId,
-        customerPlanType: subscriptionData?.customerPlanType,
-      });
-    }
-  });
+  // Search for user in '/subscriptions' collection, if found, copy
+  // customerId and customerPlanType to user document
+  const subscriptionSnapshot = await fs.doc(`subscriptions/${userID}`).get();
+  if (subscriptionSnapshot.exists) {
+    const subscriptionData = subscriptionSnapshot.data();
+    await fs.doc(`users/${userID}`).update({
+      customerId: subscriptionData?.customerId,
+      customerPlanType: subscriptionData?.customerPlanType,
+    });
+  }
+});

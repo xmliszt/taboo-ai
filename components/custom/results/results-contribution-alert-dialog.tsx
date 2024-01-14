@@ -14,7 +14,7 @@ interface ResultsContributionAlertDialogProps {
   onTopicReviewSheetOpenChange: (open: boolean) => void;
 }
 
-export default function ResutlsContributionAlertDialog({
+export default function ResultContributionAlertDialog({
   open,
   onOpenChange,
   onTopicReviewSheetOpenChange,

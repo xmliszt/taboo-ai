@@ -256,8 +256,8 @@
 
 - Taboo AI **first release**!
 - **Pre-defined topics** of taboo words.
-- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more *
-  *customization** to the game.
+- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more \*
+  \*customization\*\* to the game.
 - **Timer** scoring system.
 - Integrated with **ChatGPT AI** to respond your questions.
 - Smart system to **match** and **verify** if you hit the taboo words or AI hits the taboo words.

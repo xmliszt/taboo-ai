@@ -1,12 +1,14 @@
 import _, { uniqueId } from 'lodash';
 
+import { Game } from '@/app/result/server/fetch-game';
+import { ConversationToUpload } from '@/app/result/server/upload-game';
+
 import { CONSTANTS } from '../constants';
 import {
   CONVERSATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
   TOPIC_GENERATION_HARMFUL_CONTENT_ERROR_MESSAGE_CHOICES,
 } from '../errors/google-ai-error-parser';
-import { ILevel } from '../types/level.type';
-import { IScore, IScoreConversation } from '../types/score.type';
+import { LevelToUpload } from '../types/level.type';
 import { IWord } from '../types/word.type';
 import { formatResponseTextIntoArray } from '../utilities';
 
@@ -64,7 +66,7 @@ export async function askAITabooWordsForTarget(targetWord: string): Promise<IWor
 export async function askAIForCreativeTopic(
   topic: string,
   difficulty: number
-): Promise<ILevel | undefined> {
+): Promise<LevelToUpload | undefined> {
   let difficultyString;
   switch (difficulty) {
     case 1:
@@ -138,11 +140,11 @@ export async function askAIForCreativeTopic(
 
 /**
  * Fetch chat completion from conversation
- * @param {IScoreConversation[]} conversation The conversation to complete.
+ * @param {ConversationToUpload[]} conversation The conversation to complete.
  */
 export async function fetchConversationCompletion(
-  conversation: IScoreConversation[]
-): Promise<{ conversation: IScoreConversation[] }> {
+  conversation: ConversationToUpload[]
+): Promise<{ conversation: ConversationToUpload[] }> {
   const response = await fetch('/api/conversation', {
     method: 'POST',
     headers: {
@@ -182,7 +184,7 @@ export async function fetchConversationCompletion(
  */
 export async function performEvaluation(
   userId: string,
-  gameScore: IScore
+  gameScore: Game['scores'][number]
 ): Promise<{ score: number; reasoning: string }> {
   const response = await fetch('/api/evaluation', {
     method: 'POST',
@@ -190,8 +192,8 @@ export async function performEvaluation(
     body: JSON.stringify({
       userId: userId,
       target: gameScore.target_word,
-      taboos: gameScore.taboos,
-      conversation: gameScore.conversation,
+      taboos: gameScore.taboo_words,
+      conversation: gameScore.conversations,
     }),
   });
   return await response.json();

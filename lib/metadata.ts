@@ -67,10 +67,6 @@ export const _meta: Metadata = {
       'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
     ],
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
   appleWebApp: {
     title: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     statusBarStyle: 'black-translucent',

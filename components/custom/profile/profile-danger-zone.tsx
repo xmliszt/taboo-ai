@@ -1,8 +1,11 @@
+'use client';
+
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Skull } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { deleteUser } from '@/app/profile/server/delete-user';
+import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,53 +17,26 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { cancelSubscription, fetchCustomerSubscriptions } from '@/lib/services/subscriptionService';
-import { deleteUserFromSupabase } from '@/lib/services/userService';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/lib/utils/supabase/client';
 
 import { Spinner } from '../spinner';
 
-export default function ProfileDangerZone({ className }: { className?: string }) {
-  const router = useRouter();
+type ProfileDangerZoneProps = {
+  user: UserProfile;
+  className?: string;
+};
+export function ProfileDangerZone(props: ProfileDangerZoneProps) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const proceedToDeleteUser = async () => {
-    const supabaseClient = createClient();
-    const userResponse = await supabaseClient.auth.getUser();
-    if (userResponse.error) {
-      toast.error('We cannot identify the user to be deleted. Please retry login and try again.');
-      return;
-    }
-    const user = userResponse.data.user;
-    const fetchUserSubscription = await supabaseClient
-      .from('subscriptions')
-      .select()
-      .eq('user_id', user.id)
-      .single();
-    if (fetchUserSubscription.error) {
-      toast.error(
-        'We cannot identify the user subscription to be deleted. Please retry login and try again.'
-      );
-      return;
-    }
-    if (!user.email) {
-      toast.error('We cannot identify the user to be deleted. Please retry login and try again.');
-      return;
-    }
-    const userSubscription = await fetchCustomerSubscriptions(
-      user.email,
-      fetchUserSubscription.data.customer_id
-    );
-
-    // Start deleting
     try {
       setIsDeleting(true);
-      await deleteUserFromSupabase(user.id); // Supabase delete user
-      userSubscription?.subId && (await cancelSubscription(userSubscription.subId)); // If subscription ID presents, cancel the subscription from Stripe
+      await deleteUser(props.user.id);
       toast.info('Your account has been deleted.');
-      router.push('/');
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/';
     } catch (error) {
       console.error(error);
       toast.error('Sorry, we are unable to delete the user right now. Please try again later!');
@@ -71,7 +47,7 @@ export default function ProfileDangerZone({ className }: { className?: string })
 
   return (
     <>
-      <Card className={cn(className, 'border-red-500 text-red-600')}>
+      <Card className={cn(props.className, 'border-red-500 text-red-600')}>
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <Skull />

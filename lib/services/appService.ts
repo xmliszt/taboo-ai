@@ -1,14 +1,7 @@
-import { DataSnapshot, increment, onValue, ref, update } from 'firebase/database';
-
-import { realtime } from '../../firebase/firebase-client';
-
-export const listenToAppStats = (onSnapshotUpdated: (snapshot: DataSnapshot) => unknown) => {
-  onValue(ref(realtime, 'stats/'), onSnapshotUpdated);
+export const listenToAppStats = () => {
+  // TODO: listen to supabase realtime app stats
 };
 
 export const incrementView = () => {
-  const updates = {
-    'stats/views': increment(1),
-  };
-  update(ref(realtime), updates);
+  // TODO: increment view count
 };

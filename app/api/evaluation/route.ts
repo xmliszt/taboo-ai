@@ -2,9 +2,9 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
 
+import { ConversationToUpload } from '@/app/result/server/upload-game';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { openai } from '@/lib/openai';
-import { IScoreConversation } from '@/lib/types/score.type';
 import { createClient } from '@/lib/utils/supabase/server';
 
 type AIEvaluationMode = 'basic' | 'advanced';
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     userId: string;
     target: string;
     taboos: string[];
-    conversation: IScoreConversation[];
+    conversation: ConversationToUpload[];
   };
   // Based on user's plan, determine which model to use
   let evaluationMode: AIEvaluationMode = 'basic';

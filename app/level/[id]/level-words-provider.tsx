@@ -1,5 +1,6 @@
 'use client';
 
+// TODO: This filename does not make sense, and it is too large to be a client component. Refactor to break it down.
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { uniqueId } from 'lodash';
@@ -7,6 +8,11 @@ import { SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTimer } from 'use-timer';
 
+import {
+  ConversationToUpload,
+  HighlightToUpload,
+  ScoreToUpload,
+} from '@/app/result/server/upload-game';
 import Timer from '@/components/custom/timer';
 import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
@@ -14,12 +20,10 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { CONSTANTS } from '@/lib/constants';
 import { HASH } from '@/lib/hash';
-import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
+import { getPersistence } from '@/lib/persistence/persistence';
 import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
 import { fetchTabooWords } from '@/lib/services/wordService';
-import { IGame } from '@/lib/types/game.type';
-import { ILevel } from '@/lib/types/level.type';
-import { IHighlight, IScore, IScoreConversation } from '@/lib/types/score.type';
+import { LevelToUpload } from '@/lib/types/level.type';
 import { IWord } from '@/lib/types/word.type';
 import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
@@ -30,9 +34,6 @@ type LevelWordsProviderProps = {
   levelId: string;
   words?: string[];
 };
-
-// Game started_at
-let startedAt = new Date();
 
 // Words stored in cache
 let cacheWords: string[] = [];
@@ -51,8 +52,8 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCountingDown, setIsCountdown] = useState<boolean>(false);
-  const [conversation, setConversation] = useState<IScoreConversation[]>([]);
-  const [savedScores, setSavedScores] = useState<IScore[]>([]);
+  const [conversation, setConversation] = useState<ConversationToUpload[]>([]);
+  const [savedScores, setSavedScores] = useState<ScoreToUpload[]>([]);
 
   const {
     time,
@@ -79,7 +80,6 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
     cacheWords = words;
     resetTimer();
     setWordsPlayed([]);
-    startedAt = new Date();
     setTarget(generateNewTarget(words));
     setCurrentProgress(1);
   };
@@ -95,7 +95,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   // start the game
   useEffect(() => {
     if (isCustomGame) {
-      const cachedLevel = getPersistence<ILevel>(HASH.level);
+      const cachedLevel = getPersistence<LevelToUpload>(HASH.level);
       if (cachedLevel) {
         startGame(cachedLevel.words);
       } else {
@@ -143,7 +143,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
     const userInput = event.currentTarget['user-input'].value as string;
     // Immediately show user input in the UI.
     // Remove any message that has role == 'error' and also its previous message if it has role == 'user'.
-    const updatedConversation: IScoreConversation[] = [];
+    const updatedConversation: ConversationToUpload[] = [];
     for (let i = 0; i < conversation.length; i++) {
       const current = conversation[i];
       if (current.role === 'user' || current.role === 'assistant') {
@@ -186,7 +186,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
     }
 
     // Remove the last message from conversation if it is from assistant and does not have any content
-    const inputConversation: IScoreConversation[] = [...updatedConversation];
+    const inputConversation: ConversationToUpload[] = [...updatedConversation];
     if (
       inputConversation[inputConversation.length - 1].role === 'assistant' &&
       inputConversation[inputConversation.length - 1].content.length <= 0
@@ -220,7 +220,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   }, [conversation]);
 
   // Move on to the next question, save the scores to cache. Delay and set the current progress to the next one
-  const nextQuestion = async (highlights: IHighlight[]) => {
+  const nextQuestion = async (highlights: HighlightToUpload[]) => {
     pauseTimer();
     const copySavedScores = [...savedScores];
     copySavedScores.push({
@@ -305,16 +305,9 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   useEffect(() => {
     const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      // Game Finished. Save game to cache
-      const completedAt = new Date();
-      const game: IGame = {
-        level_id: props.levelId,
-        started_at: startedAt.toISOString(),
-        finished_at: completedAt.toISOString(),
-        scores: savedScores,
-        is_custom_game: isCustomGame,
-      };
-      setPersistence(HASH.game, game);
+      // TODO: Game Finished. We need to upload the game and generate the game ID before navigate to results page.
+      // Custom game in AI mode does not have a level ID, so we cannot upload the game. Think about ways to handle this
+      // and show the results.
       router.push('/result');
     } else if (currentProgress === 1) {
       return;

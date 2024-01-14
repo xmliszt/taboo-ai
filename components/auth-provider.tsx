@@ -1,46 +1,29 @@
 'use client';
 
-import React, { createContext, Dispatch, SetStateAction, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
-import { useSupabaseAuth } from '@/lib/hooks/useSupabaseAuth';
-import { IUserSubscriptionPlan } from '@/lib/types/subscription-plan.type';
-import { IUser } from '@/lib/types/user.type';
+import { fetchUserWithSubscriptions } from '@/app/profile/client/fetch-user-subscriptions';
+import type { UserProfileWithStripeSubscription } from '@/app/profile/server/fetch-user-profile';
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
-
 const authProviderContext = createContext<{
-  user?: IUser;
-  userPlan?: IUserSubscriptionPlan;
-  status: AuthStatus;
-  setStatus?: Dispatch<SetStateAction<AuthStatus>>;
-  login?: () => Promise<void>;
-  logout?: () => Promise<void>;
-  refreshUserSubscriptionPlan?: () => Promise<void>;
-}>({
-  status: 'loading',
-});
+  isLoading: boolean;
+  user?: UserProfileWithStripeSubscription;
+}>({ isLoading: false });
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
-  const { user, userPlan, status, setStatus, login, logout, refreshUserSubscriptionPlan } =
-    useSupabaseAuth();
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['fetch-user'],
+    queryFn: fetchUserWithSubscriptions,
+    retry: false,
+  });
 
   return (
-    <authProviderContext.Provider
-      {...props}
-      value={{
-        user,
-        userPlan,
-        status,
-        setStatus,
-        login,
-        logout,
-        refreshUserSubscriptionPlan,
-      }}
-    >
+    <authProviderContext.Provider {...props} value={{ user, isLoading }}>
       {children}
     </authProviderContext.Provider>
   );

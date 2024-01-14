@@ -1,8 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
+import { BackButton } from '@/components/custom/back-button';
+import DevToggle from '@/components/header/dev-toggle';
+import { MenuButton } from '@/components/header/menu-button';
+import { ShareScoreButton } from '@/components/header/share-score-button';
+import ThemeToggle from '@/components/header/theme-toggle';
+import { UserLoginPortal } from '@/components/header/user-login-portal';
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
@@ -59,23 +65,22 @@ export default function Header() {
         'border-b bg-card'
       )}
     >
-      <HeaderLeftElements
-        hideMenu={hideMenu}
-        hideThemeToggle={hideThemeToggle}
-        hideDevToggle={hideDevToggle}
-        hasBackButton={hasBackButton}
-        customBackHref={customBackHref}
-      />
+      <HeaderLeftElements>
+        {!hideMenu && <MenuButton />}
+        {hasBackButton === true && <BackButton customBackHref={customBackHref} />}
+        {!hideThemeToggle && <ThemeToggle />}
+        {!hideDevToggle && <DevToggle key='dev-toggle' />}
+      </HeaderLeftElements>
       <div
         data-testid='heading-rule-title'
         className='pointer-events-none absolute left-0 z-10 w-full text-center text-lg'
       >
         {title}
       </div>
-      <HeaderRightElements
-        hideUserMenu={hideUserMenu}
-        hideShareScoreButton={hideShareScoreButton}
-      />
+      <HeaderRightElements>
+        {!hideShareScoreButton && <ShareScoreButton />}
+        {!hideUserMenu && <UserLoginPortal />}
+      </HeaderRightElements>
     </header>
   );
 }

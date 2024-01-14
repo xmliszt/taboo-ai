@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
+import { login } from '@/components/header/server/login';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +16,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
-import { useAuth } from '../../auth-provider';
-
 export interface LoginErrorEventProps {
   error: string;
   redirectHref?: string;
@@ -23,7 +23,6 @@ export interface LoginErrorEventProps {
 
 export function LoginErrorDialog() {
   const router = useRouter();
-  const { setStatus, login } = useAuth();
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertHeader, setAlertHeader] = useState('');
   const [redirectHref, setRedirectHref] = useState<string>();
@@ -45,16 +44,12 @@ export function LoginErrorDialog() {
 
   const handleLogin = async () => {
     try {
-      login && (await login());
+      await login();
       redirectHref && router.push(redirectHref);
     } catch (error) {
       console.error(error);
-      setStatus && setStatus('unauthenticated');
+      toast.error('Something went wrong. Failed to log in');
     }
-  };
-
-  const handleCancel = () => {
-    setStatus && setStatus('unauthenticated');
   };
 
   return (
@@ -69,12 +64,12 @@ export function LoginErrorDialog() {
           <AlertDialogTitle>{alertHeader}</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             autoFocus
             onClick={() => {
               setAlertOpen(false);
-              handleLogin();
+              void handleLogin();
             }}
           >
             Try Again

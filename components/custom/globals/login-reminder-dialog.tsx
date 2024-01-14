@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
+import { login } from '@/components/header/server/login';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,9 +17,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
-import { useAuth } from '../../auth-provider';
-import { LoginErrorEventProps } from './login-error-dialog';
-
 export interface LoginReminderProps {
   title: string;
   message?: string;
@@ -27,7 +26,6 @@ export interface LoginReminderProps {
 }
 
 export default function LoginReminderDialog() {
-  const { login } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState<string>('');
   const [message, setMessage] = useState<string>();
@@ -59,13 +57,11 @@ export default function LoginReminderDialog() {
 
   const handleLogin = async () => {
     try {
-      login && (await login());
+      await login();
       redirectHref && router.push(redirectHref);
     } catch (error) {
-      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
-        error: error.message,
-        redirectHref,
-      });
+      console.error(error);
+      toast.error('Something went wrong. Failed to log in');
     }
   };
 

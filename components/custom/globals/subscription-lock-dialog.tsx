@@ -18,7 +18,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { useAuth } from '../../auth-provider';
 
 export default function SubscriptionLockDialog() {
-  const { userPlan } = useAuth();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -29,7 +29,7 @@ export default function SubscriptionLockDialog() {
     return () => {
       EventManager.removeListener(CustomEventKey.SUBSCRIPTION_LOCK_DIALOG, listener);
     };
-  }, []);
+  }, [setIsOpen]);
 
   return (
     <AlertDialog
@@ -41,7 +41,8 @@ export default function SubscriptionLockDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Oops, you are currently on {(userPlan?.type ?? 'free').toUpperCase()} plan
+            Oops, you are currently on{' '}
+            {(user?.subscription?.customer_plan_type ?? 'free').toUpperCase()} plan
           </AlertDialogTitle>
           <AlertDialogDescription>
             Your current subscription plan does not have access to this content. To access, consider

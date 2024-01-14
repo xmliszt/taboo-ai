@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
+import { ConversationToUpload } from '@/app/result/server/upload-game';
 import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { googleGeminiPro } from '@/lib/google-ai';
-import { IScoreConversation } from '@/lib/types/score.type';
 
 /**
  * @api {post} /api/conversation Complete a conversation
@@ -13,7 +13,7 @@ import { IScoreConversation } from '@/lib/types/score.type';
  * @apiError (500) {String} Error processing conversation.
  */
 export async function POST(request: Request) {
-  const conversation = (await request.json()).conversation as IScoreConversation[];
+  const conversation = (await request.json()).conversation as ConversationToUpload[];
   if (!conversation) {
     return new Response('Missing conversation', { status: 400 });
   }

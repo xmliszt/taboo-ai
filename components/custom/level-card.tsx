@@ -28,12 +28,12 @@ interface LevelCardProps {
 
 export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
   const router = useRouter();
-  const { user, userPlan, status } = useAuth();
+  const { user } = useAuth();
   const [pointHasDown, setPointHasDown] = useState(false);
   const isAIMode = !level;
   const isLocked =
     isAIMode &&
-    (status !== 'authenticated' || !allowedPlanType?.includes(userPlan?.type ?? 'free'));
+    (!user || !allowedPlanType?.includes(user.subscription?.customer_plan_type ?? 'free'));
 
   const goToLevel = () => {
     if (isLocked) {
@@ -41,7 +41,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
     }
     if (level) {
       setPersistence(HASH.level, level);
-      if (isShowingRank && status === 'unauthenticated') {
+      if (isShowingRank && !user) {
         EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
           title:
             'You are not logged in. Only logged in users can have their results saved and ranked.',

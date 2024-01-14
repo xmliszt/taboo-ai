@@ -6,6 +6,9 @@ import { Check, X } from 'lucide-react';
 import moment from 'moment';
 import { toast } from 'sonner';
 
+import { createCheckoutSession } from '@/app/pricing/server/create-checkout-session';
+import { Plan } from '@/app/pricing/server/fetch-plans';
+import { cancelStripeSubscription } from '@/app/profile/server/cancel-stripe-subscription';
 import { useAuth } from '@/components/auth-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,8 +22,6 @@ import {
 } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { cancelSubscription, createCheckoutSession } from '@/lib/services/subscriptionService';
-import { ISubscriptionPlan } from '@/lib/types/subscription-plan.type';
 import { cn } from '@/lib/utils';
 
 import { confirmAlert } from '../globals/generic-alert-dialog';
@@ -29,35 +30,39 @@ import { Spinner } from '../spinner';
 
 interface PricingCardProps {
   index: number;
-  plan: ISubscriptionPlan;
+  plan: Plan;
 }
 
 export default function PricingCard({ index, plan }: PricingCardProps) {
-  const { user, status, userPlan, refreshUserSubscriptionPlan } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const actionLabel =
-    userPlan === undefined
+    user?.subscription === undefined
       ? plan.type === 'free'
-        ? 'Current Plan' // If not logged in, free plan is current plan
-        : 'Start Free Trial' // If not logged in, paid plan is start free trial
-      : userPlan.type === plan.type
+        ? 'Current Plan' // If not logged in, free plan is the current plan
+        : 'Start Free Trial' // If not logged in, paid plan can start a free trial
+      : user?.subscription?.customer_plan_type === plan.type
         ? 'Current Plan' // If logged in, current plan is current plan
-        : userPlan.tier ?? 0 > plan.tier
+        : user?.user_plan?.tier ?? 0 > plan.tier
           ? 'Downgrade Plan' // If logged in and current plan is higher tier than this plan, downgrade plan
-          : userPlan?.customerId === undefined
-            ? 'Start Free Trial' // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start free trial
+          : user?.subscription?.customer_id === undefined
+            ? 'Start Free Trial' // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start a free trial
             : 'Upgrade Plan'; // If logged in and current plan is lower tier than this plan, upgrade plan
-  const isCurrentPlan = userPlan === undefined ? plan.type === 'free' : userPlan.type === plan.type;
-  const subscriptionCancelledAt = userPlan?.subscription?.cancel_at;
+  const isCurrentPlan =
+    user?.subscription === undefined
+      ? plan.type === 'free'
+      : user?.subscription?.customer_plan_type === plan.type;
+
+  const subscriptionCancelledAt = user?.stripeSubscription?.cancel_at;
   const subscriptionCancelDate = subscriptionCancelledAt
     ? moment(subscriptionCancelledAt * 1000)
     : undefined;
 
   const subscribeTo = async (priceId?: string) => {
-    // If subscription is already cancelled, do not allow to subscribe again
+    // If the subscription is already cancelled, do not allow subscribing again
     if (subscriptionCancelDate) {
       return confirmAlert({
         title: 'You have already cancelled your subscription',
@@ -68,10 +73,10 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         cancelLabel: 'OK',
       });
     }
-    // If it is a free plan, it does not have priceId, its type is 'free'.
+    // If it is a free plan, it does not have priceId; its type is 'free'.
     if (!priceId || plan.type === 'free') {
-      // user is currently trialing and not cancelled, show cancel trial dialog
-      if (userPlan?.status === 'trialing') {
+      // user is currently trialling and not cancelling, show cancel trial dialogue
+      if (user?.stripeSubscription?.status === 'trialing') {
         return confirmAlert({
           title: 'You are already on a free trial',
           description:
@@ -83,8 +88,8 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
           },
         });
       }
-      // user is on active subscription and not cancelled, show downgrade dialog
-      if (userPlan?.status === 'active') {
+      // user is on active subscription and not cancelled, show downgrade dialogue
+      if (user?.stripeSubscription?.status === 'active') {
         return confirmAlert({
           title: 'Downgrade to FREE plan',
           description:
@@ -94,7 +99,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
           },
         });
       }
-      // Other cases where subscription is not active or trialing
+      // Other cases where subscription is not active or trialling
       return confirmAlert({
         title: 'You do not have an active paid subscription',
         description:
@@ -103,8 +108,8 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         cancelLabel: 'OK',
       });
     }
-    // If user is not logged in, show login reminder
-    if (status !== 'authenticated') {
+    // If the user is not logged in, show a login reminder
+    if (!user) {
       return EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
         title: 'You need to login to subscribe',
         redirectHref: '/pricing',
@@ -113,7 +118,14 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
     // user logged in, selected paid plan and valid, create checkout session
     try {
       setIsLoading(true);
-      const redirectUrl = await createCheckoutSession(priceId, user?.email, userPlan?.customerId);
+      const successRedirectUrl = `${window.location.origin}/checkout/success/{CHECKOUT_SESSION_ID}`; // Success redirect to user's profile subscription section
+      const cancelRedirectUrl = `${window.location.origin}/pricing`; // Cancel redirect to pricing page
+      const redirectUrl = await createCheckoutSession(
+        user,
+        plan,
+        successRedirectUrl,
+        cancelRedirectUrl
+      );
       router.replace(redirectUrl);
     } catch (error) {
       toast.error(error.message);
@@ -123,12 +135,12 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
   };
 
   const downgradeToFreePlan = async () => {
-    if (!userPlan?.subId) {
+    if (!user?.stripeSubscription?.id) {
       return toast.error('We could not fetch an active subscription to cancel.');
     }
     try {
       setIsLoading(true);
-      await cancelSubscription(userPlan?.subId);
+      await cancelStripeSubscription(user.stripeSubscription.id);
       confirmAlert({
         title: 'Your subscription has been cancelled',
         description:
@@ -152,8 +164,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
     if (isCurrentPlan) {
       cardRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-    refreshUserSubscriptionPlan?.();
-  }, []);
+  }, [isCurrentPlan]);
 
   return (
     <Card
@@ -161,7 +172,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       ref={cardRef}
       className={cn(
         /pro/i.test(plan.name) ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
-        userPlan?.type === plan.type ? 'border-[1px] border-primary' : '',
+        user?.subscription?.customer_plan_type === plan.type ? 'border-[1px] border-primary' : '',
         'relative my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center transition-transform ease-in-out hover:scale-105'
       )}
     >
@@ -169,14 +180,14 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         <CardTitle>
           <div className='flex flex-row items-center justify-between'>
             {plan.name}
-            {plan.type !== 'free' && <Badge>{plan.trialsDays} days free trial</Badge>}
+            {plan.type !== 'free' && <Badge>{plan.trial_days} days free trial</Badge>}
           </div>
         </CardTitle>
-        <CardDescription className='text-base'>${plan.pricePerMonth} per month</CardDescription>
+        <CardDescription className='text-base'>${plan.price_per_month} per month</CardDescription>
       </CardHeader>
       <CardContent className='flex h-full flex-col gap-[0.35rem] text-sm'>
-        {plan.features.map((feature, index) => (
-          <div key={index} className='flex flex-row items-start justify-start gap-2'>
+        {plan.plan_features.map((feature) => (
+          <div key={feature.id} className='flex flex-row items-start justify-start gap-2'>
             <div className='w-[22px]'>
               {feature.status === 'absent' ? (
                 <X size={20} color='#E54666' strokeWidth={2} />
@@ -212,7 +223,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
           className='w-full'
           disabled={isCurrentPlan || isLoading}
           onClick={() => {
-            subscribeTo(plan.priceId);
+            void subscribeTo(plan.price_id ?? undefined);
           }}
         >
           {isLoading ? <Spinner /> : actionLabel}
