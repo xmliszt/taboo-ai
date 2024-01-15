@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 
+import { Spinner } from '@/components/custom/spinner';
 import { Badge } from '@/components/ui/badge';
 import { useAppStats } from '@/lib/hooks/useAppStats';
 
@@ -30,7 +31,14 @@ export default function PageCounter() {
       {isViewsIncreasing && (
         <ArrowUp size={16} className='absolute -right-4 -top-1 animate-ping-once' />
       )}
-      <Badge>Total Views: {appStats?.app_views?.value}</Badge>
+      <Badge>
+        Total Views:{' '}
+        {appStats?.app_views?.value ?? (
+          <span className='ml-2'>
+            <Spinner size={10} />
+          </span>
+        )}
+      </Badge>
     </div>
   );
 }
