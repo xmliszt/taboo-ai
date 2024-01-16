@@ -3,8 +3,10 @@
 import React, { createContext, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchUserWithSubscriptions } from '@/app/profile/client/fetch-user-subscriptions';
-import type { UserProfileWithStripeSubscription } from '@/app/profile/server/fetch-user-profile';
+import {
+  fetchUserWithSubscriptions,
+  UserWithSubscriptions,
+} from '@/app/profile/client/fetch-user-subscriptions';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -12,7 +14,7 @@ interface AuthProviderProps {
 
 const authProviderContext = createContext<{
   isLoading: boolean;
-  user?: UserProfileWithStripeSubscription;
+  user?: UserWithSubscriptions;
 }>({ isLoading: false });
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {

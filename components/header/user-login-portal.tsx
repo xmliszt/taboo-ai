@@ -183,12 +183,26 @@ export function UserLoginPortal() {
             moment.unix(user.stripeSubscription.trial_end).isAfter(moment()) && (
               <>
                 <DropdownMenuSeparator />
-                <p className='p-2 text-sm font-semibold italic'>
+                <p className='p-2 text-sm font-light'>
                   Trial ends on{' '}
                   {moment.unix(user.stripeSubscription.trial_end).format('DD MMM YYYY, hh:mm A')}
                 </p>
               </>
             )}
+          {user?.stripeSubscription?.cancel_at && (
+            <>
+              <DropdownMenuSeparator />
+              <p className='p-2 text-sm font-light'>
+                Your PRO plan will end on{' '}
+                {
+                  // if is today, show 'today'
+                  moment.unix(user.stripeSubscription.cancel_at).isSame(moment(), 'day')
+                    ? 'today'
+                    : moment.unix(user.stripeSubscription.cancel_at).format('DD MMM YYYY')
+                }
+              </p>
+            </>
+          )}
           <DropdownMenuSeparator />
           {userMenuItems.map(
             (item) =>

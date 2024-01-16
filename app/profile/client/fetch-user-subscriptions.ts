@@ -1,36 +1,70 @@
+import Stripe from 'stripe';
+import { AsyncReturnType } from 'type-fest';
+
+import { fetchUserProfileWithSubscription } from '@/app/profile/server/fetch-user-profile';
+import type { Database } from '@/lib/supabase/extension/types';
 import { createClient } from '@/lib/utils/supabase/client';
+
+export type UserWithSubscriptions = AsyncReturnType<typeof fetchUserProfileWithSubscription>;
 
 /**
  * Fetches the custom stored user profile of the currently logged-in user.
  */
-export async function fetchUserWithSubscriptions() {
+export async function fetchUserWithSubscriptions(): Promise<
+  Database['public']['Tables']['users']['Row'] & {
+    subscription:
+      | (Database['public']['Tables']['subscriptions']['Row'] & {
+          user_id: string | null | undefined;
+          customer_id: string | null | undefined;
+        })
+      | null;
+    user_plan: Database['public']['Tables']['plans']['Row'] | undefined;
+    stripeSubscription: Stripe.Subscription;
+  }
+> {
   const supabaseClient = createClient();
   const authUserResponse = await supabaseClient.auth.getUser();
   if (authUserResponse.error) throw authUserResponse.error;
   const { user: authUser } = authUserResponse.data;
   const fetchUserProfileResponse = await supabaseClient
     .from('users')
-    .select('*,subscription:subscriptions!inner(*)')
+    .select('*,subscription:subscriptions(*)')
     .eq('id', authUser.id)
-    .single();
+    .select()
+    .limit(1)
+    .returns<
+      (Database['public']['Tables']['users']['Row'] & {
+        subscription: Database['public']['Tables']['subscriptions']['Row'] | null;
+      })[]
+    >();
   if (fetchUserProfileResponse.error) throw fetchUserProfileResponse.error;
+  const userProfile = fetchUserProfileResponse.data[0];
   // Fetch plan
   const fetchAvailablePlans = await supabaseClient.from('plans').select('*,plan_features(*)');
   if (fetchAvailablePlans.error) throw fetchAvailablePlans.error;
   const subscribedPlan = fetchAvailablePlans.data.find(
-    (plan) => plan.type === fetchUserProfileResponse.data.subscription?.customer_plan_type
+    (plan) => plan.type === userProfile.subscription?.customer_plan_type
   );
   // Fetch subscriptions
-  const customerId = fetchUserProfileResponse.data.subscription?.customer_id;
-  const customerEmail = fetchUserProfileResponse.data.email;
+  const customerId = userProfile.subscription?.customer_id;
+  const customerEmail = userProfile.email;
   if (customerId) {
     const fetchSubscriptionResponse = await fetch(`/api/subscriptions?customer_id=${customerId}`);
     const fetchSubscriptionJson = await fetchSubscriptionResponse.json();
     if (fetchSubscriptionJson.error) throw fetchSubscriptionJson.error;
+    const subscription = fetchSubscriptionJson.subscription as Stripe.Subscription;
+    const planId = subscription.items.data[0].plan.id;
+    const customerPlanType = fetchAvailablePlans.data.find((plan) => plan.price_id === planId)
+      ?.type;
     return {
-      ...fetchUserProfileResponse.data,
+      ...userProfile,
+      subscription: {
+        user_id: userProfile.id,
+        customer_id: customerId,
+        customer_plan_type: customerPlanType ?? 'free',
+      },
       user_plan: subscribedPlan,
-      stripeSubscription: fetchSubscriptionJson.subscription,
+      stripeSubscription: subscription,
     };
   }
   const fetchSubscriptionResponse = await fetch(
@@ -38,9 +72,18 @@ export async function fetchUserWithSubscriptions() {
   );
   const fetchSubscriptionJson = await fetchSubscriptionResponse.json();
   if (fetchSubscriptionJson.error) throw fetchSubscriptionJson.error;
+  const subscription = fetchSubscriptionJson.subscription as Stripe.Subscription;
+  const planId = subscription.items.data[0].plan.id;
+  const customerPlanType = fetchAvailablePlans.data.find((plan) => plan.price_id === planId)?.type;
+
   return {
-    ...fetchUserProfileResponse.data,
+    ...userProfile,
+    subscription: {
+      user_id: userProfile.id,
+      customer_id: subscription.customer as string,
+      customer_plan_type: customerPlanType ?? 'free',
+    },
     user_plan: subscribedPlan,
-    stripeSubscription: fetchSubscriptionJson.subscription,
+    stripeSubscription: subscription,
   };
 }

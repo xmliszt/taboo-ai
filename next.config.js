@@ -19,16 +19,49 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = {
   reactStrictMode: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   images: {
     dangerouslyAllowSVG: true,
-    domains: [
-      'media.theresanaiforthat.com',
-      'api.producthunt.com',
-      'i.ibb.co',
-      'media.giphy.com',
-      'github.com',
-      'aibrb.com',
-      'lh3.googleusercontent.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'media.theresanaiforthat.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.giphy.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'aibrb.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.producthunt.com',
+        port: '',
+      },
     ],
     formats: ['image/webp'],
   },

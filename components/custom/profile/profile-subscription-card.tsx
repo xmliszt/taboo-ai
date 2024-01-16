@@ -143,9 +143,14 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
         if (subscriptionCancelDate) {
           return (
             <div className='flex flex-row items-center justify-between leading-tight'>
-              <div>Your subscription will end on:</div>
+              <div>Your subscription will end on: </div>
               <div className='flex flex-row items-center gap-2'>
-                {subscriptionCancelDate.format('DD MMM YYYY')}
+                {
+                  // if is today, show 'today'
+                  subscriptionCancelDate.isSame(moment(), 'day')
+                    ? 'today'
+                    : subscriptionCancelDate.format('DD MMM YYYY')
+                }
               </div>
             </div>
           );
@@ -185,13 +190,13 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
               <div className='flex flex-row items-center justify-between leading-tight'>
                 <div>You are on:</div>
                 <div className='flex flex-row items-center gap-2'>
-                  <Badge>{user.subscription.customer_plan_type.toUpperCase() ?? 'FREE'}</Badge>
+                  <Badge>{user.subscription.customer_plan_type?.toUpperCase() ?? 'FREE'}</Badge>
                   <span>plan</span>
                 </div>
               </div>
               {renderSubscriptionDetails(user.stripeSubscription?.status)}
               <div className='h-4'></div>
-              {user.subscription && (
+              {user.subscription.customer_id && (
                 <Button onClick={handleManageBilling}>Manage Billing & Plan</Button>
               )}
               {!userHasCancelledSubscription && (
@@ -230,12 +235,12 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
           ) : (
             <div className='mt-6 flex w-full flex-col gap-2'>
               <div className='italic text-muted-foreground'>
-                Sorry, we are having problems fetching your subscription details. .
+                Sorry, we are having problems fetching your subscription details.
               </div>
               <Button
                 size='sm'
                 onClick={() => {
-                  router.refresh();
+                  window.location.reload();
                 }}
               >
                 Refresh to try again

@@ -14,19 +14,19 @@ export interface Database {
           created_at: string
           id: string
           updated_at: string
-          value: string
+          value: number
         }
         Insert: {
           created_at?: string
           id: string
           updated_at?: string
-          value: string
+          value: number
         }
         Update: {
           created_at?: string
           id?: string
           updated_at?: string
-          value?: string
+          value?: number
         }
         Relationships: []
       }
@@ -739,6 +739,10 @@ export interface Database {
           "": string
         }
         Returns: string
+      }
+      f_delete_auth_user: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       f_increment_with_text_as_id: {
         Args: {

@@ -32,7 +32,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
   const proceedToDeleteUser = async () => {
     try {
       setIsDeleting(true);
-      await deleteUser(props.user.id);
+      await deleteUser();
       toast.info('Your account has been deleted.');
       localStorage.clear();
       sessionStorage.clear();

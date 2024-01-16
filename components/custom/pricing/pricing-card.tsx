@@ -39,6 +39,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(user?.subscription);
   const actionLabel =
     user?.subscription === undefined
       ? plan.type === 'free'
@@ -48,9 +49,9 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
         ? 'Current Plan' // If logged in, current plan is current plan
         : user?.user_plan?.tier ?? 0 > plan.tier
           ? 'Downgrade Plan' // If logged in and current plan is higher tier than this plan, downgrade plan
-          : user?.subscription?.customer_id === undefined
-            ? 'Start Free Trial' // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start a free trial
-            : 'Upgrade Plan'; // If logged in and current plan is lower tier than this plan, upgrade plan
+          : user?.subscription?.customer_id
+            ? 'Upgrade Plan' // If logged in and current plan is lower tier than this plan, upgrade plan
+            : 'Start Free Trial'; // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start a free trial
   const isCurrentPlan =
     user?.subscription === undefined
       ? plan.type === 'free'
