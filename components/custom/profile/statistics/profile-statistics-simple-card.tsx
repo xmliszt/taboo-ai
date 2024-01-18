@@ -23,7 +23,7 @@ export function ProfileStatisticsSimpleCardView({
     <div
       className={cn(
         'relative flex snap-center flex-col gap-2 rounded-lg border p-4 leading-snug',
-        'min-h-[150px] w-full min-w-[250px] lg:min-w-[150px]'
+        'min-h-[150px] w-full min-w-[250px] lg:w-fit lg:min-w-[150px]'
       )}
     >
       <div className='text-xs italic text-muted-foreground'>{title}</div>
