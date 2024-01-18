@@ -19,7 +19,7 @@ export async function fetchUserWithSubscriptions(): Promise<
         })
       | null;
     user_plan: Database['public']['Tables']['plans']['Row'] | undefined;
-    stripeSubscription: Stripe.Subscription;
+    stripeSubscription: Stripe.Subscription | null;
   }
 > {
   const supabaseClient = createClient();
@@ -45,7 +45,7 @@ export async function fetchUserWithSubscriptions(): Promise<
   const subscribedPlan = fetchAvailablePlans.data.find(
     (plan) => plan.type === userProfile.subscription?.customer_plan_type
   );
-  // Fetch subscriptions
+  // Fetch subscriptions with customer id
   const customerId = userProfile.subscription?.customer_id;
   const customerEmail = userProfile.email;
   if (customerId) {
@@ -67,12 +67,26 @@ export async function fetchUserWithSubscriptions(): Promise<
       stripeSubscription: subscription,
     };
   }
+  // Fetch subscription from stripe using email is customer id is not available
   const fetchSubscriptionResponse = await fetch(
     `/api/subscriptions?customer_email=${customerEmail}`
   );
   const fetchSubscriptionJson = await fetchSubscriptionResponse.json();
   if (fetchSubscriptionJson.error) throw fetchSubscriptionJson.error;
-  const subscription = fetchSubscriptionJson.subscription as Stripe.Subscription;
+  const subscription: Stripe.Subscription | null =
+    fetchSubscriptionJson.subscription as Stripe.Subscription;
+  if (subscription === null || subscription === undefined) {
+    return {
+      ...userProfile,
+      subscription: {
+        user_id: userProfile.id,
+        customer_id: null,
+        customer_plan_type: 'free',
+      },
+      user_plan: subscribedPlan,
+      stripeSubscription: subscription,
+    };
+  }
   const planId = subscription.items.data[0].plan.id;
   const customerPlanType = fetchAvailablePlans.data.find((plan) => plan.price_id === planId)?.type;
 
