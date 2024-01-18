@@ -14,7 +14,7 @@ export default function PricingCardCarousel({
     <div
       className={cn(
         className,
-        'flex max-w-full snap-both flex-row gap-8 overflow-x-auto overflow-y-hidden lg:gap-16'
+        'flex max-w-full snap-x snap-mandatory flex-row gap-8 overflow-x-auto overflow-y-hidden lg:gap-16'
       )}
     >
       {plans.map((plan, index) => (

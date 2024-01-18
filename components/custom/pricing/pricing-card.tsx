@@ -39,7 +39,6 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(user?.subscription);
   const actionLabel =
     user?.subscription === undefined
       ? plan.type === 'free'

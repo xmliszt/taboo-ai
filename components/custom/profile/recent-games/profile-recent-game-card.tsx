@@ -21,7 +21,7 @@ export function ProfileRecentGameCard({ game }: ProfileRecentGameCardProps) {
     <Tooltip key={game.game_id}>
       <TooltipTrigger asChild>
         <Link href={`/result?id=${game.game_id}`}>
-          <Card className='h-full min-w-[200px] max-w-[200px] snap-proximity snap-center border text-left leading-snug shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'>
+          <Card className='h-full min-w-[200px] max-w-[200px] snap-mandatory snap-center border text-left leading-snug shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'>
             <CardHeader>
               <CardTitle
                 className={
