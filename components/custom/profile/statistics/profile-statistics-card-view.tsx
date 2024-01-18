@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { isMobile } from 'react-device-detect';
 
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { fetchUserStatistics } from '@/app/profile/server/fetch-user-statistics';
@@ -38,10 +37,9 @@ export async function ProfileStatisticsCardView() {
       </div>
       <div
         className={cn(
-          isMobile
-            ? 'flex-nowrap overflow-x-auto'
-            : 'max-h-[500px] flex-wrap items-start justify-start overflow-y-auto',
-          'flex w-full snap-x flex-row gap-4 rounded-lg border p-4 leading-snug'
+          'flex w-full snap-proximity flex-row gap-4 rounded-lg border p-4 leading-snug',
+          'snap-x flex-nowrap items-stretch overflow-x-auto',
+          'lg:max-h-[500px] lg:snap-y lg:flex-wrap lg:items-start lg:justify-start lg:overflow-y-auto'
         )}
       >
         {stats.bestPerformedLevel?.level_name && (

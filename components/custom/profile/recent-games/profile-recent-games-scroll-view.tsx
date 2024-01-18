@@ -34,7 +34,7 @@ export async function ProfileRecentGamesScrollView() {
           </span>
         )}
       </div>
-      <div className='flex w-full snap-mandatory snap-center flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-8 leading-snug'>
+      <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-8 leading-snug'>
         {userGames.length === 0 ? (
           <div className='w-full text-center'>
             You have not played any game yet.{' '}

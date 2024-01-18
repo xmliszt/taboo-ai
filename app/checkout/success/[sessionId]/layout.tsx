@@ -17,5 +17,5 @@ export async function generateMetadata({
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <main className='mt-20 w-full'>{children}</main>;
+  return <main className='w-full'>{children}</main>;
 }
