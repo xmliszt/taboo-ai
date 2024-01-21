@@ -8,21 +8,19 @@ import { SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTimer } from 'use-timer';
 
-import {
-  ConversationToUpload,
-  HighlightToUpload,
-  ScoreToUpload,
-} from '@/app/result/server/upload-game';
+import { generateConversationFromAI } from '@/app/level/server/generate-conversation-from-ai';
+import { generateTabooWordsFromAI } from '@/app/level/server/generate-taboo-words-from-ai';
+import { ScoreToUpload } from '@/app/result/server/upload-game';
 import Timer from '@/components/custom/timer';
 import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { CONSTANTS } from '@/lib/constants';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { getPersistence } from '@/lib/persistence/persistence';
-import { askAITabooWordsForTarget, fetchConversationCompletion } from '@/lib/services/aiService';
-import { fetchTabooWords } from '@/lib/services/wordService';
+import { fetchWord } from '@/lib/services/wordService';
 import { LevelToUpload } from '@/lib/types/level.type';
 import { IWord } from '@/lib/types/word.type';
 import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';
@@ -31,15 +29,18 @@ import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import { generateHighlights, getMatchedTabooWords } from '@/lib/utils/levelUtils';
 
 type LevelWordsProviderProps = {
-  levelId: string;
-  words?: string[];
+  topic?: string;
+  fromAIMode?: boolean;
+  words: string[];
 };
 
 // Words stored in cache
 let cacheWords: string[] = [];
 
+// Level stored in cache - only for AI mode
+let cacheLevel: LevelToUpload | null = null;
+
 export function LevelWordsProvider(props: LevelWordsProviderProps) {
-  const isCustomGame = props.levelId === 'ai';
   const router = useRouter();
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
@@ -52,7 +53,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   const [currentProgress, setCurrentProgress] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCountingDown, setIsCountdown] = useState<boolean>(false);
-  const [conversation, setConversation] = useState<ConversationToUpload[]>([]);
+  const [conversation, setConversation] = useState<ScoreToUpload['conversations']>([]);
   const [savedScores, setSavedScores] = useState<ScoreToUpload[]>([]);
 
   const {
@@ -94,21 +95,18 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
 
   // start the game
   useEffect(() => {
-    if (isCustomGame) {
-      const cachedLevel = getPersistence<LevelToUpload>(HASH.level);
-      if (cachedLevel) {
-        startGame(cachedLevel.words);
+    if (props.fromAIMode) {
+      cacheLevel = getPersistence<LevelToUpload>(HASH.level);
+      if (cacheLevel) {
+        startGame(cacheLevel.words);
       } else {
         toast.error('Sorry we cannot find the topic to start the game.');
         router.back();
       }
-    } else if (props.words) {
-      startGame(props.words);
     } else {
-      toast.error('Sorry we cannot find the topic to start the game.');
-      router.back();
+      startGame(props.words);
     }
-  }, [props.words, isCustomGame]);
+  }, [props.words, props.fromAIMode]);
 
   // When the timer starts running, we focus on the text field input
   useEffect(() => {
@@ -143,7 +141,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
     const userInput = event.currentTarget['user-input'].value as string;
     // Immediately show user input in the UI.
     // Remove any message that has role == 'error' and also its previous message if it has role == 'user'.
-    const updatedConversation: ConversationToUpload[] = [];
+    const updatedConversation: ScoreToUpload['conversations'] = [];
     for (let i = 0; i < conversation.length; i++) {
       const current = conversation[i];
       if (current.role === 'user' || current.role === 'assistant') {
@@ -186,7 +184,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
     }
 
     // Remove the last message from conversation if it is from assistant and does not have any content
-    const inputConversation: ConversationToUpload[] = [...updatedConversation];
+    const inputConversation = [...updatedConversation];
     if (
       inputConversation[inputConversation.length - 1].role === 'assistant' &&
       inputConversation[inputConversation.length - 1].content.length <= 0
@@ -197,15 +195,19 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
     if (userInputMatchedTabooWords.length <= 0 && userInput.length > 0) {
       try {
         const { conversation: newConversation } =
-          await fetchConversationCompletion(inputConversation);
-
+          await generateConversationFromAI(inputConversation);
         setConversation(newConversation);
       } catch (error) {
-        console.error(error);
-        setConversation([
-          ...inputConversation,
-          { role: 'error', content: error.message ?? CONSTANTS.errors.overloaded },
-        ]);
+        try {
+          const googleError = tryParseErrorAsGoogleAIError(error, 'conversation');
+          setConversation([...inputConversation, { role: 'error', content: googleError.message }]);
+        } catch (error) {
+          console.error(error);
+          setConversation([
+            ...inputConversation,
+            { role: 'error', content: error.message ?? CONSTANTS.errors.overloaded },
+          ]);
+        }
       } finally {
         setIsWaitingForAIResponse(false);
         setIsLoading(false);
@@ -220,17 +222,16 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   }, [conversation]);
 
   // Move on to the next question, save the scores to cache. Delay and set the current progress to the next one
-  const nextQuestion = async (highlights: HighlightToUpload[]) => {
+  const nextQuestion = async (highlights: ScoreToUpload['highlights']) => {
     pauseTimer();
     const copySavedScores = [...savedScores];
     copySavedScores.push({
       score_index: currentProgress,
       target_word: target ?? '',
-      taboos: variations,
-      conversation: conversation,
+      conversations: conversation,
       duration: time,
       highlights: highlights,
-      ai_evaluation: null,
+      ai_evaluation: undefined,
     });
     setSavedScores(copySavedScores);
     currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
@@ -255,6 +256,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
   const generateVariationsForTarget = async (
     retries: number,
     target: string,
+    topic: string | undefined,
     callback: (variations?: IWord) => void
   ) => {
     retryCount.current = retries;
@@ -263,17 +265,17 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
         const variations = await getMockVariations(target, true);
         callback(variations);
       } else {
-        const taboo = await fetchTabooWords(target);
+        const taboo = await fetchWord(target);
         if (taboo && taboo.taboos.length > 1 && taboo.is_verified) {
           callback(taboo);
         } else {
-          const variations = await askAITabooWordsForTarget(target);
+          const variations = await generateTabooWordsFromAI(target, topic);
           callback(variations);
         }
       }
     } catch {
       if (retries > 0) {
-        await generateVariationsForTarget(retries - 1, target, callback);
+        await generateVariationsForTarget(retries - 1, target, topic, callback);
       } else {
         callback();
       }
@@ -286,7 +288,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
       setVariations([target]);
       setConversation([]);
       setIsGeneratingVariations(true);
-      void generateVariationsForTarget(5, target, (variations) => {
+      void generateVariationsForTarget(5, target, props.topic ?? cacheLevel?.name, (variations) => {
         setTimeout(() => {
           setIsGeneratingVariations(false);
           let _variations = [target];
@@ -317,7 +319,7 @@ export function LevelWordsProvider(props: LevelWordsProviderProps) {
       setVariations([newTarget]);
       setUserInput('');
     }
-  }, [currentProgress, props.levelId]);
+  }, [currentProgress]);
 
   // Timer control
   useEffect(() => {

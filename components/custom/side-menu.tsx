@@ -213,10 +213,6 @@ export default function SideMenu() {
                 NextJS
               </Link>
               <i> &amp; </i>
-              <Link href='https://openai.com/api/' target='_blank'>
-                OpenAI
-              </Link>
-              <i> &amp; </i>
               <Link
                 href='https://deepmind.google/technologies/gemini/#introduction'
                 target='_blank'

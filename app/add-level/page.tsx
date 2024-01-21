@@ -35,7 +35,7 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { sendEmail } from '@/lib/services/emailService';
-import { fetchTabooWords } from '@/lib/services/wordService';
+import { fetchWord } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
 
 const CHARACTER_LIMIT = 50;
@@ -132,7 +132,7 @@ const AddLevelPage = () => {
     statuses[targetWordIndex] = true;
     setTabooWordsCheckingStatus(statuses);
     try {
-      const taboo = await fetchTabooWords(targetWords[targetWordIndex]);
+      const taboo = await fetchWord(targetWords[targetWordIndex]);
       const existed = taboo !== undefined;
       const existedStatues = [...tabooWordsExistedStatus];
       existedStatues[targetWordIndex] = existed;

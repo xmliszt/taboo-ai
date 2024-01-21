@@ -116,7 +116,7 @@ export default function HomeMenuButtonArray() {
         subtitle: 'Review and verify topics and worlds submitted. Only available for admin!',
         ariaLabel: 'Click to review topics as dev',
         href: '/x/review-words',
-        visible: AdminManager.checkIsAdmin(user),
+        visible: AdminManager.checkIsAdmin(user?.id),
       },
     ],
     [user]

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PenTool, SpellCheck2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
 import { useAuth } from '@/components/auth-provider';
 import { Spinner } from '@/components/custom/spinner';
 import { Alert, AlertTitle } from '@/components/ui/alert';
@@ -13,9 +14,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CONSTANTS } from '@/lib/constants';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
-import { askAIForCreativeTopic } from '@/lib/services/aiService';
 
 export default function AiPage() {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ export default function AiPage() {
     if (topic.length > 0) {
       setIsLoading(true);
       try {
-        const level = await askAIForCreativeTopic(topic, Number(difficulty));
+        const level = await generateAITopic(topic, Number(difficulty));
         if (level) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
             return setErrorMessage(CONSTANTS.errors.aiModeTopicTooFew);
@@ -49,7 +50,12 @@ export default function AiPage() {
           setErrorMessage(CONSTANTS.errors.overloaded);
         }
       } catch (error) {
-        setErrorMessage(error.message ?? 'Something went wrong.');
+        try {
+          const googleError = tryParseErrorAsGoogleAIError(error, 'topic-generation');
+          setErrorMessage(googleError.message);
+        } catch (error) {
+          setErrorMessage(error.message ?? 'Something went wrong.');
+        }
       } finally {
         setIsLoading(false);
       }

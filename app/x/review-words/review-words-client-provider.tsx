@@ -7,6 +7,7 @@ import { toLower, trim } from 'lodash';
 import { Plus, RefreshCcw, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { generateTabooWordsFromAI } from '@/app/level/server/generate-taboo-words-from-ai';
 import { FetchAllLevelsAndAuthorsReturnTypeSingle } from '@/app/x/review-words/server/fetch-levels';
 import { RejectionReason, sendSecureEmail } from '@/app/x/review-words/server/send-email';
 import { useAuth } from '@/components/auth-provider';
@@ -35,14 +36,14 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { AdminManager } from '@/lib/admin-manager';
-import { askAITabooWordsForTarget } from '@/lib/services/aiService';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import {
   deleteLevel,
   updateLevelIsNew,
   updateLevelTargetWords,
   verifyLevel,
 } from '@/lib/services/levelService';
-import { addTabooWords, fetchTabooWords } from '@/lib/services/wordService';
+import { addWord, fetchWord } from '@/lib/services/wordService';
 import { IWord } from '@/lib/types/word.type';
 import { cn } from '@/lib/utils';
 
@@ -76,13 +77,6 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
     setSelectedLevel(level);
   }, [selectedLevelId]);
 
-  useEffect(() => {
-    if (!user || !AdminManager.checkIsAdmin(user)) {
-      toast.error('You are not authorized to view this page!');
-      router.push('/');
-    }
-  }, [user]);
-
   const getCachedWordList = useCallback(async () => {
     if (selectedLevel) {
       for (const word of selectedLevel.words) {
@@ -115,18 +109,23 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         return;
       }
       try {
-        const taboo = await fetchTabooWords(word);
+        const taboo = await fetchWord(word);
         if (taboo && taboo.taboos.length > 0) {
           setTabooWords(taboo);
           return taboo;
         } else {
-          const taboo = await askAITabooWordsForTarget(word);
+          const taboo = await generateTabooWordsFromAI(word);
           setTabooWords(taboo);
           return taboo;
         }
       } catch (error) {
-        console.error(error);
-        toast.error('Unable to get taboo words for: ' + `"${word}"`);
+        try {
+          const googleError = tryParseErrorAsGoogleAIError(error, 'taboos-generation');
+          toast.error(googleError.message);
+        } catch (error) {
+          console.error(error);
+          toast.error('Unable to get taboo words for: ' + `"${word}"`);
+        }
       }
     },
     [setTabooWords]
@@ -157,7 +156,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   };
 
   const refreshWord = async (word: string) => {
-    const variations = await askAITabooWordsForTarget(word);
+    const variations = await generateTabooWordsFromAI(word);
     setTabooWords(variations);
   };
 
@@ -194,7 +193,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   const onSave = async () => {
     if (taboos) {
       try {
-        await addTabooWords(
+        await addWord(
           taboos.word,
           taboos.taboos.map((w) => trim(toLower(w))),
           taboos.is_verified,
@@ -232,13 +231,13 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
     return new Promise((res, rej) => {
       setTimeout(async () => {
         try {
-          const taboo = await fetchTabooWords(target);
+          const taboo = await fetchWord(target);
           if (taboo?.taboos.length ?? 0 > 0) {
             res();
           } else {
-            const word = await askAITabooWordsForTarget(target);
+            const word = await generateTabooWordsFromAI(target);
             if (target && word) {
-              await addTabooWords(
+              await addWord(
                 target,
                 word.taboos.map((w) => trim(toLower(w))),
                 false,
@@ -377,7 +376,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
     }
   };
 
-  if (!user || !AdminManager.checkIsAdmin(user)) {
+  if (!user || !AdminManager.checkIsAdmin(user.id)) {
     return <section className='flex h-full w-full items-center justify-center'></section>;
   }
 

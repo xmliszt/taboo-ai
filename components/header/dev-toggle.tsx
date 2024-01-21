@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Bot } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { ScoreToUpload } from '@/app/result/server/upload-game';
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
 import { CONSTANTS } from '@/lib/constants';
@@ -36,7 +35,7 @@ const DevToggle = () => {
   const path = usePathname();
 
   useEffect(() => {
-    if (user && AdminManager.checkIsAdmin(user)) {
+    if (user && AdminManager.checkIsAdmin(user.id)) {
       setDevOn(isDevMode());
       const mode = getDevMode();
       if (mode) {
@@ -67,7 +66,7 @@ const DevToggle = () => {
   const autoCompleteLevel = () => {
     const level = getPersistence<LevelToUpload>(HASH.level);
     if (level) {
-      const savedScores: ScoreToUpload[] = [];
+      const savedScores = [];
       for (let i = 1; i <= CONSTANTS.numberOfQuestionsPerGame; i++) {
         const target = level.words[i - 1];
         savedScores.push({
@@ -102,7 +101,7 @@ const DevToggle = () => {
     }
   };
 
-  return user && AdminManager.checkIsAdmin(user) ? (
+  return user && AdminManager.checkIsAdmin(user.id) ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <IconButton tooltip='Open Dev Menu'>

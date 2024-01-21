@@ -8,7 +8,7 @@ interface LevelPageProps {
 
 export default async function LevelPage({ params: { id } }: LevelPageProps) {
   // if AI mode, return with no words as it will be populated from persistent storage later on
-  if (id === 'ai') return <LevelWordsProvider levelId={id} words={[]} />;
+  if (id === 'ai') return <LevelWordsProvider fromAIMode={true} words={[]} />;
 
   // fetch level for playing
   const level = await fetchLevel(id);
@@ -16,5 +16,5 @@ export default async function LevelPage({ params: { id } }: LevelPageProps) {
   // generate target word for playing
   const words = level.words.map((word) => formatStringForDisplay(word));
 
-  return <LevelWordsProvider levelId={id} words={words} />;
+  return <LevelWordsProvider topic={level.name} fromAIMode={false} words={words} />;
 }

@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import { HighlightToUpload } from '@/app/result/server/upload-game';
-
 export type SortType =
   | 'a-z'
   | 'z-a'
@@ -98,8 +96,8 @@ export const generateHighlights = (
   target: string | null,
   message: string,
   forResponse: boolean
-): HighlightToUpload[] => {
-  const highlights: HighlightToUpload[] = [];
+) => {
+  const highlights = [];
   if (forResponse && target) {
     const regex = getRegexPattern(target);
     let result;
@@ -108,7 +106,7 @@ export const generateHighlights = (
       if (result.index === regex.lastIndex) {
         regex.lastIndex++;
       }
-      const highlight: HighlightToUpload = {
+      const highlight = {
         start_position: result.index,
         end_position: regex.lastIndex,
       };
