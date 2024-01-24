@@ -30,15 +30,9 @@ export async function fetchUserWithSubscriptions(): Promise<
     .from('users')
     .select('*,subscription:subscriptions(*)')
     .eq('id', authUser.id)
-    .select()
-    .limit(1)
-    .returns<
-      (Database['public']['Tables']['users']['Row'] & {
-        subscription: Database['public']['Tables']['subscriptions']['Row'] | null;
-      })[]
-    >();
+    .single();
   if (fetchUserProfileResponse.error) throw fetchUserProfileResponse.error;
-  const userProfile = fetchUserProfileResponse.data[0];
+  const userProfile = fetchUserProfileResponse.data;
   // Fetch plan
   const fetchAvailablePlans = await supabaseClient.from('plans').select('*,plan_features(*)');
   if (fetchAvailablePlans.error) throw fetchAvailablePlans.error;
