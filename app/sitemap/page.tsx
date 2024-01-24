@@ -32,7 +32,7 @@ export default async function SitemapPage() {
     { title: 'Cookie Policy', href: '/cookie-policy' },
   ];
   const socialMedia: SitemapRoute[] = [
-    { title: 'About Me', href: 'https://xmliszt.github.io' },
+    { title: 'About Me', href: 'https://liyuxuan.dev' },
     { title: 'My Github', href: 'https://github.com/xmliszt' },
     { title: 'LinkedIn', href: 'https://www.linkedin.com/in/li-yuxuan/' },
     { title: 'Twitter', href: 'https://twitter.com/xmliszt' },
