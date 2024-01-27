@@ -1,6 +1,6 @@
 'use client';
 
-// TODO: This filename does not make sense, and it is too large to be a client component. Refactor to break it down.
+// TODO: This component is too large to be a client component. Refactor to break it down.
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { uniqueId } from 'lodash';
@@ -40,7 +40,7 @@ let cacheWords: string[] = [];
 // Level stored in cache - only for AI mode
 let cacheLevel: LevelToUpload | null = null;
 
-export function LevelWordsProvider(props: LevelWordsProviderProps) {
+export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const router = useRouter();
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
