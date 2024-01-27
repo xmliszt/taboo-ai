@@ -1,16 +1,20 @@
 'use client';
 
 // TODO: This component is too large to be a client component. Refactor to break it down.
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTimer } from 'use-timer';
 
-import { generateConversationFromAI } from '@/app/level/server/generate-conversation-from-ai';
-import { generateTabooWordsFromAI } from '@/app/level/server/generate-taboo-words-from-ai';
-import { ScoreToUpload } from '@/app/result/server/upload-game';
+import { AiEvaluationLoadingProgressBar } from '@/app/level/[id]/ai-evaluation-loading-progress-bar';
+import { Level } from '@/app/level/[id]/server/fetch-level';
+import { generateConversationFromAI } from '@/app/level/[id]/server/generate-conversation-from-ai';
+import { generateEvaluationFromAI } from '@/app/level/[id]/server/generate-evaluation-from-ai';
+import { generateTabooWordsFromAI } from '@/app/level/[id]/server/generate-taboo-words-from-ai';
+import { ScoreToUpload, uploadCompletedGameForUser } from '@/app/level/[id]/server/upload-game';
+import { useAuth } from '@/components/auth-provider';
 import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import Timer from '@/components/custom/timer';
 import IconButton from '@/components/ui/icon-button';
@@ -30,7 +34,7 @@ import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import { generateHighlights, getMatchedTabooWords } from '@/lib/utils/levelUtils';
 
 type LevelWordsProviderProps = {
-  topic?: string;
+  level?: Level;
   fromAIMode?: boolean;
   words: string[];
 };
@@ -41,8 +45,18 @@ let cacheWords: string[] = [];
 // Level stored in cache - only for AI mode
 let cacheLevel: LevelToUpload | null = null;
 
+// Scores stored in cache
+const savedScores: ScoreToUpload[] = [];
+
+// Game started at
+let gameStartedAt: Date = new Date();
+
+// Game ended at
+let gameEndedAt: Date = new Date();
+
 export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
   const [wordsPlayed, setWordsPlayed] = useState<string[]>([]);
@@ -55,7 +69,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCountingDown, setIsCountdown] = useState<boolean>(false);
   const [conversation, setConversation] = useState<ScoreToUpload['conversations']>([]);
-  const [savedScores, setSavedScores] = useState<ScoreToUpload[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   const {
     time,
@@ -84,6 +98,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     setWordsPlayed([]);
     setTarget(generateNewTarget(words));
     setCurrentProgress(1);
+    gameStartedAt = new Date();
   };
 
   const generateNewTarget = (words: string[]) => {
@@ -234,18 +249,19 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   // Move on to the next question, save the scores to cache. Delay and set the current progress to the next one
   const nextQuestion = async (highlights: ScoreToUpload['highlights']) => {
     pauseTimer();
-    const copySavedScores = [...savedScores];
-    copySavedScores.push({
+    savedScores.push({
       score_index: currentProgress,
       target_word: target ?? '',
+      taboo_words: variations,
       conversations: conversation,
       duration: time,
       highlights: highlights,
-      ai_evaluation: undefined,
+      ai_evaluation: {
+        ai_score: 0,
+        ai_explanation: '',
+        ai_suggestion: null,
+      },
     });
-    setSavedScores(copySavedScores);
-    currentProgress === CONSTANTS.numberOfQuestionsPerGame &&
-      toast('Game Over! Generating Results...');
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
     }, 5000);
@@ -298,18 +314,23 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       setVariations([target]);
       setConversation([]);
       setIsGeneratingVariations(true);
-      void generateVariationsForTarget(5, target, props.topic ?? cacheLevel?.name, (variations) => {
-        setTimeout(() => {
-          setIsGeneratingVariations(false);
-          let _variations = [target];
-          if (variations && _.toLower(variations.word) === _.toLower(target)) {
-            _variations = variations.taboos;
-          }
-          setVariations(_variations.map(formatStringForDisplay));
-          countdown.start();
-          setIsCountdown(true);
-        }, 2000);
-      });
+      void generateVariationsForTarget(
+        5,
+        target,
+        props.level?.name ?? cacheLevel?.name,
+        (variations) => {
+          setTimeout(() => {
+            setIsGeneratingVariations(false);
+            let _variations = [target];
+            if (variations && _.toLower(variations.word) === _.toLower(target)) {
+              _variations = variations.taboos;
+            }
+            setVariations(_variations.map(formatStringForDisplay));
+            countdown.start();
+            setIsCountdown(true);
+          }, 2000);
+        }
+      );
     }
   }, [target]);
 
@@ -317,10 +338,31 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   useEffect(() => {
     const isLastRound = currentProgress === CONSTANTS.numberOfQuestionsPerGame + 1;
     if (isLastRound) {
-      // TODO: Game Finished. We need to upload the game and generate the game ID before navigate to results page.
-      // Custom game in AI mode does not have a level ID, so we cannot upload the game. Think about ways to handle this
-      // and show the results.
-      router.push('/result');
+      // game over, time to generate AI evaluation
+      gameEndedAt = new Date();
+      startTransition(async () => {
+        for (let i = 0; i < savedScores.length; i++) {
+          const evaluation = await generateEvaluationFromAI(savedScores[i]);
+          savedScores[i].ai_evaluation.ai_score = evaluation.score;
+          savedScores[i].ai_evaluation.ai_explanation = evaluation.reasoning;
+          savedScores[i].ai_evaluation.ai_suggestion = evaluation.examples;
+        }
+        // Check if in AI mode, or user is guest, if so, we direct to result page, passing savedScores & level info as URLSearchParams
+        if (!props.level?.id || props.fromAIMode || !user) {
+          const resultPageSearchParam = new URLSearchParams();
+          resultPageSearchParam.set('level', JSON.stringify(cacheLevel ?? props.level));
+          resultPageSearchParam.set('scores', JSON.stringify(savedScores));
+          router.push(`/result?${resultPageSearchParam}`);
+          return;
+        }
+        // If not in AI mode and user is logged in, we upload the scores to server, then direct to the result page
+        const { gameId } = await uploadCompletedGameForUser(user.id, props.level?.id, {
+          started_at: gameStartedAt.toISOString(),
+          finished_at: gameEndedAt.toISOString(),
+          scores: savedScores,
+        });
+        router.push(`/result?id=${gameId}`);
+      });
     } else if (currentProgress === 1) {
       return;
     } else {
@@ -551,6 +593,11 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           </div>
         </section>
       </section>
+      <AiEvaluationLoadingProgressBar
+        open={isPending}
+        current={savedScores.filter((score) => score.ai_evaluation.ai_explanation === '').length}
+        total={savedScores.length}
+      />
     </main>
   );
 }

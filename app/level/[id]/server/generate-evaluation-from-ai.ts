@@ -5,15 +5,19 @@ import 'server-only';
 import * as console from 'console';
 import { cookies } from 'next/headers';
 
+import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { fetchCurrentAuthUser } from '@/app/profile/server/fetch-user-profile';
-import { ScoreToUpload } from '@/app/result/server/upload-game';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { createClient } from '@/lib/utils/supabase/server';
 
 /**
  * Generate evaluation from AI.
  */
-export async function generateEvaluationFromAI(gameScore: ScoreToUpload) {
+export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promise<{
+  score: number;
+  reasoning: string;
+  examples: string[] | null;
+}> {
   const currentUser = await fetchCurrentAuthUser();
   // Based on user's plan, determine which model to use
   let evaluationMode: AIEvaluationMode = 'basic';
@@ -89,6 +93,7 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload) {
     return {
       score,
       reasoning,
+      examples: null,
     };
   }
 }

@@ -87,19 +87,19 @@ export interface Database {
         Row: {
           ai_explanation: string
           ai_score: number
-          ai_suggestion: string | null
+          ai_suggestion: string[] | null
           score_id: string
         }
         Insert: {
           ai_explanation: string
           ai_score: number
-          ai_suggestion?: string | null
+          ai_suggestion?: string[] | null
           score_id: string
         }
         Update: {
           ai_explanation?: string
           ai_score?: number
-          ai_suggestion?: string | null
+          ai_suggestion?: string[] | null
           score_id?: string
         }
         Relationships: [
@@ -653,7 +653,7 @@ export interface Database {
         Row: {
           ai_explanation: string | null
           ai_score: number | null
-          ai_suggestion: string | null
+          ai_suggestion: string[] | null
           conversations: Json | null
           duration: number | null
           game_id: string | null
@@ -759,7 +759,7 @@ export interface Database {
           _level_id: string
           _game: Json
         }
-        Returns: undefined
+        Returns: string
       }
       increment: {
         Args: {

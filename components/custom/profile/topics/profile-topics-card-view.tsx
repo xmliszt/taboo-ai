@@ -59,7 +59,7 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
                 )}
                 <div className='flex flex-col'>
                   <span className='italic text-muted-foreground'>Best Score:</span>
-                  <span className='font-bold'>{topic.total_score.toFixed(1)}</span>
+                  <span className='font-bold'>{topic.total_score.toFixed(2)}</span>
                 </div>
                 <div className='flex flex-col'>
                   <span className='italic text-muted-foreground'>Best Rating: </span>

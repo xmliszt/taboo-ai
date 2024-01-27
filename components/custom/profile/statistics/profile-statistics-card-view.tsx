@@ -76,7 +76,7 @@ export async function ProfileStatisticsCardView() {
           <ProfileStatisticsSimpleCardView
             key='highest-score'
             title='Highest Score Achieved In A Game'
-            value={`${stats.highestScore}`}
+            value={`${stats.highestScore.toFixed(2)}`}
           />
         )}
         <ProfileStatisticsSimpleCardView

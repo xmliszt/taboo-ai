@@ -7,7 +7,7 @@ import { toLower, trim } from 'lodash';
 import { Plus, RefreshCcw, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { generateTabooWordsFromAI } from '@/app/level/server/generate-taboo-words-from-ai';
+import { generateTabooWordsFromAI } from '@/app/level/[id]/server/generate-taboo-words-from-ai';
 import { FetchAllLevelsAndAuthorsReturnTypeSingle } from '@/app/x/review-words/server/fetch-levels';
 import { RejectionReason, sendSecureEmail } from '@/app/x/review-words/server/send-email';
 import { useAuth } from '@/components/auth-provider';

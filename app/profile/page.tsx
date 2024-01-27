@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import Image from 'next/image';
 
 import { NicknameEditor } from '@/app/profile/nickname-editor';
-import { ProfileAlertInfo } from '@/app/profile/profile-alert-info';
 import { ProfileScrollControl } from '@/app/profile/profile-scroll-control';
 import { fetchUserProfileWithSubscription } from '@/app/profile/server/fetch-user-profile';
 import { ConstructionBlock } from '@/components/custom/common/construction-block';
@@ -30,7 +29,7 @@ export default async function ProfilePage() {
         />
       </div>
       <NicknameEditor initialNickname={user.nickname ?? user.name} />
-      <ProfileAlertInfo />
+      {/*<ProfileAlertInfo />*/}
       <Suspense fallback={<Skeleton className='h-[350px] w-full' numberOfRows={12} />}>
         <ProfileRecentGamesScrollView />
       </Suspense>

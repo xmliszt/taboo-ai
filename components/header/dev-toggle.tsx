@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Bot } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { useAuth } from '@/components/auth-provider';
 import { AdminManager } from '@/lib/admin-manager';
 import { CONSTANTS } from '@/lib/constants';
@@ -66,21 +67,21 @@ const DevToggle = () => {
   const autoCompleteLevel = () => {
     const level = getPersistence<LevelToUpload>(HASH.level);
     if (level) {
-      const savedScores = [];
+      const savedScores: ScoreToUpload[] = [];
       for (let i = 1; i <= CONSTANTS.numberOfQuestionsPerGame; i++) {
         const target = level.words[i - 1];
         savedScores.push({
           score_index: i,
           duration: getRandomInt(1, 100),
           target_word: target,
-          taboos: [target],
+          taboo_words: [target],
           highlights: [
             {
               start_position: 17,
               end_position: 17 + target.length,
             },
           ],
-          conversation: [
+          conversations: [
             { role: 'user', content: 'Sample user input: ' + target },
             {
               role: 'assistant',
@@ -90,12 +91,19 @@ const DevToggle = () => {
           ai_evaluation: {
             ai_explanation: 'Sample AI evaluation',
             ai_score: getRandomInt(0, 100),
-            ai_suggestion: 'Sample AI suggestion',
+            ai_suggestion: [
+              `What is something that is red and round?`,
+              `This thing drops from a tree and hits you on the head`,
+              `This thing is a fruit, and it is fragrant and yummy. Chef Gordon Ramsay loves it! What is it?`,
+            ],
           },
         });
       }
-      // TODO: use the savedScores to create a game. Only game with level saved in DB can be uploaded. Custom game in AI mode cannot be uploaded.
-      router.push('/result');
+      const resultPageSearchParam = new URLSearchParams();
+      resultPageSearchParam.set('level', JSON.stringify(level));
+      resultPageSearchParam.set('scores', JSON.stringify(savedScores));
+      router.push(`/result?${resultPageSearchParam}`);
+      return;
     } else {
       toast.error('No level found, cannot auto complete!');
     }

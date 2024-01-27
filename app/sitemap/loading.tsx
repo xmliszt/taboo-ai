@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/custom/skeleton';
 
 export default function Loading() {
   return (
-    <section className='flex h-full w-full justify-center px-4 pt-20'>
+    <section className='flex h-full w-full justify-center p-4'>
       <Skeleton numberOfRows={10} />
     </section>
   );

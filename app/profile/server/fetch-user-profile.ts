@@ -27,6 +27,7 @@ export async function fetchCurrentAuthUser() {
   if (!user) throw new Error('You are not logged in');
   return user;
 }
+
 /**
  * Fetches the custom stored user profile of the currently logged-in user.
  */
@@ -47,7 +48,7 @@ export async function fetchUserProfile(): Promise<
     .from('users')
     .select('*,subscription:subscriptions(*)')
     .eq('id', currentAuthUser.id)
-    .select()
+
     .limit(1)
     .returns<
       (Database['public']['Tables']['users']['Row'] & {

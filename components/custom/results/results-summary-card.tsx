@@ -1,5 +1,6 @@
 import { round } from 'lodash';
 
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { getDifficulty, getDisplayedTopicName } from '@/lib/utilities';
 import { getOverallRating } from '@/lib/utils/gameUtils';
@@ -31,7 +32,7 @@ export default function ResultsSummaryCard({
             <span className='font-light'>Topic: </span>
             <span className='font-extrabold'>{displayTopicName}</span>
           </span>
-          <span className='font-extrabold'>{difficultyName}</span>
+          <Badge className='font-extrabold'>{difficultyName}</Badge>
         </div>
       </CardHeader>
       <CardContent className='text-lg'>
@@ -44,7 +45,7 @@ export default function ResultsSummaryCard({
           <div className='flex flex-row items-center'>
             <ScoreInfoButton />
             {roundedTotalScore ? (
-              <span className='font-bold'>{roundedTotalScore} / 300</span>
+              <span className='font-bold'>{roundedTotalScore.toFixed(2)} / 300</span>
             ) : (
               <span className='font-bold'>N/A</span>
             )}

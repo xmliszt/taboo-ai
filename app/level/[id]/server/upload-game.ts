@@ -8,6 +8,7 @@ import { createClient } from '@/lib/utils/supabase/server';
 
 export type ScoreToUpload = {
   target_word: string;
+  taboo_words: string[];
   duration: number;
   score_index: number;
   highlights: {
@@ -18,15 +19,15 @@ export type ScoreToUpload = {
     role: 'user' | 'assistant' | 'system' | 'error';
     content: string;
   }[];
-  ai_evaluation?: {
+  ai_evaluation: {
     ai_score: number;
     ai_explanation: string;
-    ai_suggestion?: string;
+    ai_suggestion: string[] | null;
   };
 };
 
 /**
- * Uploads a completed game for a user.
+ * Uploads a completed game for a user. Returns the uploaded game id.
  */
 export const uploadCompletedGameForUser = async (
   userId: string,
@@ -44,4 +45,7 @@ export const uploadCompletedGameForUser = async (
     _game: game,
   });
   if (uploadCompletedGameForUserResponse.error) throw uploadCompletedGameForUserResponse.error;
+  return {
+    gameId: uploadCompletedGameForUserResponse.data,
+  };
 };

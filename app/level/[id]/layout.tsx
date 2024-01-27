@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { fetchLevel } from '@/app/level/server/fetch-level';
+import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { fetchAllLevelsWithoutCookies } from '@/app/levels/server/fetch-levels';
 
 export async function generateMetadata({

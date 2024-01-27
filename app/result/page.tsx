@@ -2,9 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import { round, startCase } from 'lodash';
 import { MousePointerClick } from 'lucide-react';
+import { AsyncReturnType } from 'type-fest';
 
+import { Level } from '@/app/level/[id]/server/fetch-level';
+import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
+import { CopyToClipboardLabel } from '@/app/result/copy-to-clipboard-label';
 import { fetchGame, Game } from '@/app/result/server/fetch-game';
+import { TopicContributionController } from '@/app/result/topic-contribution-controller';
 import { ResultsAiExplanationInfoDialog } from '@/components/custom/results/results-ai-explanation-info-dialog';
 import ResultsSummaryCard from '@/components/custom/results/results-summary-card';
 import { StarRatingBar } from '@/components/custom/star-rating-bar';
@@ -32,155 +37,74 @@ type StatItem = {
 
 type ResultPageProps = {
   searchParams: {
-    id: string;
+    id?: string;
+    level?: string;
+    scores?: string;
   };
 };
 
 export default async function ResultPage(props: ResultPageProps) {
-  const user = await fetchUserProfile();
-  const game = await fetchGame(props.searchParams.id);
-  const level = game.level[0];
+  let user: AsyncReturnType<typeof fetchUserProfile> | undefined;
+  try {
+    user = await fetchUserProfile();
+  } catch (error) {
+    // do nothing
+  }
 
-  const totalScore = game.total_score;
-  const totalDuration = game.total_time_taken;
-  //
-  // const [isGameUploading, setIsGameUploading] = useState(false);
-  // const [isUploadFailed, setIsUploadFailed] = useState(false);
-  // const [expandedValues, setExpandedValues] = useState<string[]>(['word-1']);
-  // const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
-  // const [isTopicReviewSheetOpen, setIsTopicReviewSheetOpen] = useState(false);
-  // const [hasTopicSubmitted, setHasTopicSubmitted] = useState(false);
-  // const [isScoring, setIsScoring] = useState(false);
+  const gameId = props.searchParams.id;
+  const levelRawString = props.searchParams.level;
+  const savedScoresRawString = props.searchParams.scores;
 
-  // FIXME: This function should not be called at this stage
-  // We can call this in the AI mode flow at the end of the game instead.
-  // i.e. AI mode game finished -> (ask for level submission) -> ai evaluation -> cache game -> come to AI mode results page
-  // const checkIfEligibleForLevelSubmission = useCallback(async () => {
-  //   if (level && level.is_ai_generated && user) {
-  //     const exists = await isLevelWithSameNameSubmittedBySameUser(level.name, user.id);
-  //     setHasTopicSubmitted(exists);
-  //     if (exists) return;
-  //     setContributionDialogOpen(true);
-  //   }
-  // }, [level, user]);
+  let level: Level | undefined = undefined;
+  let game: Game | undefined = undefined;
+  let totalScore = 0;
+  let totalDuration = 0;
 
-  // FIXME: This function should be run before we are at result page.
-  // At result page, the game results will be fetched by the game_id,
-  // which is guaranteed to have AI evaluation done.
-  // This evaluation stage should be performed before coming to this page.
-  // i.e. game finished -> ai evaluation -> upload game -> come to results page
-  // const tryUploadGameToCloud = async () => {
-  //   if (
-  //     level === null ||
-  //     user === undefined ||
-  //     game === null ||
-  //     game.is_custom_game ||
-  //     !isGameFinished(game) ||
-  //     gameExistedInCloud
-  //   )
-  //     return;
-  //   try {
-  //     setIsGameUploading(true);
-  //     await uploadCompletedGameForUser(user.id, level.id, game);
-  //     setIsUploadFailed(false);
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Sorry, we are unable to upload your game at this moment.');
-  //     setIsUploadFailed(true);
-  //   } finally {
-  //     setIsGameUploading(false);
-  //   }
-  // };
+  // If gameId present, we fetch from the server.
+  if (gameId) {
+    game = await fetchGame(gameId);
+    level = {
+      ...game.level,
+      is_ai_generated: false,
+    };
+    totalScore = game.total_score;
+    totalDuration = game.total_time_taken;
+  }
 
-  // FIXME: This function should be run before we are at result page.
-  // At result page, the game results will be fetched by the game_id,
-  // which is guaranteed to have AI evaluation done.
-  // This evaluation stage should be performed before coming to this page.
-  // i.e. game finished -> ai evaluation -> upload game -> come to results page
-  // const startEvaluation = async (game: IGame) => {
-  //   if (!game.scores) return;
-  //   setIsLoading(true);
-  //   for (let i = 0; i < game.scores.length; i++) {
-  //     await evaluateForScore(i, game);
-  //   }
-  //   setIsLoading(false);
-  // };
+  // If savedScoresRawString present, we read from the savedScoresRawString.
+  if (savedScoresRawString && levelRawString) {
+    const savedLevel: Level = JSON.parse(levelRawString);
+    if (!savedLevel) throw new Error('No level found so we cannot load the result.');
+    const savedScores: ScoreToUpload[] = JSON.parse(savedScoresRawString);
+    totalScore = savedScores.reduce(
+      (acc, score) =>
+        acc +
+        getCalculatedScore(score.duration, score.ai_evaluation.ai_score, savedLevel.difficulty),
+      0
+    );
+    totalDuration = savedScores.reduce((acc, score) => acc + score.duration, 0);
+    const gameScores: Game['scores'] = savedScores.map((score) => ({
+      game_id: '',
+      score_id: '',
+      ...score,
+      ...score.ai_evaluation,
+    }));
+    game = {
+      game_id: '',
+      level_id: savedLevel.id,
+      level_difficulty: savedLevel.difficulty,
+      level_name: savedLevel.name,
+      level: savedLevel,
+      scores: gameScores,
+      total_score: totalScore,
+      total_time_taken: totalDuration,
+      is_custom_game: savedLevel.is_ai_generated ?? false,
+    };
+    level = savedLevel;
+  }
 
-  // FIXME: This function should be run before we are at result page.
-  // At result page, the game results will be fetched by the game_id,
-  // which is guaranteed to have AI evaluation done.
-  // This evaluation stage should be performed before coming to this page.
-  // i.e. game finished -> ai evaluation -> upload game -> come to results page
-  // const evaluateForScore = async (idx: number, game: Game | null) => {
-  //   if (!game) return;
-  //   setIsScoring(true);
-  //   setLoadingMessage(
-  //     `Stay tuned! Taboo AI is evaluating your performance... [${idx + 1}/${game.scores.length}]`
-  //   );
-  //   const score = game.scores[idx];
-  //   const aiScore = score.ai_score;
-  //   const aiExplanation = score.ai_explanation;
-  //   if (isDevMode()) {
-  //     let aiMockScore;
-  //     let aiMockReasoning;
-  //     switch (getDevMode()) {
-  //       case '1':
-  //       case '2':
-  //         aiMockScore = random(0, 100);
-  //         aiMockReasoning = 'This is a test run.';
-  //         break;
-  //       case '3':
-  //       case '4':
-  //         aiMockScore = undefined;
-  //         aiMockReasoning = undefined;
-  //         break;
-  //       default:
-  //         aiMockScore = random(0, 100);
-  //         aiMockReasoning = 'This is a test run.';
-  //     }
-  //     aiMockScore !== undefined &&
-  //       aiMockReasoning !== undefined &&
-  //       updateGameAIEvaluationAtIndex(idx, aiMockScore, aiMockReasoning);
-  //     setIsScoring(false);
-  //     return;
-  //   }
-  //   if (user && (aiScore === undefined || aiExplanation === undefined)) {
-  //     // Start the AI Evaluation
-  //     try {
-  //       const { score: evaluationScore, reasoning } = await performEvaluation(user.id, score);
-  //       updateGameAIEvaluationAtIndex(idx, evaluationScore, reasoning);
-  //     } catch (error) {
-  //       console.error(error);
-  //       toast.error(
-  //         'Sorry, we are unable to evaluate your performance at the moment. Please try again later.'
-  //       );
-  //     }
-  //   }
-  //   setIsScoring(false);
-  // };
-
-  // FIXME: This function should be run before we are at result page.
-  // At result page, the game results will be fetched by the game_id,
-  // which is guaranteed to have AI evaluation done.
-  // This evaluation stage should be performed before coming to this page.
-  // i.e. game finished -> ai evaluation -> upload game -> come to results page
-  // const updateGameAIEvaluationAtIndex = (idx: number, aiScore: number, aiReasoning: string) => {
-  //   game.scores[idx].ai_evaluation = {
-  //     ai_score: aiScore,
-  //     ai_explanation: aiReasoning,
-  //     ai_suggestion: null,
-  //   };
-  //   game.scores.sort((a, b) => a.score_index - b.score_index);
-  // };
-
-  // FIXME: This function should be run before we are at result page.
-  // At result page, the game results will be fetched by the game_id,
-  // which is guaranteed to have AI evaluation done.
-  // This evaluation stage should be performed before coming to this page.
-  // i.e. game finished -> ai evaluation -> upload game -> come to results page
-  // const retryScoring = async (scoreId: number) => {
-  //   await evaluateForScore(scoreId - 1, game);
-  // };
+  if (!level) throw new Error('No level found so we cannot load the result.');
+  if (!game) throw new Error('No game found so we cannot load the result.');
 
   const generateHighlightedMessage = (
     idx: number,
@@ -252,7 +176,7 @@ export default async function ResultPage(props: ResultPageProps) {
 
   const generateMobileStatsRow = (key: string, title: string, content: React.ReactElement) => {
     return (
-      <div key={key} className='px-3 py-1 leading-snug'>
+      <div key={key} className='gap-2 px-3 py-1 leading-snug'>
         <span className='font-extrabold text-primary'>{title}: </span>
         {content}
       </div>
@@ -287,6 +211,7 @@ export default async function ResultPage(props: ResultPageProps) {
         {score.conversations.map((chat, idx) => (
           <p
             key={`accordion-content-chat-bubble-${score.score_id}-${idx}`}
+            style={{ wordBreak: 'break-word' }}
             className={cn(
               chat.role === 'user'
                 ? 'chat-bubble-right'
@@ -314,7 +239,9 @@ export default async function ResultPage(props: ResultPageProps) {
         content: (
           <StarRatingBar
             className='inline-flex'
-            rating={getIndividualRating(getCalculatedScore(score, level.difficulty))}
+            rating={getIndividualRating(
+              getCalculatedScore(score.duration, score.ai_score, level.difficulty)
+            )}
             maxRating={5}
             size={15}
           />
@@ -322,7 +249,11 @@ export default async function ResultPage(props: ResultPageProps) {
       },
       {
         title: 'Total Score',
-        content: <span>{getCalculatedScore(score, level.difficulty).toString()}</span>,
+        content: (
+          <span>
+            {getCalculatedScore(score.duration, score.ai_score, level.difficulty).toFixed(2)}
+          </span>
+        ),
       },
       {
         title: 'Total Time Taken',
@@ -331,19 +262,18 @@ export default async function ResultPage(props: ResultPageProps) {
       {
         title: `Time Score (${timeMultiplier * 100}%)`,
         content: (
-          <span>{`${calculateTimeScore(score).toString()} x ${timeMultiplier * 100}% = ${round(
-            calculateTimeScore(score) * timeMultiplier,
-            1
-          )}`}</span>
+          <span>{`${calculateTimeScore(score.duration).toString()} x ${
+            timeMultiplier * 100
+          }% = ${round(calculateTimeScore(score.duration) * timeMultiplier, 2).toFixed(2)}`}</span>
         ),
       },
       {
         title: `Clue Score (${promptMultiplier * 100}%)`,
         content: (
-          <span>{`${score.ai_score.toFixed(0)} x ${promptMultiplier * 100}% = ${round(
+          <span>{`${score.ai_score.toFixed(2)} x ${promptMultiplier * 100}% = ${round(
             score.ai_score * promptMultiplier,
-            1
-          )}`}</span>
+            2
+          ).toFixed(2)}`}</span>
         ),
       },
     ];
@@ -354,14 +284,36 @@ export default async function ResultPage(props: ResultPageProps) {
       });
     }
     items.push({
+      title: 'AI Score',
+      content: <span>{score.ai_score}</span>,
+    });
+    const isProUser = user?.user_plan?.type === 'pro';
+    items.push({
       title: 'AI Evaluation',
       content: (
         <span>
-          <ResultsAiExplanationInfoDialog isAuthenticated={user !== undefined} />
+          {!isProUser && <ResultsAiExplanationInfoDialog pro={isProUser} />}
           {score.ai_explanation}
         </span>
       ),
     });
+    if (score.ai_suggestion && score.ai_suggestion.length > 0) {
+      items.push({
+        title: 'AI Suggestions',
+        content: (
+          <span>
+            {isProUser && <ResultsAiExplanationInfoDialog pro={isProUser} />}
+            <div className='ml-2 mt-2 flex flex-col gap-2'>
+              {score.ai_suggestion.map((suggestion, idx) => (
+                <span key={idx} className='flex items-center'>
+                  {idx + 1}. <CopyToClipboardLabel text={suggestion} />
+                </span>
+              ))}
+            </div>
+          </span>
+        ),
+      });
+    }
     return items;
   };
 
@@ -380,11 +332,11 @@ export default async function ResultPage(props: ResultPageProps) {
               <Accordion type='multiple'>
                 {game.scores.map((score) => (
                   <AccordionItem
-                    key={`word-${score.score_id}`}
-                    value={`word-${score.score_id}`}
+                    key={score.score_index}
+                    value={score.score_index.toString()}
                     className='pb-1'
                   >
-                    <AccordionTrigger key={`accordion-trigger-${score.score_id}`}>
+                    <AccordionTrigger key={score.score_index}>
                       <div className='flex w-full flex-row items-center justify-between gap-2 text-primary'>
                         <div className='flex flex-grow flex-row items-center justify-between gap-2'>
                           <span className='text-left leading-snug'>
@@ -395,20 +347,22 @@ export default async function ResultPage(props: ResultPageProps) {
                           </div>
                         </div>
                         <div className='flex flex-row items-center'>
-                          <span className='font-extrabold leading-snug' key={score.score_id}>
-                            {getCalculatedScore(score, level.difficulty)}/{100}
+                          <span className='font-extrabold leading-snug' key={score.score_index}>
+                            {getCalculatedScore(
+                              score.duration,
+                              score.ai_score,
+                              level?.difficulty ?? 0
+                            ).toFixed(2)}
+                            /{100}
                           </span>
                         </div>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent
-                      key={`accordion-content-${score.score_id}`}
-                      className='rounded-lg bg-secondary'
-                    >
+                    <AccordionContent key={score.score_index} className='rounded-lg bg-secondary'>
                       {generateConversation(score)}
-                      {generateStatsItems(score).map((item, idx) => {
+                      {generateStatsItems(score).map((item) => {
                         return generateMobileStatsRow(
-                          `accordion-mobile-stats-row-${score.score_id}-${idx}`,
+                          score.score_index.toString(),
                           item.title,
                           item.content
                         );
@@ -421,51 +375,13 @@ export default async function ResultPage(props: ResultPageProps) {
           </div>
         </section>
       </main>
-      <div className='fixed bottom-2 z-40 flex w-full flex-col items-center gap-2 px-4 py-4 md:flex-row md:justify-center'>
-        <Link href={`/level/${level.id}`}>
-          <Button className='w-4/5 shadow-xl'>Play This Topic Again</Button>
-        </Link>
-      </div>
-
-      {/* TODO: This should not be here! Contributre topic should only be available for AI mode, and right after user finished the game */}
-      {/*<ResultContributionAlertDialog*/}
-      {/*  open={contributionDialogOpen}*/}
-      {/*  onOpenChange={(open) => {*/}
-      {/*    setContributionDialogOpen(open);*/}
-      {/*  }}*/}
-      {/*  onTopicReviewSheetOpenChange={(open) => {*/}
-      {/*    if (!open) {*/}
-      {/*      setIsTopicReviewSheetOpen(false);*/}
-      {/*      return;*/}
-      {/*    }*/}
-      {/*    if (!user) {*/}
-      {/*      EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {*/}
-      {/*        title: 'You need to login to contribute a topic to us.',*/}
-      {/*      });*/}
-      {/*    } else {*/}
-      {/*      setIsTopicReviewSheetOpen(true);*/}
-      {/*    }*/}
-      {/*  }}*/}
-      {/*/>*/}
-      {/* TODO: This should not be here! Contributre topic should only be available for AI mode, and right after user finished the game */}
-      {/*{!hasTopicSubmitted && (*/}
-      {/*  <TopicReviewSheet*/}
-      {/*    open={isTopicReviewSheetOpen}*/}
-      {/*    onOpenChange={(open) => {*/}
-      {/*      setIsTopicReviewSheetOpen(open);*/}
-      {/*    }}*/}
-      {/*    user={user}*/}
-      {/*    defaultNickname={user.nickname ?? user.name ?? ''}*/}
-      {/*    topicName={level.name}*/}
-      {/*    difficultyLevel={String(level.difficulty)}*/}
-      {/*    shouldUseAIForTabooWords={true}*/}
-      {/*    targetWords={level.words}*/}
-      {/*    onTopicSubmitted={() => {*/}
-      {/*      setHasTopicSubmitted(true);*/}
-      {/*    }}*/}
-      {/*    isAIGenerated={level.is_ai_generated}*/}
-      {/*  />*/}
-      {/*)}*/}
+      <Link
+        className='fixed bottom-2 z-40 flex w-full justify-center gap-2 p-4'
+        href={`/level/${level.id}`}
+      >
+        <Button className='w-[60%] shadow-xl'>Play This Topic Again</Button>
+      </Link>
+      {game.is_custom_game && <TopicContributionController level={level} user={user} />}
     </>
   );
 }

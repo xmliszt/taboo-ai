@@ -1,5 +1,5 @@
 import { LevelPageClientWrapper } from '@/app/level/[id]/level-page-client-wrapper';
-import { fetchLevel } from '@/app/level/server/fetch-level';
+import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { formatStringForDisplay } from '@/lib/utilities';
 
 interface LevelPageProps {
@@ -16,5 +16,5 @@ export default async function LevelPage({ params: { id } }: LevelPageProps) {
   // generate target word for playing
   const words = level.words.map((word) => formatStringForDisplay(word));
 
-  return <LevelPageClientWrapper topic={level.name} fromAIMode={false} words={words} />;
+  return <LevelPageClientWrapper level={level} fromAIMode={false} words={words} />;
 }

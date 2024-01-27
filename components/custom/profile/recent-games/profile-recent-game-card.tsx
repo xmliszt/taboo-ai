@@ -54,7 +54,7 @@ export function ProfileRecentGameCard({ game }: ProfileRecentGameCardProps) {
                 </div>
                 <div className='flex flex-col'>
                   <span className='italic text-muted-foreground'>Total Score:</span>
-                  <span className='font-bold'>{game.total_score}</span>
+                  <span className='font-bold'>{game.total_score.toFixed(2)}</span>
                 </div>
                 <div className='flex flex-col'>
                   <span className='italic text-muted-foreground'>Overall Ratings: </span>

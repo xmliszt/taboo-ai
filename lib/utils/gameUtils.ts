@@ -1,6 +1,5 @@
 import { round } from 'lodash';
 
-import { Game } from '@/app/result/server/fetch-game';
 
 import { getDifficultyMultipliers } from '../utilities';
 
@@ -8,16 +7,20 @@ export const getCompletionSeconds = (completion: number): number => {
   return Math.max(1, completion);
 };
 
-export const calculateTimeScore = (score: Game['scores'][number]): number => {
-  const scoreCompletionSeconds = getCompletionSeconds(score.duration);
+export const calculateTimeScore = (duration: number): number => {
+  const scoreCompletionSeconds = getCompletionSeconds(duration);
   return Math.max(Math.min(100 - scoreCompletionSeconds, 100), 0);
 };
 
-export const getCalculatedScore = (score: Game['scores'][number], difficulty: number): number => {
+export const getCalculatedScore = (
+  duration: number,
+  aiScore: number,
+  difficulty: number
+): number => {
   const multipliers = getDifficultyMultipliers(difficulty);
-  const timeScore = calculateTimeScore(score) * multipliers.timeMultiplier;
-  const aiScore = score.ai_score * multipliers.promptMultiplier;
-  return round(timeScore + aiScore, 1);
+  const timeScore = calculateTimeScore(duration) * multipliers.timeMultiplier;
+  const score = aiScore * multipliers.promptMultiplier;
+  return round(timeScore + score, 1);
 };
 
 export const getOverallRating = (totalScore: number, starCounts = 6, maxScore = 300): number => {

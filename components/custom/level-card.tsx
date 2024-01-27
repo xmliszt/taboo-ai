@@ -122,7 +122,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
           <Medal size={25} />
           <div className='flex flex-col items-center gap-2'>
             <div>Best Score</div>
-            <div className='text-2xl font-extrabold'>{level.best_score.toFixed(1)}</div>
+            <div className='text-2xl font-extrabold'>{level.best_score.toFixed(2)}</div>
             <StarRatingBar rating={getOverallRating(level.best_score, 6)} maxRating={6} />
           </div>
           {level?.top_scorer_names && (

@@ -62,7 +62,7 @@ export type Database = MergeDeep<
           Row: {
             ai_explanation: string;
             ai_score: number;
-            ai_suggestion: string | null;
+            ai_suggestion: string[] | null;
             conversations: {
               role: string;
               content: string;

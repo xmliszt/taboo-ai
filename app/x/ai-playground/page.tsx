@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { AsyncReturnType } from 'type-fest';
 
-import { generateEvaluationFromAI } from '@/app/result/server/generate-evaluation-from-ai';
+import { generateEvaluationFromAI } from '@/app/level/[id]/server/generate-evaluation-from-ai';
 import { Skeleton } from '@/components/custom/skeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +41,7 @@ export default function TestPage() {
                 const evaluation = await generateEvaluationFromAI({
                   score_index: 0,
                   target_word: targetWord,
+                  taboo_words: word?.taboos || [],
                   duration: 23,
                   highlights: [
                     {
@@ -58,6 +59,11 @@ export default function TestPage() {
                       content: assistantMessage,
                     },
                   ],
+                  ai_evaluation: {
+                    ai_score: 0,
+                    ai_explanation: '',
+                    ai_suggestion: null,
+                  },
                 });
                 setEvaluation(evaluation);
               });
