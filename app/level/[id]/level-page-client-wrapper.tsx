@@ -11,6 +11,7 @@ import { useTimer } from 'use-timer';
 import { generateConversationFromAI } from '@/app/level/server/generate-conversation-from-ai';
 import { generateTabooWordsFromAI } from '@/app/level/server/generate-taboo-words-from-ai';
 import { ScoreToUpload } from '@/app/result/server/upload-game';
+import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import Timer from '@/components/custom/timer';
 import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
@@ -98,7 +99,16 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     if (props.fromAIMode) {
       cacheLevel = getPersistence<LevelToUpload>(HASH.level);
       if (cacheLevel) {
-        startGame(cacheLevel.words);
+        confirmAlert({
+          title: 'You are playing an AI generated topic',
+          description:
+            'Please note that this game will not be saved to your profile as it is a custom game. If you would like to save your game, please contribute this topic to us. Once this topic is verified, you can then play it and your game will be saved to your profile.',
+          cancelLabel: 'OK',
+          hasConfirmButton: false,
+          onCancel: () => {
+            cacheLevel && startGame(cacheLevel.words);
+          },
+        });
       } else {
         toast.error('Sorry we cannot find the topic to start the game.');
         router.back();
