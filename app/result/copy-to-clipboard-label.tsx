@@ -21,13 +21,13 @@ export function CopyToClipboardLabel(props: CopyToClipboardLabelProps) {
       <TooltipTrigger asChild>
         <span
           className={cn(
-            'rounded-lg bg-muted px-2 py-1 text-muted-foreground',
-            'hover:cursor-pointer hover:opacity-75',
+            'rounded-lg bg-muted px-2 py-1 text-foreground',
+            'transition-colors hover:cursor-pointer hover:text-muted-foreground',
             props.className
           )}
           onClick={async () => {
             await copy(props.text);
-            toast.info('Hint copied to clipboard');
+            toast.info('Suggested hint copied to clipboard');
             setIsCopied(true);
             setTimeout(() => {
               setIsCopied(false);

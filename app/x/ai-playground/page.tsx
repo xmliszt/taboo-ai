@@ -20,7 +20,7 @@ export default function TestPage() {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className='flex flex-col gap-2 p-2'>
+    <div className='flex flex-col gap-2 overflow-y-auto p-2'>
       <Card>
         <CardHeader>
           <CardTitle>Input</CardTitle>

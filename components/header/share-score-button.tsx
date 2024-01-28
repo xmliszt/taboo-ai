@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import copy from 'clipboard-copy';
 import { startCase } from 'lodash';
-import { Share } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
+import { FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { toast } from 'sonner';
 
 import { Level } from '@/app/level/[id]/server/fetch-level';
@@ -87,7 +87,7 @@ export function ShareScoreButton() {
       <AlertDialog open={open} onOpenChange={(open) => setOpen(open)}>
         <AlertDialogTrigger asChild>
           <IconButton tooltip='Share your scores'>
-            <Share />
+            <FaArrowUpRightFromSquare />
           </IconButton>
         </AlertDialogTrigger>
         <AlertDialogContent className='flex w-11/12 items-center justify-center !rounded-none !border-none !bg-transparent p-0 !shadow-none'>

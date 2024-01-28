@@ -38,6 +38,7 @@ export const uploadCompletedGameForUser = async (
     scores: ScoreToUpload[];
   }
 ) => {
+  console.dir({ userId, levelId, game }, { depth: null });
   const supabaseClient = createClient(cookies());
   const uploadCompletedGameForUserResponse = await supabaseClient.rpc('f_upload_a_game', {
     _user_id: userId,

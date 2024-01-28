@@ -2,6 +2,8 @@
 
 import 'server-only';
 
+import { cookies } from 'next/headers';
+
 import { googleGeminiPro } from '@/lib/google-ai';
 
 /**
@@ -13,6 +15,8 @@ export async function generateConversationFromAI(
     content: string;
   }[]
 ) {
+  // Force revalidation of cache
+  cookies();
   const filteredConversation = conversation.filter((message) =>
     ['user', 'assistant'].includes(message.role)
   );

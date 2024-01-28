@@ -4,6 +4,7 @@ import 'server-only';
 
 import * as console from 'console';
 import { cookies } from 'next/headers';
+import { User } from '@supabase/gotrue-js';
 
 import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { fetchCurrentAuthUser } from '@/app/profile/server/fetch-user-profile';
@@ -18,18 +19,26 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   reasoning: string;
   examples: string[] | null;
 }> {
-  const currentUser = await fetchCurrentAuthUser();
+  let user: User | undefined = undefined;
+  try {
+    user = await fetchCurrentAuthUser();
+  } catch (error) {
+    // do nothing - user not logged in
+  }
+
+  const supabaseClient = createClient(cookies());
   // Based on user's plan, determine which model to use
   let evaluationMode: AIEvaluationMode = 'basic';
-  const supabaseClient = createClient(cookies());
-  const fetchUserSubscriptionResponse = await supabaseClient
-    .from('subscriptions')
-    .select()
-    .eq('user_id', currentUser.id)
-    .single();
-  if (fetchUserSubscriptionResponse.error) throw fetchUserSubscriptionResponse.error;
-  const userSubscription = fetchUserSubscriptionResponse.data;
-  evaluationMode = userSubscription.customer_plan_type === 'pro' ? 'advanced' : 'basic';
+  if (user) {
+    const fetchUserSubscriptionResponse = await supabaseClient
+      .from('subscriptions')
+      .select()
+      .eq('user_id', user.id)
+      .single();
+    if (fetchUserSubscriptionResponse.error) throw fetchUserSubscriptionResponse.error;
+    const userSubscription = fetchUserSubscriptionResponse.data;
+    evaluationMode = userSubscription.customer_plan_type === 'pro' ? 'advanced' : 'basic';
+  }
   console.log(`Using ${evaluationMode} mode for evaluation`);
 
   // Filter out conversation messages whose role is not 'user' or 'assistant'
@@ -53,7 +62,6 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
     fetchTaboosResponse.data?.taboos ?? [],
     evaluationMode === 'advanced'
   );
-  console.log(evaluationPrompt);
   const systemMessage = {
     role: 'user',
     parts: evaluationPrompt,
@@ -73,7 +81,6 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   });
   const completion = await chat.sendMessage(userMessage);
   const responseText = completion.response.text();
-  console.log(responseText);
   const {
     score,
     reasoning,
@@ -83,6 +90,8 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
     reasoning: string;
     examples: string[];
   } = JSON.parse(responseText);
+
+  console.log({ score, reasoning, examples });
   if (evaluationMode === 'advanced') {
     return {
       score,

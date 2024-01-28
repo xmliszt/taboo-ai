@@ -101,6 +101,7 @@ export default async function ResultPage(props: ResultPageProps) {
       is_custom_game: savedLevel.is_ai_generated ?? false,
     };
     level = savedLevel;
+    console.dir({ game, level });
   }
 
   if (!level) throw new Error('No level found so we cannot load the result.');
@@ -285,7 +286,7 @@ export default async function ResultPage(props: ResultPageProps) {
     }
     items.push({
       title: 'AI Score',
-      content: <span>{score.ai_score}</span>,
+      content: <span>{score.ai_score.toFixed(2)}</span>,
     });
     const isProUser = user?.user_plan?.type === 'pro';
     items.push({
@@ -303,7 +304,7 @@ export default async function ResultPage(props: ResultPageProps) {
         content: (
           <span>
             {isProUser && <ResultsAiExplanationInfoDialog pro={isProUser} />}
-            <div className='ml-2 mt-2 flex flex-col gap-2'>
+            <div className='ml-2 mt-2 flex flex-col gap-1'>
               {score.ai_suggestion.map((suggestion, idx) => (
                 <span key={idx} className='flex items-center'>
                   {idx + 1}. <CopyToClipboardLabel text={suggestion} />

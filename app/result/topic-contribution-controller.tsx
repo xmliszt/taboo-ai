@@ -36,7 +36,7 @@ export function TopicContributionController(props: TopicContributionControllerPr
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{`I'll decide later`}</AlertDialogCancel>
+            <AlertDialogCancel>Nope</AlertDialogCancel>
             <AlertDialogAction
               autoFocus
               onClick={() => {

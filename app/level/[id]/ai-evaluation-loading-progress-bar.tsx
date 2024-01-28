@@ -38,8 +38,15 @@ export function AiEvaluationLoadingProgressBar(props: AIEvaluationLoadingProgres
   return (
     <AlertDialog open={props.open}>
       <AlertDialogContent>
-        <AlertDialogHeader>Taboo AI is evaluating your performance...</AlertDialogHeader>
-        <AlertDialogDescription>{currentlyDisplayMessage}</AlertDialogDescription>
+        <AlertDialogHeader>Game over! Taboo AI is evaluating your performance...</AlertDialogHeader>
+        <AlertDialogDescription>
+          <div className='flex flex-row items-center justify-between'>
+            <span>{currentlyDisplayMessage}</span>
+            <span>
+              {props.current}/{props.total}
+            </span>
+          </div>
+        </AlertDialogDescription>
         <Progress value={(props.current / props.total) * 100} />
       </AlertDialogContent>
     </AlertDialog>

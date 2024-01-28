@@ -3,7 +3,7 @@
 // TODO: This component is too large to be a client component. Refactor to break it down.
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import _, { uniqueId } from 'lodash';
+import _, { cloneDeep, uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTimer } from 'use-timer';
@@ -42,11 +42,14 @@ type LevelWordsProviderProps = {
 // Words stored in cache
 let cacheWords: string[] = [];
 
+// Words played
+let wordsPlayed: string[] = [];
+
 // Level stored in cache - only for AI mode
 let cacheLevel: LevelToUpload | null = null;
 
 // Scores stored in cache
-const savedScores: ScoreToUpload[] = [];
+let savedScores: ScoreToUpload[] = [];
 
 // Game started at
 let gameStartedAt: Date = new Date();
@@ -54,12 +57,14 @@ let gameStartedAt: Date = new Date();
 // Game ended at
 let gameEndedAt: Date = new Date();
 
+// Delay between each stage
+const DELAY_BETWEEN_STAGE = 3000;
+
 export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const router = useRouter();
   const { user } = useAuth();
   const retryCount = useRef<number>(5);
   const inputTextField = useRef<HTMLInputElement>(null);
-  const [wordsPlayed, setWordsPlayed] = useState<string[]>([]);
   const [isWaitingForAIResponse, setIsWaitingForAIResponse] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [target, setTarget] = useState<string | null>(null);
@@ -70,6 +75,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const [isCountingDown, setIsCountdown] = useState<boolean>(false);
   const [conversation, setConversation] = useState<ScoreToUpload['conversations']>([]);
   const [isPending, startTransition] = useTransition();
+  const [currentEvaluationProgress, setCurrentEvaluationProgress] = useState(0);
 
   const {
     time,
@@ -94,18 +100,21 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   // start the new game with provided words
   const startGame = (words: string[]) => {
     cacheWords = words;
+    wordsPlayed = [];
     resetTimer();
-    setWordsPlayed([]);
     setTarget(generateNewTarget(words));
     setCurrentProgress(1);
     gameStartedAt = new Date();
+    gameEndedAt = new Date();
+    savedScores = [];
+    setCurrentEvaluationProgress(0);
   };
 
   const generateNewTarget = (words: string[]) => {
     // filter out those played
     const filteredWords = [...words].filter((w) => !wordsPlayed.includes(w));
     const newTarget = filteredWords[Math.floor(Math.random() * filteredWords.length)];
-    setWordsPlayed([...wordsPlayed, newTarget]);
+    wordsPlayed.push(newTarget);
     return newTarget;
   };
 
@@ -249,11 +258,12 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   // Move on to the next question, save the scores to cache. Delay and set the current progress to the next one
   const nextQuestion = async (highlights: ScoreToUpload['highlights']) => {
     pauseTimer();
+    if (savedScores.find((score) => score.score_index === currentProgress)) return;
     savedScores.push({
       score_index: currentProgress,
       target_word: target ?? '',
-      taboo_words: variations,
-      conversations: conversation,
+      taboo_words: cloneDeep(variations),
+      conversations: cloneDeep(conversation),
       duration: time,
       highlights: highlights,
       ai_evaluation: {
@@ -264,7 +274,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     });
     setTimeout(() => {
       setCurrentProgress((progress) => progress + 1);
-    }, 5000);
+    }, DELAY_BETWEEN_STAGE);
   };
 
   // If the last message from conversation is from assistant, we generate highlights for it. And move on to the next question
@@ -340,29 +350,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     if (isLastRound) {
       // game over, time to generate AI evaluation
       gameEndedAt = new Date();
-      startTransition(async () => {
-        for (let i = 0; i < savedScores.length; i++) {
-          const evaluation = await generateEvaluationFromAI(savedScores[i]);
-          savedScores[i].ai_evaluation.ai_score = evaluation.score;
-          savedScores[i].ai_evaluation.ai_explanation = evaluation.reasoning;
-          savedScores[i].ai_evaluation.ai_suggestion = evaluation.examples;
-        }
-        // Check if in AI mode, or user is guest, if so, we direct to result page, passing savedScores & level info as URLSearchParams
-        if (!props.level?.id || props.fromAIMode || !user) {
-          const resultPageSearchParam = new URLSearchParams();
-          resultPageSearchParam.set('level', JSON.stringify(cacheLevel ?? props.level));
-          resultPageSearchParam.set('scores', JSON.stringify(savedScores));
-          router.push(`/result?${resultPageSearchParam}`);
-          return;
-        }
-        // If not in AI mode and user is logged in, we upload the scores to server, then direct to the result page
-        const { gameId } = await uploadCompletedGameForUser(user.id, props.level?.id, {
-          started_at: gameStartedAt.toISOString(),
-          finished_at: gameEndedAt.toISOString(),
-          scores: savedScores,
-        });
-        router.push(`/result?id=${gameId}`);
-      });
+      startEvaluationAndUpload();
     } else if (currentProgress === 1) {
       return;
     } else {
@@ -379,6 +367,45 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       resetTimer();
     }
   }, [isCountingDown]);
+
+  function startEvaluationAndUpload() {
+    setCurrentEvaluationProgress(0);
+    startTransition(async () => {
+      try {
+        for (let i = 0; i < savedScores.length; i++) {
+          const evaluation = await generateEvaluationFromAI(savedScores[i]);
+          savedScores[i].ai_evaluation.ai_score = evaluation.score;
+          savedScores[i].ai_evaluation.ai_explanation = evaluation.reasoning;
+          savedScores[i].ai_evaluation.ai_suggestion = evaluation.examples;
+          setCurrentEvaluationProgress(i + 1);
+        }
+        // Check if in AI mode, or user is guest, if so, we direct to result page, passing savedScores & level info as URLSearchParams
+        if (!props.level?.id || props.fromAIMode || !user) {
+          const resultPageSearchParam = new URLSearchParams();
+          resultPageSearchParam.set('level', JSON.stringify(cacheLevel ?? props.level));
+          resultPageSearchParam.set('scores', JSON.stringify(savedScores));
+          router.push(`/result?${resultPageSearchParam}`);
+          return;
+        }
+        // If not in AI mode and user is logged in, we upload the scores to server, then direct to the result page
+        const { gameId } = await uploadCompletedGameForUser(user.id, props.level?.id, {
+          started_at: gameStartedAt.toISOString(),
+          finished_at: gameEndedAt.toISOString(),
+          scores: savedScores,
+        });
+        router.push(`/result?id=${gameId}`);
+      } catch (error) {
+        console.error(error);
+        confirmAlert({
+          title: 'Something went wrong!',
+          description: 'Something went wrong during our evaluation process. Please try again.',
+          cancelLabel: 'Try again',
+          hasConfirmButton: false,
+          onCancel: startEvaluationAndUpload,
+        });
+      }
+    });
+  }
 
   // user input validated against taboo words.
   const matchers = target == null ? variations : [...variations, target];
@@ -513,7 +540,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
               {target}
             </span>
           </div>
-          <form onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
+          <form autoComplete='off' onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
             <div className='relative flex items-center justify-center gap-4 px-4'>
               <IconButton
                 id='clear'
@@ -535,6 +562,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                 disabled={timerStatus !== 'RUNNING'}
                 ref={inputTextField}
                 autoFocus
+                autoComplete='off'
                 placeholder={
                   isGeneratingVariations
                     ? 'Generating taboo words...'
@@ -595,8 +623,8 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       </section>
       <AiEvaluationLoadingProgressBar
         open={isPending}
-        current={savedScores.filter((score) => score.ai_evaluation.ai_explanation === '').length}
-        total={savedScores.length}
+        current={currentEvaluationProgress}
+        total={CONSTANTS.numberOfQuestionsPerGame}
       />
     </main>
   );
