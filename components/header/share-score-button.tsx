@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import copy from 'clipboard-copy';
 import { startCase } from 'lodash';
@@ -22,34 +22,37 @@ import { Button } from '@/components/ui/button';
 import IconButton from '@/components/ui/icon-button';
 import { Separator } from '@/components/ui/separator';
 import { CONSTANTS } from '@/lib/constants';
+import { HASH } from '@/lib/hash';
+import { getPersistence } from '@/lib/persistence/persistence';
 import { b64toBlob, getDifficulty, shareImage } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getCalculatedScore } from '@/lib/utils/gameUtils';
 
 export function ShareScoreButton() {
+  const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const [game, setGame] = useState<Game>();
   const [open, setOpen] = useState(false);
   const shareCardRef = useRef(null);
 
   const gameId = searchParams.get('id');
-  const levelRawString = searchParams.get('level');
-  const savedScoresRawString = searchParams.get('scores');
+  const hashedKey = searchParams.get('key');
 
   useEffect(() => {
-    async function fetch(gameId: string) {
+    startTransition(async () => {
       if (gameId) {
         const game = await fetchGame(gameId);
         setGame(game);
       }
-    }
+    });
 
-    gameId && fetch(gameId);
     // If savedScoresRawString present, we read from the savedScoresRawString.
-    if (savedScoresRawString && levelRawString) {
-      const savedLevel: Level = JSON.parse(levelRawString);
-      if (!savedLevel) throw new Error('No level found so we cannot load the result.');
-      const savedScores: ScoreToUpload[] = JSON.parse(savedScoresRawString);
+    if (hashedKey) {
+      const savedLevel: Level | null = getPersistence(HASH.level);
+      if (!savedLevel) return;
+      const savedScores: ScoreToUpload[] | null = getPersistence(hashedKey);
+      if (!savedScores) return;
+
       const totalScore = savedScores.reduce(
         (acc, score) =>
           acc +
@@ -76,7 +79,7 @@ export function ShareScoreButton() {
       };
       setGame(game);
     }
-  }, [gameId, savedScoresRawString, levelRawString]);
+  }, [gameId, hashedKey]);
 
   if (!game) {
     return null;
@@ -86,7 +89,7 @@ export function ShareScoreButton() {
     <>
       <AlertDialog open={open} onOpenChange={(open) => setOpen(open)}>
         <AlertDialogTrigger asChild>
-          <IconButton tooltip='Share your scores'>
+          <IconButton tooltip='Share your scores' disabled={isPending}>
             <FaArrowUpRightFromSquare />
           </IconButton>
         </AlertDialogTrigger>

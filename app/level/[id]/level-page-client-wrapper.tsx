@@ -24,11 +24,16 @@ import { Progress } from '@/components/ui/progress';
 import { CONSTANTS } from '@/lib/constants';
 import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
-import { getPersistence } from '@/lib/persistence/persistence';
+import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { fetchWord } from '@/lib/services/wordService';
 import { LevelToUpload } from '@/lib/types/level.type';
 import { IWord } from '@/lib/types/word.type';
-import { formatStringForDisplay, getMockResponse, getMockVariations } from '@/lib/utilities';
+import {
+  formatStringForDisplay,
+  generateHashedString,
+  getMockResponse,
+  getMockVariations,
+} from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import { generateHighlights, getMatchedTabooWords } from '@/lib/utils/levelUtils';
@@ -382,8 +387,9 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
         // Check if in AI mode, or user is guest, if so, we direct to result page, passing savedScores & level info as URLSearchParams
         if (!props.level?.id || props.fromAIMode || !user) {
           const resultPageSearchParam = new URLSearchParams();
-          resultPageSearchParam.set('level', JSON.stringify(cacheLevel ?? props.level));
-          resultPageSearchParam.set('scores', JSON.stringify(savedScores));
+          const hashKey = generateHashedString(JSON.stringify(savedScores));
+          setPersistence(hashKey, savedScores);
+          resultPageSearchParam.set('key', hashKey);
           router.push(`/result?${resultPageSearchParam}`);
           return;
         }
