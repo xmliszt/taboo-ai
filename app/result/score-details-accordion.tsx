@@ -255,7 +255,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
   };
 
   return (
-    <Accordion type='multiple'>
+    <Accordion type='multiple' defaultValue={['1']}>
       {props.game.scores.map((score) => (
         <AccordionItem key={score.score_index} value={score.score_index.toString()}>
           <AccordionTrigger key={score.score_index} className='hover:no-underline'>
