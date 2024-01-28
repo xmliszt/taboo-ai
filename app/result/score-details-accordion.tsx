@@ -168,7 +168,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
           <StarRatingBar
             className='inline-flex'
             rating={getIndividualRating(
-              getCalculatedScore(score.duration, score.ai_score, props.level.difficulty)
+              getCalculatedScore(score.duration, score.ai_score ?? 0, props.level.difficulty)
             )}
             maxRating={5}
             size={15}
@@ -179,7 +179,11 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
         title: 'Total Score',
         content: (
           <span>
-            {getCalculatedScore(score.duration, score.ai_score, props.level.difficulty).toFixed(2)}
+            {getCalculatedScore(
+              score.duration,
+              score.ai_score ?? 0,
+              props.level.difficulty
+            ).toFixed(2)}
           </span>
         ),
       },
@@ -195,7 +199,9 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
           }% = ${round(calculateTimeScore(score.duration) * timeMultiplier, 2).toFixed(2)}`}</span>
         ),
       },
-      {
+    ];
+    if (score.ai_score !== undefined) {
+      items.push({
         title: `Clue Score (${promptMultiplier * 100}%)`,
         content: (
           <span>{`${score.ai_score.toFixed(2)} x ${promptMultiplier * 100}% = ${round(
@@ -203,27 +209,31 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
             2
           ).toFixed(2)}`}</span>
         ),
-      },
-    ];
+      });
+    }
     if (score.taboo_words.length > 0) {
       items.push({
         title: 'Taboo Words',
         content: <span>{score.taboo_words.map(startCase).join(', ')}</span>,
       });
     }
-    items.push({
-      title: 'AI Score',
-      content: <span>{score.ai_score.toFixed(2)}</span>,
-    });
-    items.push({
-      title: 'AI Evaluation',
-      content: (
-        <span>
-          {!props.pro && <ResultsAiExplanationInfoDialog pro={props.pro} />}
-          {score.ai_explanation}
-        </span>
-      ),
-    });
+    if (score.ai_score !== undefined) {
+      items.push({
+        title: 'AI Score',
+        content: <span>{score.ai_score.toFixed(2)}</span>,
+      });
+    }
+    if (score.ai_explanation !== undefined) {
+      items.push({
+        title: 'AI Evaluation',
+        content: (
+          <span>
+            {!props.pro && <ResultsAiExplanationInfoDialog pro={props.pro} />}
+            {score.ai_explanation}
+          </span>
+        ),
+      });
+    }
     if (score.ai_suggestion && score.ai_suggestion.length > 0) {
       items.push({
         title: 'AI Suggestions',
@@ -260,7 +270,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
                 <span className='font-extrabold leading-snug' key={score.score_index}>
                   {getCalculatedScore(
                     score.duration,
-                    score.ai_score,
+                    score.ai_score ?? 0,
                     props.level.difficulty
                   ).toFixed(2)}
                   /{100}

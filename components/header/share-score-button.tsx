@@ -105,7 +105,7 @@ export function ShareScoreButton(props: ShareScoreButtonProps) {
                         rating={
                           (getCalculatedScore(
                             score.duration,
-                            score.ai_score,
+                            score.ai_score ?? 0,
                             props.gameToShare?.level_difficulty ?? 0
                           ) *
                             5) /

@@ -52,18 +52,21 @@ type UserMenuItem = {
   onClick: ((event: Event) => void) | ((event: Event) => Promise<void>);
 };
 
+let hasGreeted = false;
+
 export function UserLoginPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (user && !hasGreeted) {
       if (user.login_times <= 1) {
         toast(`Welcome to Taboo AI 🎉 ${user.nickname ?? user.name}!`);
       } else {
         toast(`Welcome back, ${user.nickname ?? user.name}!`);
       }
+      hasGreeted = true;
     }
   }, [user]);
 
@@ -80,6 +83,7 @@ export function UserLoginPortal() {
     try {
       await logout();
       toast(`Bye bye, ${user?.nickname ?? user?.name}! 👋`);
+      hasGreeted = false;
       setTimeout(() => {
         window.location.href = '/';
       }, 2500);

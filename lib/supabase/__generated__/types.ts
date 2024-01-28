@@ -106,16 +106,9 @@ export interface Database {
           {
             foreignKeyName: "game_ai_evaluations_score_id_fkey"
             columns: ["score_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "game_scores"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "game_ai_evaluations_score_id_fkey"
-            columns: ["score_id"]
-            isOneToOne: false
-            referencedRelation: "v_score_with_ai_evaluations"
-            referencedColumns: ["score_id"]
           }
         ]
       }
@@ -125,18 +118,21 @@ export interface Database {
           id: string
           role: Database["public"]["Enums"]["conversation_chat_role"]
           score_id: string
+          timestamp: string
         }
         Insert: {
           content: string
           id?: string
           role: Database["public"]["Enums"]["conversation_chat_role"]
           score_id: string
+          timestamp?: string
         }
         Update: {
           content?: string
           id?: string
           role?: Database["public"]["Enums"]["conversation_chat_role"]
           score_id?: string
+          timestamp?: string
         }
         Relationships: [
           {
@@ -145,13 +141,6 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "game_scores"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "game_score_conversations_score_id_fkey"
-            columns: ["score_id"]
-            isOneToOne: false
-            referencedRelation: "v_score_with_ai_evaluations"
-            referencedColumns: ["score_id"]
           }
         ]
       }
@@ -181,13 +170,6 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "game_scores"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "game_score_highlights_score_id_fkey"
-            columns: ["score_id"]
-            isOneToOne: false
-            referencedRelation: "v_score_with_ai_evaluations"
-            referencedColumns: ["score_id"]
           }
         ]
       }
@@ -232,13 +214,6 @@ export interface Database {
             foreignKeyName: "game_scores_game_id_fkey"
             columns: ["game_id"]
             isOneToOne: false
-            referencedRelation: "v_score_with_ai_evaluations"
-            referencedColumns: ["game_id"]
-          },
-          {
-            foreignKeyName: "game_scores_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
             referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
             referencedColumns: ["game_id"]
           },
@@ -255,21 +230,21 @@ export interface Database {
         Row: {
           finished_at: string
           id: string
-          level_id: string | null
+          level_id: string
           started_at: string
           user_id: string
         }
         Insert: {
           finished_at?: string
           id?: string
-          level_id?: string | null
+          level_id: string
           started_at?: string
           user_id: string
         }
         Update: {
           finished_at?: string
           id?: string
-          level_id?: string | null
+          level_id?: string
           started_at?: string
           user_id?: string
         }
@@ -648,30 +623,6 @@ export interface Database {
           words: string[] | null
         }
         Relationships: []
-      }
-      v_score_with_ai_evaluations: {
-        Row: {
-          ai_explanation: string | null
-          ai_score: number | null
-          ai_suggestion: string[] | null
-          conversations: Json | null
-          duration: number | null
-          game_id: string | null
-          highlights: Json | null
-          score_id: string | null
-          score_index: number | null
-          taboo_words: string[] | null
-          target_word: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "game_scores_target_word_fkey"
-            columns: ["target_word"]
-            isOneToOne: false
-            referencedRelation: "words"
-            referencedColumns: ["word"]
-          }
-        ]
       }
       v_user_played_level_game_with_scores_and_completed_times: {
         Row: {
