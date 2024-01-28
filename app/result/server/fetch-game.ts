@@ -19,8 +19,9 @@ export const fetchGame = async (gameId: string) => {
       '*,scores:game_scores(*,conversations:game_score_conversations!inner(*),highlights:game_score_highlights!inner(*),ai_evaluation:game_ai_evaluations!inner(*),words!inner(*))'
     )
     .eq('id', gameId)
-    .single();
+    .maybeSingle();
   if (fetchGameResponse.error) throw fetchGameResponse.error;
+  if (!fetchGameResponse.data) throw new Error('Game not found');
   const game = fetchGameResponse.data;
   const fetchGameLevelInfoResponse = await supabaseClient
     .from('v_game_level_info')
