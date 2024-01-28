@@ -61,7 +61,6 @@ export class RouteManager {
       case TabooPathname.RESULT === route:
         return {
           title: 'Game Result',
-          hideShareScoreButton: false,
           hideDevToggle: false,
         };
       case TabooPathname.PWA === route:
@@ -111,7 +110,6 @@ export class RouteManager {
           hideMenu: false,
           hideThemeToggle: false,
           hideDevToggle: true,
-          hideShareScoreButton: true,
           hasBackButton: false,
         };
     }

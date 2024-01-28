@@ -33,24 +33,38 @@ interface PricingCardProps {
   plan: Plan;
 }
 
+function getPlanActionLabel(
+  plan: Plan,
+  customerPlanType?: 'free' | 'pro',
+  customerPlanTier?: number
+) {
+  if (!customerPlanType || !customerPlanTier) {
+    return plan.type === 'free' ? 'Current Plan' : 'Start Free Trial';
+  }
+  // logged in
+  if (customerPlanType === plan.type) {
+    return 'Current Plan';
+  }
+  if (customerPlanTier > plan.tier) {
+    return 'Downgrade Plan';
+  } else if (customerPlanTier < plan.tier) {
+    return 'Upgrade Plan';
+  } else {
+    return 'Start Free Trial';
+  }
+}
+
 export default function PricingCard({ index, plan }: PricingCardProps) {
   const { user } = useAuth();
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const actionLabel =
-    user?.subscription === undefined
-      ? plan.type === 'free'
-        ? 'Current Plan' // If not logged in, free plan is the current plan
-        : 'Start Free Trial' // If not logged in, paid plan can start a free trial
-      : user?.subscription?.customer_plan_type === plan.type
-        ? 'Current Plan' // If logged in, current plan is current plan
-        : user?.user_plan?.tier ?? 0 > plan.tier
-          ? 'Downgrade Plan' // If logged in and current plan is higher tier than this plan, downgrade plan
-          : user?.subscription?.customer_id
-            ? 'Upgrade Plan' // If logged in and current plan is lower tier than this plan, upgrade plan
-            : 'Start Free Trial'; // If logged in and current plan is lower tier than this plan, but not a Stripe customer before, start a free trial
+  const actionLabel = getPlanActionLabel(
+    plan,
+    user?.subscription?.customer_plan_type,
+    user?.user_plan?.tier
+  );
   const isCurrentPlan =
     user?.subscription === undefined
       ? plan.type === 'free'

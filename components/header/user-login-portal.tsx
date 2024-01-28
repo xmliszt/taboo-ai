@@ -34,6 +34,16 @@ import {
 } from '../ui/dropdown-menu';
 import IconButton from '../ui/icon-button';
 
+function shouldShowLoginIconWithLabel(pathname: string) {
+  return (
+    pathname === '/' ||
+    pathname === '/levels' ||
+    pathname === '/profile' ||
+    pathname === '/result' ||
+    pathname === '/pricing'
+  );
+}
+
 type UserMenuItem = {
   label: string;
   icon: React.ReactElement;
@@ -98,7 +108,8 @@ export function UserLoginPortal() {
       {
         label: 'Manage Billing & Plan',
         icon: <BookMarked />,
-        isVisible: user?.subscription?.customer_id !== undefined,
+        isVisible:
+          user?.subscription?.customer_id !== undefined && user?.subscription?.customer_id !== null,
         onClick: handleManageSubscription,
       },
       {
@@ -228,7 +239,7 @@ export function UserLoginPortal() {
     </div>
   ) : (
     <div>
-      {pathname === '/' || pathname === '/levels' || pathname === '/profile' ? (
+      {shouldShowLoginIconWithLabel(pathname) ? (
         <Button aria-label='Click to login' onClick={handleLogin} className='h-[32px] px-2 py-1'>
           <div className='flex flex-row items-center gap-1'>
             <CircleUser size='23' />

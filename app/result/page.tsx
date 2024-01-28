@@ -30,14 +30,12 @@ export default async function ResultPage(props: ResultPageProps) {
   }
 
   return (
-    <main className='relative'>
-      <section className='!leading-screenshot pb-24 pt-4'>
-        <ResultClientWrapper
-          user={user}
-          storedHashKey={hashedKey}
-          remotelyFetchedGame={remotelyFetchedGame}
-        />
-      </section>
+    <main className='relative pb-20'>
+      <ResultClientWrapper
+        user={user}
+        storedHashKey={hashedKey}
+        remotelyFetchedGame={remotelyFetchedGame}
+      />
     </main>
   );
 }

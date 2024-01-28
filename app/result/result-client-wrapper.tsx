@@ -10,6 +10,7 @@ import { ScoreDetailsAccordion } from '@/app/result/score-details-accordion';
 import { Game } from '@/app/result/server/fetch-game';
 import { TopicContributionController } from '@/app/result/topic-contribution-controller';
 import ResultsSummaryCard from '@/components/custom/results/results-summary-card';
+import { ShareScoreButton } from '@/components/header/share-score-button';
 import { Button } from '@/components/ui/button';
 import { HASH } from '@/lib/hash';
 import { getPersistence } from '@/lib/persistence/persistence';
@@ -77,7 +78,8 @@ export function ResultClientWrapper(props: ResultClientWrapperProps) {
   if (!game) throw new Error('No game found so we cannot load the result.');
 
   return (
-    <div className='mb-8 flex w-full flex-col gap-6 px-4'>
+    <div className='relative mb-8 flex w-full flex-col gap-6 px-4 pt-6'>
+      <ShareScoreButton gameToShare={game} />
       <ResultsSummaryCard
         total={totalDuration}
         totalScore={totalScore}

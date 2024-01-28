@@ -30,8 +30,9 @@ export async function fetchUserWithSubscriptions(): Promise<
     .from('users')
     .select('*,subscription:subscriptions(*)')
     .eq('id', authUser.id)
-    .single();
+    .maybeSingle();
   if (fetchUserProfileResponse.error) throw fetchUserProfileResponse.error;
+  if (!fetchUserProfileResponse.data) throw new Error('User not found');
   const userProfile = fetchUserProfileResponse.data;
   // Fetch plan
   const fetchAvailablePlans = await supabaseClient.from('plans').select('*,plan_features(*)');

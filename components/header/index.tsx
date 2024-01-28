@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { BackButton } from '@/components/custom/back-button';
 import DevToggle from '@/components/header/dev-toggle';
 import { MenuButton } from '@/components/header/menu-button';
-import { ShareScoreButton } from '@/components/header/share-score-button';
 import ThemeToggle from '@/components/header/theme-toggle';
 import { UserLoginPortal } from '@/components/header/user-login-portal';
 import { cn } from '@/lib/utils';
@@ -21,7 +20,6 @@ export interface HeaderProps {
   hideUserMenu?: boolean;
   hideThemeToggle?: boolean;
   hideDevToggle?: boolean;
-  hideShareScoreButton?: boolean;
   hasBackButton?: boolean;
   customBackHref?: string;
 }
@@ -34,7 +32,6 @@ export default function Header() {
       hideMenu,
       hideThemeToggle,
       hideDevToggle,
-      hideShareScoreButton,
       hasBackButton,
       customBackHref,
     },
@@ -45,7 +42,6 @@ export default function Header() {
     hideMenu: false,
     hideThemeToggle: false,
     hideDevToggle: true,
-    hideShareScoreButton: true,
     hasBackButton: false,
   });
   const pathname = usePathname();
@@ -77,10 +73,7 @@ export default function Header() {
       >
         {title}
       </div>
-      <HeaderRightElements>
-        {!hideShareScoreButton && <ShareScoreButton />}
-        {!hideUserMenu && <UserLoginPortal />}
-      </HeaderRightElements>
+      <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
     </header>
   );
 }
