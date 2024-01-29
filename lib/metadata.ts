@@ -22,7 +22,7 @@ export const _meta: Metadata = {
     'Brain teaser',
     'Linguistic skills',
   ],
-  authors: [{ name: 'Li Yuxuan', url: 'https://xmliszt.github.io/' }],
+  authors: [{ name: 'Li Yuxuan', url: 'https://liyuxuan.dev/' }],
   creator: 'Li Yuxuan',
   category: 'technology',
   openGraph: {

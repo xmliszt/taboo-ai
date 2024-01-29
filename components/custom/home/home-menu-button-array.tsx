@@ -10,8 +10,8 @@ import { login } from '@/components/header/server/login';
 import { AdminManager } from '@/lib/admin-manager';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
-import { LoginReminderProps } from '../globals/login-reminder-dialog';
 import { HomeMenuButton } from '../home-menu-button';
+import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
 
 interface HomeMenuButtonData {
   key: string;
@@ -119,11 +119,11 @@ export default function HomeMenuButtonArray() {
         visible: AdminManager.checkIsAdmin(user?.id),
       },
     ],
-    [user]
+    [user],
   );
 
   return (
-    <section className='mx-4 mb-2 mt-4 flex max-w-[400px] flex-col gap-4'>
+    <section className="mx-4 mb-2 mt-4 flex max-w-[400px] flex-col gap-4">
       {homeMenuButtonData.map(
         (data) =>
           data.visible && (
@@ -136,7 +136,7 @@ export default function HomeMenuButtonArray() {
               onClick={data.onClick}
               aria-label={data.ariaLabel}
             />
-          )
+          ),
       )}
     </section>
   );

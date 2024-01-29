@@ -286,7 +286,7 @@ export default function SideMenu() {
             </span>
             <span>
               <i>Developed by </i>
-              <Link href='https://xmliszt.github.io/' target='_blank'>
+              <Link href='https://liyuxuan.dev/' target='_blank'>
                 Li Yuxuan
               </Link>
             </span>
