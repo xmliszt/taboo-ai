@@ -8,8 +8,7 @@ import { CustomEventKey, EventManager } from '../event-manager';
 export const getPersistence = <T>(key: string): T | null => {
   const resultAsString = localStorage.getItem(key);
   if (!resultAsString) return null;
-  const result = JSON.parse(resultAsString) as T;
-  return result;
+  return JSON.parse(resultAsString) as T;
 };
 
 /**
@@ -52,11 +51,4 @@ export const bindPersistence = <T>(key: string, callback: (value: T | null) => v
     EventManager.removeListener(CustomEventKey.STORAGE_UPDATE, listener);
     window.removeEventListener('storage', windowListener);
   };
-};
-
-/**
- * Remove the persistence with the given key.
- */
-export const removePersistence = (key: string): void => {
-  localStorage.removeItem(key);
 };

@@ -2,6 +2,15 @@
 
 ## Release Notes (V3.0)
 
+### 30 Jan 2023 - V3.1.5
+
+- Important database migration from Firebase to Supabase.
+- Bug fixes & UI improvements.
+- Introduce pricing plans.
+- Revamp home screen.
+- Add "/publications" page.
+- Revamp user login and user profile page.
+
 ### 01 Jan 2023 - V3.1.4
 
 - Improve log in experience.

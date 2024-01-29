@@ -9,11 +9,7 @@ interface ConstructionBlockProps {
   className?: string;
 }
 
-export default function ConstructionBlock({
-  title,
-  description,
-  className,
-}: ConstructionBlockProps) {
+export function ConstructionBlock({ title, description, className }: ConstructionBlockProps) {
   return (
     <Card className={cn(className, 'opacity-50 hover:cursor-not-allowed')}>
       <CardContent>

@@ -1,8 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
+import { BackButton } from '@/components/custom/back-button';
+import DevToggle from '@/components/header/dev-toggle';
+import { MenuButton } from '@/components/header/menu-button';
+import ThemeToggle from '@/components/header/theme-toggle';
+import { UserLoginPortal } from '@/components/header/user-login-portal';
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
@@ -15,7 +20,6 @@ export interface HeaderProps {
   hideUserMenu?: boolean;
   hideThemeToggle?: boolean;
   hideDevToggle?: boolean;
-  hideShareScoreButton?: boolean;
   hasBackButton?: boolean;
   customBackHref?: string;
 }
@@ -28,7 +32,6 @@ export default function Header() {
       hideMenu,
       hideThemeToggle,
       hideDevToggle,
-      hideShareScoreButton,
       hasBackButton,
       customBackHref,
     },
@@ -39,7 +42,6 @@ export default function Header() {
     hideMenu: false,
     hideThemeToggle: false,
     hideDevToggle: true,
-    hideShareScoreButton: true,
     hasBackButton: false,
   });
   const pathname = usePathname();
@@ -53,29 +55,25 @@ export default function Header() {
 
   return (
     <header
-      id='header-section'
+      id="header-section"
       className={cn(
         'flex h-16 w-full flex-row items-center justify-between gap-2 p-4 text-center',
-        'border-b bg-card'
+        'border-b bg-card',
       )}
     >
-      <HeaderLeftElements
-        hideMenu={hideMenu}
-        hideThemeToggle={hideThemeToggle}
-        hideDevToggle={hideDevToggle}
-        hasBackButton={hasBackButton}
-        customBackHref={customBackHref}
-      />
-      <div
-        data-testid='heading-rule-title'
-        className='pointer-events-none absolute left-0 z-10 w-full text-center text-lg'
+      <HeaderLeftElements>
+        {!hideMenu && <MenuButton />}
+        {hasBackButton === true && <BackButton customBackHref={customBackHref} />}
+        {!hideThemeToggle && <ThemeToggle />}
+        {!hideDevToggle && <DevToggle key="dev-toggle" />}
+      </HeaderLeftElements>
+      <h1
+        data-testid="heading-rule-title"
+        className="pointer-events-none absolute left-0 z-10 w-full text-center text-lg"
       >
         {title}
-      </div>
-      <HeaderRightElements
-        hideUserMenu={hideUserMenu}
-        hideShareScoreButton={hideShareScoreButton}
-      />
+      </h1>
+      <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
     </header>
   );
 }

@@ -1,7 +1,3 @@
-export default interface IWord {
-  target: string;
-  taboos: string[];
-  isVerified: boolean;
-  updatedAt: string;
-  creatorEmail?: string;
-}
+import { Database } from '@/lib/supabase/extension/types';
+
+export type IWord = Database['public']['Tables']['words']['Row'];

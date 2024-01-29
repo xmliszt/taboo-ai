@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { deleteUser, getAuth } from 'firebase/auth';
-import { Skull } from 'lucide-react';
+'use client';
 
+import { useState } from 'react';
+import { Skull } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { deleteUser } from '@/app/profile/server/delete-user';
+import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,35 +17,29 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { deleteUserFromFirebase } from '@/lib/services/userService';
 import { cn } from '@/lib/utils';
 
 import { Spinner } from '../spinner';
 
-const auth = getAuth();
-
-export default function ProfileDangerZone({ className }: { className?: string }) {
-  const router = useRouter();
-  const { toast } = useToast();
+type ProfileDangerZoneProps = {
+  user: UserProfile;
+  className?: string;
+};
+export function ProfileDangerZone(props: ProfileDangerZoneProps) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const proceedToDeleteUser = async () => {
-    const user = auth.currentUser;
-    if (!user) return;
     try {
       setIsDeleting(true);
-      user.email && (await deleteUserFromFirebase(user.email));
-      await deleteUser(user);
-      toast({ title: 'Your account has been deleted.' });
-      router.push('/');
+      await deleteUser();
+      toast.info('Your account has been deleted.');
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/';
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to delete the user right now. Please try again later!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to delete the user right now. Please try again later!');
     } finally {
       setIsDeleting(false);
     }
@@ -50,7 +47,7 @@ export default function ProfileDangerZone({ className }: { className?: string })
 
   return (
     <>
-      <Card className={cn(className, 'border-red-500 text-red-600')}>
+      <Card className={cn(props.className, 'border-red-500 text-red-600')}>
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <Skull />
@@ -58,7 +55,13 @@ export default function ProfileDangerZone({ className }: { className?: string })
           </CardHeader>
           <CardDescription>
             Once you delete your account, there is no going back. All your data with us will be
-            permanently deleted. Please be certain.
+            permanently deleted.{' '}
+            <b>
+              Your active subscription will also be cancelled. However, you ongoing paid
+              subscription (including trial) will still be available until the end of the billing
+              cycle if you log in with the same email account again.
+            </b>{' '}
+            Please be certain.
           </CardDescription>
           <Button
             className='mt-4'
@@ -84,7 +87,13 @@ export default function ProfileDangerZone({ className }: { className?: string })
             </AlertDialogTitle>
             <AlertDialogDescription>
               The action cannot be undone. This will permanently delete your account and remove all
-              your data from our servers.
+              your data from our server.{' '}
+              <b>
+                Your current subscription will also be cancelled automatically. However, you ongoing
+                subscription will still be available until the end of the billing cycle if you log
+                in with the same email account again.
+              </b>{' '}
+              This action is <b>irreversible</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

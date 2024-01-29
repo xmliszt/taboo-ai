@@ -1,34 +1,45 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PenTool, SpellCheck2 } from 'lucide-react';
+import { toast } from 'sonner';
 
+import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
+import { useAuth } from '@/components/auth-provider';
 import { Spinner } from '@/components/custom/spinner';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { CONSTANTS } from '@/lib/constants';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
 
-import { CONSTANTS } from '../../lib/constants';
-import { askAIForCreativeTopic } from '../../lib/services/aiService';
-
 export default function AiPage() {
+  const { user } = useAuth();
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const isLocked = !user || user.subscription?.customer_plan_type === 'free';
+
+  useEffect(() => {
+    if (isLocked) {
+      toast.info('You need a paid subscription to access this feature');
+      router.push('/pricing');
+    }
+  }, [isLocked]);
 
   const submitForm = async (event: FormEvent) => {
     event.preventDefault();
     if (topic.length > 0) {
       setIsLoading(true);
       try {
-        const level = await askAIForCreativeTopic(topic, Number(difficulty));
+        const level = await generateAITopic(topic, Number(difficulty));
         if (level) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
             return setErrorMessage(CONSTANTS.errors.aiModeTopicTooFew);
@@ -36,10 +47,15 @@ export default function AiPage() {
           setPersistence(HASH.level, level);
           router.push('/level/ai');
         } else {
-          throw new Error(CONSTANTS.errors.overloaded);
+          setErrorMessage(CONSTANTS.errors.overloaded);
         }
       } catch (error) {
-        setErrorMessage(error.message ?? 'Something went wrong.');
+        try {
+          const googleError = tryParseErrorAsGoogleAIError(error, 'topic-generation');
+          setErrorMessage(googleError.message);
+        } catch (error) {
+          setErrorMessage(error.message ?? 'Something went wrong.');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -52,6 +68,9 @@ export default function AiPage() {
     setTopic(event.target.value);
     setErrorMessage(undefined);
   };
+
+  if (isLocked)
+    return <main className='flex h-full w-full flex-col items-center px-10 pt-20'></main>;
 
   return (
     <>

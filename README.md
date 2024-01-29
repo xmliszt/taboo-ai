@@ -54,10 +54,6 @@ When you clone the project, simply run `npm i && npm run dev` to start your deve
 ```
 SITE_URL="http://localhost:3000"
 
-# OPENAI API
-OPENAI_API_KEY=""
-OPENAI_ORGANIZATION_ID=""
-
 # Taboo AI app settings
 NEXT_PUBLIC_MAINTENANCE="false"
 NEXT_PUBLIC_TABOO_AI_VERSION="3.1.2"

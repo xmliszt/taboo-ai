@@ -1,10 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import { IHighlight } from '../types/highlight.type';
-import ILevel from '../types/level.type';
-import { DateUtils } from './dateUtils';
-
 export type SortType =
   | 'a-z'
   | 'z-a'
@@ -18,7 +14,14 @@ export type SortType =
   | 'easy-first';
 
 export class LevelUtils {
-  static getCompareFn(sortType: SortType): (a: ILevel, b: ILevel) => number {
+  static getCompareFn<
+    T extends {
+      name: string;
+      created_at: string;
+      popularity?: number;
+      difficulty?: number;
+    },
+  >(sortType: SortType): (a: T, b: T) => number {
     switch (sortType) {
       case 'a-z':
         return (a, b) => {
@@ -30,17 +33,11 @@ export class LevelUtils {
         };
       case 'create-new':
         return (a, b) => {
-          return (
-            moment(b.createdAt, DateUtils.formats.levelCreatedAt).unix() -
-            moment(a.createdAt, DateUtils.formats.levelCreatedAt).unix()
-          );
+          return moment(b.created_at).unix() - moment(a.created_at).unix();
         };
       case 'create-old':
         return (a, b) => {
-          return (
-            moment(a.createdAt, DateUtils.formats.levelCreatedAt).unix() -
-            moment(b.createdAt, DateUtils.formats.levelCreatedAt).unix()
-          );
+          return moment(a.created_at).unix() - moment(b.created_at).unix();
         };
       case 'most-popular':
         return (a, b) => {
@@ -99,8 +96,8 @@ export const generateHighlights = (
   target: string | null,
   message: string,
   forResponse: boolean
-): IHighlight[] => {
-  const highlights: IHighlight[] = [];
+) => {
+  const highlights = [];
   if (forResponse && target) {
     const regex = getRegexPattern(target);
     let result;
@@ -109,9 +106,10 @@ export const generateHighlights = (
       if (result.index === regex.lastIndex) {
         regex.lastIndex++;
       }
-      const startIndex = result.index;
-      const endIndex = regex.lastIndex;
-      const highlight = { start: startIndex, end: endIndex };
+      const highlight = {
+        start_position: result.index,
+        end_position: regex.lastIndex,
+      };
       highlights.push(highlight);
     }
   }

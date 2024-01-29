@@ -1,62 +1,14 @@
 import crypto from 'crypto';
 import html2canvas from 'html2canvas';
 import _ from 'lodash';
-import moment from 'moment';
 
-import { IHighlight } from './types/highlight.type';
-import IWord from './types/word.type';
-import { DateUtils } from './utils/dateUtils';
+import { IWord } from './types/word.type';
 
 export function generateHashedString(...items: string[]): string {
   const stringToHash = items.join('_');
   const hash = crypto.createHash('sha256').update(stringToHash).digest('hex');
-  const truncatedHash = hash.substring(0, 8);
-  return truncatedHash;
+  return hash.substring(0, 8);
 }
-
-export function getFormattedToday(): string {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
-  const day = ('0' + date.getDate()).slice(-2);
-  return `${day}-${month}-${year}`;
-}
-
-/**
- * Sanitize the array of Highlight objects such that Highlight
- * with same start but different end will only keep the one
- * that has the larget end.
- * @param highlights The array of Highlight object
- */
-export const sanitizeHighlights = (highlights: IHighlight[]): IHighlight[] => {
-  const highlightMap: { [key: number]: IHighlight } = {};
-  for (const highlight of highlights) {
-    const start = highlight.start;
-    if (start in highlightMap) {
-      const currentHighlight = highlightMap[start];
-      highlightMap[start] = highlight.end > currentHighlight.end ? highlight : currentHighlight;
-    } else {
-      highlightMap[start] = highlight;
-    }
-  }
-  const highlightsArray = Object.values(highlightMap);
-  highlightsArray.sort((a, b) => a.start - b.start);
-  const results: IHighlight[] = [];
-  let prevEnd = 0;
-  let idx = 0;
-  for (const highlight of highlightsArray) {
-    if (highlight.start < prevEnd) {
-      if (highlight.end > prevEnd) {
-        results[idx - 1].end = highlight.end;
-      }
-    } else {
-      results.push(highlight);
-      prevEnd = highlight.end;
-      idx++;
-    }
-  }
-  return results;
-};
 
 export const formatResponseTextIntoArray = (text: string, target?: string): string[] => {
   let wordList: string[];
@@ -125,10 +77,11 @@ export const getMockVariations = async (target: string, shouldSucceed = true): P
     setTimeout(() => {
       shouldSucceed
         ? res({
-            target: target,
+            word: target,
             taboos: Array(15).fill(target),
-            isVerified: true,
-            updatedAt: moment().format(DateUtils.formats.wordUpdatedAt),
+            is_verified: true,
+            updated_at: new Date().toISOString(),
+            created_by: null,
           })
         : rej('Mock Failure');
     }, 1000);
@@ -144,7 +97,7 @@ export const formatStringForDisplay = (s: string) => {
 };
 
 export const getDifficulty = (difficulty: number, withNumber = true): string => {
-  let s = '';
+  let s;
   switch (difficulty) {
     case 1:
       s = 'Easy';
@@ -167,16 +120,16 @@ export const getDifficulty = (difficulty: number, withNumber = true): string => 
 
 export const getDifficultyMultipliers = (
   difficulty: number
-): { timeMultipler: number; promptMultiplier: number } => {
+): { timeMultiplier: number; promptMultiplier: number } => {
   switch (difficulty) {
     case 1:
-      return { timeMultipler: 0.4, promptMultiplier: 0.6 };
+      return { timeMultiplier: 0.4, promptMultiplier: 0.6 };
     case 2:
-      return { timeMultipler: 0.3, promptMultiplier: 0.7 };
+      return { timeMultiplier: 0.3, promptMultiplier: 0.7 };
     case 3:
-      return { timeMultipler: 0.2, promptMultiplier: 0.8 };
+      return { timeMultiplier: 0.2, promptMultiplier: 0.8 };
     default:
-      return { timeMultipler: 0.5, promptMultiplier: 0.5 };
+      return { timeMultiplier: 0.5, promptMultiplier: 0.5 };
   }
 };
 
@@ -200,8 +153,7 @@ export const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) =>
     byteArrays.push(byteArray);
   }
 
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
+  return new Blob(byteArrays, { type: contentType });
 };
 
 type ShareResult = {
@@ -217,7 +169,7 @@ export const shareImage = (source: HTMLDivElement): Promise<ShareResult> => {
     })
       .then((canvas) => {
         const href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-        const downloadName = `taboo-ai-scores-${moment().format('DDMMYYYYHHmmss')}.png`;
+        const downloadName = `taboo-ai-scores-${new Date().toISOString()}.png`;
         res({
           href,
           downloadName,

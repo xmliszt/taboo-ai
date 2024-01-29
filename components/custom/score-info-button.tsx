@@ -1,36 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Info } from 'lucide-react';
 
-import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { cn } from '@/lib/utils';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import IconButton from '@/components/ui/icon-button';
 
-import { AspectRatio } from '../ui/aspect-ratio';
-import { ButtonProps } from '../ui/button';
-import { Dialog, DialogContent } from '../ui/dialog';
-import IconButton from '../ui/icon-button';
-
-export const ScoreInfoDialog = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const listener = EventManager.bindEvent(CustomEventKey.OPEN_SCORE_INFO_DIALOG, () => {
-      setIsOpen(true);
-    });
-    return () => {
-      EventManager.removeListener(CustomEventKey.OPEN_SCORE_INFO_DIALOG, listener);
-    };
-  }, []);
-
+export const ScoreInfoButton = () => {
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-      }}
-    >
+    <Dialog>
+      <DialogTrigger asChild>
+        <IconButton asChild variant='link' tooltip='How do we calculate the scores?'>
+          <Info size={20} />
+        </IconButton>
+      </DialogTrigger>
       <DialogContent className='rounded-lg p-0'>
         <AspectRatio ratio={16 / 9}>
           <Image
@@ -42,23 +26,5 @@ export const ScoreInfoDialog = () => {
         </AspectRatio>
       </DialogContent>
     </Dialog>
-  );
-};
-
-export const ScoreInfoButton = ({ className = '', ...props }: ButtonProps) => {
-  const onClick = () => {
-    EventManager.fireEvent(CustomEventKey.OPEN_SCORE_INFO_DIALOG);
-  };
-  return (
-    <IconButton
-      asChild
-      {...props}
-      className={cn(className, '')}
-      variant='link'
-      tooltip='How do we calculate the scores?'
-      onClick={onClick}
-    >
-      <Info size={20} />
-    </IconButton>
   );
 };

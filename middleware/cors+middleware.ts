@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 const allowedOrigins = [
   /taboo-ai\.vercel\.app$/,
   /taboo-.+-xmliszt\.vercel\.app$/,
-  /taboo-ai-xmliszt-xmliszt-team\.vercel\.app$/,
   /localhost:\d+$/,
-  /192\.168\.\d+\.\d+:\d+$/,
+  /127\.0\.0\.1:\d+$/,
   /\[::1\]:\d+$/,
+  /192\.168\.\d+\.\d+:\d+$/,
 ];
 
 const checkOrigin = (

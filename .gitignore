@@ -44,12 +44,11 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
-/test-results/
-/playwright-report/
-/playwright/.cache/
 
 .eslintcache
-functions/*
-**/*.log
 
-ui-debug.log
+# IntelliJ IDEA
+/.idea
+*.iml
+
+.nvmrc
