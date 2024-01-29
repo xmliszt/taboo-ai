@@ -2,6 +2,15 @@
 
 ## Release Notes (V3.0)
 
+### 30 Jan 2023 - V3.1.5
+
+- Important database migration from Firebase to Supabase.
+- Bug fixes & UI improvements.
+- Introduce pricing plans.
+- Revamp home screen.
+- Add "/publications" page.
+- Revamp user login and user profile page.
+
 ### 01 Jan 2023 - V3.1.4
 
 - Improve log in experience.
@@ -256,7 +265,8 @@
 
 - Taboo AI **first release**!
 - **Pre-defined topics** of taboo words.
-- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more **customization** to the game.
+- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more *
+  *customization** to the game.
 - **Timer** scoring system.
 - Integrated with **ChatGPT AI** to respond your questions.
 - Smart system to **match** and **verify** if you hit the taboo words or AI hits the taboo words.
