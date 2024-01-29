@@ -17,6 +17,7 @@ export enum TabooPathname {
   SITEMAP = '/sitemap',
   PROFILE = '/profile',
   PRICING = '/pricing',
+  PUBLICATIONS = '/publications',
 }
 
 export class RouteManager {
@@ -97,11 +98,16 @@ export class RouteManager {
         };
       case TabooPathname.PRICING === route:
         return {
-          hasBackButton: true,
+          title: 'Pricing',
+          hasBackButton: false,
         };
       case /^\/checkout\/success/.test(route):
         return {
           title: 'Checkout Success',
+        };
+      case TabooPathname.PUBLICATIONS === route:
+        return {
+          title: 'Publications',
         };
       default:
         return {

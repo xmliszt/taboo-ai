@@ -31,6 +31,7 @@ import { Spinner } from '../spinner';
 interface PricingCardProps {
   index: number;
   plan: Plan;
+  className?: string;
 }
 
 function getPlanActionLabel(
@@ -54,7 +55,7 @@ function getPlanActionLabel(
   }
 }
 
-export default function PricingCard({ index, plan }: PricingCardProps) {
+export default function PricingCard({ index, plan, className }: PricingCardProps) {
   const { user } = useAuth();
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -185,6 +186,7 @@ export default function PricingCard({ index, plan }: PricingCardProps) {
       id={`plan-card-${index}`}
       ref={cardRef}
       className={cn(
+        className,
         /pro/i.test(plan.name) ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
         user?.subscription?.customer_plan_type === plan.type ? 'border-[1px] border-primary' : '',
         'relative my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center transition-transform ease-in-out hover:scale-105'

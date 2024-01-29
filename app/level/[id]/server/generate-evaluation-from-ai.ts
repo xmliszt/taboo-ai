@@ -91,7 +91,6 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
     examples: string[];
   } = JSON.parse(responseText);
 
-  console.log({ score, reasoning, examples });
   if (evaluationMode === 'advanced') {
     return {
       score,

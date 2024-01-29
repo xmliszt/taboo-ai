@@ -81,6 +81,7 @@ module.exports = {
           'smallBounce 300ms alternate 100ms infinite cubic-bezier(.2, .65, .6, 1)',
         'small-bounce-delay-3-loop':
           'smallBounce 300ms alternate 200ms infinite cubic-bezier(.2, .65, .6, 1)',
+        'shake-head': 'shakeHead 0.35s once',
       },
       keyframes: {
         'accordion-down': {
@@ -118,6 +119,13 @@ module.exports = {
         smallBounce: {
           from: { transform: 'translateY(0px)' },
           to: { transform: 'translateY(-5px)' },
+        },
+        shakeHead: {
+          '0%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(5px)' },
+          '50%': { transform: 'translateX(0)' },
+          '75%': { transform: 'translateX(-5px)' },
+          '100%': { transform: 'translateX(0)' },
         },
       },
     },

@@ -55,24 +55,24 @@ export default function Header() {
 
   return (
     <header
-      id='header-section'
+      id="header-section"
       className={cn(
         'flex h-16 w-full flex-row items-center justify-between gap-2 p-4 text-center',
-        'border-b bg-card'
+        'border-b bg-card',
       )}
     >
       <HeaderLeftElements>
         {!hideMenu && <MenuButton />}
         {hasBackButton === true && <BackButton customBackHref={customBackHref} />}
         {!hideThemeToggle && <ThemeToggle />}
-        {!hideDevToggle && <DevToggle key='dev-toggle' />}
+        {!hideDevToggle && <DevToggle key="dev-toggle" />}
       </HeaderLeftElements>
-      <div
-        data-testid='heading-rule-title'
-        className='pointer-events-none absolute left-0 z-10 w-full text-center text-lg'
+      <h1
+        data-testid="heading-rule-title"
+        className="pointer-events-none absolute left-0 z-10 w-full text-center text-lg"
       >
         {title}
-      </div>
+      </h1>
       <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
     </header>
   );

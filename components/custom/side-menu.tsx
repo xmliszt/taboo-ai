@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
+import { BiBook, BiCart, BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
+import { BsDiscord } from 'react-icons/bs';
 import { toast } from 'sonner';
 
 import { login } from '@/components/header/server/login';
@@ -206,8 +208,70 @@ export default function SideMenu() {
             )
           )}
           <Separator />
-          <article className='mt-4'>
-            <p>
+          <article className='flex flex-col gap-1 py-1'>
+            <Link
+              className='group/pricing'
+              href={'/pricing'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Pricing{' '}
+              <BiCart className='ml-2 inline-block transition-transform ease-in-out group-hover/pricing:rotate-[30deg]' />
+            </Link>
+            <Link className='group/privacy-policy' href={'/privacy'} target='_blank'>
+              Privacy policy{' '}
+              <BiMask className='ml-2 inline-block transition-transform ease-in-out group-hover/privacy-policy:rotate-[30deg]' />
+            </Link>
+            <Link className='group/cookie-policy' href={'/cookie-policy'} target='_blank'>
+              Cookie policy{' '}
+              <BiCookie className='ml-2 inline-block transition-transform ease-in-out group-hover/cookie-policy:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/sitemap'
+              href={'/sitemap'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Sitemap{' '}
+              <BiMapAlt className='ml-2 inline-block transition-transform ease-in-out group-hover/sitemap:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/publications'
+              href={'/publications'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Publications{' '}
+              <BiBook className='ml-2 inline-block transition-transform ease-in-out group-hover/publications:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/buymecoffee'
+              href={'/buymecoffee'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Buy me a coffee{' '}
+              <BiCoffeeTogo className='ml-2 inline-block transition-transform ease-in-out group-hover/buymecoffee:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/discord'
+              href='https://discord.gg/dgqs29CHC2'
+              target='_blank'
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Join Taboo AI Discord community{' '}
+              <BsDiscord className='ml-2 inline-block transition-transform ease-in-out group-hover/discord:rotate-[30deg]' />
+            </Link>
+
+            <Separator className='my-1' />
+
+            <span>
               <i>Powered by </i>
               <Link href='https://beta.nextjs.org/docs/getting-started' target='_blank'>
                 NextJS
@@ -219,48 +283,19 @@ export default function SideMenu() {
               >
                 Gemini Pro
               </Link>
-            </p>
-            <p>
+            </span>
+            <span>
               <i>Developed by </i>
               <Link href='https://xmliszt.github.io/' target='_blank'>
                 Li Yuxuan
               </Link>
-            </p>
-            <p>
-              <Link
-                href='/pricing'
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-              >
-                Pricing
-              </Link>
-            </p>
-            <p>
-              <Link href='/privacy'>Privacy Policy</Link>
-            </p>
-            <p>
-              <Link href='/cookie-policy'>Cookie Policy</Link>
-            </p>
-            <p>
-              <Link
-                href='/sitemap'
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-              >
-                Sitemap
-              </Link>
-            </p>
-            <p>
-              <Link href='https://liyuxuan.substack.com'>Newsletters</Link>
-            </p>
-            <p>
+            </span>
+            <span>
               <i>Taboo AI is an open-source project. Feel free to </i>
               <Link href='https://github.com/xmliszt/Taboo-AI' target='_blank'>
                 contribute on GitHub.
               </Link>{' '}
-            </p>
+            </span>
           </article>
         </div>
       </SheetContent>

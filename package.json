@@ -55,6 +55,8 @@
     "clipboard-copy": "^4.0.1",
     "clsx": "^2.0.0",
     "dateformat": "^5.0.3",
+    "embla-carousel-autoplay": "^8.0.0-rc21",
+    "embla-carousel-react": "^8.0.0-rc21",
     "eslint-config-next": "^13.5.3",
     "file-loader": "^1.1.6",
     "framer-motion": "^10.12.16",
@@ -118,7 +120,10 @@
     "ts-node": "^10.9.1"
   },
   "lint-staged": {
-    "app/**/*.{js,ts,jsx,tsx}": ["eslint --cache --fix", "prettier --write"],
+    "app/**/*.{js,ts,jsx,tsx}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
     "!app/**/*.{js,ts,jsx,tsx}": "prettier --write"
   }
 }
