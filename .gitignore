@@ -50,3 +50,5 @@ next-env.d.ts
 # IntelliJ IDEA
 /.idea
 *.iml
+
+.nvmrc
