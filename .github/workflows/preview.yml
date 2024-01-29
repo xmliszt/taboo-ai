@@ -5,10 +5,10 @@ on:
   push:
     branches-ignore:
       - main
-  # run when a pull request into preview is opened or updated
+  # run when a pull request into main is opened or updated
   pull_request:
     branches:
-      - preview
+      - main
 
 jobs:
   lint_and_test:
@@ -63,7 +63,7 @@ jobs:
   supabase_deploy:
     name: Deploy preview supabase
     runs-on: ubuntu-latest
-    needs: [supabase_test]
+    needs: [ supabase_test ]
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
@@ -78,7 +78,7 @@ jobs:
   vercel_deploy:
     name: Deploy preview on vercel
     runs-on: ubuntu-latest
-    needs: [lint_and_test, supabase_deploy]
+    needs: [ lint_and_test, supabase_deploy ]
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
