@@ -18,6 +18,7 @@ export type ScoreToUpload = {
   conversations: {
     role: 'user' | 'assistant' | 'system' | 'error';
     content: string;
+    timestamp: string;
   }[];
   ai_evaluation: {
     ai_score: number;
@@ -36,7 +37,7 @@ export const uploadCompletedGameForUser = async (
     started_at: string;
     finished_at: string;
     scores: ScoreToUpload[];
-  }
+  },
 ) => {
   console.dir({ userId, levelId, game }, { depth: null });
   const supabaseClient = createClient(cookies());

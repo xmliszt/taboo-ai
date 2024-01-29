@@ -169,7 +169,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
         return 'Trying even harder to find relevant taboo words...';
       case 0:
       default:
-        return "Sorry, I can't seem to find any other relevant taboo words >_<!";
+        return 'Sorry, I can\'t seem to find any other relevant taboo words >_<!';
     }
   };
 
@@ -192,8 +192,8 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       }
     }
     updatedConversation.push(
-      { role: 'user', content: userInput },
-      { role: 'assistant', content: '' }
+      { role: 'user', content: userInput, timestamp: new Date().toISOString() },
+      { role: 'assistant', content: '', timestamp: new Date().toISOString() },
     );
     setConversation(updatedConversation);
     setUserInput('');
@@ -208,11 +208,15 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       mockConversation.pop();
       try {
         const mockResponse = await getMockResponse(target ?? '', getDevMode());
-        setConversation([...mockConversation, { role: 'assistant', content: mockResponse ?? '' }]);
+        setConversation([...mockConversation, {
+          role: 'assistant',
+          content: mockResponse ?? '',
+          timestamp: new Date().toISOString(),
+        }]);
       } catch {
         setConversation([
           ...mockConversation,
-          { role: 'error', content: CONSTANTS.errors.overloaded },
+          { role: 'error', content: CONSTANTS.errors.overloaded, timestamp: new Date().toISOString() },
         ]);
       } finally {
         setIsWaitingForAIResponse(false);
@@ -239,12 +243,20 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       } catch (error) {
         try {
           const googleError = tryParseErrorAsGoogleAIError(error, 'conversation');
-          setConversation([...inputConversation, { role: 'error', content: googleError.message }]);
+          setConversation([...inputConversation, {
+            role: 'error',
+            content: googleError.message,
+            timestamp: new Date().toISOString(),
+          }]);
         } catch (error) {
           console.error(error);
           setConversation([
             ...inputConversation,
-            { role: 'error', content: error.message ?? CONSTANTS.errors.overloaded },
+            {
+              role: 'error',
+              content: error.message ?? CONSTANTS.errors.overloaded,
+              timestamp: new Date().toISOString(),
+            },
           ]);
         }
       } finally {
@@ -288,7 +300,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       const lastAssistantMessage = conversation[conversation.length - 1];
       const highlights = generateHighlights(target, lastAssistantMessage.content, true);
       if (highlights.length > 0) {
-        toast("That's a hit! Well done!");
+        toast('That\'s a hit! Well done!');
         void nextQuestion(highlights);
       }
     }
@@ -298,7 +310,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     retries: number,
     target: string,
     topic: string | undefined,
-    callback: (variations?: IWord) => void
+    callback: (variations?: IWord) => void,
   ) => {
     retryCount.current = retries;
     try {
@@ -344,7 +356,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
             countdown.start();
             setIsCountdown(true);
           }, 2000);
-        }
+        },
       );
     }
   }, [target]);
@@ -427,7 +439,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     };
     const renderHighlightMessageSpan = (message: string) => {
       return (
-        <span key={uniqueId(message)} className='rounded-lg bg-green-400 px-1 py-1 text-black'>
+        <span key={uniqueId(message)} className="rounded-lg bg-green-400 px-1 py-1 text-black">
           {message}
         </span>
       );
@@ -460,7 +472,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   };
 
   return (
-    <main className='flex justify-center'>
+    <main className="flex justify-center">
       {isCountingDown ? (
         <div
           className={cn(
@@ -473,21 +485,21 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                   ? 'text-4xl'
                   : countdown.time === 3
                     ? 'text-3xl'
-                    : 'text-2xl'
+                    : 'text-2xl',
           )}
         >
           {countdown.time === 0 ? 'Start' : countdown.time === -1 ? '' : countdown.time}
         </div>
       ) : isGeneratingVariations ? (
-        <div className='fixed top-1/2 z-50 w-full animate-bounce text-center text-3xl'>
+        <div className="fixed top-1/2 z-50 w-full animate-bounce text-center text-3xl">
           {renderWaitingMessageForVariations()}
         </div>
       ) : (
         <></>
       )}
-      <Timer className='fixed right-3 top-3 z-50 shadow-lg' time={time} status={timerStatus} />
-      <section className='flex h-full w-full flex-col gap-0 text-center'>
-        <div className='flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 py-4 scrollbar-hide'>
+      <Timer className="fixed right-3 top-3 z-50 shadow-lg" time={time} status={timerStatus} />
+      <section className="flex h-full w-full flex-col gap-0 text-center">
+        <div className="flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 py-4 scrollbar-hide">
           {conversation.map((prompt, idx) => (
             <p
               key={idx}
@@ -495,7 +507,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
             >
               {prompt.role === 'assistant' && idx === conversation.length - 1 ? (
                 isWaitingForAIResponse ? (
-                  <span className='flex flex-row items-center gap-1'>
+                  <span className="flex flex-row items-center gap-1">
                     {'...'.split('').map((c, i) =>
                       i === 0 ? (
                         <span
@@ -520,42 +532,43 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                         </span>
                       ) : (
                         ''
-                      )
+                      ),
                     )}
                   </span>
                 ) : (
                   renderHighlightedMessageBubble(prompt.content)
                 )
               ) : prompt.role === 'error' ? (
-                <span className='text-slate-400'>{prompt.content}</span>
+                <span className="text-slate-400">{prompt.content}</span>
               ) : (
                 `${prompt.content}`
               )}
             </p>
           ))}
-          <div id='chat-end'></div>
+          <div id="chat-end"></div>
         </div>
-        <section className='flex w-full flex-col border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
+        <section
+          className="flex w-full flex-col border-t-[1px] border-t-border bg-card text-card-foreground transition-colors">
           <Progress
-            className='h-1 rounded-none'
+            className="h-1 rounded-none"
             value={(currentProgress / CONSTANTS.numberOfQuestionsPerGame) * 100}
           />
-          <div className='relative mb-4 flex flex-col items-center gap-2 px-4 pt-4 text-card-foreground'>
-            <span className='text-base font-light'>Make AI Say:</span>
-            <span className='rounded-lg bg-card-foreground px-2 py-1 text-xl font-bold text-card'>
+          <div className="relative mb-4 flex flex-col items-center gap-2 px-4 pt-4 text-card-foreground">
+            <span className="text-base font-light">Make AI Say:</span>
+            <span className="rounded-lg bg-card-foreground px-2 py-1 text-xl font-bold text-card">
               {target}
             </span>
           </div>
-          <form autoComplete='off' onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
-            <div className='relative flex items-center justify-center gap-4 px-4'>
+          <form autoComplete="off" onSubmit={onUserSubmitInput} className="flex flex-col gap-2">
+            <div className="relative flex items-center justify-center gap-4 px-4">
               <IconButton
-                id='clear'
-                type='button'
-                tooltip='Clear input'
-                aria-label='Clear input button'
+                id="clear"
+                type="button"
+                tooltip="Clear input"
+                aria-label="Clear input button"
                 asChild
                 disabled={isLoading || isCountingDown || isGeneratingVariations}
-                className='absolute right-20 z-10 !h-[20px] !w-[20px] rounded-full shadow-lg'
+                className="absolute right-20 z-10 !h-[20px] !w-[20px] rounded-full shadow-lg"
                 onClick={() => {
                   setUserInput('');
                   inputTextField.current?.focus();
@@ -564,11 +577,11 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                 <X size={12} />
               </IconButton>
               <Input
-                id='user-input'
+                id="user-input"
                 disabled={timerStatus !== 'RUNNING'}
                 ref={inputTextField}
                 autoFocus
-                autoComplete='off'
+                autoComplete="off"
                 placeholder={
                   isGeneratingVariations
                     ? 'Generating taboo words...'
@@ -580,9 +593,9 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                   'flex-grow pr-10',
                   userInputMatchedTabooWords.length > 0
                     ? 'bg-red-500 text-primary-foreground'
-                    : 'text-primary'
+                    : 'text-primary',
                 )}
-                type='text'
+                type="text"
                 value={userInput}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   setUserInput(event.target.value);
@@ -590,9 +603,9 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                 maxLength={150}
               />
               <IconButton
-                id='submit'
-                data-style='none'
-                tooltip='Submit'
+                id="submit"
+                data-style="none"
+                tooltip="Submit"
                 disabled={
                   isGeneratingVariations ||
                   isCountingDown ||
@@ -600,28 +613,28 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                   userInputMatchedTabooWords.length > 0 ||
                   isLoading
                 }
-                type='submit'
-                className='aspect-square'
-                aria-label='submit button'
+                type="submit"
+                className="aspect-square"
+                aria-label="submit button"
               >
                 <SendHorizonal />
               </IconButton>
             </div>
             {userInputError && (
               <Label
-                htmlFor='user-input'
-                className='animate-fade-in px-4 leading-snug text-red-400'
+                htmlFor="user-input"
+                className="animate-fade-in px-4 leading-snug text-red-400"
               >
                 {userInputError}
               </Label>
             )}
           </form>
-          <div className='mt-4 w-full overflow-x-auto whitespace-nowrap px-4 pb-8 text-base'>
+          <div className="mt-4 w-full overflow-x-auto whitespace-nowrap px-4 pb-8 text-base">
             <span>
-              <span className='font-light italic'>Taboos: </span>
-              <span className='text-red-400'>{variations.map(_.startCase).join(', ')}</span>{' '}
+              <span className="font-light italic">Taboos: </span>
+              <span className="text-red-400">{variations.map(_.startCase).join(', ')}</span>{' '}
               {isGeneratingVariations && (
-                <span className=''>({renderWaitingMessageForVariations()})</span>
+                <span className="">({renderWaitingMessageForVariations()})</span>
               )}
             </span>
           </div>
