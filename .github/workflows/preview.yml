@@ -1,16 +1,14 @@
-name: Taboo AI Production CI/CD
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+name: Taboo AI Preview CI/CD
+
 on:
-  # Runs when a commit is pushed to the main branch
+  # run when pushed to all branches except main
   push:
-    branches:
+    branches-ignore:
       - main
-  # Runs when a pull request into main is opened or updated
+  # run when a pull request into preview is opened or updated
   pull_request:
     branches:
-      - main
+      - preview
 
 jobs:
   lint_and_test:
@@ -54,29 +52,29 @@ jobs:
         run: supabase start
       - name: Verify generated types are checked in
         run: |
-          supabase gen types typescript --project-id avosfnqiscrmxpqmhswp --schema public > lib/supabase/__generated__/types.ts
+          supabase gen types typescript--project-id qbjkpfyfmnkerzcmmjbk --schema public > lib/supabase/__generated__/types.ts
           if ! git diff --ignore-space-at-eol --exit-code --quiet lib/supabase/__generated__/types.ts; then
             echo "Detected uncommitted changes after build. See status below:"
             git diff
             exit 1
           fi
   supabase_deploy:
-    name: Deploy production supabase
+    name: Deploy preview supabase
     runs-on: ubuntu-latest
     needs: [supabase_test]
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.PRODUCTION_DB_PASSWORD }}
-      SUPABASE_PROJECT_ID: ${{ secrets.PRODUCTION_PROJECT_ID }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - run: supabase link --project-ref avosfnqiscrmxpqmhswp
+      - run: supabase link --project-ref qbjkpfyfmnkerzcmmjbk
       - run: supabase db push
   vercel_deploy:
-    name: Deploy production on vercel
+    name: Deploy preview on vercel
     runs-on: ubuntu-latest
     needs: [lint_and_test, supabase_deploy]
     env:
@@ -88,8 +86,8 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} --archive=tgz
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --archive=tgz

@@ -7,7 +7,7 @@
     "dev:turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ lib/ firebase/ components/ middleware/ --fix && stylelint app/**/*.{css,scss} --fix ",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern app/ lib/ components/ middleware/ && stylelint app/**/*.{css,scss} components/**/*.{css,scss}",
     "style": "prettier --write * --no-error-on-unmatched-pattern",
     "prepare": "husky install",
     "test": "jest --passWithNoTests",
@@ -16,8 +16,7 @@
     "vercel:init": "vercel link && vercel pull",
     "vercel:pull": "vercel pull",
     "vercel:dev": "vercel dev --listen 3000",
-    "gen-types:preview": "supabase gen types typescript --project-id qbjkpfyfmnkerzcmmjbk --schema public > lib/supabase/__generated__/types.ts --debug",
-    "gen-types": "supabase gen types typescript --project-id avosfnqiscrmxpqmhswp --schema public > lib/supabase/__generated__/types.ts --debug"
+    "gen-types": "supabase gen types typescript --project-id qbjkpfyfmnkerzcmmjbk --schema public > lib/supabase/__generated__/types.ts --debug"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.2",
@@ -119,10 +118,7 @@
     "ts-node": "^10.9.1"
   },
   "lint-staged": {
-    "app/**/*.{js,ts,jsx,tsx}": [
-      "eslint --cache --fix",
-      "prettier --write"
-    ],
+    "app/**/*.{js,ts,jsx,tsx}": ["eslint --cache --fix", "prettier --write"],
     "!app/**/*.{js,ts,jsx,tsx}": "prettier --write"
   }
 }
