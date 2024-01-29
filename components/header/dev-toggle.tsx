@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 
 import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { useAuth } from '@/components/auth-provider';
-import { AdminManager } from '@/lib/admin-manager';
 import { CONSTANTS } from '@/lib/constants';
 import { HASH } from '@/lib/hash';
 import { getPersistence } from '@/lib/persistence/persistence';
@@ -36,7 +35,7 @@ const DevToggle = () => {
   const path = usePathname();
 
   useEffect(() => {
-    if (user && AdminManager.checkIsAdmin(user.id)) {
+    if (user && user?.is_dev) {
       setDevOn(isDevMode());
       const mode = getDevMode();
       if (mode) {
@@ -110,7 +109,7 @@ const DevToggle = () => {
     }
   };
 
-  return user && AdminManager.checkIsAdmin(user.id) ? (
+  return user && user?.is_dev ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <IconButton tooltip="Open Dev Menu">
