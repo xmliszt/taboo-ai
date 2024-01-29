@@ -12,7 +12,7 @@ import { createClient } from '@/lib/utils/supabase/client';
 export async function fetchGamesCompletedByUserWithLevelInfo(
   userId: string,
   limit: number,
-  offset: number
+  offset: number,
 ) {
   const supabaseClient = createClient();
   const fetchGamesCompletedByUserWithLevelInfoResponse = await supabaseClient
@@ -20,7 +20,7 @@ export async function fetchGamesCompletedByUserWithLevelInfo(
     .select()
     .eq('user_id', userId)
     .order('game_finished_at', { ascending: false })
-    .range(offset, offset + limit);
+    .range(offset, offset + limit - 1);
   if (fetchGamesCompletedByUserWithLevelInfoResponse.error)
     throw fetchGamesCompletedByUserWithLevelInfoResponse.error;
   return fetchGamesCompletedByUserWithLevelInfoResponse.data;

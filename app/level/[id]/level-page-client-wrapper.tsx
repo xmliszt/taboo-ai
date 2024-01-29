@@ -3,7 +3,7 @@
 // TODO: This component is too large to be a client component. Refactor to break it down.
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import _, { cloneDeep, uniqueId } from 'lodash';
+import _, { cloneDeep, toLower, uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTimer } from 'use-timer';
@@ -276,10 +276,11 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const nextQuestion = async (highlights: ScoreToUpload['highlights']) => {
     pauseTimer();
     if (savedScores.find((score) => score.score_index === currentProgress)) return;
+    if (target == null) return;
     savedScores.push({
       score_index: currentProgress,
-      target_word: target ?? '',
-      taboo_words: cloneDeep(variations),
+      target_word: toLower(target),
+      taboo_words: cloneDeep(variations).map(toLower),
       conversations: cloneDeep(conversation),
       duration: time,
       highlights: highlights,
