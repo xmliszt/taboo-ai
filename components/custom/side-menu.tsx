@@ -4,36 +4,25 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
+import { BiBook, BiCart, BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
+import { BsDiscord } from 'react-icons/bs';
+import { toast } from 'sonner';
 
+import { login } from '@/components/header/server/login';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { HASH } from '@/lib/hash';
-import { bindPersistence, getPersistence } from '@/lib/persistence/persistence';
-import IGame from '@/lib/types/game.type';
-import { isGameFinished } from '@/lib/utils/gameUtils';
 
 import { useAuth } from '../auth-provider';
 import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
 import AccessLinkCard, { MenuItem } from './common/access-link-card';
-import { LoginErrorEventProps } from './globals/login-error-dialog';
 import { LoginReminderProps } from './globals/login-reminder-dialog';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [game, setGame] = useState<IGame | null>(null);
-  const { user, status, login } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-
-  useEffect(() => {
-    const game = getPersistence<IGame>(HASH.game);
-    setGame(game);
-    const unbind = bindPersistence<IGame>(HASH.game, setGame);
-    return () => {
-      unbind();
-    };
-  }, []);
 
   useEffect(() => {
     const listener = EventManager.bindEvent(
@@ -64,19 +53,16 @@ export default function SideMenu() {
   }, [isFocused, pathname]);
 
   const handleLogin = async () => {
-    if (!login) return;
     try {
       await login();
     } catch (error) {
       console.error(error);
-      EventManager.fireEvent<LoginErrorEventProps>(CustomEventKey.LOGIN_ERROR, {
-        error: error.message,
-      });
+      toast.error('Something went wrong. Failed to log in');
     }
   };
 
   const handleContributeTopic = () => {
-    if (user && status === 'authenticated') {
+    if (user) {
       router.push('/add-level');
     } else {
       EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
@@ -100,7 +86,7 @@ export default function SideMenu() {
         title: 'Login',
         subtitle:
           'Login to enjoy much more features! Contribute topics, personal profile, view game statistics, join rankings, and more!',
-        visible: user === undefined || status !== 'authenticated',
+        visible: user === undefined,
         highlight: true,
         onClick: handleLogin,
       },
@@ -121,18 +107,11 @@ export default function SideMenu() {
         onClick: handleContributeTopic,
       },
       {
-        path: '/result',
-        title: 'See my last result',
-        subtitle: 'We found your last played result is cached in the app. You can revisit it here!',
-        visible: status != 'authenticated' && isGameFinished(game),
-        href: '/result',
-      },
-      {
         path: '/profile',
         title: 'My Profile',
         subtitle:
           'Access your personalized profile here. Change your nickname, view past results, game statistics, manage privacy settings, delete your account...',
-        visible: user !== undefined && status === 'authenticated',
+        visible: user !== undefined,
         href: '/profile',
       },
       {
@@ -186,7 +165,7 @@ export default function SideMenu() {
         href: '/roadmap',
       },
     ],
-    [user, status, game, pathname]
+    [user, pathname]
   );
 
   return (
@@ -229,15 +208,73 @@ export default function SideMenu() {
             )
           )}
           <Separator />
-          <article className='mt-4'>
-            <p>
+          <article className='flex flex-col gap-1 py-1'>
+            <Link
+              className='group/pricing'
+              href={'/pricing'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Pricing{' '}
+              <BiCart className='ml-2 inline-block transition-transform ease-in-out group-hover/pricing:rotate-[30deg]' />
+            </Link>
+            <Link className='group/privacy-policy' href={'/privacy'} target='_blank'>
+              Privacy policy{' '}
+              <BiMask className='ml-2 inline-block transition-transform ease-in-out group-hover/privacy-policy:rotate-[30deg]' />
+            </Link>
+            <Link className='group/cookie-policy' href={'/cookie-policy'} target='_blank'>
+              Cookie policy{' '}
+              <BiCookie className='ml-2 inline-block transition-transform ease-in-out group-hover/cookie-policy:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/sitemap'
+              href={'/sitemap'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Sitemap{' '}
+              <BiMapAlt className='ml-2 inline-block transition-transform ease-in-out group-hover/sitemap:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/publications'
+              href={'/publications'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Publications{' '}
+              <BiBook className='ml-2 inline-block transition-transform ease-in-out group-hover/publications:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/buymecoffee'
+              href={'/buymecoffee'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Buy me a coffee{' '}
+              <BiCoffeeTogo className='ml-2 inline-block transition-transform ease-in-out group-hover/buymecoffee:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/discord'
+              href='https://discord.gg/dgqs29CHC2'
+              target='_blank'
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Join Taboo AI Discord community{' '}
+              <BsDiscord className='ml-2 inline-block transition-transform ease-in-out group-hover/discord:rotate-[30deg]' />
+            </Link>
+
+            <Separator className='my-1' />
+
+            <span>
               <i>Powered by </i>
               <Link href='https://beta.nextjs.org/docs/getting-started' target='_blank'>
                 NextJS
-              </Link>
-              <i> &amp; </i>
-              <Link href='https://openai.com/api/' target='_blank'>
-                OpenAI
               </Link>
               <i> &amp; </i>
               <Link
@@ -246,48 +283,19 @@ export default function SideMenu() {
               >
                 Gemini Pro
               </Link>
-            </p>
-            <p>
+            </span>
+            <span>
               <i>Developed by </i>
               <Link href='https://xmliszt.github.io/' target='_blank'>
                 Li Yuxuan
               </Link>
-            </p>
-            <p>
-              <Link
-                href='/pricing'
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-              >
-                Pricing
-              </Link>
-            </p>
-            <p>
-              <Link href='/privacy'>Privacy Policy</Link>
-            </p>
-            <p>
-              <Link href='/cookie-policy'>Cookie Policy</Link>
-            </p>
-            <p>
-              <Link
-                href='/sitemap'
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-              >
-                Sitemap
-              </Link>
-            </p>
-            <p>
-              <Link href='https://liyuxuan.substack.com'>Newsletters</Link>
-            </p>
-            <p>
+            </span>
+            <span>
               <i>Taboo AI is an open-source project. Feel free to </i>
               <Link href='https://github.com/xmliszt/Taboo-AI' target='_blank'>
                 contribute on GitHub.
               </Link>{' '}
-            </p>
+            </span>
           </article>
         </div>
       </SheetContent>

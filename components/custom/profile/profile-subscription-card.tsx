@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BookMarked } from 'lucide-react';
 import moment from 'moment';
+import { toast } from 'sonner';
 import Stripe from 'stripe';
 
-import { useAuth } from '@/components/auth-provider';
+import { cancelStripeSubscription } from '@/app/profile/server/cancel-stripe-subscription';
+import { createStripeCustomerPortal } from '@/app/profile/server/create-stripe-customer-portal';
+import { UserProfileWithStripeSubscription } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -20,80 +23,70 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/components/ui/use-toast';
-import {
-  cancelSubscription,
-  createCustomerPortalSession,
-} from '@/lib/services/subscriptionService';
 import { cn } from '@/lib/utils';
 import { TabooPathname } from '@/lib/utils/routeUtils';
 
 import { confirmAlert } from '../globals/generic-alert-dialog';
 import { feedback } from '../globals/generic-feedback-dialog';
-import { Skeleton } from '../skeleton';
 import { Spinner } from '../spinner';
 
 interface ProfileSubscriptionCardProps {
+  user: UserProfileWithStripeSubscription;
   className?: string;
 }
 
-export default function ProfileSubscriptionCard({ className }: ProfileSubscriptionCardProps) {
+export function ProfileSubscriptionCard({ user, className }: ProfileSubscriptionCardProps) {
   const [isCancellingSubscription, setIsCancellingSubscription] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
-  const { user, userPlan, status, refreshUserSubscriptionPlan } = useAuth();
-  const router = useRouter();
-  const { toast } = useToast();
 
-  const subscriptionCancelledAt = userPlan?.subscription?.cancel_at;
+  const router = useRouter();
+
+  const subscriptionCancelledAt = user.stripeSubscription?.cancel_at;
   const subscriptionCancelDate = subscriptionCancelledAt
     ? moment(subscriptionCancelledAt * 1000)
     : undefined;
   const userHasCancelledSubscription = subscriptionCancelDate !== undefined;
-
-  useEffect(() => {
-    refreshUserSubscriptionPlan?.();
-  }, [status]);
+  const trialEndDate = user.stripeSubscription?.trial_end
+    ? moment.unix(user.stripeSubscription.trial_end)
+    : undefined;
+  const nextBillingDate = user.stripeSubscription
+    ? moment.unix(user.stripeSubscription.current_period_end)
+    : undefined;
 
   const proceedToCancelSubscription = async () => {
     try {
       setIsCancellingSubscription(true);
-      if (userPlan?.subId) {
-        await cancelSubscription(userPlan.subId);
-        refreshUserSubscriptionPlan?.();
-        setIsConfirmationDialogOpen(false);
-        confirmAlert({
-          title: 'Your subscription has been cancelled',
-          description:
-            'You will still have access to paid features until your current subscription period ends. After that, you will automatically switch to FREE plan.',
-          hasConfirmButton: false,
-          cancelLabel: 'OK',
-        });
-      }
+      user.stripeSubscription?.id && (await cancelStripeSubscription(user.stripeSubscription.id));
+      setIsConfirmationDialogOpen(false);
+      confirmAlert({
+        title: 'Your subscription has been cancelled',
+        description:
+          'You will still have access to paid features until your current subscription period ends. After that, you will automatically switch to FREE plan.',
+        hasConfirmButton: false,
+        cancelLabel: 'OK',
+        onCancel: () => {
+          router.refresh();
+        },
+      });
     } catch (error) {
       console.error(error);
-      toast({
-        title: "Something went wrong. We couldn't cancel your subscription.",
-        variant: 'destructive',
-      });
+      toast.error("Something went wrong. We couldn't cancel your subscription.");
     } finally {
       setIsCancellingSubscription(false);
     }
   };
 
   const handleManageBilling = async () => {
-    if (!user?.customerId) return;
+    if (!user.subscription?.customer_id) return;
     try {
-      const portalSessionUrl = await createCustomerPortalSession(
-        user?.customerId,
+      const portalSessionUrl = await createStripeCustomerPortal(
+        user.subscription.customer_id,
         `${window.location.origin}/profile?anchor=subscription`
       );
       router.push(portalSessionUrl);
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we cannot open your billing portal at the moment. Please try again!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we cannot open your billing portal at the moment. Please try again!');
     }
   };
 
@@ -116,7 +109,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
 
   const renderSubscriptionDetails = (status: Stripe.Subscription.Status | undefined) => {
     function renderExpiryDuration() {
-      const diffDuration = moment.duration(userPlan?.trialEndDate?.diff(moment()));
+      const diffDuration = moment.duration(trialEndDate?.diff(moment()));
       const diffDays = diffDuration.days();
       const diffHours = diffDuration.hours();
       const diffMinutes = diffDuration.minutes();
@@ -150,9 +143,14 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
         if (subscriptionCancelDate) {
           return (
             <div className='flex flex-row items-center justify-between leading-tight'>
-              <div>Your subscription will end on:</div>
+              <div>Your subscription will end on: </div>
               <div className='flex flex-row items-center gap-2'>
-                {subscriptionCancelDate.format('DD MMM YYYY')}
+                {
+                  // if is today, show 'today'
+                  subscriptionCancelDate.isSame(moment(), 'day')
+                    ? 'today'
+                    : subscriptionCancelDate.format('DD MMM YYYY')
+                }
               </div>
             </div>
           );
@@ -161,7 +159,7 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
           <div className='flex flex-row items-center justify-between leading-tight'>
             <div>Next billing cycle:</div>
             <div className='flex flex-row items-center gap-2'>
-              {userPlan?.nextBillingDate?.format('DD MMM YYYY')}
+              {nextBillingDate?.format('DD MMM YYYY')}
             </div>
           </div>
         );
@@ -187,39 +185,35 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
             <CardTitle>My Subscription</CardTitle>
           </CardHeader>
           <CardDescription>Manage your subscription here.</CardDescription>
-          {status === 'loading' ? (
-            <Skeleton className='my-4' />
-          ) : userPlan === undefined ? (
-            <div className='mt-6 flex w-full flex-col gap-2'>
-              <div className='flex flex-row items-center justify-between leading-tight'>
-                <div className='text-destructive'>Sorry something went wrong!</div>
-              </div>
-            </div>
-          ) : (
+          {user.subscription ? (
             <div className='mt-6 flex w-full flex-col gap-2'>
               <div className='flex flex-row items-center justify-between leading-tight'>
                 <div>You are on:</div>
                 <div className='flex flex-row items-center gap-2'>
-                  <Badge>{userPlan?.type?.toUpperCase() ?? 'FREE'}</Badge>
+                  <Badge>{user.subscription.customer_plan_type?.toUpperCase() ?? 'FREE'}</Badge>
                   <span>plan</span>
                 </div>
               </div>
-              {renderSubscriptionDetails(userPlan?.status)}
+              {renderSubscriptionDetails(user.stripeSubscription?.status)}
               <div className='h-4'></div>
-              {user?.customerId !== undefined && (
+              {user.subscription.customer_id && (
                 <Button onClick={handleManageBilling}>Manage Billing & Plan</Button>
               )}
               {!userHasCancelledSubscription && (
                 <>
                   <Button
-                    className={cn(userPlan?.type === 'free' && 'animate-pulse')}
+                    className={cn(
+                      user.subscription?.customer_plan_type === 'free' && 'animate-pulse'
+                    )}
                     onClick={() => {
                       router.push(TabooPathname.PRICING);
                     }}
                   >
-                    {userPlan?.type === 'free' ? 'Upgrade My Plan' : 'Change My Plan'}
+                    {user.subscription?.customer_plan_type === 'free'
+                      ? 'Upgrade My Plan'
+                      : 'Change My Plan'}
                   </Button>
-                  {userPlan.type !== 'free' && (
+                  {user.subscription?.customer_plan_type !== 'free' && (
                     <Button
                       variant='destructive'
                       onClick={() => {
@@ -231,12 +225,26 @@ export default function ProfileSubscriptionCard({ className }: ProfileSubscripti
                   )}
                 </>
               )}
-              {userHasCancelledSubscription && (
+              {userHasCancelledSubscription && subscriptionCancelDate && (
                 <p className='text-sm text-muted-foreground'>
                   You have cancelled your subscription. You will still have access to all paid
                   features until {subscriptionCancelDate.format('DD MMM yyyy hh:mm A')}.
                 </p>
               )}
+            </div>
+          ) : (
+            <div className='mt-6 flex w-full flex-col gap-2'>
+              <div className='italic text-muted-foreground'>
+                Sorry, we are having problems fetching your subscription details.
+              </div>
+              <Button
+                size='sm'
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Refresh to try again
+              </Button>
             </div>
           )}
           <div className='h-3'></div>

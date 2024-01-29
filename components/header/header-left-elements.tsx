@@ -1,29 +1,11 @@
-import { BackButton } from '../custom/back-button';
-import DevToggle from '../custom/dev-toggle';
-import { MenuButton } from '../custom/menu-button';
-import ThemeToggle from '../custom/theme-toggle';
+'use client';
 
-interface HeaderLeftElementsProps {
-  hideMenu?: boolean;
-  hideThemeToggle?: boolean;
-  hideDevToggle?: boolean;
-  hasBackButton?: boolean;
-  customBackHref?: string;
-}
+import React from 'react';
 
-export default function HeaderLeftElements({
-  hideMenu = false,
-  hideThemeToggle = false,
-  hideDevToggle = true,
-  hasBackButton = false,
-  customBackHref,
-}: HeaderLeftElementsProps) {
+export default function HeaderLeftElements({ children }: { children: React.ReactNode }) {
   return (
     <div id='left-header-slot' className='flex justify-start gap-1'>
-      {!hideMenu && <MenuButton />}
-      {hasBackButton === true && <BackButton customBackHref={customBackHref} />}
-      {!hideThemeToggle && <ThemeToggle />}
-      {!hideDevToggle && <DevToggle key='dev-toggle' />}
+      {children}
     </div>
   );
 }

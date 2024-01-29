@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import { Lora } from 'next/font/google';
 import Script from 'next/script';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -14,11 +14,13 @@ import PWAInstaller from '@/components/custom/pwa-installer';
 import SideMenu from '@/components/custom/side-menu';
 import { ThemeProvider } from '@/components/theme-provider';
 import { GlobalTooltipProvider } from '@/components/tooltip-provider';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { _meta } from '@/lib/metadata';
 
 import './markdown.css';
 import './globals.css';
+
+import React from 'react';
 
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
@@ -41,14 +43,22 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'hsl(var(--background))' },
+    { media: '(prefers-color-scheme: dark)', color: 'hsl(var(--foreground))' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+};
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const maintenanceMode = JSON.parse(process.env.NEXT_PUBLIC_MAINTENANCE || 'false');
   return (
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning={true}>
         <Script id='pwa-script' src='/js/pwa.js' />
         <Script id='clarity-script' src='/js/clarity.js' />
-        <head />
         <body className={`${font.className}`}>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
             <GlobalTooltipProvider delayDuration={300}>
@@ -74,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <AnalyticsWrapper />
               </AuthProvider>
             </GlobalTooltipProvider>
-            <Toaster />
+            <Toaster closeButton />
           </ThemeProvider>
           <SpeedInsights />
         </body>

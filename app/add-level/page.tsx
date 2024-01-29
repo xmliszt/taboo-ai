@@ -1,10 +1,12 @@
 'use client';
 
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { zip } from 'lodash';
 import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
+import { useAuth } from '@/components/auth-provider';
 import { InfoButton } from '@/components/custom/info-button';
 import { Skeleton } from '@/components/custom/skeleton';
 import { Spinner } from '@/components/custom/spinner';
@@ -32,12 +34,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
 import { sendEmail } from '@/lib/services/emailService';
-import { getTabooWords } from '@/lib/services/wordService';
+import { fetchWord } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
-
-import { useAuth } from '../../components/auth-provider';
 
 const CHARACTER_LIMIT = 50;
 const MAX_TARGET_WORDS_COUNT = 10;
@@ -47,7 +46,7 @@ const INVALID_WORD_ERROR =
   'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty. e.g.: invalid - "Mc-Donalds", valid - "McDonald\'s"';
 
 const AddLevelPage = () => {
-  const { user, status } = useAuth();
+  const { user } = useAuth();
   const [reviewSheetOpen, setReviewSheetOpen] = useState(false);
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] = useState(false);
   const [topicName, setTopicName] = useState('');
@@ -64,7 +63,7 @@ const AddLevelPage = () => {
   const [tabooWordsErrorIndexs, setTabooWordsErrorIndexs] = useState<number[][]>([]);
 
   //ANCHOR - States for appeal
-  const [selectedWordForAppeal, setselectedWordForAppeal] = useState('');
+  const [selectedWordForAppeal, setSelectedWordForAppeal] = useState('');
   const [isAppealModalOpen, setIsAppealModalOpen] = useState(false);
   const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
   const [appealReasons, setAppealReasons] = useState('');
@@ -72,17 +71,14 @@ const AddLevelPage = () => {
 
   //ANCHOR - States for component control
   const [expandedAccItem, setExpandedAccItem] = useState<string>('');
-  const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      toast({
-        title: 'You need to sign in to contribute a topic',
-      });
+    if (!user) {
+      toast.warning('You need to sign in to contribute a topic');
       router.push('/');
     }
-  }, [status]);
+  }, [user]);
 
   useEffect(() => {
     validateTargetWords();
@@ -136,7 +132,7 @@ const AddLevelPage = () => {
     statuses[targetWordIndex] = true;
     setTabooWordsCheckingStatus(statuses);
     try {
-      const taboo = await getTabooWords(targetWords[targetWordIndex]);
+      const taboo = await fetchWord(targetWords[targetWordIndex]);
       const existed = taboo !== undefined;
       const existedStatues = [...tabooWordsExistedStatus];
       existedStatues[targetWordIndex] = existed;
@@ -329,7 +325,7 @@ const AddLevelPage = () => {
   };
 
   const isAllValid = useMemo(() => {
-    let _isAllValid = false;
+    let _isAllValid;
     if (shouldUseAIForTabooWords) {
       _isAllValid =
         !topicNameErrorMessage &&
@@ -371,7 +367,7 @@ const AddLevelPage = () => {
   };
 
   const openAppeal = (forTarget: string) => {
-    setselectedWordForAppeal(forTarget);
+    setSelectedWordForAppeal(forTarget);
     setIsAppealModalOpen(true);
   };
 
@@ -386,16 +382,12 @@ const AddLevelPage = () => {
         appealReasons,
         `Taboo AI Taboo Words Appeal Request for [${forTarget}] from ${user.email}`
       );
-      toast({
-        title: 'Appeal submitted successfully! We will get in touch with you soon!',
-      });
+      toast.success('Appeal submitted successfully! We will get in touch with you soon!');
       setAppealReasons('');
     } catch (error) {
-      toast({
-        title:
-          'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!',
-        variant: 'destructive',
-      });
+      toast.error(
+        'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!'
+      );
       console.error(error);
     } finally {
       setIsSubmittingAppeal(false);
@@ -414,9 +406,7 @@ const AddLevelPage = () => {
     setTabooWordsExistedStatus([]);
   };
 
-  if (!user || status !== 'authenticated') {
-    return <section className='flex h-full w-full items-center justify-center'></section>;
-  }
+  if (!user) return <section className='flex h-full w-full items-center justify-center'></section>;
 
   return (
     <main className='flex flex-col items-center gap-4 p-4'>
@@ -607,7 +597,7 @@ const AddLevelPage = () => {
                       (tabooWordsExistedStatus[expandedIndex] === true &&
                         tabooWords[expandedIndex].length === 0)
                     ) {
-                      checkIfTabooWordsExistedForTarget(expandedIndex);
+                      void checkIfTabooWordsExistedForTarget(expandedIndex);
                     }
                   }}
                 >
@@ -616,7 +606,7 @@ const AddLevelPage = () => {
                       <AccordionItem
                         key={i}
                         value={String(i)}
-                        disabled={tabooWordsCheckingStatus.some((s) => s === true)}
+                        disabled={tabooWordsCheckingStatus.some((s) => s)}
                       >
                         <AccordionTrigger>
                           <div>
@@ -801,7 +791,7 @@ const AddLevelPage = () => {
               <Button
                 disabled={appealReasons.length <= 0 || appealReasonErrorMessage.length > 0}
                 onClick={() => {
-                  submitAppeal(selectedWordForAppeal);
+                  void submitAppeal(selectedWordForAppeal);
                 }}
               >
                 Submit Appeal

@@ -1,13 +1,5 @@
-export default interface ILevel {
-  id: string; // Uniquely identify a level
-  name: string; // Name could be the same
-  difficulty: number;
-  words: string[];
-  isVerified: boolean;
-  author?: string;
-  isNew?: boolean;
-  createdAt?: string;
-  popularity?: number;
-  authorEmail?: string;
-  isAIGenerated?: boolean;
-}
+import { Database } from '@/lib/supabase/extension/types';
+
+export type LevelToUpload = Database['public']['Tables']['levels']['Row'] & {
+  is_ai_generated: boolean;
+};

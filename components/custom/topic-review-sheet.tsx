@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { DialogProps } from '@radix-ui/react-dialog';
 import _ from 'lodash';
+import { toast } from 'sonner';
 
+import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { sendEmail } from '@/lib/services/emailService';
-import { addLevel, isLevelExists } from '@/lib/services/levelService';
-import { updateUserFromUser } from '@/lib/services/userService';
-import { addTabooWords } from '@/lib/services/wordService';
-import IUser from '@/lib/types/user.type';
+import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
+import { addWord } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
 
 import { Badge } from '../ui/badge';
@@ -15,11 +15,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet';
-import { useToast } from '../ui/use-toast';
 import { Spinner } from './spinner';
 
 interface TopicReviewSheet extends DialogProps {
-  user: IUser;
+  user: UserProfile;
   topicName: string;
   difficultyLevel: string;
   shouldUseAIForTabooWords: boolean;
@@ -43,16 +42,15 @@ export function TopicReviewSheet({
   onTopicSubmitted,
   onOpenChange,
 }: TopicReviewSheet) {
-  const { toast } = useToast();
   const [nickname, setNickname] = useState(defaultNickname);
   const [isCreatingLevel, setisCreatingLevel] = useState(false);
 
   const submitNewTopic = async () => {
     setisCreatingLevel(true);
     try {
-      const exists = await isLevelExists(topicName, user.email);
+      const exists = await isLevelWithSameNameSubmittedBySameUser(topicName, user.id);
       if (exists) {
-        toast({ title: 'You have already submitted this topic.' });
+        toast.info('You have already submitted this topic.');
         onTopicSubmitted && onTopicSubmitted();
         return;
       }
@@ -60,32 +58,22 @@ export function TopicReviewSheet({
         name: topicName,
         difficulty: Number(difficultyLevel),
         words: targetWords.map((w) => _.toLower(_.trim(w))),
-        author: nickname,
-        authorEmail: user.email,
-        isNew: true,
-      });
-      await updateUserFromUser({
-        email: user.email,
-        nickname: nickname,
+        createdBy: user.id,
       });
       if (!shouldUseAIForTabooWords)
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
           const targetWord = targetWords[i];
-          await addTabooWords(targetWord, wordList, false, user.email);
+          await addWord(targetWord, wordList, false, user.id);
         }
 
       await sendMyselfEmail();
-      toast({
-        title:
-          'Your topic has been submitted for review. The outcome of the submission will be notified via email.',
-      });
+      toast.success(
+        'Your topic has been submitted for review. The outcome of the submission will be notified via email.'
+      );
       onTopicSubmitted && onTopicSubmitted();
     } catch (error) {
-      toast({
-        title: 'Sorry, we are unable to submit the topic at the moment!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to submit the topic at the moment!');
       console.error(error);
     } finally {
       setisCreatingLevel(false);

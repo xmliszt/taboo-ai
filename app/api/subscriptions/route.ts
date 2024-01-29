@@ -1,27 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 
-export async function GET(req: NextRequest) {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({ error: 'Stripe key not found' }, { status: 500 });
-  }
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const params = req.nextUrl.searchParams;
-  const customerId = params.get('customerId');
-  if (!customerId) {
-    return NextResponse.json({ error: 'Customer id not found' }, { status: 400 });
-  }
-  try {
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
+import {
+  fetchUserSubscriptionsFromStripe,
+  fetchUserSubscriptionsFromStripeWithEmail,
+} from '@/app/profile/server/fetch-subscriptions-from-stripe';
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const customerId = searchParams.get('customer_id');
+  const userEmail = searchParams.get('customer_email');
+  if (!customerId && !userEmail) {
+    return new Response('No customer_id or email provided', {
+      status: 400,
     });
-    return NextResponse.json({ subscriptions: subscriptions.data });
-  } catch (error) {
-    console.error(error);
-    if (error instanceof Stripe.errors.StripeError) {
-      return NextResponse.json({ error: error.message }, { status: error.statusCode });
-    } else {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
   }
+  const subscriptions = customerId
+    ? await fetchUserSubscriptionsFromStripe(customerId)
+    : await fetchUserSubscriptionsFromStripeWithEmail(userEmail!);
+  if (subscriptions.length === 0) {
+    return NextResponse.json({
+      subscription: null,
+    });
+  }
+  return NextResponse.json({
+    subscription: subscriptions[0],
+  });
 }

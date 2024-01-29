@@ -1,17 +1,10 @@
-import IUser from './types/user.type';
-
 export class AdminManager {
   static WHITELIST_UIDS = [
-    'BnlcfMNIvrf2XCxY73O5KXmYNkI3', // production - Yuxuan
-    'aynNbQcI5rV2UxXVaRRW34K3eaH2', // preview - Yuxuan
-    'xAlLvLRvY7NHtRr5GkL6TxIV0Vu1', // production - Austin
-    'd57nt5xyZhX4S4f1sOFlo5WbAlX2', // preview - Austin
+    '9f63e892-04f0-4f8b-b7e6-bb945f013fe8', // preview - Yuxuan
   ];
 
-  static checkIsAdmin(user: IUser | null | undefined): boolean {
-    if (user?.uid) {
-      return this.WHITELIST_UIDS.includes(user.uid);
-    }
+  static checkIsAdmin(userId?: string): boolean {
+    if (userId) return this.WHITELIST_UIDS.includes(userId);
     return false;
   }
 }

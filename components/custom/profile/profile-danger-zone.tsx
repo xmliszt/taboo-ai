@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuth } from 'firebase/auth';
-import { Skull } from 'lucide-react';
+'use client';
 
+import { useState } from 'react';
+import { Skull } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { deleteUser } from '@/app/profile/server/delete-user';
+import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,45 +17,29 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { cancelSubscription, fetchCustomerSubscriptions } from '@/lib/services/subscriptionService';
-import { deleteUserFromFirebase, getUser } from '@/lib/services/userService';
 import { cn } from '@/lib/utils';
 
 import { Spinner } from '../spinner';
 
-const auth = getAuth();
-
-export default function ProfileDangerZone({ className }: { className?: string }) {
-  const router = useRouter();
-  const { toast } = useToast();
+type ProfileDangerZoneProps = {
+  user: UserProfile;
+  className?: string;
+};
+export function ProfileDangerZone(props: ProfileDangerZoneProps) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const proceedToDeleteUser = async () => {
-    const user = auth.currentUser;
-    if (!user || !user.email) {
-      toast({
-        title: 'We cannot identify the user to be deleted. Please retry login and try again.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    const userDoc = await getUser(user.email);
-    const userSubscription = await fetchCustomerSubscriptions(user.email, userDoc?.customerId);
     try {
       setIsDeleting(true);
-      user.email && (await deleteUserFromFirebase(user.email)); // Firebase db delete user
-      await user.delete(); // Firebase auth delete user
-      userSubscription?.subId && (await cancelSubscription(userSubscription.subId)); // If subscription ID presents, cancel the subscription from Stripe
-      toast({ title: 'Your account has been deleted.' });
-      router.push('/');
+      await deleteUser();
+      toast.info('Your account has been deleted.');
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/';
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Sorry, we are unable to delete the user right now. Please try again later!',
-        variant: 'destructive',
-      });
+      toast.error('Sorry, we are unable to delete the user right now. Please try again later!');
     } finally {
       setIsDeleting(false);
     }
@@ -60,7 +47,7 @@ export default function ProfileDangerZone({ className }: { className?: string })
 
   return (
     <>
-      <Card className={cn(className, 'border-red-500 text-red-600')}>
+      <Card className={cn(props.className, 'border-red-500 text-red-600')}>
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <Skull />

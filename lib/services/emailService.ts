@@ -1,5 +1,3 @@
-import { RejectionReason } from '@/app/api/x/mail/route';
-
 interface ErrorResponse {
   error: string;
   details?: any;
@@ -40,27 +38,4 @@ export const sendEmail = async (
     subject: subject,
     html: html,
   });
-};
-
-export const sendEmailX = async (
-  topic: string,
-  to: string,
-  type: 'reject' | 'verify',
-  reason?: RejectionReason,
-  token?: string
-) => {
-  const url = `/api/x/mail`;
-  return await request<{
-    message: string;
-  }>(
-    url,
-    'POST',
-    {
-      topic,
-      type,
-      to,
-      reason,
-    },
-    token
-  );
 };

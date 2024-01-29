@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import { isMobile } from 'react-device-detect';
+'use client';
+
+import React, { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { isDesktop } from 'react-device-detect';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,7 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-import { SortType } from '@/lib/utils/levelUtils';
+import type { SortType } from '@/lib/utils/levelUtils';
 
 type SortItem = {
   value: SortType;
@@ -34,71 +37,69 @@ const sorters: SortItem[] = [
   { value: 'hard-first', label: 'Hardest First' },
 ];
 
-export default function LevelsSearchBar({
-  topicNumber,
-  setFilterKeyword,
-  onSorterChange,
-  onRankingModeChange,
-}: {
-  topicNumber: number;
-  setFilterKeyword: React.Dispatch<React.SetStateAction<string>>;
-  onSorterChange?: (sorter: SortType) => void;
-  onRankingModeChange?: (isRankingModeOn: boolean) => void;
-}) {
-  const [isRankingModeOn, setIsRankingModeOn] = useState(false);
-  const [selectedSorter, setSelectedSorter] = useState<SortType>('create-new');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const clearSearch = () => {
-    setSearchTerm('');
-    setFilterKeyword('');
-  };
+  const isRankingModeOn = searchParams.get('rank') === 'true';
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
 
   return (
-    <>
+    <div>
       <div className='flex flex-row items-center gap-4'>
-        <Select
-          value={selectedSorter}
-          onValueChange={(value) => {
-            setSelectedSorter(value as SortType);
-            onSorterChange && onSorterChange(value as SortType);
+        {/* only show dropdown sort selector only if on desktop*/}
+        {isDesktop && (
+          <Select
+            defaultValue={searchParams.get('sort') || 'create-new'}
+            onValueChange={(selectedSortType) => {
+              const newSearchParams = new URLSearchParams(searchParams);
+              newSearchParams.set('sort', selectedSortType);
+              router.replace(`${pathname}?${newSearchParams}`);
+            }}
+          >
+            <SelectTrigger className='max-w-[250px]'>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className='max-h-[var(--radix-select-content-available-height)] w-[var(--radix-select-trigger-width)]'>
+              <SelectGroup>
+                <SelectLabel>Sort Topics</SelectLabel>
+                {sorters.map((sorter) => (
+                  <SelectItem key={sorter.value} value={sorter.value}>
+                    {sorter.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        )}
+
+        <form
+          className='flex w-full flex-row items-center gap-4 !text-sm'
+          onSubmit={(e) => {
+            e.preventDefault();
+            const newSearchParams = new URLSearchParams(searchParams);
+            if (searchTerm.length > 0) newSearchParams.set('search', searchTerm);
+            else newSearchParams.delete('search');
+            router.replace(`${pathname}?${newSearchParams}`);
           }}
         >
-          <SelectTrigger className='w-[250px]'>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className='max-h-[var(--radix-select-content-available-height)] w-[var(--radix-select-trigger-width)]'>
-            <SelectGroup>
-              <SelectLabel>Sort Topics</SelectLabel>
-              {sorters.map((sorter) => (
-                <SelectItem key={sorter.value} value={sorter.value}>
-                  {sorter.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Input
-          className='w-full !text-sm'
-          placeholder='Search by name/author'
-          value={searchTerm}
-          type='text'
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setFilterKeyword(e.target.value);
-          }}
-        />
-        {!isMobile && searchTerm.length > 0 && (
-          <Button className='animate-fade-in' onClick={clearSearch}>
-            Clear
-          </Button>
-        )}
+          <Input
+            placeholder='Search by name/author. Enter to search.'
+            type='text'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm.length > 0 && (
+            <Button className='animate-fade-in' type='submit'>
+              Search
+            </Button>
+          )}
+        </form>
       </div>
       <div className='mt-4 flex flex-row items-center justify-between'>
         <Badge className='shadow-[0_5px_10px_rgba(0,0,0,0.3)]'>
-          {searchTerm && searchTerm.length > 0
-            ? `Found ${topicNumber} topics`
-            : `Total ${topicNumber} topics`}
+          {`Found ${topicNumber} topics`}
         </Badge>
         <div className='flex flex-row items-center gap-2'>
           <Switch
@@ -106,8 +107,10 @@ export default function LevelsSearchBar({
             className={cn(isRankingModeOn ? 'shadow-[0_5px_10px_rgba(0,0,0,0.3)]' : 'shadow-none')}
             checked={isRankingModeOn}
             onCheckedChange={(checked) => {
-              setIsRankingModeOn(checked);
-              onRankingModeChange && onRankingModeChange(checked);
+              const newSearchParams = new URLSearchParams(searchParams);
+              if (checked) newSearchParams.set('rank', checked.toString());
+              else newSearchParams.delete('rank');
+              router.replace(`${pathname}?${newSearchParams}`);
             }}
           />
           <Label
@@ -120,6 +123,6 @@ export default function LevelsSearchBar({
           </Label>
         </div>
       </div>
-    </>
+    </div>
   );
 }

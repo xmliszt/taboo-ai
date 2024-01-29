@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -15,7 +16,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { sendEmail } from '@/lib/services/emailService';
 
@@ -44,8 +44,6 @@ export default function GenericFeedbackDialog() {
   const [cancelLabel, setCancelLabel] = useState<string>('Cancel');
   const onSubmit = useRef<() => void>();
   const onCancel = useRef<() => void>();
-
-  const { toast } = useToast();
 
   useEffect(() => {
     const listener = EventManager.bindEvent<GenericFeedbackDialogProps>(
@@ -82,15 +80,10 @@ export default function GenericFeedbackDialog() {
         <p>${feedbackContent}</p>
       `
       );
-      toast({
-        title: 'Your feedback has been sent. Thank you!',
-      });
+      toast.success('Your feedback has been sent. Thank you!');
     } catch (error) {
       console.error(error);
-      toast({
-        title: "We couldn't send your feedback at the moment. Please try again later.",
-        variant: 'destructive',
-      });
+      toast.error("We couldn't send your feedback at the moment. Please try again later.");
     }
   };
 

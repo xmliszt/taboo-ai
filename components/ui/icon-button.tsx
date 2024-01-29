@@ -12,8 +12,17 @@ interface IconButtonProps extends ButtonProps {
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ tooltip, className, children, asChild = false, ...props }, ref) => {
     const renderButton = () => (
-      <Button ref={ref} {...props} className={cn(className, 'h-[30px] w-[30px] p-1')}>
-        {children}
+      <Button
+        ref={ref}
+        {...props}
+        className={cn(className, 'h-[32px] w-[32px] p-1', 'group/icon-button')}
+      >
+        <div
+          className='transition-transform ease-in-out group-hover/icon-button:scale-110'
+          id='icon-wrapper'
+        >
+          {children}
+        </div>
       </Button>
     );
     return tooltip ? (

@@ -17,6 +17,7 @@ export enum TabooPathname {
   SITEMAP = '/sitemap',
   PROFILE = '/profile',
   PRICING = '/pricing',
+  PUBLICATIONS = '/publications',
 }
 
 export class RouteManager {
@@ -61,7 +62,6 @@ export class RouteManager {
       case TabooPathname.RESULT === route:
         return {
           title: 'Game Result',
-          hideShareScoreButton: false,
           hideDevToggle: false,
         };
       case TabooPathname.PWA === route:
@@ -98,11 +98,16 @@ export class RouteManager {
         };
       case TabooPathname.PRICING === route:
         return {
-          hasBackButton: true,
+          title: 'Pricing',
+          hasBackButton: false,
         };
       case /^\/checkout\/success/.test(route):
         return {
           title: 'Checkout Success',
+        };
+      case TabooPathname.PUBLICATIONS === route:
+        return {
+          title: 'Publications',
         };
       default:
         return {
@@ -111,7 +116,6 @@ export class RouteManager {
           hideMenu: false,
           hideThemeToggle: false,
           hideDevToggle: true,
-          hideShareScoreButton: true,
           hasBackButton: false,
         };
     }
