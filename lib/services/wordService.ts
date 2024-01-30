@@ -1,12 +1,8 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { toLower, trim } from 'lodash';
 
-import { createClient } from '@/lib/utils/supabase/server';
 import { createServiceRoleClient } from '@/lib/utils/supabase/service-role';
-
-import { IWord } from '../types/word.type';
 
 /**
  * Adds a word to the database
@@ -35,8 +31,8 @@ export const addWord = async (
 /**
  * Fetches a word from the database
  */
-export const fetchWord = async (targetWord: string): Promise<IWord | undefined> => {
-  const supabaseClient = createClient(cookies());
+export const fetchWord = async (targetWord: string) => {
+  const supabaseClient = createServiceRoleClient();
   const target = toLower(trim(targetWord));
   const fetchTabooWordsResponse = await supabaseClient
     .from('words')

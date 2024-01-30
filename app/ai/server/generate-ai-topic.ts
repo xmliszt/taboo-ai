@@ -4,9 +4,9 @@ import 'server-only';
 
 import { uniqueId } from 'lodash';
 
+import { LevelToUpload } from '@/app/level/[id]/server/upload-game';
 import { CONSTANTS } from '@/lib/constants';
 import { googleGeminiPro } from '@/lib/google-ai';
-import { LevelToUpload } from '@/lib/types/level.type';
 import { formatResponseTextIntoArray } from '@/lib/utilities';
 
 /**

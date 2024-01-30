@@ -6,6 +6,7 @@ import { SelectGroup } from '@radix-ui/react-select';
 import { toLower, trim } from 'lodash';
 import { Plus, RefreshCcw, Trash } from 'lucide-react';
 import { toast } from 'sonner';
+import { AsyncReturnType } from 'type-fest';
 
 import { generateTabooWordsFromAI } from '@/app/level/[id]/server/generate-taboo-words-from-ai';
 import { FetchAllLevelsAndAuthorsReturnTypeSingle } from '@/app/x/review-words/server/fetch-levels';
@@ -43,7 +44,6 @@ import {
   verifyLevel,
 } from '@/lib/services/levelService';
 import { addWord, fetchWord } from '@/lib/services/wordService';
-import { IWord } from '@/lib/types/word.type';
 import { cn } from '@/lib/utils';
 
 type DevReviewWordsPageProps = {
@@ -56,7 +56,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<FetchAllLevelsAndAuthorsReturnTypeSingle>();
   const [selectedLevelId, setSelectedLevelId] = useState('');
-  const [taboos, setTabooWords] = useState<IWord>();
+  const [taboos, setTabooWords] = useState<AsyncReturnType<typeof fetchWord>>();
   const [fullWordList, setFullWordList] = useState<string[]>([]);
   const [currentEditingTabooWordIndex, setCurrentEditingTabooWordIndex] = useState<number>();
   const [currentEditingTargetWordIndex, setCurrentEditingTargetWordIndex] = useState<number>();
@@ -82,8 +82,6 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         if (word.length <= 0 || fullWordList.includes(word)) {
           continue;
         }
-        word.toLowerCase() === 'static character' &&
-          console.log('checking word: ' + word, props.words.length);
         if (props.words.includes(word.toLowerCase())) {
           setFullWordList((wordList) => [...wordList, word]);
         }
@@ -170,7 +168,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
 
   const onVerifyTargetWord = (checked: boolean) => {
     if (taboos) {
-      const currentTarget: IWord = { ...taboos };
+      const currentTarget = { ...taboos };
       currentTarget.is_verified = checked;
       setTabooWords(currentTarget);
     }
@@ -183,7 +181,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
       setSelectedLevel(copyLevel);
     }
     if (taboos) {
-      const copyTaboos: IWord = { ...taboos };
+      const copyTaboos = { ...taboos };
       copyTaboos.word = e.target.value;
       setTabooWords(copyTaboos);
     }
@@ -422,7 +420,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
                 {(level?.author?.nickname || level?.author?.name) && (
                   <span>
                     {' - '}
-                    {level?.author.name ?? level?.author.nickname}
+                    {level?.author.nickname ?? level?.author.name}
                   </span>
                 )}
               </SelectItem>

@@ -4,6 +4,7 @@ import 'server-only';
 
 import { cookies } from 'next/headers';
 
+import { Database } from '@/lib/supabase/extension/types';
 import { createClient } from '@/lib/utils/supabase/server';
 
 export type ScoreToUpload = {
@@ -50,4 +51,8 @@ export const uploadCompletedGameForUser = async (
   return {
     gameId: uploadCompletedGameForUserResponse.data,
   };
+};
+
+export type LevelToUpload = Database['public']['Tables']['levels']['Row'] & {
+  is_ai_generated: boolean;
 };

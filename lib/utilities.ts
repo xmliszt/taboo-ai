@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 import html2canvas from 'html2canvas';
 import _ from 'lodash';
+import { AsyncReturnType } from 'type-fest';
 
-import { IWord } from './types/word.type';
+import { fetchWord } from '@/lib/services/wordService';
 
 export function generateHashedString(...items: string[]): string {
   const stringToHash = items.join('_');
@@ -72,8 +73,8 @@ export const getMockResponse = async (
   });
 };
 
-export const getMockVariations = async (target: string, shouldSucceed = true): Promise<IWord> => {
-  return new Promise<IWord>((res, rej) => {
+export const getMockVariations = async (target: string, shouldSucceed = true) => {
+  return new Promise<AsyncReturnType<typeof fetchWord>>((res, rej) => {
     setTimeout(() => {
       shouldSucceed
         ? res({

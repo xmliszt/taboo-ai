@@ -5,12 +5,11 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Bot } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
+import { LevelToUpload, ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { useAuth } from '@/components/auth-provider';
 import { CONSTANTS } from '@/lib/constants';
 import { HASH } from '@/lib/hash';
 import { getPersistence } from '@/lib/persistence/persistence';
-import { LevelToUpload } from '@/lib/types/level.type';
 import { getRandomInt } from '@/lib/utilities';
 import {
   clearDevMode,

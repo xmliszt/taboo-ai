@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import _, { cloneDeep, toLower, uniqueId } from 'lodash';
 import { SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { AsyncReturnType } from 'type-fest';
 import { useTimer } from 'use-timer';
 
 import { AiEvaluationLoadingProgressBar } from '@/app/level/[id]/ai-evaluation-loading-progress-bar';
@@ -13,7 +14,11 @@ import { Level } from '@/app/level/[id]/server/fetch-level';
 import { generateConversationFromAI } from '@/app/level/[id]/server/generate-conversation-from-ai';
 import { generateEvaluationFromAI } from '@/app/level/[id]/server/generate-evaluation-from-ai';
 import { generateTabooWordsFromAI } from '@/app/level/[id]/server/generate-taboo-words-from-ai';
-import { ScoreToUpload, uploadCompletedGameForUser } from '@/app/level/[id]/server/upload-game';
+import {
+  LevelToUpload,
+  ScoreToUpload,
+  uploadCompletedGameForUser,
+} from '@/app/level/[id]/server/upload-game';
 import { useAuth } from '@/components/auth-provider';
 import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import Timer from '@/components/custom/timer';
@@ -26,8 +31,6 @@ import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parse
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { fetchWord } from '@/lib/services/wordService';
-import { LevelToUpload } from '@/lib/types/level.type';
-import { IWord } from '@/lib/types/word.type';
 import {
   formatStringForDisplay,
   generateHashedString,
@@ -321,7 +324,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     retries: number,
     target: string,
     topic: string | undefined,
-    callback: (variations?: IWord) => void
+    callback: (variations?: AsyncReturnType<typeof fetchWord>) => void
   ) => {
     retryCount.current = retries;
     try {
