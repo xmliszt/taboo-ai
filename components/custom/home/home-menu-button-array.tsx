@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { login } from '@/components/header/server/login';
-import { AdminManager } from '@/lib/admin-manager';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 import { HomeMenuButton } from '../home-menu-button';
@@ -116,7 +115,7 @@ export default function HomeMenuButtonArray() {
         subtitle: 'Review and verify topics and worlds submitted. Only available for admin!',
         ariaLabel: 'Click to review topics as dev',
         href: '/x/review-words',
-        visible: AdminManager.checkIsAdmin(user?.id),
+        visible: user?.is_dev ?? false,
       },
     ],
     [user],

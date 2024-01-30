@@ -517,6 +517,7 @@ export interface Database {
           first_login_at: string
           id: string
           is_anonymous: boolean
+          is_dev: boolean
           last_login_at: string
           login_times: number
           name: string
@@ -528,6 +529,7 @@ export interface Database {
           first_login_at?: string
           id?: string
           is_anonymous?: boolean
+          is_dev?: boolean
           last_login_at?: string
           login_times?: number
           name: string
@@ -539,6 +541,7 @@ export interface Database {
           first_login_at?: string
           id?: string
           is_anonymous?: boolean
+          is_dev?: boolean
           last_login_at?: string
           login_times?: number
           name?: string
@@ -616,6 +619,7 @@ export interface Database {
           difficulty: number | null
           id: string | null
           is_new: boolean | null
+          is_verified: boolean | null
           name: string | null
           popularity: number | null
           top_scorer_ids: string[] | null

@@ -1,12 +1,10 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 
-import { fetchCurrentAuthUser } from '@/app/profile/server/fetch-user-profile';
-import { AdminManager } from '@/lib/admin-manager';
+import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 
 export default async function DevLayout({ children }: { children: React.ReactNode }) {
-  const authUser = await fetchCurrentAuthUser();
-  const isUserWhitelisted = AdminManager.checkIsAdmin(authUser.id);
-  if (!isUserWhitelisted) notFound();
+  const user = await fetchUserProfile();
+  if (!user.is_dev) notFound();
   return <> {children} </>;
 }

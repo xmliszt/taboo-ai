@@ -1,6 +1,7 @@
 import { LevelPageClientWrapper } from '@/app/level/[id]/level-page-client-wrapper';
 import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { formatStringForDisplay } from '@/lib/utilities';
+import { incrementLevelPopularity } from '@/app/level/[id]/server/increment-level-popularity';
 
 interface LevelPageProps {
   params: { id: string };
@@ -12,6 +13,9 @@ export default async function LevelPage({ params: { id } }: LevelPageProps) {
 
   // fetch level for playing
   const level = await fetchLevel(id);
+
+  // increment level popularity
+  await incrementLevelPopularity(id);
 
   // generate target word for playing
   const words = level.words.map((word) => formatStringForDisplay(word));

@@ -19,13 +19,15 @@ export default async function LevelsPage(props: LevelsPageProps) {
   const selectedSorter = sort ?? 'create-new';
 
   // filter levels by search term
-  const filteredLevels = levels.filter((level) => {
-    if (!searchTerm) return true;
-    return (
-      level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (level.created_by && level.created_by.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  });
+  const filteredLevels = levels
+    .filter((level) => {
+      if (!searchTerm) return true;
+      return (
+        level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (level.created_by && level.created_by.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    })
+    .filter((level) => level.is_verified);
   const sortedLevels = [...filteredLevels].sort(LevelUtils.getCompareFn(selectedSorter));
 
   return (
