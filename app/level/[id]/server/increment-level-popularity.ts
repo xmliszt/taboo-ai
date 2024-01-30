@@ -1,11 +1,10 @@
 import 'server-only';
 
-import { cookies } from 'next/headers';
-
-import { createClient } from '@/lib/utils/supabase/server';
+import { createServiceRoleClient } from '@/lib/utils/supabase/service-role';
 
 export const incrementLevelPopularity = async (id: string) => {
-  const supabaseClient = createClient(cookies());
+  // Use service role client to bypass RLS
+  const supabaseClient = createServiceRoleClient();
   const incrementLevelPopularityResponse = await supabaseClient.rpc('increment', {
     _table_name: 'levels',
     _row_id: id,

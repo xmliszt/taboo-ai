@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { toLower, trim } from 'lodash';
 
 import { createClient } from '@/lib/utils/supabase/server';
+import { createServiceRoleClient } from '@/lib/utils/supabase/service-role';
 
 import { IWord } from '../types/word.type';
 
@@ -16,7 +17,8 @@ export const addWord = async (
   isVerified = false,
   userId: string | undefined = undefined
 ): Promise<void> => {
-  const supabaseClient = createClient(cookies());
+  // Use service role client to bypass RLS
+  const supabaseClient = createServiceRoleClient();
   const target = toLower(trim(targetWord));
   const insertNewTabooWordsResponse = await supabaseClient.from('words').upsert(
     {

@@ -2,6 +2,7 @@
 
 import 'server-only';
 
+import { cookies } from 'next/headers';
 import { toLower, trim } from 'lodash';
 
 import { googleGeminiPro } from '@/lib/google-ai';
@@ -11,6 +12,7 @@ import { formatResponseTextIntoArray } from '@/lib/utilities';
  * Ask AI to generate taboo words for a given topic.
  */
 export async function generateTabooWordsFromAI(targetWord: string, topic?: string) {
+  cookies(); // opt-out for caching
   const target = toLower(trim(targetWord));
   const prompt =
     `Generate 5-8 words related to '${target}',` +

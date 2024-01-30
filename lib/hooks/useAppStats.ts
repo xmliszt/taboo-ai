@@ -8,6 +8,7 @@ export const useAppStats = () => {
 
   useEffect(() => {
     const supabaseClient = createClient();
+
     // Fetch app_stats for initial render
     async function fetchInitialAppStats() {
       try {
@@ -21,6 +22,7 @@ export const useAppStats = () => {
         console.log(error);
       }
     }
+
     void fetchInitialAppStats();
     // Subscribe to app_stats changes
     supabaseClient

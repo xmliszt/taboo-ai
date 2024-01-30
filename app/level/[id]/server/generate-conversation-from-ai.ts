@@ -14,12 +14,12 @@ export async function generateConversationFromAI(
     role: 'user' | 'assistant' | 'system' | 'error';
     content: string;
     timestamp: string;
-  }[],
+  }[]
 ) {
   // Force revalidation of cache
   cookies();
   const filteredConversation = conversation.filter((message) =>
-    ['user', 'assistant'].includes(message.role),
+    ['user', 'assistant'].includes(message.role)
   );
   // pop the last item from chatCompletionMessages as the new user message
   const userMessage = filteredConversation.pop()?.content;
@@ -38,8 +38,8 @@ export async function generateConversationFromAI(
     },
     {
       role: 'model',
-      parts: 'Ok, let\'s start the game.',
-    },
+      parts: "Ok, let's start the game.",
+    }
   );
   const chat = googleGeminiPro.startChat({
     history: chatCompletionMessages,

@@ -12,7 +12,7 @@ import { createClient } from '@/lib/utils/supabase/client';
 export async function fetchGamesCompletedByUserWithLevelInfo(
   userId: string,
   limit: number,
-  offset: number,
+  offset: number
 ) {
   const supabaseClient = createClient();
   const fetchGamesCompletedByUserWithLevelInfoResponse = await supabaseClient

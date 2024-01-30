@@ -20,7 +20,7 @@ export default function TestPage() {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto p-2">
+    <div className='flex flex-col gap-2 overflow-y-auto p-2'>
       <Card>
         <CardHeader>
           <CardTitle>Input</CardTitle>
@@ -32,7 +32,7 @@ export default function TestPage() {
         </CardHeader>
         <CardContent>
           <form
-            className="flex flex-col gap-4"
+            className='flex flex-col gap-4'
             action={() => {
               startTransition(async () => {
                 if (!targetWord || !userMessage || !assistantMessage) return;
@@ -71,44 +71,44 @@ export default function TestPage() {
               });
             }}
           >
-            <div className="flex flex-row items-center gap-2">
-              <Label className="w-[200px]" htmlFor="target-word">
+            <div className='flex flex-row items-center gap-2'>
+              <Label className='w-[200px]' htmlFor='target-word'>
                 Target Word
               </Label>
               <Input
-                id="target-word"
+                id='target-word'
                 value={targetWord}
                 onChange={(e) => {
                   setTargetWord(e.target.value);
                 }}
               />
             </div>
-            <div className="flex flex-row items-center gap-2">
-              <Label className="w-[200px]" htmlFor="user-msg">
+            <div className='flex flex-row items-center gap-2'>
+              <Label className='w-[200px]' htmlFor='user-msg'>
                 User Message
               </Label>
               <Input
-                id="user-msg"
+                id='user-msg'
                 value={userMessage}
                 onChange={(e) => {
                   setUserMessage(e.target.value);
                 }}
               />
             </div>
-            <div className="flex flex-row items-center gap-2">
-              <Label className="w-[200px]" htmlFor="ai-msg">
+            <div className='flex flex-row items-center gap-2'>
+              <Label className='w-[200px]' htmlFor='ai-msg'>
                 Assistant Message
               </Label>
               <Input
-                id="ai-msg"
+                id='ai-msg'
                 value={assistantMessage}
                 onChange={(e) => {
                   setAssistantMessage(e.target.value);
                 }}
               />
             </div>
-            <div className="mt-4">
-              <Button type="submit" disabled={isPending}>
+            <div className='mt-4'>
+              <Button type='submit' disabled={isPending}>
                 Submit
               </Button>
             </div>
@@ -123,18 +123,18 @@ export default function TestPage() {
           {isPending ? (
             <Skeleton />
           ) : (
-            <div className="grid grid-cols-[100px_1fr] gap-4">
-              <Label className="w-[200px]">Taboos</Label>
+            <div className='grid grid-cols-[100px_1fr] gap-4'>
+              <Label className='w-[200px]'>Taboos</Label>
               <div>{taboos?.join(', ')}</div>
-              <Label className="w-[200px]">Score</Label>
+              <Label className='w-[200px]'>Score</Label>
               <div>{evaluation?.score}</div>
-              <Label className="w-[200px]">Explanation</Label>
+              <Label className='w-[200px]'>Explanation</Label>
               <div>{evaluation?.reasoning}</div>
-              <Label className="w-[200px]">Suggestions</Label>
+              <Label className='w-[200px]'>Suggestions</Label>
               <ol>
                 {evaluation?.examples &&
                   evaluation?.examples.map((example, idx) => (
-                    <li key={idx} className="flex items-center">
+                    <li key={idx} className='flex items-center'>
                       {idx + 1}. {example}
                     </li>
                   ))}

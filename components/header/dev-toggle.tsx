@@ -81,7 +81,11 @@ const DevToggle = () => {
             },
           ],
           conversations: [
-            { role: 'user', content: 'Sample user input: ' + target, timestamp: new Date().toISOString() },
+            {
+              role: 'user',
+              content: 'Sample user input: ' + target,
+              timestamp: new Date().toISOString(),
+            },
             {
               role: 'assistant',
               content: 'Sample response: ' + target,
@@ -112,88 +116,88 @@ const DevToggle = () => {
   return user && user?.is_dev ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton tooltip="Open Dev Menu">
+        <IconButton tooltip='Open Dev Menu'>
           <Bot />
         </IconButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col justify-center gap-2 p-2">
-        <div className="flex w-full flex-row items-center justify-center gap-2">
+      <DropdownMenuContent className='flex flex-col justify-center gap-2 p-2'>
+        <div className='flex w-full flex-row items-center justify-center gap-2'>
           <Switch
-            id="dev-toggle"
-            aria-label="Toggle for development mode"
-            name="dev-toggle"
+            id='dev-toggle'
+            aria-label='Toggle for development mode'
+            name='dev-toggle'
             checked={devOn}
             onCheckedChange={onDevToggle}
           />
-          <label htmlFor="dev-toggle">Dev Mode</label>
+          <label htmlFor='dev-toggle'>Dev Mode</label>
         </div>
         {devOn && (
           <>
             <fieldset
-              id="response-mode"
-              className="w-full rounded-lg border-[1px] border-primary bg-card p-4 leading-none text-primary"
+              id='response-mode'
+              className='w-full rounded-lg border-[1px] border-primary bg-card p-4 leading-none text-primary'
             >
-              <h2 className="mb-4 font-bold">Server Response Mode</h2>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-row items-center gap-2">
+              <h2 className='mb-4 font-bold'>Server Response Mode</h2>
+              <div className='flex flex-col gap-2'>
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
-                    id="response-success"
-                    aria-label="Toggle for response success mode"
-                    name="response-success"
+                    id='response-success'
+                    aria-label='Toggle for response success mode'
+                    name='response-success'
                     onCheckedChange={(checked) => {
                       if (checked) {
                         onModeChange(1);
                       }
                     }}
                     checked={selectedMode === 1}
-                    value="1"
+                    value='1'
                   />
-                  <label htmlFor="response-success">success</label>
+                  <label htmlFor='response-success'>success</label>
                 </div>
-                <div className="flex flex-row items-center gap-2">
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
-                    id="response-nomatch"
-                    aria-label="Toggle for response no match mode"
-                    name="response-nomatch"
+                    id='response-nomatch'
+                    aria-label='Toggle for response no match mode'
+                    name='response-nomatch'
                     onCheckedChange={(checked) => {
                       if (checked) {
                         onModeChange(2);
                       }
                     }}
                     checked={selectedMode === 2}
-                    value="2"
+                    value='2'
                   />
-                  <label htmlFor="response-nomatch">no-match</label>
+                  <label htmlFor='response-nomatch'>no-match</label>
                 </div>
-                <div className="flex flex-row items-center gap-2">
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
-                    id="response-overload"
-                    aria-label="Toggle for overloaded mode"
-                    name="response-overload"
+                    id='response-overload'
+                    aria-label='Toggle for overloaded mode'
+                    name='response-overload'
                     onCheckedChange={(checked) => {
                       if (checked) {
                         onModeChange(3);
                       }
                     }}
                     checked={selectedMode === 3}
-                    value="3"
+                    value='3'
                   />
-                  <label htmlFor="response-overload">overloaded</label>
+                  <label htmlFor='response-overload'>overloaded</label>
                 </div>
-                <div className="flex flex-row items-center gap-2">
+                <div className='flex flex-row items-center gap-2'>
                   <Checkbox
-                    id="response-error"
-                    aria-label="Toggle for server error mode"
-                    name="response-error"
+                    id='response-error'
+                    aria-label='Toggle for server error mode'
+                    name='response-error'
                     onCheckedChange={(checked) => {
                       if (checked) {
                         onModeChange(4);
                       }
                     }}
                     checked={selectedMode === 4}
-                    value="4"
+                    value='4'
                   />
-                  <label htmlFor="response-error">error</label>
+                  <label htmlFor='response-error'>error</label>
                 </div>
               </div>
             </fieldset>
