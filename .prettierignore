@@ -30,3 +30,5 @@ robots.txt
 example.txt
 ui-debug.log
 .firebaserc
+
+/lib/supabase/__generated__/**
