@@ -78,7 +78,7 @@ jobs:
   vercel_deploy:
     name: Deploy preview on vercel
     runs-on: ubuntu-latest
-    needs: [ lint_and_test, supabase_deploy ]
+    needs: [ lint_and_test, supabase_test ]
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
