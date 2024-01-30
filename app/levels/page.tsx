@@ -19,18 +19,20 @@ export default async function LevelsPage(props: LevelsPageProps) {
   const selectedSorter = sort ?? 'create-new';
 
   // filter levels by search term
-  const filteredLevels = levels.filter((level) => {
-    if (!searchTerm) return true;
-    return (
-      level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (level.created_by && level.created_by.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  }).filter((level) => level.is_verified);
+  const filteredLevels = levels
+    .filter((level) => {
+      if (!searchTerm) return true;
+      return (
+        level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (level.created_by && level.created_by.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    })
+    .filter((level) => level.is_verified);
   const sortedLevels = [...filteredLevels].sort(LevelUtils.getCompareFn(selectedSorter));
 
   return (
-    <section className="flex h-full w-full flex-col overflow-y-hidden">
-      <div className="h-30 w-full border border-b-primary bg-card px-4 py-4 lg:px-12">
+    <section className='flex h-full w-full flex-col overflow-y-hidden'>
+      <div className='h-30 w-full border border-b-primary bg-card px-4 py-4 lg:px-12'>
         <LevelsSearchBar topicNumber={filteredLevels.length} />
       </div>
       <LevelsScrollArea>
