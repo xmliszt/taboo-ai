@@ -6,11 +6,11 @@ import { BookMarked, BookPlus, CircleUser, PenSquare, Quote, User, View } from '
 import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
+import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
 import { login } from '@/components/header/server/login';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 import { HomeMenuButton } from '../home-menu-button';
-import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
 
 interface HomeMenuButtonData {
   key: string;
@@ -118,11 +118,11 @@ export default function HomeMenuButtonArray() {
         visible: user?.is_dev ?? false,
       },
     ],
-    [user],
+    [user]
   );
 
   return (
-    <section className="mx-4 mb-2 mt-4 flex max-w-[400px] flex-col gap-4">
+    <section className='mx-4 mb-2 mt-4 flex max-w-[400px] flex-col gap-4'>
       {homeMenuButtonData.map(
         (data) =>
           data.visible && (
@@ -135,7 +135,7 @@ export default function HomeMenuButtonArray() {
               onClick={data.onClick}
               aria-label={data.ariaLabel}
             />
-          ),
+          )
       )}
     </section>
   );

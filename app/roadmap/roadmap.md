@@ -23,7 +23,7 @@
 
 ### 19 Nov 2023 - V3.1.2
 
-- Profile page has a new section for user to view the played topics and quick access to play them!
+- Profile page has a new section for users to view the played topics and quick access to play them!
 - Update some information on the app
 - Update greeting messages
 - Fix issue where nickname is not in sync
@@ -32,22 +32,22 @@
 
 ### 18 Nov 2023 - V3.1.1
 
-- Topics page can toggle to view best score and top scorer instead
-- Profile page add Privacy Settings section for user to toggle anonymity option
-- Topics page add scrollbar for easier navigation
+- Topics page can toggle to view the best score and top scorer instead
+- Profile page adds a Privacy Settings section for user to toggle an anonymity option
+- Topics page adds scrollbar for easier navigation
 
 ### 16 Nov 2023 - V3.1.0
 
 - AI Evaluation with Feedback Improvements
-- Profile Page opened (for signed in user)
-- Change nickname at profile page (for signed in user)
-- View 5 past games (for signed in user)
-- View game statistics (for signed in user)
+- Profile Page opened (for signed-in user)
+- Change nickname at profile page (for signed-in user)
+- View 5 past games (for signed-in user)
+- View game statistics (for signed-in user)
 
 ### 05 Nov 2023 - V3.0.14
 
 - Smart AI score evaluation
-- New page /about for quick introdution to Taboo AI
+- New page /about for quick introduction to Taboo AI
 
 ### 04 Nov 2023 - V3.0.13
 
@@ -67,9 +67,9 @@
 
 ### 21 Oct 2023 - V3.0.10
 
-- Better sharing of result with Taboo AI Share Card!
+- Better sharing of results with Taboo AI Share Card!
 - Result improved with star ratings. Better visualization of how the player performed.
-- Include newsletter link to subscribe from SubStack.
+- Include a newsletter link to subscribe from SubStack.
 
 ### 19 Oct 2023 - V3.0.9
 
@@ -83,7 +83,7 @@
 
 ### 30 Sep 2023 - V3.0.7
 
-- Dynamic sitemap endpoint for other file type
+- Dynamic sitemap endpoint for other file types
 - Upgrade nextjs to 13.5
 
 ### 27 Sep 2023 - V3.0.6
@@ -167,7 +167,7 @@
 - Removed "Daily Challenge" and "Leaderboard".
 - Added non-intrusive, closeable ads.
 - Added instructions on how to install Taboo AI as Progressive Web App (PWA) on Home Screen.
-- Added "Contact Me" section, for players to submit custom word list, or any feedbacks.
+- Added "Contact Me" section, for players to submit custom word list, or any feedback.
 
 ## 06 Jul - Release Notes (V2.6)
 
@@ -186,7 +186,7 @@
 
 ## 17 Jun - Release Notes (V2.3)
 
-- **Recovery Key** now can be copied directly by clicking on your **nickname** once signed in, on Home Page.
+- **Recovery Key** now can be copied directly by clicking on your **nickname** once signed in, on the Home Page.
 - Remove `/daily-challenge/loading`
 
 ## 31 May - Release Notes (V2.2)
@@ -228,7 +228,7 @@
 - Version number indicator to inform players about version updates.
 - **OpenAI API free trial ended**. Started paid subscription to continue use the Curie model to provide users with
   smooth gameplay experience.
-- Added **"Buy Me Coffee"** to call for kind supports from the players. If you like this game, can buy me a coffee so
+- Added **"Buy Me Coffee"** to call for kind support from the players. If you like this game, can buy me a coffee so
   that I can continue to maintain the game and update it to bring more fun and exciting features to you! **Thank you for
   your kind support** ❤️!
 - Disclaimer for possible internet hiccups due to the **overloaded OpenAI service**.
@@ -265,10 +265,9 @@
 
 - Taboo AI **first release**!
 - **Pre-defined topics** of taboo words.
-- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more *
-  *customization** to the game.
+- **AI mode** to allow player to suggest a topic and AI will generate the taboo words from that topic, providing more **customization** to the game.
 - **Timer** scoring system.
-- Integrated with **ChatGPT AI** to respond your questions.
+- Integrated with **ChatGPT AI** to respond to your questions.
 - Smart system to **match** and **verify** if you hit the taboo words or AI hits the taboo words.
 - **Result scoreboard** to revisit your journey! Sharing screenshot is provided too!
 - **Light & Dark mode**.

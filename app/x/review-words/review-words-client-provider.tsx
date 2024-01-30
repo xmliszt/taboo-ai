@@ -83,7 +83,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
           continue;
         }
         word.toLowerCase() === 'static character' &&
-        console.log('checking word: ' + word, props.words.length);
+          console.log('checking word: ' + word, props.words.length);
         if (props.words.includes(word.toLowerCase())) {
           setFullWordList((wordList) => [...wordList, word]);
         }
@@ -127,7 +127,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         }
       }
     },
-    [setTabooWords],
+    [setTabooWords]
   );
 
   const startEditWord = (idx: number) => {
@@ -196,7 +196,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
           taboos.word,
           taboos.taboos.map((w) => trim(toLower(w))),
           taboos.is_verified,
-          user?.id,
+          user?.id
         );
         selectedLevel && (await updateLevelTargetWords(selectedLevel.id, selectedLevel.words));
         setFullWordList((wordList) => [...wordList, trim(toLower(taboos.word))]);
@@ -240,7 +240,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
                 target,
                 word.taboos.map((w) => trim(toLower(w))),
                 false,
-                user?.id,
+                user?.id
               );
               setFullWordList((wordList) => [...wordList, target]);
               toast.success('Saved successfully!');
@@ -293,7 +293,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
                 selectedLevel.name ?? 'unknown',
                 selectedLevel.author.email,
                 'reject',
-                rejectionReason,
+                rejectionReason
               );
               toast.success('Verification rejection email sent successfully!');
             } catch (error) {
@@ -315,7 +315,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   };
 
   const resendVerifyEmail = async (
-    level: FetchAllLevelsAndAuthorsReturnTypeSingle | undefined = undefined,
+    level: FetchAllLevelsAndAuthorsReturnTypeSingle | undefined = undefined
   ) => {
     if (!level) {
       toast.error('Unable to resend verification email as no level is selected!');
@@ -376,14 +376,14 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
   };
 
   if (!user || !user.is_dev) {
-    return <section className="flex h-full w-full items-center justify-center"></section>;
+    return <section className='flex h-full w-full items-center justify-center'></section>;
   }
 
   return (
-    <main className="flex flex-col items-center gap-4 py-4 leading-snug">
+    <main className='flex flex-col items-center gap-4 py-4 leading-snug'>
       {selectedLevel && (
         <>
-          <div className="flex flex-wrap justify-center gap-2 p-2">
+          <div className='flex flex-wrap justify-center gap-2 p-2'>
             <Badge variant={selectedLevel?.is_verified ? 'default' : 'destructive'}>
               {selectedLevel?.is_verified ? 'Verified' : 'Not Verified'}
             </Badge>
@@ -396,16 +396,16 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
             {selectedLevel?.is_new && <Badge>NEW</Badge>}
           </div>
           {selectedLevel.author && (
-            <div className="flex flex-wrap justify-center gap-2 p-2">
+            <div className='flex flex-wrap justify-center gap-2 p-2'>
               <div>From: {selectedLevel.author.email}</div>
             </div>
           )}
         </>
       )}
-      <div className="w-full px-8">
-        <Select name="level" value={selectedLevel?.name} onValueChange={onLevelSelected}>
+      <div className='w-full px-8'>
+        <Select name='level' value={selectedLevel?.name} onValueChange={onLevelSelected}>
           <SelectTrigger>
-            <SelectValue placeholder="Select A Topic to Review" className="text-primary">
+            <SelectValue placeholder='Select A Topic to Review' className='text-primary'>
               <b>{selectedLevel?.name}</b>
               {(selectedLevel?.author?.nickname || selectedLevel?.author?.name) && (
                 <span>
@@ -415,8 +415,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
               )}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent
-            className="max-h-[var(--radix-select-content-available-height)] w-[var(--radix-select-trigger-width)]">
+          <SelectContent className='max-h-[var(--radix-select-content-available-height)] w-[var(--radix-select-trigger-width)]'>
             {props.levels.map((level, idx) => (
               <SelectItem key={idx} value={level.id}>
                 <b>{level?.name}</b>
@@ -431,9 +430,9 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full px-8">
+      <div className='w-full px-8'>
         <Input
-          className="h-full w-full"
+          className='h-full w-full'
           value={
             currentEditingTargetWordIndex !== undefined
               ? selectedLevel?.words[currentEditingTargetWordIndex]
@@ -443,20 +442,20 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
           disabled={
             !selectedLevel || currentEditingTargetWordIndex === undefined || !isPageInteractive
           }
-          placeholder="Pick a word to edit..."
-          type="text"
+          placeholder='Pick a word to edit...'
+          type='text'
         />
       </div>
-      <div className="flex min-h-[200px] w-10/12 flex-wrap gap-4 overflow-y-auto rounded-lg p-8 shadow-lg">
+      <div className='flex min-h-[200px] w-10/12 flex-wrap gap-4 overflow-y-auto rounded-lg p-8 shadow-lg'>
         {selectedLevel?.words.map((word, idx) => (
-          <div key={idx} className="relative w-auto">
+          <div key={idx} className='relative w-auto'>
             <Button
               disabled={!isPageInteractive}
               className={cn(
                 fullWordList.map((w) => trim(toLower(w))).includes(trim(toLower(word)))
                   ? '!bg-green-500 !text-black'
                   : '!bg-yellow-500 !text-black',
-                currentEditingTargetWordIndex === idx ? '!border-1 !border-white' : '',
+                currentEditingTargetWordIndex === idx ? '!border-1 !border-white' : ''
               )}
               key={idx}
               onClick={() => {
@@ -470,26 +469,26 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
               <>
                 <IconButton
                   asChild
-                  tooltip="Ask AI for Taboo Words again"
-                  aria-label="refresh"
+                  tooltip='Ask AI for Taboo Words again'
+                  aria-label='refresh'
                   disabled={!isPageInteractive}
-                  className="absolute -left-4 -top-5 rounded-full bg-yellow-500"
-                  id="refresh"
-                  data-style="none"
+                  className='absolute -left-4 -top-5 rounded-full bg-yellow-500'
+                  id='refresh'
+                  data-style='none'
                   onClick={() => {
                     void refreshWord(word);
                   }}
                 >
-                  <RefreshCcw size={15} color="black" />
+                  <RefreshCcw size={15} color='black' />
                 </IconButton>
                 <IconButton
                   asChild
-                  tooltip="Delete"
-                  aria-label="delete"
+                  tooltip='Delete'
+                  aria-label='delete'
                   disabled={!isPageInteractive}
-                  className="absolute -right-3 -top-5 rounded-full"
-                  variant="destructive"
-                  id="delete"
+                  className='absolute -right-3 -top-5 rounded-full'
+                  variant='destructive'
+                  id='delete'
                   onClick={() => {
                     void deleteTargetWord(idx);
                   }}
@@ -502,7 +501,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         ))}
         <IconButton
           asChild
-          tooltip="Add target word"
+          tooltip='Add target word'
           disabled={
             !isPageInteractive ||
             !selectedLevel ||
@@ -514,14 +513,14 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         </IconButton>
       </div>
       <Separator />
-      <div className="flex w-10/12 flex-wrap gap-4">
+      <div className='flex w-10/12 flex-wrap gap-4'>
         {taboos?.taboos.map((word, idx) => (
-          <div key={idx} className="relative w-auto">
+          <div key={idx} className='relative w-auto'>
             <Button
               disabled={!isPageInteractive}
-              variant="outline"
+              variant='outline'
               className={cn(
-                currentEditingTabooWordIndex === idx ? 'border-2 border-yellow-500' : '',
+                currentEditingTabooWordIndex === idx ? 'border-2 border-yellow-500' : ''
               )}
               onClick={() => {
                 startEditWord(idx);
@@ -531,12 +530,12 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
             </Button>
             <IconButton
               asChild
-              tooltip="Delete"
-              aria-label="delete"
+              tooltip='Delete'
+              aria-label='delete'
               disabled={!isPageInteractive}
-              className="absolute -right-3 -top-4 rounded-full"
-              id="delete"
-              variant="destructive"
+              className='absolute -right-3 -top-4 rounded-full'
+              id='delete'
+              variant='destructive'
               onClick={() => {
                 deleteWord(idx);
               }}
@@ -546,36 +545,36 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
           </div>
         ))}
       </div>
-      <div className="flex w-full flex-row items-center gap-2 px-2">
+      <div className='flex w-full flex-row items-center gap-2 px-2'>
         <Input
           disabled={
             (taboos?.taboos.length ?? 0) <= 0 ||
             (currentEditingTabooWordIndex && currentEditingTabooWordIndex < 0) ||
             !isPageInteractive
           }
-          placeholder="Pick a word to edit..."
-          type="text"
+          placeholder='Pick a word to edit...'
+          type='text'
           onChange={onEdit}
           value={
             currentEditingTabooWordIndex !== undefined
               ? taboos?.taboos[currentEditingTabooWordIndex]
               : ''
           }
-          className="h-12 grow text-xl"
+          className='h-12 grow text-xl'
         />
         <IconButton
           asChild
-          tooltip="Add taboo word"
-          aria-label="add word"
+          tooltip='Add taboo word'
+          aria-label='add word'
           disabled={
             !isPageInteractive ||
             currentEditingTargetWordIndex === undefined ||
             currentEditingTargetWordIndex < 0 ||
             !taboos?.taboos.every((s) => s.length > 0)
           }
-          className="rounded-full drop-shadow-lg"
-          id="add"
-          data-style="none"
+          className='rounded-full drop-shadow-lg'
+          id='add'
+          data-style='none'
           onClick={addNewWord}
         >
           <Plus />
@@ -587,28 +586,28 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         </div>
       )}
       <Separator />
-      <div className="grid w-10/12 grid-cols-2 gap-4">
+      <div className='grid w-10/12 grid-cols-2 gap-4'>
         <Button
           disabled={
             !isPageInteractive ||
             !selectedLevel?.words.every((s) => s.length > 0) ||
             !taboos?.taboos.every((s) => s.length > 0)
           }
-          className="flex-grow bg-green-500 text-black"
+          className='flex-grow bg-green-500 text-black'
           onClick={onSave}
         >
           SAVE
         </Button>
         <Button
           disabled={!isPageInteractive || !selectedLevel?.words.every((s) => s.length > 0)}
-          className="flex-grow bg-yellow-500 text-black"
+          className='flex-grow bg-yellow-500 text-black'
           onClick={generateForAll}
         >
           AUTO GENERATE
         </Button>
         <Button
           disabled={!isPageInteractive}
-          className="flex-grow"
+          className='flex-grow'
           onClick={() => {
             void setLevelIsNew(true);
           }}
@@ -617,18 +616,18 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         </Button>
         <Button
           disabled={!isPageInteractive}
-          className="flex-grow"
+          className='flex-grow'
           onClick={() => {
             void setLevelIsNew(false);
           }}
-          variant="destructive"
+          variant='destructive'
         >
           SET NOT NEW
         </Button>
         {!selectedLevel?.is_verified ? (
           <Button
             disabled={!isPageInteractive || isSendingVerifyingEmail}
-            className="flex-grow"
+            className='flex-grow'
             onClick={setVerifyLevel}
           >
             VERIFY
@@ -636,7 +635,7 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         ) : (
           <Button
             disabled={!isPageInteractive || isSendingVerifyingEmail}
-            className="flex-grow"
+            className='flex-grow'
             onClick={() => {
               void resendVerifyEmail(selectedLevel);
             }}
@@ -646,33 +645,33 @@ const DevReviewWordsPage = (props: DevReviewWordsPageProps) => {
         )}
         <Button
           disabled={!isPageInteractive || isSendingRejectingEmail}
-          className="flex-grow"
+          className='flex-grow'
           onClick={() => {
             setRejectConfirmationOpen(true);
           }}
-          variant="destructive"
+          variant='destructive'
         >
           REJECT
         </Button>
       </div>
-      <div className="mt-2 flex w-full flex-row items-center gap-2 px-8">
-        <Label htmlFor="reject-reason-select">Rejection Reason</Label>
+      <div className='mt-2 flex w-full flex-row items-center gap-2 px-8'>
+        <Label htmlFor='reject-reason-select'>Rejection Reason</Label>
         <Select
           value={rejectionReason}
           onValueChange={(value: RejectionReason) => {
             setRejectionReason(value);
           }}
         >
-          <SelectTrigger id="reject-reason-select">
-            <SelectValue placeholder="Choose a rejection reason" />
+          <SelectTrigger id='reject-reason-select'>
+            <SelectValue placeholder='Choose a rejection reason' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Rejection Reasons</SelectLabel>
-              <SelectItem value="inappropriate-content">Inappropriate Content</SelectItem>
-              <SelectItem value="ambiguous">Ambiguity and Lack of Clarity</SelectItem>
-              <SelectItem value="duplicate">Duplicate Topic</SelectItem>
-              <SelectItem value="insufficient-word-variety">Insufficient Word Variety</SelectItem>
+              <SelectItem value='inappropriate-content'>Inappropriate Content</SelectItem>
+              <SelectItem value='ambiguous'>Ambiguity and Lack of Clarity</SelectItem>
+              <SelectItem value='duplicate'>Duplicate Topic</SelectItem>
+              <SelectItem value='insufficient-word-variety'>Insufficient Word Variety</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

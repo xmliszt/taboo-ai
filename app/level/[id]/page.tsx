@@ -1,7 +1,7 @@
 import { LevelPageClientWrapper } from '@/app/level/[id]/level-page-client-wrapper';
 import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
-import { formatStringForDisplay } from '@/lib/utilities';
 import { incrementLevelPopularity } from '@/app/level/[id]/server/increment-level-popularity';
+import { formatStringForDisplay } from '@/lib/utilities';
 
 interface LevelPageProps {
   params: { id: string };

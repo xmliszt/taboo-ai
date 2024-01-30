@@ -1,6 +1,5 @@
 import { round } from 'lodash';
 
-
 import { getDifficultyMultipliers } from '../utilities';
 
 export const getCompletionSeconds = (completion: number): number => {

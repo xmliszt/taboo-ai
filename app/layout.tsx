@@ -4,7 +4,7 @@ import { Lora } from 'next/font/google';
 import Script from 'next/script';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
-import { AnalyticsWrapper } from '@/components/analytics-wrapper';
+import { AnalyticsProvider } from '@/components/analytics-provider';
 import { AuthProvider } from '@/components/auth-provider';
 import FeaturePopup from '@/components/custom/globals/feature-popup';
 import { LoginErrorDialog } from '@/components/custom/globals/login-error-dialog';
@@ -81,7 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <NewsletterSignupDialog />
                   </>
                 )}
-                <AnalyticsWrapper />
+                <AnalyticsProvider />
               </AuthProvider>
             </GlobalTooltipProvider>
             <Toaster closeButton />
