@@ -29,8 +29,7 @@ Visit https://taboo-ai.vercel.app/
 `npm run vercel:init`: Login to your account in vercel, bind the project and then pull in development environment variables
 `npm run vercel:pull`: Required login to vercel. Pull in development environment variables.
 `npm run vercel:dev`: Start a local development using vercel cli pulled environment (found in `.vercel/` in project root)
-`functions:deploy`: Deploy firebase cloud functions in production environment. Required login to firebase.
-`functions:deploy:preview`: Deploy firebase cloud functions in preview environment. Required login to firebase.
+`npm run gen-types`: Generate types for supabase postgres schemas
 
 # Contribute
 
@@ -47,7 +46,7 @@ When you create a PR, GitHub pipeline is automatically run to deploy a staging b
 
 ## Local Dev Environment
 
-When you clone the project, simply run `npm i && npm run dev` to start your development. You might notice certain features in the local dev version not working, for example Google Authentication, Supabase Connection. This is because you need to specify a environment file for local development and it stays in your local and never pushed to GitHub. You should create your own environment file in order for some features to work:
+When you clone the project, simply run `npm i && npm run dev` to start your development. If you are given access to Vercel proejct, then you can run `npm run vercel:dev` instead. You might notice certain features in the local dev version not working, for example Ai feature or Supabase Connection. This is because you need to specify a environment file for local development and it stays in your local and never pushed to GitHub. You should create your own environment file in order for some features to work:
 
 `.env.local`
 
@@ -67,19 +66,13 @@ SENDGRID_FROM_EMAIL=""
 VERCEL_ANALYTICS_ID=""
 VERCEL_WEB_ANALYTICS_ID=""
 
-# Firebase project settings
-NEXT_PUBLIC_FIREBASE_CLIENT_API_KEY=''
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="taboo-ai-preview.firebaseapp.com"
-NEXT_PUBLIC_FIREBASE_DATABASE_URL="https://taboo-ai-preview-default-rtdb.asia-southeast1.firebasedatabase.app"
-NEXT_PUBLIC_FIREBASE_PROJECT_ID="taboo-ai-preview"
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="taboo-ai-preview.appspot.com"
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="508144832475"
-NEXT_PUBLIC_FIREBASE_APP_ID="1:508144832475:web:61f8681bef340b04d321fe"
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=""
+# Google Gemini API
+GOOGLE_GEMINI_PRO_API_KEY=""
 
-# Firebase admin settings
-FIREBASE_CLIENT_EMAIL=""
-FIREBASE_PRIVATE_KEY=""
+# Supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=""
+NEXT_PUBLIC_SUPABASE_URL=""
+SUPABASE_SERVICE_ROLE_KEY=""
 
 # Stripe API
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=""
@@ -89,7 +82,7 @@ STRIPE_SECRET_KEY=""
 
 For any missing values in the environment sample above, if you need it, please feel free to leave me a message and I will assist you in setting up.
 
-## Why not use Vercel env?
+## Why not use Vercel env and do `vercel pull`?
 
 Yes the most convenient way is to use Vercel. However, unfortunately I'm on FREE plan in vercel so I cannot add team members in order to do so. So for now, you have to create your own local env file 😅 sorry for the inconvenience!
 
