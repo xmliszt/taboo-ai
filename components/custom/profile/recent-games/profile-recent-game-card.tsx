@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { startCase } from 'lodash';
 import { PlusCircle } from 'lucide-react';
 import moment from 'moment';
 
@@ -30,7 +31,7 @@ export function ProfileRecentGameCard({ game }: ProfileRecentGameCardProps) {
                     : 'text-left text-card-foreground'
                 }
               >
-                {game.level_name}
+                {startCase(game.level_name)}
               </CardTitle>
               <CardDescription>
                 {game.game_id == 'play-more'
