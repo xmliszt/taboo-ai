@@ -58,6 +58,7 @@ export async function createCheckoutSession(
     payment_method_collection: 'always',
     success_url: successUrl,
     cancel_url: cancelUrl,
+    allow_promotion_codes: true,
   };
 
   if (user.subscription?.customer_id) {
