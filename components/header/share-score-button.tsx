@@ -69,7 +69,7 @@ export function ShareScoreButton(props: ShareScoreButtonProps) {
                   )}
                 >
                   <h2 className='text-xl italic'>
-                    Topic: <b>{props.gameToShare.level_name}</b>
+                    Topic: <b>{startCase(props.gameToShare.level_name)}</b>
                   </h2>
                   <StarRatingBar
                     size={25}
