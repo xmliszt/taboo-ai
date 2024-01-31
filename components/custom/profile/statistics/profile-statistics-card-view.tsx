@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { startCase } from 'lodash';
 
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { fetchUserStatistics } from '@/app/profile/server/fetch-user-statistics';
@@ -46,7 +47,7 @@ export async function ProfileStatisticsCardView() {
           <ProfileStatisticsSimpleCardView
             key='best-performing-topic'
             title='Best Performing Topic'
-            value={stats.bestPerformedLevel.level_name}
+            value={startCase(stats.bestPerformedLevel.level_name)}
             actionLabel='Play This Level Again'
             href={`/level/${stats.bestPerformedLevel.level_id}`}
           />
@@ -57,7 +58,7 @@ export async function ProfileStatisticsCardView() {
             <ProfileStatisticsSimpleCardView
               key={mostFreqPlayedTopic.level_id}
               title='Most Frequently Played Topic'
-              value={mostFreqPlayedTopic.level_name}
+              value={startCase(mostFreqPlayedTopic.level_name)}
               actionLabel='Play This Level Again'
               href={`/level/${mostFreqPlayedTopic.level_id}`}
             />
