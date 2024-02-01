@@ -16,20 +16,24 @@ Visit https://taboo-ai.vercel.app/
 
 # Commands
 
-`npm run dev`: Start a local development with `.env.local`
-`npm dev:turbo`: Start a local development using experimental turbopack (not available for now)
-`npm run build`: Create a local build
-`npm run start`: Start the local server using local build
-`npm run lint`: Run eslint and stylelint on the codebase and auto-fix
-`npm run style`: Run prettier on the codebase and auto-format
-`npm run prepare`: Prepare for Husky integration (no need to run)
-`npm run test`: Run unit test
-`npm run test:e2e`: Run e2e test using Playwright
-`npm run test:e2e:trace`: Run e2e test using Playwright and generate a trace report
-`npm run vercel:init`: Login to your account in vercel, bind the project and then pull in development environment variables
-`npm run vercel:pull`: Required login to vercel. Pull in development environment variables.
-`npm run vercel:dev`: Start a local development using vercel cli pulled environment (found in `.vercel/` in project root)
-`npm run gen-types`: Generate types for supabase postgres schemas
+- `npm run dev`: Start a local development with `.env.local`
+- `npm dev:turbo`: Start a local development using experimental turbopack (not available for now)
+- `npm run build`: Create a local build
+- `npm run start`: Start the local server using local build
+- `npm run lint`: Run eslint and stylelint on the codebase
+- `npm run style`: Run prettier on the codebase and auto-format
+- `npm run test`: Run unit test
+- `npm run test:e2e`: Run e2e test using Playwright
+- `npm run test:e2e:trace`: Run e2e test using Playwright and generate a trace report
+- `npm run vercel:init`: Login to your account in vercel, bind the project and then pull in development environment variables
+- `npm run vercel:pull`: Required login to vercel. Pull in development environment variables.
+- `npm run vercel:dev`: Start a local development using vercel cli pulled environment (found in `.vercel/` in project root)
+- `npm run gen-types`: Generate types for supabase postgres schemas
+
+# Local supabase
+When you are running `npm run dev`, it is recommended that you run with a local supabase instance. For how to set up supabase for local dev, check out https://supabase.com/docs/guides/cli/local-development.
+
+Then ask me for the migration files, which you will need to populate the local postgres with existing schemas, roles and RLS policies.
 
 # Contribute
 
