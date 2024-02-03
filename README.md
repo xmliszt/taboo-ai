@@ -31,6 +31,7 @@ Visit https://taboo-ai.vercel.app/
 - `npm run gen-types`: Generate types for supabase postgres schemas
 
 # Local supabase
+
 When you are running `npm run dev`, it is recommended that you run with a local supabase instance. For how to set up supabase for local dev, check out https://supabase.com/docs/guides/cli/local-development.
 
 Then ask me for the migration files, which you will need to populate the local postgres with existing schemas, roles and RLS policies.
