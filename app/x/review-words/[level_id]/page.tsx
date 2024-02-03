@@ -19,6 +19,8 @@ type ReviewWordsLevelPageProps = {
   };
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function ReviewWordsLevelPage(props: ReviewWordsLevelPageProps) {
   const user = await fetchUserProfile();
   const [level, allWords] = await Promise.all([fetchLevel(props.params.level_id), fetchAllWords()]);
@@ -62,7 +64,7 @@ export default async function ReviewWordsLevelPage(props: ReviewWordsLevelPagePr
       </section>
       <NewLevelButtonGroup levelId={level.id} />
       {/* Edit individual target word section */}
-      <LevelWordsAccordion level={level} words={level.words} allWords={allWords} />
+      <LevelWordsAccordion level={level} words={level.words} allWords={allWords} user={user} />
       {/* Create new target word section */}
       <CreateNewTargetWordSection level={level} user={user} />
       {/* Verification section */}
