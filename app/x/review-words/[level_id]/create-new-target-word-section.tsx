@@ -71,7 +71,7 @@ export function CreateNewTargetWordSection(props: CreateNewTargetWordSectionProp
     );
   }
   return (
-    <form aria-disabled={isPending} action={submitNewTargetWord} className={'px-2'}>
+    <form action={submitNewTargetWord} className={'px-2'}>
       <h2 className={'my-2 text-center'}>New Target Word</h2>
       <Input
         autoFocus

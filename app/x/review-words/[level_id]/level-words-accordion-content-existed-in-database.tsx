@@ -119,7 +119,6 @@ export function LevelWordsAccordionContentExistedInDatabase(props: {
         />
       ))}
       <form
-        aria-disabled={isPending}
         action={(data) => {
           addNewTabooWord(data);
           setIsAddingNewTabooWord(false);

@@ -23,7 +23,6 @@ export function EditableRow(props: EditableRowProps) {
   if (isEditing) {
     return (
       <form
-        aria-disabled={props.disabled}
         action={(formData) => {
           setIsEditing(false);
           props.onSubmit(formData);
