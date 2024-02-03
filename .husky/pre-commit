@@ -6,5 +6,3 @@ npm run style
 npm run lint
 
 echo "👌  Husky - commit succeeded. Please remember to run \`supabase db pull\` to sync your local database with the latest changes in taboo-ai-preview database"
-
-git restore --staged ./supabase/config.toml
