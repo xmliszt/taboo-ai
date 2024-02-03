@@ -6,3 +6,38 @@ export const CONSTANTS = {
       'Sorry, Taboo AI is unable to generate the topic right now. Please try again.',
   },
 };
+
+export type RejectionReason =
+  | 'inappropriate-content'
+  | 'ambiguous'
+  | 'duplicate'
+  | 'insufficient-word-variety';
+
+export const REJECTIONS: Record<
+  RejectionReason,
+  {
+    title: string;
+    message: string;
+  }
+> = {
+  'inappropriate-content': {
+    title: 'Inappropriate Content',
+    message:
+      'We strive to maintain a friendly and inclusive environment for players of all ages. Unfortunately, your topic contains content that may not align with our community standards. Please feel free to submit other topics that are suitable for a wider audience.',
+  },
+  ambiguous: {
+    title: 'Ambiguity and Lack of Clarity',
+    message:
+      "Your topic's target words and associated taboo words lacked clarity, making the gameplay confusing and less enjoyable for users. To enhance the gaming experience, please consider providing more concise and clear definitions for future submissions.",
+  },
+  duplicate: {
+    title: 'Duplicate Topic',
+    message:
+      'We already have a similar topic in our database, and to avoid repetition, we have decided not to accept duplicate entries. We encourage you to explore other unique topics to share with the Taboo AI community.',
+  },
+  'insufficient-word-variety': {
+    title: 'Insufficient Word Variety',
+    message:
+      'Your submission contained limited word choices, which may limit the diversity of gameplay. Please consider adding more words or exploring broader themes for your next submission.',
+  },
+};

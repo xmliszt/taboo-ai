@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { sendEmail } from '@/lib/services/emailService';
 import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
-import { addWord } from '@/lib/services/wordService';
+import { upsertWordWithTabooWords } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
 
 import { Badge } from '../ui/badge';
@@ -64,7 +64,7 @@ export function TopicReviewSheet({
         for (let i = 0; i < tabooWords.length; i++) {
           const wordList = tabooWords[i];
           const targetWord = targetWords[i];
-          await addWord(targetWord, wordList, false, user.id);
+          await upsertWordWithTabooWords(targetWord, wordList, false, user.id);
         }
 
       await sendMyselfEmail();

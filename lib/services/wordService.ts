@@ -5,9 +5,9 @@ import { toLower, trim } from 'lodash';
 import { createServiceRoleClient } from '@/lib/utils/supabase/service-role';
 
 /**
- * Adds a word to the database
+ * Insert new word to the database
  */
-export const addWord = async (
+export const upsertWordWithTabooWords = async (
   targetWord: string,
   taboos: string[],
   isVerified = false,

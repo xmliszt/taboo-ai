@@ -2,8 +2,6 @@
 
 import 'server-only';
 
-import { AsyncReturnType } from 'type-fest';
-
 import { createServiceRoleClient } from '@/lib/utils/supabase/service-role';
 
 export async function fetchAllLevelsAndAuthors() {
@@ -14,7 +12,3 @@ export async function fetchAllLevelsAndAuthors() {
   if (fetchAllLevelsAndAuthorsResponse.error) throw fetchAllLevelsAndAuthorsResponse.error;
   return fetchAllLevelsAndAuthorsResponse.data;
 }
-
-export type FetchAllLevelsAndAuthorsReturnTypeSingle = AsyncReturnType<
-  typeof fetchAllLevelsAndAuthors
->[number];

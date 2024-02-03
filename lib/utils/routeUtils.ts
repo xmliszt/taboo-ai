@@ -109,6 +109,11 @@ export class RouteManager {
         return {
           title: 'Publications',
         };
+      case /^\/x\/review-words/.test(route):
+        return {
+          title: 'Review Words',
+          hasBackButton: true,
+        };
       default:
         return {
           title: '',
