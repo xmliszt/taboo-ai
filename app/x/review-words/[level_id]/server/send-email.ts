@@ -5,16 +5,11 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import sgMail from '@sendgrid/mail';
 
+import { RejectionReason, REJECTIONS } from '@/lib/constants';
 import { createClient } from '@/lib/utils/supabase/server';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
-
-export type RejectionReason =
-  | 'inappropriate-content'
-  | 'ambiguous'
-  | 'duplicate'
-  | 'insufficient-word-variety';
 
 async function sendExternalEmailVerificationSuccess(
   topicName: string,
@@ -46,30 +41,8 @@ async function sendExternalEmailVerificationRejection(
   fromEmail: string,
   reason: RejectionReason
 ) {
-  let reasonString = '';
-  let reasonContent = '';
-  switch (reason) {
-    case 'ambiguous':
-      reasonString = 'Ambiguity and Lack of Clarity';
-      reasonContent =
-        "Your topic's target words and associated taboo words lacked clarity, making the gameplay confusing and less enjoyable for users. To enhance the gaming experience, please consider providing more concise and clear definitions for future submissions.";
-      break;
-    case 'duplicate':
-      reasonString = 'Duplicate Topic';
-      reasonContent =
-        'We already have a similar topic in our database, and to avoid repetition, we have decided not to accept duplicate entries. We encourage you to explore other unique topics to share with the Taboo AI community.';
-      break;
-    case 'inappropriate-content':
-      reasonString = 'Inappropriate Content';
-      reasonContent =
-        'We strive to maintain a friendly and inclusive environment for players of all ages. Unfortunately, your topic contains content that may not align with our community standards. Please feel free to submit other topics that are suitable for a wider audience.';
-      break;
-    case 'insufficient-word-variety':
-      reasonString = 'Insufficient Word Variety';
-      reasonContent =
-        'Your submission contained limited word choices, which may limit the diversity of gameplay. Please consider adding more words or exploring broader themes for your next submission.';
-      break;
-  }
+  const reasonString = REJECTIONS[reason].title;
+  const reasonContent = REJECTIONS[reason].message;
   const msg = {
     to: toEmail,
     from: fromEmail,
@@ -110,19 +83,19 @@ async function sendExternalEmailVerificationRejection(
 
 export async function sendSecureEmail(
   topic: string,
-  to: string,
+  toEmail: string,
   type: 'reject' | 'verify',
   reason?: RejectionReason
 ) {
   const supabaseClient = createClient(cookies());
   const authUserResponse = await supabaseClient.auth.getUser();
-  if (authUserResponse.error) throw new Error(authUserResponse.error.message);
+  if (authUserResponse.error) throw new Error('You are not authenticated');
   const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
   if (FROM_EMAIL === undefined)
     throw new Error('Error sending email because no source email is provided');
   if (type === 'verify') {
-    await sendExternalEmailVerificationSuccess(topic, to, FROM_EMAIL);
+    await sendExternalEmailVerificationSuccess(topic, toEmail, FROM_EMAIL);
   } else if (type === 'reject' && reason !== undefined) {
-    await sendExternalEmailVerificationRejection(to, FROM_EMAIL, reason);
+    await sendExternalEmailVerificationRejection(toEmail, FROM_EMAIL, reason);
   }
 }
