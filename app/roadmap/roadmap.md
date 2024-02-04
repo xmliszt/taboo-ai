@@ -5,6 +5,7 @@
 ### 04 Feb 2024 - V3.1.6
 
 - Add feedback portal in profile and menu side bar.
+- Revamp ranking mode UI.
 - Bug fixes & UI improvements.
 
 ### 30 Jan 2024 - V3.1.5
