@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,11 +18,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-import { sendEmail } from '@/lib/services/emailService';
+import { sendEmail } from '@/lib/services/send-email';
 
 type GenericFeedbackDialogProps = {
   title: string;
-  userEmail?: string;
+  user?: UserProfile;
   description?: string;
   defaultFeedback?: string;
   onSubmit?: () => void;
@@ -37,13 +38,14 @@ type GenericFeedbackDialogProps = {
 export default function GenericFeedbackDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState<string>('Feedback');
-  const [userEmail, setUserEmail] = useState<string>();
+  const [user, setUser] = useState<UserProfile>();
   const [feedbackContent, setFeedbackContent] = useState('');
   const [description, setDescription] = useState<string>();
   const [submitLabel, setSubmitLabel] = useState<string>('Submit');
   const [cancelLabel, setCancelLabel] = useState<string>('Cancel');
   const onSubmit = useRef<() => void>();
   const onCancel = useRef<() => void>();
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const listener = EventManager.bindEvent<GenericFeedbackDialogProps>(
@@ -52,7 +54,7 @@ export default function GenericFeedbackDialog() {
         setIsOpen(true);
         setTitle(detail.title);
         setDescription(detail.description);
-        setUserEmail(detail.userEmail);
+        setUser(detail.user);
         setSubmitLabel(detail.submitLabel ?? 'Submit');
         setCancelLabel(detail.cancelLabel ?? 'Cancel');
         setFeedbackContent(detail.defaultFeedback ?? '');
@@ -65,26 +67,28 @@ export default function GenericFeedbackDialog() {
     };
   }, []);
 
-  const sendFeedback = async () => {
-    if (!userEmail || !feedbackContent) return;
-    try {
-      await sendEmail(
-        '',
-        userEmail,
-        feedbackContent,
-        `Feedback - ${title} - from ${userEmail}`,
-        `
+  const sendFeedback = () => {
+    if (!user || !feedbackContent) return;
+    startTransition(async () => {
+      try {
+        await sendEmail(
+          user.nickname ?? user.name,
+          user.email,
+          feedbackContent,
+          `Feedback - ${title} - from ${user.nickname ?? user.name} (${user.email})`,
+          `
         <h1>${title}</h1>
         <p>${description}</p>
-        <h2>From: ${userEmail}</h2>
+        <h2>From: ${user.email}</h2>
         <p>${feedbackContent}</p>
       `
-      );
-      toast.success('Your feedback has been sent. Thank you!');
-    } catch (error) {
-      console.error(error);
-      toast.error("We couldn't send your feedback at the moment. Please try again later.");
-    }
+        );
+        toast.success('Your feedback has been sent. Thank you!');
+      } catch (error) {
+        console.error(error);
+        toast.error("We couldn't send your feedback at the moment. Please try again later.");
+      }
+    });
   };
 
   return (
@@ -105,14 +109,11 @@ export default function GenericFeedbackDialog() {
               Email
             </Label>
             <Input
-              disabled={userEmail !== undefined}
+              disabled
               id='email-input'
               type='email'
               placeholder='Enter your email address'
-              value={userEmail ?? ''}
-              onChange={(e) => {
-                setUserEmail(e.target.value);
-              }}
+              value={user?.email ?? ''}
             />
           </div>
           <div className='h-2'></div>
@@ -142,7 +143,7 @@ export default function GenericFeedbackDialog() {
             {cancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction
-            disabled={!userEmail || !feedbackContent}
+            disabled={!user?.email || !feedbackContent || isPending}
             onClick={() => {
               sendFeedback();
               onSubmit.current?.();
