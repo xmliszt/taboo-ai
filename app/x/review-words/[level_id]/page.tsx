@@ -7,7 +7,7 @@ import { LevelVerificationSection } from '@/app/x/review-words/[level_id]/level-
 import { LevelWordsAccordion } from '@/app/x/review-words/[level_id]/level-words-accordion';
 import { NewLevelButtonGroup } from '@/app/x/review-words/[level_id]/new-level-button-group';
 import { NonEditableRow } from '@/app/x/review-words/[level_id]/non-editable-row';
-import { fetchAllWords } from '@/app/x/review-words/[level_id]/server/fetch-all-words';
+import { fetchWords } from '@/app/x/review-words/[level_id]/server/fetch-words';
 import { updateLevel } from '@/app/x/review-words/[level_id]/server/update-level';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -23,7 +23,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function ReviewWordsLevelPage(props: ReviewWordsLevelPageProps) {
   const user = await fetchUserProfile();
-  const [level, allWords] = await Promise.all([fetchLevel(props.params.level_id), fetchAllWords()]);
+  const level = await fetchLevel(props.params.level_id);
+  const words = await fetchWords(level.words);
 
   return (
     <ScrollArea>
@@ -64,7 +65,7 @@ export default async function ReviewWordsLevelPage(props: ReviewWordsLevelPagePr
       </section>
       <NewLevelButtonGroup levelId={level.id} />
       {/* Edit individual target word section */}
-      <LevelWordsAccordion level={level} words={level.words} allWords={allWords} user={user} />
+      <LevelWordsAccordion level={level} words={level.words} wordsInDatabase={words} user={user} />
       {/* Create new target word section */}
       <CreateNewTargetWordSection level={level} user={user} />
       {/* Verification section */}
