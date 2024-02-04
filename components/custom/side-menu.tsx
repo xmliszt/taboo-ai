@@ -3,12 +3,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { ArrowRight } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
 import { BiBook, BiCart, BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
 import { BsDiscord } from 'react-icons/bs';
 import { toast } from 'sonner';
 
+import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
 import { login } from '@/components/header/server/login';
+import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 import { useAuth } from '../auth-provider';
@@ -207,6 +210,18 @@ export default function SideMenu() {
               )
             )
           )}
+          <Button
+            variant={'outline'}
+            onClick={() => {
+              feedback({
+                title: 'Feedback',
+                description: 'How do you feel about our app? Any suggestions or bugs? Let us know!',
+                user: user,
+              });
+            }}
+          >
+            Feedback to us <ArrowRight size={15} className={'ml-2'} />{' '}
+          </Button>
           <Separator />
           <article className='flex flex-col gap-1 py-1'>
             <Link

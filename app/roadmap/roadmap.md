@@ -2,7 +2,14 @@
 
 ## Release Notes (V3.0)
 
-### 30 Jan 2023 - V3.1.5
+### 04 Feb 2024 - V3.1.6
+
+- Add feedback portal in profile and menu side bar.
+- Revamp ranking mode UI.
+- Revamp AI mode UI.
+- Bug fixes & UI improvements.
+
+### 30 Jan 2024 - V3.1.5
 
 - Important database migration from Firebase to Supabase.
 - Bug fixes & UI improvements.
@@ -11,7 +18,7 @@
 - Add "/publications" page.
 - Revamp user login and user profile page.
 
-### 01 Jan 2023 - V3.1.4
+### 01 Jan 2024 - V3.1.4
 
 - Improve log in experience.
 - Bug fixes.

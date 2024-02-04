@@ -62,16 +62,9 @@ module.exports = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'unicorn-flow': 'unicornFlow 10s ease-in-out infinite',
         'ping-once': 'ping 1s linear 1',
         'fade-out': 'fadeOut 0.5s ease-in-out',
         'fade-in': 'fadeIn 0.5s ease-in-out',
-        'carousell-20': 'moveIn 40s linear infinite',
-        'carousell-18': 'moveIn 38s linear infinite',
-        'carousell-16': 'moveIn 36s linear infinite',
-        'carousell-14': 'moveIn 34s linear infinite',
-        'carousell-12': 'moveIn 32s linear infinite',
-        'carousell-10': 'moveIn 20s linear infinite',
         'fade-inout': 'fadeInOut 1.5s ease-in-out',
         'fade-inout-first-loop': 'fadeInOut 10s ease-in-out infinite',
         'fade-inout-delay-loop': 'fadeInOut 10s ease-in-out 5s infinite',
@@ -91,10 +84,6 @@ module.exports = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: 0 },
-        },
-        unicornFlow: {
-          '0%': { 'background-position': '0% 0%' },
-          '100%': { 'background-position': '0% 100%' },
         },
         fadeOut: {
           '0%': { opacity: 100 },

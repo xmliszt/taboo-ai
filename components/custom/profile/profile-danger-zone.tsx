@@ -54,12 +54,12 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
             <CardTitle>Danger Zone</CardTitle>
           </CardHeader>
           <CardDescription>
-            Once you delete your account, there is no going back. All your data with us will be
-            permanently deleted.{' '}
+            Once you have deleted your account, there is no going back. All your data with us will
+            be permanently deleted.{' '}
             <b>
-              Your active subscription will also be cancelled. However, you ongoing paid
+              Your active subscription will also be cancelled. However, your ongoing paid
               subscription (including trial) will still be available until the end of the billing
-              cycle if you log in with the same email account again.
+              cycle when you log in with the same email account.
             </b>{' '}
             Please be certain.
           </CardDescription>
@@ -89,9 +89,9 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
               The action cannot be undone. This will permanently delete your account and remove all
               your data from our server.{' '}
               <b>
-                Your current subscription will also be cancelled automatically. However, you ongoing
-                subscription will still be available until the end of the billing cycle if you log
-                in with the same email account again.
+                Your current subscription will also be cancelled automatically. However, your
+                ongoing subscription will still be available until the end of the billing cycle when
+                you log in with the same email account.
               </b>{' '}
               This action is <b>irreversible</b>.
             </AlertDialogDescription>
@@ -99,7 +99,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <Button variant='destructive' onClick={proceedToDeleteUser}>
-              {isDeleting ? <Spinner /> : 'Continue'}
+              {isDeleting ? <Spinner /> : 'Delete my account'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

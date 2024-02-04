@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import { NicknameEditor } from '@/app/profile/nickname-editor';
 import { ProfileAlertInfo } from '@/app/profile/profile-alert-info';
+import { ProfileFeedbackFloatingButton } from '@/app/profile/profile-feedback-floating-button';
 import { ProfileScrollControl } from '@/app/profile/profile-scroll-control';
 import { fetchUserProfileWithSubscription } from '@/app/profile/server/fetch-user-profile';
 import { ConstructionBlock } from '@/components/custom/common/construction-block';
@@ -48,6 +49,7 @@ export default async function ProfilePage() {
       <ProfilePrivacySettingsCard className='w-full max-w-[500px]' user={user} />
       <ProfileSubscriptionCard className='w-full max-w-[500px]' user={user} />
       <ProfileDangerZone className='w-full max-w-[500px]' user={user} />
+      <ProfileFeedbackFloatingButton user={user} />
     </ProfileScrollControl>
   );
 }

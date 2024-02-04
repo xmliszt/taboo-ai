@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { DialogProps } from '@radix-ui/react-dialog';
 import _ from 'lodash';
 import { toast } from 'sonner';
 
 import { UserProfile } from '@/app/profile/server/fetch-user-profile';
-import { sendEmail } from '@/lib/services/emailService';
 import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
+import { sendEmail } from '@/lib/services/send-email';
 import { upsertWordWithTabooWords } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
 
@@ -43,42 +43,40 @@ export function TopicReviewSheet({
   onOpenChange,
 }: TopicReviewSheet) {
   const [nickname, setNickname] = useState(defaultNickname);
-  const [isCreatingLevel, setisCreatingLevel] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const submitNewTopic = async () => {
-    setisCreatingLevel(true);
-    try {
-      const exists = await isLevelWithSameNameSubmittedBySameUser(topicName, user.id);
-      if (exists) {
-        toast.info('You have already submitted this topic.');
-        onTopicSubmitted && onTopicSubmitted();
-        return;
-      }
-      await addLevel({
-        name: topicName,
-        difficulty: Number(difficultyLevel),
-        words: targetWords.map((w) => _.toLower(_.trim(w))),
-        createdBy: user.id,
-      });
-      if (!shouldUseAIForTabooWords)
-        for (let i = 0; i < tabooWords.length; i++) {
-          const wordList = tabooWords[i];
-          const targetWord = targetWords[i];
-          await upsertWordWithTabooWords(targetWord, wordList, false, user.id);
+    startTransition(async () => {
+      try {
+        const exists = await isLevelWithSameNameSubmittedBySameUser(topicName, user.id);
+        if (exists) {
+          toast.info('You have already submitted this topic.');
+          onTopicSubmitted && onTopicSubmitted();
+          return;
         }
+        await addLevel({
+          name: topicName,
+          difficulty: Number(difficultyLevel),
+          words: targetWords.map((w) => _.toLower(_.trim(w))),
+          createdBy: user.id,
+        });
+        if (!shouldUseAIForTabooWords)
+          for (let i = 0; i < tabooWords.length; i++) {
+            const wordList = tabooWords[i];
+            const targetWord = targetWords[i];
+            await upsertWordWithTabooWords(targetWord, wordList, false, user.id);
+          }
 
-      await sendMyselfEmail();
-      toast.success(
-        'Your topic has been submitted for review. The outcome of the submission will be notified via email.'
-      );
-      onTopicSubmitted && onTopicSubmitted();
-    } catch (error) {
-      toast.error('Sorry, we are unable to submit the topic at the moment!');
-      console.error(error);
-    } finally {
-      setisCreatingLevel(false);
-      onOpenChange && onOpenChange(false);
-    }
+        await sendMyselfEmail();
+        toast.success(
+          'Your topic has been submitted for review. The outcome of the submission will be notified via email.'
+        );
+        onTopicSubmitted && onTopicSubmitted();
+      } catch (error) {
+        toast.error('Sorry, we are unable to submit the topic at the moment!');
+        console.error(error);
+      }
+    });
   };
 
   const sendMyselfEmail = async () => {
@@ -169,6 +167,7 @@ export function TopicReviewSheet({
         <div className='my-4 flex flex-col gap-2'>
           <Label htmlFor='nickname-input'>Nickname: </Label>
           <Input
+            disabled={isPending}
             id='nickname-input'
             value={nickname}
             maxLength={20}
@@ -183,13 +182,13 @@ export function TopicReviewSheet({
           </p>
         </div>
         <div className='flex justify-center'>
-          {isCreatingLevel ? (
+          {isPending ? (
             <Button disabled>
               <Spinner />
             </Button>
           ) : (
             <Button
-              disabled={_.trim(nickname).length <= 0}
+              disabled={_.trim(nickname).length <= 0 || isPending}
               className='mb-4'
               aria-label='click to submit the topic created'
               onClick={submitNewTopic}

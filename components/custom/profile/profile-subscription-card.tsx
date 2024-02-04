@@ -260,7 +260,7 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
                   title: 'Found your subscription incorrect?',
                   description:
                     'Please raise a request and we will help you resolve the issue as soon as possible.',
-                  userEmail: user?.email,
+                  user: user,
                   defaultFeedback: 'Hi! I found my subscription incorrect.',
                 });
               }}
@@ -283,14 +283,14 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
               Are you absolutely sure?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This will cancel your ongoing subscription and you will lose access to all the paid
+              This will cancel your ongoing subscription and you will lose access to all paid
               features after your current subscription period ends.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <Button variant='destructive' onClick={proceedToCancelSubscription}>
-              {isCancellingSubscription ? <Spinner /> : 'Continue'}
+              {isCancellingSubscription ? <Spinner /> : 'Cancel my subscription'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

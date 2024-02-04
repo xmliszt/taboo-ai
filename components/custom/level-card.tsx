@@ -151,59 +151,71 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
   };
 
   return (
-    <Card
-      onPointerDown={() => {
-        setPointHasDown(true);
-      }}
-      onClick={() => {
-        if (pointHasDown) {
-          goToLevel();
-          setPointHasDown(false);
-        }
-      }}
-      className={cn(
-        'group/level-card',
-        isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
-          ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
-          : '',
-        isAIMode ? 'unicorn-color' : '',
-        isLocked ? 'hover:-rotate-[5deg]' : 'hover:scale-[1.02]',
-        'relative flex h-auto w-full cursor-pointer flex-col shadow-md transition-all ease-in-out sm:min-h-[300px] sm:w-[200px]'
-      )}
-    >
-      {isLocked && (
-        <div
-          className={cn(
-            'absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-black bg-opacity-60 p-4 leading-normal text-white',
-            isLocked ? 'group-hover/level-card:rotate-[10deg]' : '',
-            'transition-transform ease-in-out'
-          )}
-        >
-          <Lock size={40} color='#eeeeee' strokeWidth={2} />
-          <div>You need a PRO subscription to access this content</div>
-        </div>
-      )}
-      <CardHeader>
-        <div
-          className={cn(
-            'text-md rounded-lg bg-primary p-2 font-extrabold leading-tight text-primary-foreground shadow-md transition-transform ease-in-out',
-            'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
-          )}
-        >
-          {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
-        </div>
-      </CardHeader>
-      <CardContent className='relative'>
-        {isShowingRank ? renderRankingContent() : renderCardContent()}
-      </CardContent>
-      <div className='h-auto w-full flex-grow'></div>
-      {level?.created_by && (
-        <CardFooter>
-          <div className='w-full text-right italic leading-snug'>
-            by <span className='font-extrabold'>{level.created_by}</span>
+    <div className={'group/level-card relative h-auto min-h-[300px] w-[200px] cursor-pointer'}>
+      <Card
+        onPointerDown={() => {
+          setPointHasDown(true);
+        }}
+        onClick={() => {
+          if (pointHasDown) {
+            goToLevel();
+            setPointHasDown(false);
+          }
+        }}
+        className={cn(
+          'z-10',
+          isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
+            ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
+            : '',
+          isLocked
+            ? 'group-hover/level-card:-rotate-[5deg]'
+            : 'group-hover/level-card:scale-[1.02]',
+          'relative flex h-full w-full cursor-pointer flex-col shadow-md transition-all ease-in-out'
+        )}
+      >
+        {isLocked && (
+          <div
+            className={cn(
+              'absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-black bg-opacity-80 p-4 leading-normal text-white',
+              isLocked ? 'group-hover/level-card:rotate-[10deg]' : '',
+              'transition-transform ease-in-out'
+            )}
+          >
+            <Lock size={40} color='#eeeeee' strokeWidth={2} />
+            <div>You need a PRO subscription to access this content</div>
           </div>
-        </CardFooter>
+        )}
+        <CardHeader>
+          <div
+            className={cn(
+              'text-md rounded-lg bg-primary p-2 font-extrabold leading-tight text-primary-foreground shadow-md transition-transform ease-in-out',
+              !isLocked &&
+                'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150',
+              isLocked ? 'opacity-50' : ''
+            )}
+          >
+            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
+          </div>
+        </CardHeader>
+        <CardContent className='relative'>
+          {isShowingRank ? renderRankingContent() : renderCardContent()}
+        </CardContent>
+        <div className='h-auto w-full flex-grow'></div>
+        {level?.created_by && (
+          <CardFooter>
+            <div className='w-full text-right italic leading-snug'>
+              by <span className='font-extrabold'>{level.created_by}</span>
+            </div>
+          </CardFooter>
+        )}
+      </Card>
+      {isAIMode && (
+        <span
+          className={
+            'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg group-hover/level-card:-rotate-[5deg]'
+          }
+        ></span>
       )}
-    </Card>
+    </div>
   );
 }
