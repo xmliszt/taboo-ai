@@ -18,7 +18,7 @@ import { LevelWordsAccordionContentExistedInDatabase } from './level-words-accor
 type LevelWordsAccordionProps = {
   level: AsyncReturnType<typeof fetchLevel>;
   words: string[];
-  allWords: Database['public']['Tables']['words']['Row'][];
+  wordsInDatabase: Database['public']['Tables']['words']['Row'][];
   user?: UserProfile;
 };
 
@@ -31,7 +31,7 @@ export function LevelWordsAccordion(props: LevelWordsAccordionProps) {
             <div className={'flex flex-row items-center gap-4'}>
               {word}
               <Badge variant={'outline'}>
-                {props.allWords.find((w) => w.word === word)?.is_verified
+                {props.wordsInDatabase.find((w) => w.word === word)?.is_verified
                   ? 'verified'
                   : '[x] not verified'}
               </Badge>
@@ -39,10 +39,10 @@ export function LevelWordsAccordion(props: LevelWordsAccordionProps) {
           </AccordionTrigger>
           <AccordionContent>
             <div className={'w-full border-b pb-2 text-center font-bold'}>Taboo Words</div>
-            {props.allWords.find((w) => w.word === word) ? (
+            {props.wordsInDatabase.find((w) => w.word === word) ? (
               <LevelWordsAccordionContentExistedInDatabase
                 level={props.level}
-                word={props.allWords.find((w) => w.word === word)!}
+                word={props.wordsInDatabase.find((w) => w.word === word)!}
               />
             ) : (
               <LevelWordsAccordionContentNotInDatabase
