@@ -151,7 +151,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
   };
 
   return (
-    <div className={'group/level-card relative'}>
+    <div className={'group/level-card relative h-auto min-h-[300px] w-[200px] cursor-pointer'}>
       <Card
         onPointerDown={() => {
           setPointHasDown(true);
@@ -170,7 +170,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
           isLocked
             ? 'group-hover/level-card:-rotate-[5deg]'
             : 'group-hover/level-card:scale-[1.02]',
-          'relative flex h-auto w-full cursor-pointer flex-col shadow-md transition-all ease-in-out sm:min-h-[300px] sm:w-[200px]'
+          'relative flex h-full w-full cursor-pointer flex-col shadow-md transition-all ease-in-out'
         )}
       >
         {isLocked && (
@@ -212,7 +212,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
       {isAIMode && (
         <span
           className={
-            'unicorn-color absolute left-0 top-0 -z-10 h-auto w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg group-hover/level-card:-rotate-[5deg] sm:min-h-[300px]'
+            'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg group-hover/level-card:-rotate-[5deg]'
           }
         ></span>
       )}

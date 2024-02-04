@@ -17,11 +17,7 @@ export function LevelsScrollArea({ children }: { children: React.ReactNode }) {
   const onScrollChange = (e: React.UIEvent<HTMLDivElement>) => {
     const clientHeight = document.getElementById('level-section')?.clientHeight;
     const scrollTop = e.currentTarget.scrollTop;
-    if (clientHeight && scrollTop > clientHeight) {
-      !isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(true);
-    } else {
-      isScrollToTopButtonVisible && setIsScrollToTopButtonVisible(false);
-    }
+    setIsScrollToTopButtonVisible(scrollTop > (clientHeight ?? 0));
   };
   return (
     <ScrollArea id='level-section' ref={levelSectionRef} onScroll={onScrollChange}>

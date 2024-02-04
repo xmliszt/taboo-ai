@@ -116,7 +116,7 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
         >
           <div
             className={cn(
-              'absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center rounded-sm text-center text-xs',
+              'absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-sm text-center text-xs',
               isRankingModeOn ? 'text-black' : 'bg-background text-secondary-foreground'
             )}
           >{`Let's get competitive! 🏆`}</div>
