@@ -7,7 +7,6 @@ import { isDesktop } from 'react-device-detect';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -17,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import type { SortType } from '@/lib/utils/levelUtils';
 
@@ -97,30 +95,31 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
           )}
         </form>
       </div>
-      <div className='mt-4 flex flex-row items-center justify-between'>
+      <div className='mt-2 flex flex-row items-center justify-between'>
         <Badge className='shadow-[0_5px_10px_rgba(0,0,0,0.3)]'>
           {`Found ${topicNumber} topics`}
         </Badge>
-        <div className='flex flex-row items-center gap-2'>
-          <Switch
-            id='ranking-mode-switch'
-            className={cn(isRankingModeOn ? 'shadow-[0_5px_10px_rgba(0,0,0,0.3)]' : 'shadow-none')}
-            checked={isRankingModeOn}
-            onCheckedChange={(checked) => {
-              const newSearchParams = new URLSearchParams(searchParams);
-              if (checked) newSearchParams.set('rank', checked.toString());
-              else newSearchParams.delete('rank');
-              router.replace(`${pathname}?${newSearchParams}`);
-            }}
-          />
-          <Label
-            htmlFor='ranking-mode-switch'
+        <div
+          className={cn(
+            'relative h-6 w-44 rounded-sm border border-border after:blur-lg',
+            isRankingModeOn
+              ? 'rotating-golden-gradient '
+              : 'rotating-golden-border-trace bg-background',
+            'transition-transform ease-in-out hover:scale-105 hover:cursor-pointer'
+          )}
+          onClick={() => {
+            const newSearchParams = new URLSearchParams(searchParams);
+            if (isRankingModeOn) newSearchParams.delete('rank');
+            else newSearchParams.set('rank', 'true');
+            router.replace(`${pathname}?${newSearchParams}`);
+          }}
+        >
+          <div
             className={cn(
-              isRankingModeOn ? 'font-bold text-primary' : 'font-light text-muted-foreground'
+              'absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-sm text-center text-xs',
+              isRankingModeOn ? 'text-black' : 'bg-background text-secondary-foreground'
             )}
-          >
-            Ranking Mode
-          </Label>
+          >{`Let's get competitive! 🏆`}</div>
         </div>
       </div>
     </div>

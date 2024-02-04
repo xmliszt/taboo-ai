@@ -1,6 +1,13 @@
 'use client';
 
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import _, { zip } from 'lodash';
 import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
@@ -34,7 +41,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { sendEmail } from '@/lib/services/emailService';
+import { sendEmail } from '@/lib/services/send-email';
 import { fetchWord } from '@/lib/services/wordService';
 import { cn } from '@/lib/utils';
 
@@ -61,11 +68,11 @@ const AddLevelPage = () => {
   const [targetWordsErrorIndexs, setTargetWordsErrorIndexs] = useState<number[]>([]);
   const [tabooWordsErrorMessages, setTabooWordsErrorMessages] = useState<string[]>([]);
   const [tabooWordsErrorIndexs, setTabooWordsErrorIndexs] = useState<number[][]>([]);
+  const [isPending, startTransition] = useTransition();
 
   //ANCHOR - States for appeal
   const [selectedWordForAppeal, setSelectedWordForAppeal] = useState('');
   const [isAppealModalOpen, setIsAppealModalOpen] = useState(false);
-  const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
   const [appealReasons, setAppealReasons] = useState('');
   const [appealReasonErrorMessage, setAppealReasonErrorMessage] = useState('');
 
@@ -371,28 +378,28 @@ const AddLevelPage = () => {
     setIsAppealModalOpen(true);
   };
 
-  const submitAppeal = async (forTarget: string) => {
+  const submitAppeal = (forTarget: string) => {
     validateAppealReason(appealReasons);
     if (appealReasons.length <= 0 || !user?.email) return;
-    setIsSubmittingAppeal(true);
-    try {
-      await sendEmail(
-        '',
-        user.email,
-        appealReasons,
-        `Taboo AI Taboo Words Appeal Request for [${forTarget}] from ${user.email}`
-      );
-      toast.success('Appeal submitted successfully! We will get in touch with you soon!');
-      setAppealReasons('');
-    } catch (error) {
-      toast.error(
-        'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!'
-      );
-      console.error(error);
-    } finally {
-      setIsSubmittingAppeal(false);
-      setIsAppealModalOpen(false);
-    }
+    startTransition(async () => {
+      try {
+        await sendEmail(
+          user.nickname || user.name,
+          user.email,
+          appealReasons,
+          `Taboo AI Taboo Words Appeal Request for [${forTarget}] from ${user.email}`
+        );
+        toast.success('Appeal submitted successfully! We will get in touch with you soon!');
+        setAppealReasons('');
+      } catch (error) {
+        toast.error(
+          'Sorry, something went wrong. We are unable to submit your appeal request. Please try again later!'
+        );
+        console.error(error);
+      } finally {
+        setIsAppealModalOpen(false);
+      }
+    });
   };
 
   const reset = () => {
@@ -783,16 +790,16 @@ const AddLevelPage = () => {
             onChange={onAppealReasonChange}
           />
           <DialogFooter>
-            {isSubmittingAppeal ? (
+            {isPending ? (
               <Button disabled>
                 <Spinner />
               </Button>
             ) : (
               <Button
-                disabled={appealReasons.length <= 0 || appealReasonErrorMessage.length > 0}
-                onClick={() => {
-                  void submitAppeal(selectedWordForAppeal);
-                }}
+                disabled={
+                  appealReasons.length <= 0 || appealReasonErrorMessage.length > 0 || isPending
+                }
+                onClick={() => submitAppeal(selectedWordForAppeal)}
               >
                 Submit Appeal
               </Button>
