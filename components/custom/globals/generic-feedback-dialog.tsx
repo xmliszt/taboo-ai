@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { validate } from 'email-validator';
 import { toast } from 'sonner';
 
 import { UserProfile } from '@/app/profile/server/fetch-user-profile';
@@ -39,6 +40,7 @@ export default function GenericFeedbackDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState<string>('Feedback');
   const [user, setUser] = useState<UserProfile>();
+  const [customEmail, setCustomEmail] = useState('');
   const [feedbackContent, setFeedbackContent] = useState('');
   const [description, setDescription] = useState<string>();
   const [submitLabel, setSubmitLabel] = useState<string>('Submit');
@@ -68,18 +70,20 @@ export default function GenericFeedbackDialog() {
   }, []);
 
   const sendFeedback = () => {
-    if (!user || !feedbackContent) return;
+    if (!feedbackContent) return;
+    if (!user && !customEmail) return;
+    const name = user?.nickname ?? user?.name ?? 'Unknown';
     startTransition(async () => {
       try {
         await sendEmail(
-          user.nickname ?? user.name,
-          user.email,
+          name,
+          user?.email ?? customEmail,
           feedbackContent,
-          `Feedback - ${title} - from ${user.nickname ?? user.name} (${user.email})`,
+          `Feedback - ${title} - from ${name} (${user?.email ?? customEmail})`,
           `
         <h1>${title}</h1>
         <p>${description}</p>
-        <h2>From: ${user.email}</h2>
+        <h2>From: ${user?.email ?? customEmail}</h2>
         <p>${feedbackContent}</p>
       `
         );
@@ -109,11 +113,14 @@ export default function GenericFeedbackDialog() {
               Email
             </Label>
             <Input
-              disabled
+              disabled={user?.email !== undefined}
               id='email-input'
               type='email'
               placeholder='Enter your email address'
-              value={user?.email ?? ''}
+              value={user?.email ?? customEmail}
+              onChange={(e) => {
+                setCustomEmail(e.target.value);
+              }}
             />
           </div>
           <div className='h-2'></div>
@@ -143,7 +150,12 @@ export default function GenericFeedbackDialog() {
             {cancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction
-            disabled={!user?.email || !feedbackContent || isPending}
+            disabled={
+              !feedbackContent ||
+              isPending ||
+              (!user && !customEmail) ||
+              (!user && !validate(customEmail))
+            }
             onClick={() => {
               sendFeedback();
               onSubmit.current?.();
