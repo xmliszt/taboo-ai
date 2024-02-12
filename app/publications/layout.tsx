@@ -3,12 +3,12 @@ import { Metadata } from 'next';
 import { Footer } from '../footer';
 
 export const metadata: Metadata = {
-  title: 'Taboo AI: Install App',
+  title: 'Taboo AI: Publications',
   alternates: {
-    canonical: '/pwa',
+    canonical: '/publications',
   },
   openGraph: {
-    url: 'https://taboo-ai.vercel.app/pwa',
+    url: 'https://taboo-ai.vercel.app/publications',
   },
 };
 

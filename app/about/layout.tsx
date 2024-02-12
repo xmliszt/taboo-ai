@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { Footer } from '../footer';
+
 export const metadata: Metadata = {
   title: 'About Taboo AI',
   alternates: {
@@ -11,5 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      {children}
+      <Footer />
+    </>
+  );
 }

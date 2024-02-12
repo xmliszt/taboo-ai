@@ -189,9 +189,9 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
           <div
             className={cn(
               'text-md rounded-lg bg-primary p-2 font-extrabold leading-tight text-primary-foreground shadow-md transition-transform ease-in-out',
-              !isLocked &&
-                'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150',
-              isLocked ? 'opacity-50' : ''
+              isLocked
+                ? 'opacity-50'
+                : 'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
             )}
           >
             {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
@@ -209,11 +209,20 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
           </CardFooter>
         )}
       </Card>
-      {isAIMode && (
+      {isAIMode ? (
         <span
-          className={
-            'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg group-hover/level-card:-rotate-[5deg]'
-          }
+          className={cn(
+            'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg',
+            isLocked
+              ? 'group-hover/level-card:-rotate-[5deg]'
+              : 'group-hover/level-card:scale-[1.02]'
+          )}
+        ></span>
+      ) : (
+        <span
+          className={cn(
+            'rotating-mono-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card opacity-0 transition-[transform_opacity_0.3s_ease-in-out] after:blur-lg group-hover/level-card:scale-[1.02] group-hover/level-card:opacity-100'
+          )}
         ></span>
       )}
     </div>

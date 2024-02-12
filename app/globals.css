@@ -157,18 +157,34 @@ textarea {
   z-index: 0;
   background: conic-gradient(
     from var(--gradient-angle),
-    #fd964d,
-    #fdbd4d,
-    #ffef61,
-    #ffffa9,
-    #ffef61,
-    #fdbd4d,
-    #fd964d
+    #fd674d,
+    #fda54d,
+    #ffcd61,
+    #f5c367,
+    #ffcd61,
+    #fda54d,
+    #fd674d
   );
   border-radius: inherit;
   animation: rotating 3s linear infinite forwards;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
+}
+
+.rotating-mono-border-trace::before,
+.rotating-mono-border-trace::after {
+  content: '';
+  position: absolute;
+  inset: -0.1rem;
+  z-index: 0;
+  background: conic-gradient(
+    from var(--gradient-angle),
+    hsl(var(--background)),
+    hsl(var(--foreground)),
+    hsl(var(--background))
+  );
+  border-radius: inherit;
+  animation: rotating 1.5s linear infinite forwards;
 }
 
 .unicorn-color::before,
@@ -180,18 +196,18 @@ textarea {
   border-radius: inherit;
   animation: rotating 5s linear infinite forwards;
   background: conic-gradient(
-          from var(--gradient-angle),
-          #42eca6,
-          #64b3d9,
-          #208ea2,
-          #498ada,
-          #5b73df,
-          #897ed3,
-          #5b73df,
-          #498ada,
-          #208ea2,
-          #64b3d9,
-          #42eca6
+    from var(--gradient-angle),
+    #42eca6,
+    #64b3d9,
+    #208ea2,
+    #498ada,
+    #5b73df,
+    #897ed3,
+    #5b73df,
+    #498ada,
+    #208ea2,
+    #64b3d9,
+    #42eca6
   );
 }
 
