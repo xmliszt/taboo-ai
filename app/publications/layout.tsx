@@ -3,13 +3,13 @@ import { Metadata } from 'next';
 import { Footer } from '../footer';
 
 export const metadata: Metadata = {
-  title: 'Project Roadmap',
+  title: 'Publications',
   alternates: {
-    canonical: '/roadmap',
+    canonical: '/publications',
   },
   openGraph: {
-    title: 'Taboo AI: Project Roadmap',
-    url: 'https://taboo-ai.vercel.app/roadmap',
+    title: 'Taboo AI: Publications',
+    url: 'https://taboo-ai.vercel.app/publications',
     images: [
       {
         url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',

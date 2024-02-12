@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Home } from 'lucide-react';
 
 import { BackButton } from '@/components/custom/back-button';
 import DevToggle from '@/components/header/dev-toggle';
@@ -11,6 +13,7 @@ import { UserLoginPortal } from '@/components/header/user-login-portal';
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import HeaderLeftElements from './header-left-elements';
 import HeaderRightElements from './header-right-elements';
 
@@ -67,11 +70,21 @@ export default function Header() {
         {!hideThemeToggle && <ThemeToggle />}
         {!hideDevToggle && <DevToggle key='dev-toggle' />}
       </HeaderLeftElements>
-      <h1
-        data-testid='heading-rule-title'
-        className='pointer-events-none absolute left-0 z-10 w-full text-center text-lg'
-      >
+      <h1 data-testid='heading-rule-title' className='flex items-center gap-2 text-center text-lg'>
         {title}
+        {pathname !== '/' && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link href='/' className='group/link inline-block'>
+                <Home
+                  size={15}
+                  className='transition-transform ease-in-out group-hover/link:scale-110'
+                />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>Go to home</TooltipContent>
+          </Tooltip>
+        )}
       </h1>
       <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
     </header>

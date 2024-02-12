@@ -101,7 +101,7 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
         </Badge>
         <div
           className={cn(
-            'relative h-6 w-44 rounded-sm border border-border after:blur-lg',
+            'relative h-6 w-44 rounded-sm border border-border after:blur-sm',
             isRankingModeOn
               ? 'rotating-golden-gradient '
               : 'rotating-golden-border-trace bg-background',
