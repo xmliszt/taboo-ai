@@ -72,17 +72,19 @@ export default function Header() {
       </HeaderLeftElements>
       <h1 data-testid='heading-rule-title' className='flex items-center gap-2 text-center text-lg'>
         {title}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href='/' className='group/link inline-block'>
-              <Home
-                size={15}
-                className='transition-transform ease-in-out group-hover/link:scale-110'
-              />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>Go to home</TooltipContent>
-        </Tooltip>
+        {pathname !== '/' && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link href='/' className='group/link inline-block'>
+                <Home
+                  size={15}
+                  className='transition-transform ease-in-out group-hover/link:scale-110'
+                />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>Go to home</TooltipContent>
+          </Tooltip>
+        )}
       </h1>
       <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
     </header>
