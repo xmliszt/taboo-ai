@@ -11,7 +11,16 @@ export async function generateMetadata({
       canonical: `/checkout/success/${sessionId}`,
     },
     openGraph: {
+      title: 'Taboo AI: Thank you for your purchase!',
       url: 'https://taboo-ai.vercel.app/checkout/success/' + sessionId,
+      images: [
+        {
+          url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
+          width: 800,
+          height: 600,
+          alt: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
+        },
+      ],
     },
   };
 }

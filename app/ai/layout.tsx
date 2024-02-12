@@ -8,7 +8,16 @@ export const metadata: Metadata = {
     canonical: '/ai',
   },
   openGraph: {
+    title: 'Taboo AI: AI Mode',
     url: 'https://taboo-ai.vercel.app/ai',
+    images: [
+      {
+        url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
+        width: 800,
+        height: 600,
+        alt: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
+      },
+    ],
   },
 };
 

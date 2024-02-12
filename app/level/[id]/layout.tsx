@@ -16,7 +16,16 @@ export async function generateMetadata({
         canonical: '/level/ai',
       },
       openGraph: {
+        title: 'Taboo AI: AI Mode',
         url: 'https://taboo-ai.vercel.app/level/ai',
+        images: [
+          {
+            url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
+            width: 800,
+            height: 600,
+            alt: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
+          },
+        ],
       },
     };
   }
@@ -27,7 +36,16 @@ export async function generateMetadata({
       canonical: `/level/${id}`,
     },
     openGraph: {
+      title: `Taboo AI: ${level?.name ?? 'Level'}`,
       url: 'https://taboo-ai.vercel.app/level/' + id,
+      images: [
+        {
+          url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
+          width: 800,
+          height: 600,
+          alt: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
+        },
+      ],
     },
   };
 }
