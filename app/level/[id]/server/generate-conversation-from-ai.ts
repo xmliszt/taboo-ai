@@ -4,7 +4,7 @@ import 'server-only';
 
 import { cookies } from 'next/headers';
 
-import { googleGeminiPro } from '@/lib/google-ai';
+import { googleGeminiPro, SAFETY_SETTINGS } from '@/lib/google-ai';
 
 /**
  * Generate conversations from AI.
@@ -46,6 +46,7 @@ export async function generateConversationFromAI(
     generationConfig: {
       maxOutputTokens: 100,
     },
+    safetySettings: SAFETY_SETTINGS,
   });
   if (!userMessage) throw new Error('Missing user message');
   const completion = await chat.sendMessage(userMessage);

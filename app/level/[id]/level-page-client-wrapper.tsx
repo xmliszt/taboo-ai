@@ -27,7 +27,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { CONSTANTS } from '@/lib/constants';
-import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { fetchWord } from '@/lib/services/wordService';
@@ -251,27 +250,16 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           await generateConversationFromAI(inputConversation);
         setConversation(newConversation);
       } catch (error) {
-        try {
-          const googleError = tryParseErrorAsGoogleAIError(error, 'conversation');
-          setConversation([
-            ...inputConversation,
-            {
-              role: 'error',
-              content: googleError.message,
-              timestamp: new Date().toISOString(),
-            },
-          ]);
-        } catch (error) {
-          console.error(error);
-          setConversation([
-            ...inputConversation,
-            {
-              role: 'error',
-              content: error.message ?? CONSTANTS.errors.overloaded,
-              timestamp: new Date().toISOString(),
-            },
-          ]);
-        }
+        console.error(error);
+        setConversation([
+          ...inputConversation,
+          {
+            role: 'error',
+            content:
+              "Oops! I encountered a technical issue and I'm unable to continue the conversation right now. Please try again later!",
+            timestamp: new Date().toISOString(),
+          },
+        ]);
       } finally {
         setIsWaitingForAIResponse(false);
         setIsLoading(false);
