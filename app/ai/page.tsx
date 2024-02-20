@@ -54,7 +54,8 @@ export default function AiPage() {
           const googleError = tryParseErrorAsGoogleAIError(error, 'topic-generation');
           setErrorMessage(googleError.message);
         } catch (error) {
-          setErrorMessage(error.message ?? 'Something went wrong.');
+          console.error(error);
+          setErrorMessage('Something went wrong. Please try again!');
         }
       } finally {
         setIsLoading(false);
