@@ -40,18 +40,18 @@ function getPlanActionLabel(
   customerPlanTier?: number
 ) {
   if (!customerPlanType || !customerPlanTier) {
-    return plan.type === 'free' ? 'Current Plan' : 'Start Free Trial';
+    return plan.type === 'free' ? 'Current plan' : 'Start free trial';
   }
   // logged in
   if (customerPlanType === plan.type) {
-    return 'Current Plan';
+    return 'Current plan';
   }
   if (customerPlanTier > plan.tier) {
-    return 'Downgrade Plan';
+    return 'Downgrade plan';
   } else if (customerPlanTier < plan.tier) {
-    return 'Upgrade Plan';
+    return 'Upgrade plan';
   } else {
-    return 'Start Free Trial';
+    return 'Start free trial';
   }
 }
 
@@ -106,9 +106,9 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
       // user is on active subscription and not cancelled, show downgrade dialogue
       if (user?.stripeSubscription?.status === 'active') {
         return confirmAlert({
-          title: 'Downgrade to FREE plan',
+          title: 'Downgrade to free plan',
           description:
-            'Are you sure you want to downgrade to FREE plan? You will lose all the features of your current plan after your current subscription period ends. You will still have access to paid features until then.',
+            'Are you sure you want to downgrade to free plan? You will lose all the features of your current plan after your current subscription period ends. You will still have access to paid features until then.',
           onConfirm: () => {
             downgradeToFreePlan();
           },
@@ -118,7 +118,7 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
       return confirmAlert({
         title: 'You do not have an active paid subscription',
         description:
-          'You do not have an active paid subscription. Once your current paid subscription ends, you will automatically switch to FREE plan.',
+          'You do not have an active paid subscription. Once your current paid subscription ends, you will automatically switch to free plan.',
         hasConfirmButton: false,
         cancelLabel: 'OK',
       });
@@ -159,7 +159,7 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
       confirmAlert({
         title: 'Your subscription has been cancelled',
         description:
-          'You will still have access to paid features until your current subscription period ends. After that, you will automatically switch to FREE plan.',
+          'You will still have access to paid features until your current subscription period ends. After that, you will automatically switch to free plan.',
         hasConfirmButton: false,
         cancelLabel: 'OK',
         onCancel: () => {
