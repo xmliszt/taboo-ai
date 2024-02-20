@@ -6,7 +6,6 @@ import { ProfileAlertInfo } from '@/app/profile/profile-alert-info';
 import { ProfileFeedbackFloatingButton } from '@/app/profile/profile-feedback-floating-button';
 import { ProfileScrollControl } from '@/app/profile/profile-scroll-control';
 import { fetchUserProfileWithSubscription } from '@/app/profile/server/fetch-user-profile';
-import { ConstructionBlock } from '@/components/custom/common/construction-block';
 import { ProfilePrivacySettingsCard } from '@/components/custom/profile/privacy/profile-privacy-settings-card';
 import { ProfileDangerZone } from '@/components/custom/profile/profile-danger-zone';
 import { ProfileSubscriptionCard } from '@/components/custom/profile/profile-subscription-card';
@@ -41,11 +40,6 @@ export default async function ProfilePage() {
       <Suspense fallback={<Skeleton className='h-[350px] w-full' numberOfRows={12} />}>
         <ProfileStatisticsCardView />
       </Suspense>
-      <ConstructionBlock
-        title='Flashcard under construction...'
-        description='You will soon be able to create your own flashcards with the words you have played, kickstart custom game from the flashcard, organize them into decks and share them with your friends...'
-        className='w-full max-w-[500px]'
-      />
       <ProfilePrivacySettingsCard className='w-full max-w-[500px]' user={user} />
       <ProfileSubscriptionCard className='w-full max-w-[500px]' user={user} />
       <ProfileDangerZone className='w-full max-w-[500px]' user={user} />

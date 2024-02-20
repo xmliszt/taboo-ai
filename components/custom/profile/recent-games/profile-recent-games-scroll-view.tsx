@@ -17,7 +17,7 @@ export async function ProfileRecentGamesScrollView() {
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
       <div className='flex w-full flex-row items-center gap-2'>
-        <h2 className='text-2xl'>Past Games</h2>
+        <h2 className='text-2xl'>Past games</h2>
       </div>
       <div className='text-sm leading-snug text-muted-foreground'>
         You can view most recent{' '}
@@ -29,7 +29,7 @@ export async function ProfileRecentGamesScrollView() {
           <span>
             To view more past games, upgrade to PRO plan:{' '}
             <Link className='animate-pulse p-0 underline' href='/pricing'>
-              Upgrade My Plan
+              Upgrade my plan
             </Link>
           </span>
         )}

@@ -24,13 +24,13 @@ export function ProfilePrivacySettingsCard({ user, className }: ProfilePrivacySe
       <CardContent>
         <CardHeader className='my-4 p-0'>
           <VenetianMask />
-          <CardTitle>Privacy Settings</CardTitle>
+          <CardTitle>Privacy settings</CardTitle>
         </CardHeader>
         <CardDescription>Control your privacy settings here.</CardDescription>
 
         <div className='mt-6 flex flex-col gap-4'>
           <ProfilePrivacyFeatureToggle
-            title='Stay Anonymous?'
+            title='Stay anonymous?'
             description='If turned on, your nickname will be hidden from others when shown in the topic rankings. It will be shown as "Anonymous" instead.'
             onToggle={async (isOn) => {
               try {

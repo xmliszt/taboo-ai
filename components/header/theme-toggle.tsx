@@ -9,11 +9,11 @@ export default function ThemeToggle() {
   const getToolTip = (theme: string | undefined): string => {
     switch (theme) {
       case 'light':
-        return 'Set to Dark Mode';
+        return 'Set to dark mode';
       case 'dark':
-        return 'Set to Follow System';
+        return 'Set to follow system';
       case 'system':
-        return 'Set to Light Mode';
+        return 'Set to light mode';
       default:
         return '';
     }

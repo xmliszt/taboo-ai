@@ -12,7 +12,7 @@ export async function ProfilePlayedTopicScrollView() {
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
       <div className='flex w-full flex-row items-center gap-2'>
-        <h2 className='text-2xl'>Completed Topics</h2>
+        <h2 className='text-2xl'>Completed topics</h2>
       </div>
       <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-12 overflow-x-auto rounded-lg border px-12 py-8 leading-snug'>
         {playedTopics.length === 0 ? (

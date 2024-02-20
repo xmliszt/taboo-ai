@@ -18,7 +18,7 @@ interface InfoButtonProps {
 export const InfoButton = ({
   title,
   description,
-  tooltip = 'View Info',
+  tooltip = 'View info',
   className = '',
   size = 20,
 }: InfoButtonProps) => {

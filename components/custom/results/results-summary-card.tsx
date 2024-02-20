@@ -37,11 +37,11 @@ export default function ResultsSummaryCard({
       </CardHeader>
       <CardContent className='text-lg'>
         <div className='flex flex-row justify-between'>
-          <span>Total Time Taken: </span>
+          <span>Total time taken: </span>
           <span className='font-bold'>{total} seconds</span>
         </div>
         <div className='flex flex-row justify-between'>
-          <span>Total Score:</span>
+          <span>Total score:</span>
           <div className='flex flex-row items-center'>
             <ScoreInfoButton />
             {roundedTotalScore ? (
@@ -52,7 +52,7 @@ export default function ResultsSummaryCard({
           </div>
         </div>
         <div className='flex flex-row justify-between'>
-          <span>Overall Ratings: </span>
+          <span>Overall ratings: </span>
           {rating ? (
             <StarRatingBar rating={rating} maxRating={6} />
           ) : (

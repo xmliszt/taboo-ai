@@ -110,14 +110,14 @@ export function UserLoginPortal() {
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
       {
-        label: 'Manage Billing & Plan',
+        label: 'Manage billing & plan',
         icon: <BookMarked />,
         isVisible:
           user?.subscription?.customer_id !== undefined && user?.subscription?.customer_id !== null,
         onClick: handleManageSubscription,
       },
       {
-        label: 'Contribute A Topic',
+        label: 'Contribute a topic',
         icon: <PenTool />,
         isVisible: pathname !== '/add-level',
         onClick: () => {
@@ -133,7 +133,7 @@ export function UserLoginPortal() {
         },
       },
       {
-        label: 'Logout',
+        label: 'Sign out',
         icon: <LogOut />,
         isVisible: true,
         onClick: handleLogout,
@@ -250,7 +250,7 @@ export function UserLoginPortal() {
         <Button aria-label='Click to login' onClick={handleLogin} className='h-[32px] px-2 py-1'>
           <div className='flex flex-row items-center gap-1'>
             <CircleUser size='23' />
-            Log in
+            Sign in
           </div>
         </Button>
       ) : (

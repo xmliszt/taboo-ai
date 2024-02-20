@@ -68,7 +68,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
               variant='outline'
               className='border-yellow-500 bg-secondary text-secondary-foreground'
             >
-              New Level
+              New level
             </Badge>
           )}
           {level?.difficulty && (
@@ -121,16 +121,16 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
         <section className='flex flex-col items-center gap-4'>
           <Medal size={25} />
           <div className='flex flex-col items-center gap-2'>
-            <div>Best Score</div>
+            <div>Best score</div>
             <div className='text-2xl font-extrabold'>{level.best_score.toFixed(2)}</div>
             <StarRatingBar rating={getOverallRating(level.best_score, 6)} maxRating={6} />
           </div>
           {level?.top_scorer_names && (
             <div className='flex flex-col items-center gap-2'>
               {level.top_scorer_names.length > 1 ? (
-                <div className='italic'>by Top Scorers</div>
+                <div className='italic'>by top scorers</div>
               ) : (
-                <div className='italic'>by Top Scorer</div>
+                <div className='italic'>by top scorer</div>
               )}
               <div className='text-2xl font-extrabold'>{level.top_scorer_names.join(' & ')}</div>
             </div>
@@ -194,7 +194,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
                 : 'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
             )}
           >
-            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Mode'}
+            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI mode'}
           </div>
         </CardHeader>
         <CardContent className='relative'>

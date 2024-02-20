@@ -51,7 +51,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <Skull />
-            <CardTitle>Danger Zone</CardTitle>
+            <CardTitle>Danger zone</CardTitle>
           </CardHeader>
           <CardDescription>
             Once you have deleted your account, there is no going back. All your data with us will
@@ -70,7 +70,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
               setIsConfirmOpen(true);
             }}
           >
-            Delete My Account
+            Delete my account
           </Button>
         </CardContent>
       </Card>

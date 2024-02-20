@@ -32,7 +32,7 @@ export default function PageCounter() {
         <ArrowUp size={16} className='absolute -right-4 -top-1 animate-ping-once' />
       )}
       <Badge>
-        Total Views:{' '}
+        Total views:{' '}
         {appStats?.app_views?.value ?? (
           <span className='ml-2'>
             <Spinner size={10} />

@@ -182,7 +182,7 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <BookMarked />
-            <CardTitle>My Subscription</CardTitle>
+            <CardTitle>My subscription</CardTitle>
           </CardHeader>
           <CardDescription>Manage your subscription here.</CardDescription>
           {user.subscription ? (
@@ -197,7 +197,7 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
               {renderSubscriptionDetails(user.stripeSubscription?.status)}
               <div className='h-4'></div>
               {user.subscription.customer_id && (
-                <Button onClick={handleManageBilling}>Manage Billing & Plan</Button>
+                <Button onClick={handleManageBilling}>Manage billing & plan</Button>
               )}
               {!userHasCancelledSubscription && (
                 <>
@@ -210,8 +210,8 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
                     }}
                   >
                     {user.subscription?.customer_plan_type === 'free'
-                      ? 'Upgrade My Plan'
-                      : 'Change My Plan'}
+                      ? 'Upgrade my plan'
+                      : 'Change my plan'}
                   </Button>
                   {user.subscription?.customer_plan_type !== 'free' && (
                     <Button
@@ -220,7 +220,7 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
                         setIsConfirmationDialogOpen(true);
                       }}
                     >
-                      Cancel Subscription
+                      Cancel subscription
                     </Button>
                   )}
                 </>
