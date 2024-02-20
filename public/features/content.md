@@ -2,7 +2,7 @@
 
 _new patch v3.1.7 on 20 Feb 2024_
 
-## Log in to access your profile 😎
+## Sign in to access your profile 😎
 
 ![1](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-0-1.png?raw=true)
 

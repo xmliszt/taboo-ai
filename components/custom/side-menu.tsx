@@ -10,7 +10,7 @@ import { BsDiscord } from 'react-icons/bs';
 import { toast } from 'sonner';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
-import { login } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/login';
 import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
@@ -55,12 +55,12 @@ export default function SideMenu() {
     });
   }, [isFocused, pathname]);
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     try {
-      await login();
+      await signIn();
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong. Failed to log in');
+      toast.error('Something went wrong. Failed to sign in');
     }
   };
 
@@ -91,7 +91,7 @@ export default function SideMenu() {
           'Login to enjoy much more features! Contribute topics, personal profile, view game statistics, join rankings, and more!',
         visible: user === undefined,
         highlight: true,
-        onClick: handleLogin,
+        onClick: handleSignIn,
       },
       {
         path: '/levels',

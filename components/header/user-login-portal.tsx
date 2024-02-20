@@ -17,8 +17,8 @@ import { toast } from 'sonner';
 
 import { createStripeCustomerPortal } from '@/app/profile/server/create-stripe-customer-portal';
 import { useAuth } from '@/components/auth-provider';
-import { login } from '@/components/header/server/login';
-import { logout } from '@/components/header/server/logout';
+import { signIn } from '@/components/header/server/login';
+import { signOut } from '@/components/header/server/logout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -70,18 +70,18 @@ export function UserLoginPortal() {
     }
   }, [user]);
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     try {
-      await login();
+      await signIn();
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong. Failed to log in');
+      toast.error('Something went wrong. Failed to sign in');
     }
   };
 
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     try {
-      await logout();
+      await signOut();
       toast(`Bye bye, ${user?.nickname ?? user?.name}! 👋`);
       hasGreeted = false;
       setTimeout(() => {
@@ -136,7 +136,7 @@ export function UserLoginPortal() {
         label: 'Sign out',
         icon: <LogOut />,
         isVisible: true,
-        onClick: handleLogout,
+        onClick: handleSignOut,
       },
     ];
   }, [pathname, user]);
@@ -247,14 +247,14 @@ export function UserLoginPortal() {
   ) : (
     <div>
       {shouldShowLoginIconWithLabel(pathname) ? (
-        <Button aria-label='Click to login' onClick={handleLogin} className='h-[32px] px-2 py-1'>
+        <Button aria-label='Click to sign in' onClick={handleSignIn} className='h-[32px] px-2 py-1'>
           <div className='flex flex-row items-center gap-1'>
             <CircleUser size='23' />
             Sign in
           </div>
         </Button>
       ) : (
-        <IconButton aria-label='Click to login' tooltip='Log in' onClick={handleLogin}>
+        <IconButton aria-label='Click to sign in' tooltip='Sign in' onClick={handleSignIn}>
           <CircleUser />
         </IconButton>
       )}

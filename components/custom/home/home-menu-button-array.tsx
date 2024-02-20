@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
-import { login } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/login';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 import { HomeMenuButton } from '../home-menu-button';
@@ -38,26 +38,26 @@ export default function HomeMenuButtonArray() {
     }
   };
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     try {
-      await login();
+      await signIn();
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong. Failed to log in');
+      toast.error('Something went wrong. Failed to sign in');
     }
   };
 
   const homeMenuButtonData = useMemo<HomeMenuButtonData[]>(
     () => [
       {
-        key: 'log in',
+        key: 'sign in',
         // eslint-disable-next-line react/jsx-no-undef
         icon: <CircleUser size={20} />,
-        title: 'Log in',
+        title: 'Sign in',
         subtitle:
           'Unlock personal profile, game history, join topic rankings, and contribute new topics!',
-        ariaLabel: 'Click to log in',
-        onClick: handleLogin,
+        ariaLabel: 'Click to sign in',
+        onClick: handleSignIn,
         visible: user === undefined,
       },
       {
