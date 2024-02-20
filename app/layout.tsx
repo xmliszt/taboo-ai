@@ -24,7 +24,6 @@ import React from 'react';
 
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
-import { NewsletterSignupDialog } from '@/components/custom/globals/newletter-signup-dialog';
 import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
 import Header from '@/components/header';
 import { ReactQueryProvider } from '@/components/query-provider';
@@ -78,7 +77,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <GenericAlertDialog />
                     <GenericFeedbackDialog />
                     <FeaturePopup />
-                    <NewsletterSignupDialog />
                   </>
                 )}
                 <AnalyticsProvider />
