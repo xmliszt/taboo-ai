@@ -756,7 +756,7 @@ const AddLevelPage = () => {
           aria-label='click to review the topic'
           onClick={onReviewTopic}
         >
-          {user && user.email ? 'Review Your Topic' : 'You need to login to proceed'}
+          {user && user.email ? 'Review Your Topic' : 'You need to sign in to proceed'}
         </Button>
       )}
       <TopicReviewSheet

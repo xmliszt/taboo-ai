@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import { Level } from '@/app/level/[id]/server/fetch-level';
 import { UserProfile } from '@/app/profile/server/fetch-user-profile';
-import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
+import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import {
   AlertDialog,
@@ -42,8 +42,8 @@ export function TopicContributionController(props: TopicContributionControllerPr
               onClick={() => {
                 setIsAlertDialogOpen(false);
                 if (!props.user) {
-                  EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
-                    title: 'You need to login to contribute a topic to us.',
+                  EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
+                    title: 'You need to sign in to contribute a topic to us.',
                   });
                   return;
                 }

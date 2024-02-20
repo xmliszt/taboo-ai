@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { signIn } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/sign-in';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,12 +16,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
-export interface LoginErrorEventProps {
+export interface SignInErrorEventProps {
   error: string;
   redirectHref?: string;
 }
 
-export function LoginErrorDialog() {
+export function SignInErrorDialog() {
   const router = useRouter();
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertHeader, setAlertHeader] = useState('');
@@ -29,8 +29,8 @@ export function LoginErrorDialog() {
 
   useEffect(() => {
     const listener = EventManager.bindEvent(
-      CustomEventKey.LOGIN_ERROR,
-      ({ detail: { error, redirectHref } }: { detail: LoginErrorEventProps }) => {
+      CustomEventKey.SIGN_IN_ERROR,
+      ({ detail: { error, redirectHref } }: { detail: SignInErrorEventProps }) => {
         console.log(error);
         setAlertHeader(error);
         setAlertOpen(true);
@@ -38,7 +38,7 @@ export function LoginErrorDialog() {
       }
     );
     return () => {
-      EventManager.removeListener(CustomEventKey.LOGIN_ERROR, listener);
+      EventManager.removeListener(CustomEventKey.SIGN_IN_ERROR, listener);
     };
   }, []);
 

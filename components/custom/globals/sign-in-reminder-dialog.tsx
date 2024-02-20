@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { signIn } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/sign-in';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
-export interface LoginReminderProps {
+export interface SignInReminderProps {
   title: string;
   message?: string;
   redirectHref?: string;
@@ -25,7 +25,7 @@ export interface LoginReminderProps {
   cancelLabel?: string;
 }
 
-export default function LoginReminderDialog() {
+export default function SignInReminderDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState<string>('');
   const [message, setMessage] = useState<string>();
@@ -36,11 +36,11 @@ export default function LoginReminderDialog() {
 
   useEffect(() => {
     const listener = EventManager.bindEvent(
-      CustomEventKey.LOGIN_REMINDER,
+      CustomEventKey.SIGN_IN_REMINDER,
       ({
         detail: { title, message, redirectHref, afterDialogClose, cancelLabel },
       }: {
-        detail: LoginReminderProps;
+        detail: SignInReminderProps;
       }) => {
         setTitle(title);
         setMessage(message);
@@ -51,7 +51,7 @@ export default function LoginReminderDialog() {
       }
     );
     return () => {
-      EventManager.removeListener(CustomEventKey.LOGIN_REMINDER, listener);
+      EventManager.removeListener(CustomEventKey.SIGN_IN_REMINDER, listener);
     };
   }, []);
 
@@ -86,7 +86,7 @@ export default function LoginReminderDialog() {
             {customCancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction autoFocus onClick={handleSignIn}>
-            Login
+            Sign in
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

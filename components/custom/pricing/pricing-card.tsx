@@ -25,7 +25,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
 
 import { confirmAlert } from '../globals/generic-alert-dialog';
-import { LoginReminderProps } from '../globals/login-reminder-dialog';
+import { SignInReminderProps } from '../globals/sign-in-reminder-dialog';
 import { Spinner } from '../spinner';
 
 interface PricingCardProps {
@@ -123,10 +123,10 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
         cancelLabel: 'OK',
       });
     }
-    // If the user is not logged in, show a login reminder
+    // If the user is not logged in, show a sign in reminder
     if (!user) {
-      return EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
-        title: 'You need to login to subscribe',
+      return EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
+        title: 'You need to sign in to subscribe',
         redirectHref: '/pricing',
       });
     }

@@ -10,7 +10,7 @@ import { BackButton } from '@/components/custom/back-button';
 import DevToggle from '@/components/header/dev-toggle';
 import { MenuButton } from '@/components/header/menu-button';
 import ThemeToggle from '@/components/header/theme-toggle';
-import { UserLoginPortal } from '@/components/header/user-login-portal';
+import { UserSignInPortal } from '@/components/header/user-sign-in-portal';
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
@@ -101,7 +101,7 @@ export default function Header() {
           )}
         </h1>
       )}
-      <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
+      <HeaderRightElements>{!hideUserMenu && <UserSignInPortal />}</HeaderRightElements>
     </header>
   );
 }

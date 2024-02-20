@@ -4,7 +4,7 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Taboo AI: Ignite Learning Through Play 🚀🎮",
+  "name": "Taboo AI: Ignite English learning through play 🚀🎮",
   "short_name": "Taboo AI",
   "description": "Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.",
   "categories": ["technology", "education", "game", "trivia", "AI", "English", "vocabulary"],
@@ -36,42 +36,35 @@
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Taboo AI: Ignite Learning Through Play 🚀🎮"
+      "label": "Taboo AI: Ignite English learning through play 🚀🎮"
     },
     {
       "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Taboo AI: Ignite Learning Through Play 🚀🎮"
+      "label": "Taboo AI: Ignite English learning through play 🚀🎮"
     },
     {
       "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%201.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Interactive Gameplay with Real Conversation"
+      "label": "Interactive gameplay with conversations"
     },
     {
       "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%202.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Intuitive Menu Brings You Anywhere with Ease"
+      "label": "Intuitive menu brings you anywhere with ease"
     },
     {
       "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%203.png?raw=true",
       "sizes": "1920x1080",
       "type": "image/png",
       "platform": "wide",
-      "label": "Comprehensive Results to be Shared with Your Friends"
-    },
-    {
-      "src": "https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/3.0%20Feature%204.png?raw=true",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "platform": "wide",
-      "label": "Easy Google Login to Contribute your Creative Topics"
+      "label": "Comprehensive results to be shared with your friends"
     }
   ]
 }
