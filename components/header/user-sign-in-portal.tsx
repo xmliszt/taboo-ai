@@ -17,8 +17,8 @@ import { toast } from 'sonner';
 
 import { createStripeCustomerPortal } from '@/app/profile/server/create-stripe-customer-portal';
 import { useAuth } from '@/components/auth-provider';
-import { signIn } from '@/components/header/server/login';
-import { signOut } from '@/components/header/server/logout';
+import { signIn } from '@/components/header/server/sign-in';
+import { signOut } from '@/components/header/server/sign-out';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -34,7 +34,7 @@ import {
 } from '../ui/dropdown-menu';
 import IconButton from '../ui/icon-button';
 
-function shouldShowLoginIconWithLabel(pathname: string) {
+function shouldShowSignInIconWithLabel(pathname: string) {
   return (
     pathname === '/' ||
     pathname === '/levels' ||
@@ -54,7 +54,7 @@ type UserMenuItem = {
 
 let hasGreeted = false;
 
-export function UserLoginPortal() {
+export function UserSignInPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isLoading } = useAuth();
@@ -246,7 +246,7 @@ export function UserLoginPortal() {
     </div>
   ) : (
     <div>
-      {shouldShowLoginIconWithLabel(pathname) ? (
+      {shouldShowSignInIconWithLabel(pathname) ? (
         <Button aria-label='Click to sign in' onClick={handleSignIn} className='h-[32px] px-2 py-1'>
           <div className='flex flex-row items-center gap-1'>
             <CircleUser size='23' />

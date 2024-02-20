@@ -7,8 +7,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { AnalyticsProvider } from '@/components/analytics-provider';
 import { AuthProvider } from '@/components/auth-provider';
 import FeaturePopup from '@/components/custom/globals/feature-popup';
-import { LoginErrorDialog } from '@/components/custom/globals/login-error-dialog';
-import LoginReminderDialog from '@/components/custom/globals/login-reminder-dialog';
+import { SignInErrorDialog } from '@/components/custom/globals/sign-in-error-dialog';
+import SignInReminderDialog from '@/components/custom/globals/sign-in-reminder-dialog';
 import Maintenance from '@/components/custom/maintenance';
 import PWAInstaller from '@/components/custom/pwa-installer';
 import SideMenu from '@/components/custom/side-menu';
@@ -71,8 +71,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     {/* Below are floating components */}
                     <SideMenu />
                     <PWAInstaller />
-                    <LoginErrorDialog />
-                    <LoginReminderDialog />
+                    <SignInErrorDialog />
+                    <SignInReminderDialog />
                     <SubscriptionLockDialog />
                     <GenericAlertDialog />
                     <GenericFeedbackDialog />

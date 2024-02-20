@@ -17,7 +17,7 @@ import { getOverallRating } from '@/lib/utils/gameUtils';
 import { useAuth } from '../auth-provider';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { LoginReminderProps } from './globals/login-reminder-dialog';
+import { SignInReminderProps } from './globals/sign-in-reminder-dialog';
 import { StarRatingBar } from './star-rating-bar';
 
 interface LevelCardProps {
@@ -42,7 +42,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
     if (level) {
       setPersistence(HASH.level, level);
       if (isShowingRank && !user) {
-        EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
+        EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
           title:
             'You are not logged in. Only logged in users can have their results saved and ranked.',
           redirectHref: `/level/${level.id}`,

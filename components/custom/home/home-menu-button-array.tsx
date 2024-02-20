@@ -6,8 +6,8 @@ import { BookMarked, BookPlus, CircleUser, PenSquare, Quote, User, View } from '
 import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
-import { LoginReminderProps } from '@/components/custom/globals/login-reminder-dialog';
-import { signIn } from '@/components/header/server/login';
+import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
+import { signIn } from '@/components/header/server/sign-in';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 import { HomeMenuButton } from '../home-menu-button';
@@ -31,8 +31,8 @@ export default function HomeMenuButtonArray() {
     if (user) {
       router.push('/add-level');
     } else {
-      EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
-        title: 'You need to login to contribute a topic',
+      EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
+        title: 'You need to sign in to contribute a topic',
         redirectHref: '/add-level',
       });
     }

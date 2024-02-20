@@ -10,7 +10,7 @@ import { BsDiscord } from 'react-icons/bs';
 import { toast } from 'sonner';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
-import { signIn } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/sign-in';
 import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
@@ -18,7 +18,7 @@ import { useAuth } from '../auth-provider';
 import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
 import AccessLinkCard, { MenuItem } from './common/access-link-card';
-import { LoginReminderProps } from './globals/login-reminder-dialog';
+import { SignInReminderProps } from './globals/sign-in-reminder-dialog';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,8 +68,8 @@ export default function SideMenu() {
     if (user) {
       router.push('/add-level');
     } else {
-      EventManager.fireEvent<LoginReminderProps>(CustomEventKey.LOGIN_REMINDER, {
-        title: 'You need to login to contribute a topic',
+      EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
+        title: 'You need to sign in to contribute a topic',
         redirectHref: '/add-level',
       });
     }
@@ -85,10 +85,10 @@ export default function SideMenu() {
         href: '/',
       },
       {
-        path: 'login',
-        title: 'Login',
+        path: 'sign-in',
+        title: 'Sign in',
         subtitle:
-          'Login to enjoy much more features! Contribute topics, personal profile, view game statistics, join rankings, and more!',
+          'Sign in to enjoy much more features! Contribute topics, personal profile, view game statistics, join rankings, and more!',
         visible: user === undefined,
         highlight: true,
         onClick: handleSignIn,
