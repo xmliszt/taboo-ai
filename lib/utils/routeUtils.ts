@@ -35,17 +35,17 @@ export class RouteManager {
         };
       case TabooPathname.ADD_LEVEL === route:
         return {
-          title: 'Contribute Topics',
+          title: 'Contribute topics',
         };
       case TabooPathname.AI_MODE === route:
         return {
-          title: 'AI Generated Topic',
+          title: 'AI generated topic',
           hasBackButton: true,
           hideMenu: true,
         };
       case TabooPathname.BUY_ME_COFFEE === route:
         return {
-          title: 'Buy Me A Coffee',
+          title: 'Buy me a coffee',
         };
       case /^\/level\//.test(route):
         return {
@@ -57,11 +57,11 @@ export class RouteManager {
         };
       case TabooPathname.LEVELS === route:
         return {
-          title: 'Choose A Topic',
+          title: 'Choose a topic',
         };
       case TabooPathname.RESULT === route:
         return {
-          title: 'Game Result',
+          title: 'Game result',
           hideDevToggle: false,
         };
       case TabooPathname.PWA === route:
@@ -74,11 +74,11 @@ export class RouteManager {
         };
       case TabooPathname.RULE === route:
         return {
-          title: 'Taboo AI Game Rules',
+          title: 'Game rules',
         };
       case TabooPathname.WHATSNEW === route:
         return {
-          title: 'New Features',
+          title: 'New features',
         };
       case TabooPathname.ABOUT === route:
         return {
@@ -86,7 +86,7 @@ export class RouteManager {
         };
       case TabooPathname.X_REVIEW_WORDS === route:
         return {
-          title: 'Review Topics & Words',
+          title: 'Review topics',
         };
       case TabooPathname.SITEMAP === route:
         return {
@@ -94,7 +94,7 @@ export class RouteManager {
         };
       case TabooPathname.PROFILE === route:
         return {
-          title: 'My Profile',
+          title: 'My profile',
         };
       case TabooPathname.PRICING === route:
         return {
@@ -103,7 +103,7 @@ export class RouteManager {
         };
       case /^\/checkout\/success/.test(route):
         return {
-          title: 'Checkout Success',
+          title: 'Checkout success',
         };
       case TabooPathname.PUBLICATIONS === route:
         return {
@@ -111,7 +111,7 @@ export class RouteManager {
         };
       case /^\/x\/review-words/.test(route):
         return {
-          title: 'Review Words',
+          title: 'Review words',
           hasBackButton: true,
         };
       default:

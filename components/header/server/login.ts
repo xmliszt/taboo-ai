@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/utils/supabase/client';
 
-export async function login() {
+export async function signIn() {
   const supabaseClient = createClient();
 
   const oauthResponse = await supabaseClient.auth.signInWithOAuth({

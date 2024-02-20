@@ -440,8 +440,8 @@ const AddLevelPage = () => {
             <span>
               <InfoButton
                 size={15}
-                tooltip='Read About Taboo AI Content Policy'
-                title='Taboo AI Content Policy'
+                tooltip='Read about Taboo AI content policy'
+                title='Taboo AI content policy'
                 description='Taboo AI, our innovative web application, is designed to
                     ensure a safe and respectful user experience for everyone.
                     As part of our commitment to maintaining a positive online

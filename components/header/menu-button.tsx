@@ -9,7 +9,7 @@ import IconButton from '../ui/icon-button';
 export function MenuButton() {
   return (
     <IconButton
-      tooltip='Open Menu'
+      tooltip='Open menu'
       onClick={() => {
         EventManager.fireEvent<boolean>(CustomEventKey.TOGGLE_MENU, true);
       }}

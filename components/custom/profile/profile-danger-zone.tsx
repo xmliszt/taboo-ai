@@ -51,7 +51,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <Skull />
-            <CardTitle>Danger Zone</CardTitle>
+            <CardTitle>Danger zone</CardTitle>
           </CardHeader>
           <CardDescription>
             Once you have deleted your account, there is no going back. All your data with us will
@@ -59,7 +59,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
             <b>
               Your active subscription will also be cancelled. However, your ongoing paid
               subscription (including trial) will still be available until the end of the billing
-              cycle when you log in with the same email account.
+              cycle when you sign in with the same email account.
             </b>{' '}
             Please be certain.
           </CardDescription>
@@ -70,7 +70,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
               setIsConfirmOpen(true);
             }}
           >
-            Delete My Account
+            Delete my account
           </Button>
         </CardContent>
       </Card>
@@ -91,7 +91,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
               <b>
                 Your current subscription will also be cancelled automatically. However, your
                 ongoing subscription will still be available until the end of the billing cycle when
-                you log in with the same email account.
+                you sign in with the same email account.
               </b>{' '}
               This action is <b>irreversible</b>.
             </AlertDialogDescription>

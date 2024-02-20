@@ -13,7 +13,7 @@ export function BackButton({ customBackHref }: BackButtonProps) {
   const router = useRouter();
   return (
     <IconButton
-      tooltip='Go Back'
+      tooltip='Go back'
       onClick={() => {
         customBackHref ? router.push(customBackHref) : router.back();
       }}

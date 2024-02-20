@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { login } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/login';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,13 +55,13 @@ export default function LoginReminderDialog() {
     };
   }, []);
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     try {
-      await login();
+      await signIn();
       redirectHref && router.push(redirectHref);
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong. Failed to log in');
+      toast.error('Something went wrong. Failed to sign in');
     }
   };
 
@@ -85,7 +85,7 @@ export default function LoginReminderDialog() {
           >
             {customCancelLabel}
           </AlertDialogCancel>
-          <AlertDialogAction autoFocus onClick={handleLogin}>
+          <AlertDialogAction autoFocus onClick={handleSignIn}>
             Login
           </AlertDialogAction>
         </AlertDialogFooter>

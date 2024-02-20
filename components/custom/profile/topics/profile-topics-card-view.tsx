@@ -24,7 +24,7 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
           <Link href='/levels'>
             <Card className='h-full min-w-[250px] max-w-[250px] snap-center border text-left shadow-none transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg'>
               <CardHeader>
-                <CardTitle className='text-center text-border'>Play More Topics</CardTitle>
+                <CardTitle className='text-center text-border'>Play more topics</CardTitle>
               </CardHeader>
               <CardContent className='flex min-h-[300px] items-center justify-center'>
                 <PlusCircle size={50} color='#c1c1c1' strokeWidth={1} />
@@ -58,24 +58,24 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
                   </div>
                 )}
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Best Score:</span>
+                  <span className='italic text-muted-foreground'>Best score:</span>
                   <span className='font-bold'>{topic.total_score.toFixed(2)}</span>
                 </div>
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Best Rating: </span>
+                  <span className='italic text-muted-foreground'>Best rating: </span>
                   <StarRatingBar rating={getOverallRating(topic.total_score, 6)} maxRating={6} />
                 </div>
                 {topic.is_best_score && (
                   <div className='flex flex-row items-center justify-start gap-2'>
                     <Medal size={50} />
                     <span className='italic text-muted-foreground'>
-                      You are the <b>Top Scorer</b> for this topic!
+                      You are the <b>top scorer</b> for this topic!
                     </span>
                   </div>
                 )}
                 <Link href={`/level/${topic.level_id}`}>
                   <Button className='w-full' variant='secondary'>
-                    Play Again
+                    Play again
                   </Button>
                 </Link>
               </CardContent>
@@ -84,7 +84,7 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
         )}
       </TooltipTrigger>
       <TooltipContent>
-        {topic.level_id === 'play-more' ? 'Play More Topics' : 'Play Again'}
+        {topic.level_id === 'play-more' ? 'Play more topics' : 'Play again'}
       </TooltipContent>
     </Tooltip>
   );

@@ -176,7 +176,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
         ),
       },
       {
-        title: 'Total Score',
+        title: 'Total score',
         content: (
           <span>
             {getCalculatedScore(
@@ -188,11 +188,11 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
         ),
       },
       {
-        title: 'Total Time Taken',
+        title: 'Total time taken',
         content: <span>{`${getCompletionSeconds(score.duration)} seconds`}</span>,
       },
       {
-        title: `Time Score (${timeMultiplier * 100}%)`,
+        title: `Time score (${timeMultiplier * 100}%)`,
         content: (
           <span>{`${calculateTimeScore(score.duration).toString()} x ${
             timeMultiplier * 100
@@ -202,7 +202,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
     ];
     if (score.ai_score !== undefined) {
       items.push({
-        title: `Clue Score (${promptMultiplier * 100}%)`,
+        title: `Clue score (${promptMultiplier * 100}%)`,
         content: (
           <span>{`${score.ai_score.toFixed(2)} x ${promptMultiplier * 100}% = ${round(
             score.ai_score * promptMultiplier,
@@ -213,19 +213,19 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
     }
     if (score.taboo_words.length > 0) {
       items.push({
-        title: 'Taboo Words',
+        title: 'Taboo words',
         content: <span>{score.taboo_words.map(startCase).join(', ')}</span>,
       });
     }
     if (score.ai_score !== undefined) {
       items.push({
-        title: 'AI Score',
+        title: 'AI score',
         content: <span>{score.ai_score.toFixed(2)}</span>,
       });
     }
     if (score.ai_explanation !== undefined) {
       items.push({
-        title: 'AI Evaluation',
+        title: 'AI evaluation',
         content: (
           <span>
             {!props.pro && <ResultsAiExplanationInfoDialog pro={props.pro} />}
@@ -236,7 +236,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
     }
     if (score.ai_suggestion && score.ai_suggestion.length > 0) {
       items.push({
-        title: 'AI Suggestions',
+        title: 'AI suggestions',
         content: (
           <span>
             {props.pro && <ResultsAiExplanationInfoDialog pro={props.pro} />}

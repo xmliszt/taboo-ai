@@ -50,20 +50,20 @@ export function ProfileRecentGameCard({ game }: ProfileRecentGameCardProps) {
                   <span className='font-bold'>{getDifficulty(game.level_difficulty, false)}</span>
                 </div>
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Total Time Taken: </span>
+                  <span className='italic text-muted-foreground'>Total time taken: </span>
                   <span className='font-bold'>{game.total_time_taken} seconds</span>
                 </div>
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Total Score:</span>
+                  <span className='italic text-muted-foreground'>Total score:</span>
                   <span className='font-bold'>{game.total_score.toFixed(2)}</span>
                 </div>
                 <div className='flex flex-col'>
-                  <span className='italic text-muted-foreground'>Overall Ratings: </span>
+                  <span className='italic text-muted-foreground'>Overall ratings: </span>
                   <StarRatingBar rating={getOverallRating(game.total_score)} maxRating={6} />
                 </div>
                 <Link href={`/result?id=${game.game_id}`}>
                   <Button className='w-full' variant='secondary' size='sm'>
-                    View Results
+                    View results
                   </Button>
                 </Link>
               </CardContent>
@@ -72,7 +72,7 @@ export function ProfileRecentGameCard({ game }: ProfileRecentGameCardProps) {
         </Link>
       </TooltipTrigger>
       <TooltipContent>
-        {game.game_id == 'play-more' ? 'Play More Topics' : 'View Results'}
+        {game.game_id == 'play-more' ? 'Play more topics' : 'View results'}
       </TooltipContent>
     </Tooltip>
   );

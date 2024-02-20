@@ -10,7 +10,7 @@ import { BsDiscord } from 'react-icons/bs';
 import { toast } from 'sonner';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
-import { login } from '@/components/header/server/login';
+import { signIn } from '@/components/header/server/login';
 import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
@@ -55,12 +55,12 @@ export default function SideMenu() {
     });
   }, [isFocused, pathname]);
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     try {
-      await login();
+      await signIn();
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong. Failed to log in');
+      toast.error('Something went wrong. Failed to sign in');
     }
   };
 
@@ -91,11 +91,11 @@ export default function SideMenu() {
           'Login to enjoy much more features! Contribute topics, personal profile, view game statistics, join rankings, and more!',
         visible: user === undefined,
         highlight: true,
-        onClick: handleLogin,
+        onClick: handleSignIn,
       },
       {
         path: '/levels',
-        title: 'Choose A Topic',
+        title: 'Choose a topic',
         subtitle:
           'Start playing Taboo AI by choosing any of the listed topic as you like. Can\'t find the topic you are looking for? Give "AI Mode" a try!',
         visible: true,
@@ -103,7 +103,7 @@ export default function SideMenu() {
       },
       {
         path: '/add-level',
-        title: 'Contribute A Topic',
+        title: 'Contribute a topic',
         subtitle:
           'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
         visible: true,
@@ -111,7 +111,7 @@ export default function SideMenu() {
       },
       {
         path: '/profile',
-        title: 'My Profile',
+        title: 'My profile',
         subtitle:
           'Access your personalized profile here. Change your nickname, view past results, game statistics, manage privacy settings, delete your account...',
         visible: user !== undefined,
@@ -154,14 +154,14 @@ export default function SideMenu() {
       },
       {
         path: '/whatsnew',
-        title: 'Latest Features',
+        title: 'Latest features',
         subtitle: "Take a look at Taboo AI's latest features!",
         visible: true,
         href: '/whatsnew',
       },
       {
         path: '/roadmap',
-        title: 'Project Roadmap',
+        title: 'Project roadmap',
         subtitle:
           'Taboo AI has come a long way so far. Join me together to review the exciting journey!',
         visible: true,

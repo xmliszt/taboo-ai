@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home } from 'lucide-react';
+import { isMobile } from 'react-device-detect';
 
 import { BackButton } from '@/components/custom/back-button';
 import DevToggle from '@/components/header/dev-toggle';
@@ -70,22 +71,36 @@ export default function Header() {
         {!hideThemeToggle && <ThemeToggle />}
         {!hideDevToggle && <DevToggle key='dev-toggle' />}
       </HeaderLeftElements>
-      <h1 data-testid='heading-rule-title' className='flex items-center gap-2 text-center text-lg'>
-        {title}
-        {pathname !== '/' && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href='/' className='group/link inline-block'>
-                <Home
-                  size={15}
-                  className='transition-transform ease-in-out group-hover/link:scale-110'
-                />
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>Go to home</TooltipContent>
-          </Tooltip>
-        )}
-      </h1>
+      {isMobile ? (
+        <Link href='/'>
+          <h1
+            data-testid='heading-rule-title'
+            className='max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-center text-base'
+          >
+            {title}
+          </h1>
+        </Link>
+      ) : (
+        <h1
+          data-testid='heading-rule-title'
+          className='flex items-center gap-2 whitespace-nowrap text-center text-lg'
+        >
+          {title}
+          {pathname !== '/' && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href='/' className='group/link inline-block'>
+                  <Home
+                    size={15}
+                    className='transition-transform ease-in-out group-hover/link:scale-110'
+                  />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Go to home</TooltipContent>
+            </Tooltip>
+          )}
+        </h1>
+      )}
       <HeaderRightElements>{!hideUserMenu && <UserLoginPortal />}</HeaderRightElements>
     </header>
   );

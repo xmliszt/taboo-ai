@@ -17,14 +17,14 @@ export async function ProfileStatisticsCardView() {
       <Card className='w-full max-w-[500px]'>
         <CardContent>
           <CardHeader className='my-4 p-0'>
-            <CardTitle>Game Statistics</CardTitle>
+            <CardTitle>Game statistics</CardTitle>
           </CardHeader>
           <CardDescription>
             Upgrade to PRO plan to unlock your exclusive game statistics. Get more insights on your
             game performance and improve your game play!
           </CardDescription>
           <Link href='/pricing'>
-            <Button className='mt-4 w-full animate-pulse'>Upgrade My Plan</Button>
+            <Button className='mt-4 w-full animate-pulse'>Upgrade my plan</Button>
           </Link>
         </CardContent>
       </Card>
@@ -34,7 +34,7 @@ export async function ProfileStatisticsCardView() {
   return (
     <div className='flex w-full flex-col justify-start gap-2'>
       <div className='flex w-full flex-row items-center gap-2'>
-        <h2 className='text-2xl'>Game Statistics</h2>
+        <h2 className='text-2xl'>Game statistics</h2>
       </div>
       <div
         className={cn(
@@ -46,9 +46,9 @@ export async function ProfileStatisticsCardView() {
         {stats.bestPerformedLevel?.level_name && (
           <ProfileStatisticsSimpleCardView
             key='best-performing-topic'
-            title='Best Performing Topic'
+            title='Best performing topic'
             value={startCase(stats.bestPerformedLevel.level_name)}
-            actionLabel='Play This Level Again'
+            actionLabel='Play this level again'
             href={`/level/${stats.bestPerformedLevel.level_id}`}
           />
         )}
@@ -57,32 +57,32 @@ export async function ProfileStatisticsCardView() {
           stats.mostFreqPlayedLevels.map((mostFreqPlayedTopic) => (
             <ProfileStatisticsSimpleCardView
               key={mostFreqPlayedTopic.level_id}
-              title='Most Frequently Played Topic'
+              title='Most frequently played topic'
               value={startCase(mostFreqPlayedTopic.level_name)}
-              actionLabel='Play This Level Again'
+              actionLabel='Play this level again'
               href={`/level/${mostFreqPlayedTopic.level_id}`}
             />
           ))}
         <ProfileStatisticsSimpleCardView
           key='attempted-level-count'
-          title='# of Topics Attempted'
+          title='# of topics attempted'
           value={`${stats.uniqueLevelsCount}`}
         />
         <ProfileStatisticsSimpleCardView
           key='total-game-completed-count'
-          title='# of Games Completed'
+          title='# of games completed'
           value={`${stats.gamesCount}`}
         />
         {stats.highestScore && (
           <ProfileStatisticsSimpleCardView
             key='highest-score'
-            title='Highest Score Achieved In A Game'
+            title='Highest score achieved in a game'
             value={`${stats.highestScore.toFixed(2)}`}
           />
         )}
         <ProfileStatisticsSimpleCardView
           key='total-time-spent'
-          title='Total Time Spent Playing Games'
+          title='Total time spent playing games'
           value={(() => {
             const totalSeconds = stats.totalDurationSpent;
             const hours = Math.floor(totalSeconds / 3600);
