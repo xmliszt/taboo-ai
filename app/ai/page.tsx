@@ -83,16 +83,14 @@ export default function AiPage() {
           </Alert>
         )}
         <form onSubmit={submitForm}>
-          <div className='flex flex-col items-center justify-center gap-6'>
+          <div className='flex max-w-xl flex-col items-center justify-center gap-6'>
             <label
               htmlFor='topicInput'
               className='text-center text-base leading-normal'
               aria-label='AI Mode Explanation'
             >
-              In &quot;AI Mode&quot;, the topic you give will be used by the AI to come up with{' '}
-              <b>guess words</b> for your Taboo game. This means you&apos;re getting a custom-made
-              game instead of using preset topics. The <b>Difficulty Level</b> determine how hard
-              the words will be in the game.
+              Enter a topic and Taboo AI will generate a list of words for you to guess. The
+              difficulty level will determine how easy or hard the words are.
             </label>
             <Input
               aria-label='topic input field'
@@ -102,12 +100,12 @@ export default function AiPage() {
               type='text'
               value={topic}
               onChange={onInputChange}
-              placeholder='Enter Topic: e.g. Planets'
+              placeholder='Enter a topic: e.g. planets'
               maxLength={50}
               disabled={isLoading}
               className='w-full'
             />
-            <Label htmlFor='difficulty'>Difficulty Level</Label>
+            <Label htmlFor='difficulty'>Choose a difficulty level</Label>
             <RadioGroup
               name='difficulty'
               id='difficulty'
@@ -143,7 +141,7 @@ export default function AiPage() {
               >
                 <div className='flex flex-row items-center gap-2'>
                   <PenTool />
-                  Generate
+                  Generate a topic
                 </div>
               </Button>
             )}
