@@ -23,7 +23,7 @@ export function ProfileScrollControl(props: ProfileScrollControlProps) {
 
   return (
     <main className='flex flex-col items-center gap-16 bg-background px-10 py-8 text-foreground'>
-      <div className='flex max-w-xl flex-col items-center gap-16'>{props.children}</div>
+      <div className='flex w-full flex-col items-center gap-16 md:max-w-xl'>{props.children}</div>
     </main>
   );
 }
