@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { CONSTANTS } from '@/lib/constants';
+import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
 import { fetchWord } from '@/lib/services/wordService';
@@ -254,15 +255,28 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
         setConversation(newConversation);
       } catch (error) {
         console.error(error);
-        setConversation([
-          ...inputConversation,
-          {
-            role: 'error',
-            content:
-              "Oops! I encountered a technical issue and I'm unable to continue the conversation right now. Please try again later!",
-            timestamp: new Date().toISOString(),
-          },
-        ]);
+        try {
+          const googleError = tryParseErrorAsGoogleAIError(error, 'conversation');
+          setConversation([
+            ...inputConversation,
+            {
+              role: 'error',
+              content: googleError.message,
+              timestamp: new Date().toISOString(),
+            },
+          ]);
+        } catch (error) {
+          console.error(error);
+          setConversation([
+            ...inputConversation,
+            {
+              role: 'error',
+              content:
+                "Oops! I encountered a technical issue and I'm unable to continue the conversation right now. Please try again later!",
+              timestamp: new Date().toISOString(),
+            },
+          ]);
+        }
       } finally {
         setIsWaitingForAIResponse(false);
         setIsLoading(false);
@@ -422,9 +436,13 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
         confirmAlert({
           title: 'Something went wrong!',
           description: 'Something went wrong during our evaluation process. Please try again.',
-          cancelLabel: 'Try again',
-          hasConfirmButton: false,
-          onCancel: startEvaluationAndUpload,
+          cancelLabel: 'Cancel and exit',
+          confirmLabel: 'Try again',
+          hasConfirmButton: true,
+          onCancel: () => {
+            router.push('/levels');
+          },
+          onConfirm: startEvaluationAndUpload,
         });
       }
     });
@@ -481,7 +499,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       {isCountingDown ? (
         <div
           className={cn(
-            'fixed top-1/2 z-50 w-full animate-bounce text-center',
+            'fixed top-1/2 z-50 w-full animate-ping text-center',
             countdown.time === 0
               ? 'text-6xl'
               : countdown.time === 1
@@ -496,7 +514,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           {countdown.time === 0 ? 'Start' : countdown.time === -1 ? '' : countdown.time}
         </div>
       ) : isGeneratingVariations ? (
-        <div className='fixed top-1/2 z-50 w-full animate-bounce text-center text-3xl'>
+        <div className='fixed top-1/2 z-50 w-full animate-pulse text-center text-3xl'>
           {renderWaitingMessageForVariations()}
         </div>
       ) : (
