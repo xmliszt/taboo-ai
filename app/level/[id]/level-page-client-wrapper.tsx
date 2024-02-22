@@ -156,7 +156,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     }
   }, [timerStatus]);
 
-  const isEmptyInput = userInput.length <= 0;
+  const isEmptyInput = userInput.trim().length <= 0;
 
   const renderWaitingMessageForVariations = () => {
     switch (retryCount.current) {
@@ -180,6 +180,9 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     if (userInputMatchedTabooWords.length > 0) return;
     // Get the submitted value
     const userInput = event.currentTarget['user-input'].value as string;
+    // Format input trim spaces
+    const formattedInput = userInput.trim();
+    if (formattedInput.length <= 0) return;
     // Immediately show user input in the UI.
     // Remove any message that has role == 'error' and also its previous message if it has role == 'user'.
     const updatedConversation: ScoreToUpload['conversations'] = [];
