@@ -9,7 +9,7 @@ interface SkeletonProps {
 export function Skeleton({
   hasHeaderRow = true,
   numberOfRows = 3,
-  className = 'w-full',
+  className = 'w-full max-w-xl',
 }: SkeletonProps) {
   const renderRows = () => {
     const rows: React.ReactElement[] = [];

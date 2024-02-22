@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
+  AlertDialogFooter,
   AlertDialogHeader,
 } from '@/components/ui/alert-dialog';
 import { Progress } from '@/components/ui/progress';
@@ -24,8 +27,10 @@ const AI_EVALUATION_LOADING_MESSAGES = [
 ];
 
 export function AiEvaluationLoadingProgressBar(props: AIEvaluationLoadingProgressBarProps) {
+  const router = useRouter();
   const [currentlyDisplayMessage, setCurrentlyDisplayMessage] = useState<string>('');
   const intervalRef = useRef<number | null>(null);
+
   useEffect(() => {
     // Loop the messages
     let index = 0;
@@ -48,6 +53,15 @@ export function AiEvaluationLoadingProgressBar(props: AIEvaluationLoadingProgres
           </div>
         </AlertDialogDescription>
         <Progress value={(props.current / props.total) * 100} />
+        <AlertDialogFooter>
+          <AlertDialogCancel
+            onClick={() => {
+              router.push('/levels');
+            }}
+          >
+            Cancel and exit
+          </AlertDialogCancel>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

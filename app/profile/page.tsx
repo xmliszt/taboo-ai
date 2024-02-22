@@ -37,12 +37,12 @@ export default async function ProfilePage() {
       <Suspense fallback={<Skeleton className='h-[350px] w-full' numberOfRows={12} />}>
         <ProfilePlayedTopicScrollView />
       </Suspense>
-      <Suspense fallback={<Skeleton className='h-[350px] w-full' numberOfRows={12} />}>
+      <Suspense fallback={<Skeleton className='h-[500px] w-full' numberOfRows={12} />}>
         <ProfileStatisticsCardView />
       </Suspense>
-      <ProfilePrivacySettingsCard className='w-full max-w-[500px]' user={user} />
-      <ProfileSubscriptionCard className='w-full max-w-[500px]' user={user} />
-      <ProfileDangerZone className='w-full max-w-[500px]' user={user} />
+      <ProfilePrivacySettingsCard className='w-full' user={user} />
+      <ProfileSubscriptionCard className='w-full' user={user} />
+      <ProfileDangerZone className='w-full' user={user} />
       <ProfileFeedbackFloatingButton user={user} />
     </ProfileScrollControl>
   );

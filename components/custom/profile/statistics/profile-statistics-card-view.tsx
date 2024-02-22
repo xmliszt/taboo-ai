@@ -95,11 +95,6 @@ export async function ProfileStatisticsCardView() {
           })()}
           titleFontSize='text-4xl'
         />
-        <ProfileStatisticsSimpleCardView
-          key='coming-soon'
-          title='Stay tuned...'
-          value='More stats coming soon!'
-        />
       </div>
     </div>
   );
