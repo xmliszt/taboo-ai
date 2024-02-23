@@ -95,11 +95,20 @@ export default function SideMenu() {
       },
       {
         path: '/levels',
-        title: 'Choose a topic',
+        title: 'Play public topics',
         subtitle:
-          'Start playing Taboo AI by choosing any of the listed topic as you like. Can\'t find the topic you are looking for? Give "AI Mode" a try!',
+          'Start playing Taboo AI with public topics contributed by players around the world!',
         visible: true,
         href: '/levels',
+      },
+      {
+        path: '/ai',
+        title: 'Play AI generated topics',
+        subtitle:
+          'Play with AI generated topics for endless possibilities! Exclusive to pro plan subscribers!',
+        visible: true,
+        href: '/ai',
+        cta: true,
       },
       {
         path: '/add-level',
@@ -119,9 +128,14 @@ export default function SideMenu() {
       },
       {
         path: '/pricing',
-        title: 'Pricing',
+        title:
+          !user || user.subscription?.customer_plan_type === 'free'
+            ? 'Become a pro player'
+            : 'Pricing',
         subtitle:
-          'Taboo AI is free to play. However, you can choose to subscribe to our PRO plan to enjoy exclusive features!',
+          !user || user.subscription?.customer_plan_type === 'free'
+            ? 'Taboo AI is free to play. However, you can enjoy more exclusive features by subscribing to our pro plan!'
+            : 'View pricing plans to discover what exclusive features you can enjoy as a pro player!',
         visible: true,
         href: '/pricing',
       },
@@ -206,6 +220,7 @@ export default function SideMenu() {
                   onClick={() => {
                     setIsOpen(false);
                   }}
+                  cta={item.cta}
                 />
               )
             )

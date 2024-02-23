@@ -37,7 +37,7 @@ export default async function LevelsPage(props: LevelsPageProps) {
       </div>
       <LevelsScrollArea>
         {/* AI Mode Card */}
-        <LevelCard allowedPlanType={['pro']} />
+        <LevelCard />
 
         {/* Levels Card */}
         {sortedLevels.map((level, idx) => (

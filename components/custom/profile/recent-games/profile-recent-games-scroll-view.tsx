@@ -46,6 +46,9 @@ export async function ProfileRecentGamesScrollView() {
         ) : (
           userGames.map((game) => <ProfileRecentGameCard key={game.game_id} game={game} />)
         )}
+        <ProfileRecentGameCard
+          game={{ ...userGames[0], game_id: 'play-more', level_name: 'Play more games' }}
+        />
       </div>
     </div>
   );
