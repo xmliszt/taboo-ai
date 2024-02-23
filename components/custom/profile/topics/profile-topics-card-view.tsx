@@ -81,7 +81,7 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
                 </CardContent>
               </Card>
               {topic.is_best_score && (
-                <div className='rotating-golden-gradient absolute left-0 top-0 -z-10 h-full w-full rounded-lg after:blur-lg'></div>
+                <div className='rotating-golden-gradient absolute left-0 top-0 -z-10 h-full w-full rounded-lg after:blur-sm'></div>
               )}
             </HoverPerspectiveContainer>
           </Link>

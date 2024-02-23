@@ -15,7 +15,7 @@ export async function ProfilePlayedTopicScrollView() {
       <p className='text-sm text-muted-foreground'>
         Golden aura indicates you are the top scorer for this topic
       </p>
-      <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-8 leading-snug'>
+      <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-6 overflow-x-auto rounded-lg border p-8 leading-snug'>
         {playedTopics.map((topic) => (
           <ProfileTopicsCardView key={topic.level_id} topic={topic} />
         ))}
