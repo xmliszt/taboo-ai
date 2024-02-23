@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Medal, Trophy } from 'lucide-react';
+import { Medal, Trophy } from 'lucide-react';
 
 import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetch-levels';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
@@ -17,6 +17,7 @@ import { getOverallRating } from '@/lib/utils/gameUtils';
 import { useAuth } from '../auth-provider';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { HoverPerspectiveContainer } from './common/hover-perspective-container';
 import { SignInReminderProps } from './globals/sign-in-reminder-dialog';
 import { StarRatingBar } from './star-rating-bar';
 
@@ -26,19 +27,13 @@ interface LevelCardProps {
   allowedPlanType?: Database['public']['Enums']['customer_plan_type'][];
 }
 
-export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardProps) {
+export function LevelCard({ isShowingRank, level }: LevelCardProps) {
   const router = useRouter();
   const { user } = useAuth();
   const [pointHasDown, setPointHasDown] = useState(false);
   const isAIMode = !level;
-  const isLocked =
-    isAIMode &&
-    (!user || !allowedPlanType?.includes(user.subscription?.customer_plan_type ?? 'free'));
 
   const goToLevel = () => {
-    if (isLocked) {
-      return EventManager.fireEvent(CustomEventKey.SUBSCRIPTION_LOCK_DIALOG);
-    }
     if (level) {
       setPersistence(HASH.level, level);
       if (isShowingRank && !user) {
@@ -151,7 +146,9 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
   };
 
   return (
-    <div className={'group/level-card relative h-auto min-h-[300px] w-[200px] cursor-pointer'}>
+    <HoverPerspectiveContainer
+      className={'group/level-card relative h-auto min-h-[300px] w-[200px] cursor-pointer'}
+    >
       <Card
         onPointerDown={() => {
           setPointHasDown(true);
@@ -167,31 +164,14 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
           isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
             ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
             : '',
-          isLocked
-            ? 'group-hover/level-card:-rotate-[5deg]'
-            : 'group-hover/level-card:scale-[1.02]',
-          'relative flex h-full w-full cursor-pointer flex-col shadow-md transition-all ease-in-out'
+          'relative flex h-full w-full cursor-pointer flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
         )}
       >
-        {isLocked && (
-          <div
-            className={cn(
-              'absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-black bg-opacity-80 p-4 leading-normal text-white',
-              isLocked ? 'group-hover/level-card:rotate-[10deg]' : '',
-              'transition-transform ease-in-out'
-            )}
-          >
-            <Lock size={40} color='#eeeeee' strokeWidth={2} />
-            <div>You need a PRO subscription to access this content</div>
-          </div>
-        )}
         <CardHeader>
           <div
             className={cn(
               'text-md rounded-lg bg-primary p-2 font-extrabold leading-tight text-primary-foreground shadow-md transition-transform ease-in-out',
-              isLocked
-                ? 'opacity-50'
-                : 'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
+              'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
             )}
           >
             {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI mode'}
@@ -213,9 +193,7 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
         <span
           className={cn(
             'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg',
-            isLocked
-              ? 'group-hover/level-card:-rotate-[5deg]'
-              : 'group-hover/level-card:scale-[1.02]'
+            'group-hover/level-card:scale-[1.02]'
           )}
         ></span>
       ) : (
@@ -225,6 +203,6 @@ export function LevelCard({ isShowingRank, level, allowedPlanType }: LevelCardPr
           )}
         ></span>
       )}
-    </div>
+    </HoverPerspectiveContainer>
   );
 }

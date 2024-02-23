@@ -2,7 +2,7 @@
 
 import React, { MouseEventHandler, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookMarked, BookPlus, CircleUser, PenSquare, Quote, User, View } from 'lucide-react';
+import { BookPlus, BrainCircuit, CircleUser, PenSquare, Quote, User, View } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
@@ -21,6 +21,7 @@ interface HomeMenuButtonData {
   onClick?: MouseEventHandler;
   ariaLabel: string;
   visible: boolean;
+  cta?: boolean;
 }
 
 export default function HomeMenuButtonArray() {
@@ -63,11 +64,21 @@ export default function HomeMenuButtonArray() {
       {
         key: 'play a topic',
         icon: <Quote size={20} />,
-        title: 'Choose a topic',
-        subtitle: 'Start playing Taboo AI by choosing one topic that you like.',
+        title: 'Play public topics',
+        subtitle: 'Start playing with public topics contributed by players around the world!',
         ariaLabel: 'Click to choose a topic to start playing',
         href: '/levels',
         visible: true,
+      },
+      {
+        key: 'ai mode',
+        icon: <BrainCircuit size={20} />,
+        title: 'Play AI generated topic',
+        subtitle: 'Play with AI generated topics for endless possibilities!',
+        ariaLabel: 'Click to play with AI generated topics',
+        href: '/ai',
+        visible: true,
+        cta: true,
       },
       {
         key: 'contribute a topic',
@@ -77,17 +88,7 @@ export default function HomeMenuButtonArray() {
           'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
         ariaLabel: 'Click to contribute a new topic to Taboo AI',
         onClick: handleAddTopic,
-        visible: true,
-      },
-      {
-        key: 'view pricing',
-        icon: <BookMarked size={20} />,
-        title: 'Taboo AI pricing',
-        subtitle:
-          'Taboo AI offers both free and paid plans. Choose a plan that suits you the best! PRO plan offers more exclusive features, including AI Mode!',
-        ariaLabel: 'Click to upgrade your subscription',
-        href: '/pricing',
-        visible: user === undefined,
+        visible: user !== undefined,
       },
       {
         key: 'view my profile',
@@ -106,7 +107,7 @@ export default function HomeMenuButtonArray() {
         subtitle: 'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features.',
         ariaLabel: 'Click to upgrade your plan',
         href: '/pricing',
-        visible: user?.subscription?.customer_plan_type === 'free',
+        visible: !user || user.subscription?.customer_plan_type === 'free',
       },
       {
         key: 'review topic and words',
@@ -134,6 +135,7 @@ export default function HomeMenuButtonArray() {
               href={data.href}
               onClick={data.onClick}
               aria-label={data.ariaLabel}
+              cta={data.cta}
             />
           )
       )}
