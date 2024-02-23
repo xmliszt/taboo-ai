@@ -14,6 +14,9 @@ export async function ProfilePlayedTopicScrollView() {
       <div className='flex w-full flex-row items-center gap-2'>
         <h2 className='text-2xl'>Completed topics</h2>
       </div>
+      <p className='text-sm text-muted-foreground'>
+        Golden aura indicates you are the top scorer for this topic
+      </p>
       <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-12 overflow-x-auto rounded-lg border px-12 py-8 leading-snug'>
         {playedTopics.length === 0 ? (
           <div className='w-full text-center'>
@@ -26,6 +29,7 @@ export async function ProfilePlayedTopicScrollView() {
         ) : (
           playedTopics.map((topic) => <ProfileTopicsCardView key={topic.level_id} topic={topic} />)
         )}
+        <ProfileTopicsCardView topic={{ ...playedTopics[0], level_id: 'play-more' }} />
       </div>
     </div>
   );

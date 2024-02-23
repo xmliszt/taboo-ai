@@ -1,12 +1,15 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { PenTool, SpellCheck2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useTheme } from 'next-themes';
 
 import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
 import { useAuth } from '@/components/auth-provider';
+import { HoverPerspectiveContainer } from '@/components/custom/common/hover-perspective-container';
+import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import { Spinner } from '@/components/custom/spinner';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -27,15 +30,22 @@ export default function AiPage() {
   const router = useRouter();
   const isLocked = !user || user.subscription?.customer_plan_type === 'free';
 
-  useEffect(() => {
-    if (isLocked) {
-      toast.info('You need a paid subscription to access this feature');
-      router.push('/pricing');
-    }
-  }, [isLocked]);
+  const { resolvedTheme } = useTheme();
 
   const submitForm = async (event: FormEvent) => {
     event.preventDefault();
+    if (isLocked) {
+      confirmAlert({
+        title: 'Subscribe to pro plan to unlock AI generated topics!',
+        description:
+          'AI generated topics are exclusive to pro plan subscribers. Become a pro player and enjoy the endless possibilities from our intelligent AI.',
+        confirmLabel: 'See pricing plans',
+        onConfirm: () => {
+          router.push('/pricing');
+        },
+      });
+      return;
+    }
     if (topic.length > 0) {
       setIsLoading(true);
       try {
@@ -70,14 +80,27 @@ export default function AiPage() {
     setErrorMessage(undefined);
   };
 
-  if (isLocked)
-    return <main className='flex h-full w-full flex-col items-center px-10 pt-20'></main>;
-
   return (
     <>
-      <main className='flex flex-col items-center px-10 pt-8'>
+      <main className='flex flex-col items-center px-10 py-8'>
+        <div className='h-52 w-52 p-4 lg:h-64 lg:w-64 lg:p-8'>
+          <HoverPerspectiveContainer className='rounded-lg shadow-xl'>
+            <Image
+              className='rounded-lg'
+              src={
+                resolvedTheme === 'dark'
+                  ? 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/ai-mode-dark.png?raw=true'
+                  : 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/ai-mode-light.png?raw=true'
+              }
+              alt='AI Mode'
+              width={600}
+              height={600}
+            />
+            <div className='unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg after:blur-lg'></div>
+          </HoverPerspectiveContainer>
+        </div>
         {errorMessage !== undefined && (
-          <Alert className='mb-8 animate-fade-in border-red-500 text-center font-extrabold text-red-500'>
+          <Alert className='mb-8 max-w-xl animate-fade-in border-red-500 text-center font-extrabold text-red-500'>
             <SpellCheck2 color='red' />
             <AlertTitle className='leading-snug'>{errorMessage}</AlertTitle>
           </Alert>
@@ -86,7 +109,7 @@ export default function AiPage() {
           <div className='flex max-w-xl flex-col items-center justify-center gap-6'>
             <label
               htmlFor='topicInput'
-              className='text-center text-base leading-normal'
+              className='text-center text-sm leading-normal lg:text-base'
               aria-label='AI Mode Explanation'
             >
               Enter a topic and Taboo AI will generate a list of words for you to guess. The
@@ -130,15 +153,11 @@ export default function AiPage() {
               </div>
             </RadioGroup>
             {isLoading ? (
-              <Button className='mt-8 w-full' disabled>
+              <Button className='w-full' disabled>
                 <Spinner />
               </Button>
             ) : (
-              <Button
-                type='submit'
-                className='mt-8 w-full'
-                aria-label='Confirm to submit your input'
-              >
+              <Button type='submit' className='w-full' aria-label='Confirm to submit your input'>
                 <div className='flex flex-row items-center gap-2'>
                   <PenTool />
                   Generate a topic

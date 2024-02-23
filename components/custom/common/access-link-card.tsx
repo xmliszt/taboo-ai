@@ -11,6 +11,7 @@ interface AccessLinkCardProps {
   onClick?: MouseEventHandler;
   className?: string;
   icon?: React.ReactNode;
+  cta?: boolean;
 }
 
 export interface MenuItem {
@@ -22,6 +23,7 @@ export interface MenuItem {
   highlight?: boolean;
   href?: string; // Convenient way for router push, if defined, router will push to this route
   onClick?: MouseEventHandler; // Additional handling when the item gets clicked, more customization
+  cta?: boolean; // Call to action, if true, it will be highlighted
 }
 
 export default function AccessLinkCard({
@@ -30,18 +32,19 @@ export default function AccessLinkCard({
   onClick,
   className,
   icon,
+  cta = false,
 }: AccessLinkCardProps) {
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <Card
+    <div
       key={`menu-${item.path}`}
       id={`menu-${idx}`}
       className={cn(
         item.highlight ? 'border-green-500' : '',
         pathname === item.path ? 'border-4 border-primary font-bold' : '',
         item.isUpcoming && 'opacity-20',
-        'transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg',
+        'relative rounded-lg border transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg',
         className
       )}
       onClick={(e) => {
@@ -53,15 +56,23 @@ export default function AccessLinkCard({
         onClick && onClick(e);
       }}
     >
-      <CardHeader>
-        {item.isUpcoming === true ? <Construction /> : icon}
-        <CardTitle>{item.title}</CardTitle>
-        <CardDescription>
-          {item.isUpcoming
-            ? 'Taboo AI is still developing this feature for you. Stay tuned for more updates!'
-            : item.subtitle}
-        </CardDescription>
-      </CardHeader>
-    </Card>
+      <Card key={`menu-${item.path}`} id={`menu-${idx}`}>
+        <CardHeader>
+          {item.isUpcoming === true ? <Construction /> : icon}
+          <CardTitle>{item.title}</CardTitle>
+          <CardDescription>
+            {item.isUpcoming
+              ? 'Taboo AI is still developing this feature for you. Stay tuned for more updates!'
+              : item.subtitle}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      <div
+        className={cn(
+          'absolute left-0 top-0 -z-10 h-full w-full rounded-lg',
+          !!cta && 'unicorn-color transition-colors ease-out after:blur-sm'
+        )}
+      ></div>
+    </div>
   );
 }
