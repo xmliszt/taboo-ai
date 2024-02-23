@@ -1,4 +1,4 @@
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { DialogProps } from '@radix-ui/react-dialog';
 import _ from 'lodash';
 import { toast } from 'sonner';
@@ -7,7 +7,6 @@ import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
 import { sendEmail } from '@/lib/services/send-email';
 import { upsertWordWithTabooWords } from '@/lib/services/wordService';
-import { cn } from '@/lib/utils';
 
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -23,7 +22,6 @@ interface TopicReviewSheet extends DialogProps {
   difficultyLevel: string;
   shouldUseAIForTabooWords: boolean;
   targetWords: string[];
-  defaultNickname: string;
   isAIGenerated?: boolean;
   tabooWords?: string[][];
   onTopicSubmitted?: () => void;
@@ -34,7 +32,6 @@ export function TopicReviewSheet({
   user,
   topicName,
   difficultyLevel,
-  defaultNickname,
   shouldUseAIForTabooWords,
   isAIGenerated = false,
   targetWords,
@@ -42,7 +39,6 @@ export function TopicReviewSheet({
   onTopicSubmitted,
   onOpenChange,
 }: TopicReviewSheet) {
-  const [nickname, setNickname] = useState(defaultNickname);
   const [isPending, startTransition] = useTransition();
 
   const submitNewTopic = async () => {
@@ -81,10 +77,9 @@ export function TopicReviewSheet({
 
   const sendMyselfEmail = async () => {
     const email = user.email;
-    const name = nickname || 'anonymous';
     try {
       await sendEmail(
-        name,
+        user.name,
         email,
         `${email} has submitted a new topic!`,
         `Taboo AI New Topic Submission: ${email} has submitted a new topic!`,
@@ -164,23 +159,6 @@ export function TopicReviewSheet({
           <Label htmlFor='email-input'>Contributor email: </Label>
           <Input disabled id='email-input' defaultValue={user.email} />
         </div>
-        <div className='my-4 flex flex-col gap-2'>
-          <Label htmlFor='nickname-input'>Nickname: </Label>
-          <Input
-            disabled={isPending}
-            id='nickname-input'
-            value={nickname}
-            maxLength={20}
-            onChange={(e) => {
-              setNickname(e.target.value);
-            }}
-            className={cn(_.trim(nickname).length <= 0 ? '!border-red-500' : '!border-border')}
-          />
-          <p className='text-xs text-muted-foreground'>
-            Nickname will be displayed under the successfully contributed topic and visible to all
-            players.
-          </p>
-        </div>
         <div className='flex justify-center'>
           {isPending ? (
             <Button disabled>
@@ -188,7 +166,7 @@ export function TopicReviewSheet({
             </Button>
           ) : (
             <Button
-              disabled={_.trim(nickname).length <= 0 || isPending}
+              disabled={isPending}
               className='mb-4'
               aria-label='click to submit the topic created'
               onClick={submitNewTopic}

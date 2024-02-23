@@ -761,7 +761,6 @@ const AddLevelPage = () => {
       )}
       <TopicReviewSheet
         user={user}
-        defaultNickname={user.nickname ?? user.name ?? ''}
         difficultyLevel={difficultyLevel}
         open={reviewSheetOpen}
         onOpenChange={(open) => {

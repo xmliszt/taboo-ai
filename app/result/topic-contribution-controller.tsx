@@ -62,7 +62,6 @@ export function TopicContributionController(props: TopicContributionControllerPr
             setIsTopicReviewSheetOpen(open);
           }}
           user={props.user}
-          defaultNickname={props.user.nickname ?? props.user.name}
           topicName={props.level.name}
           difficultyLevel={String(props.level.difficulty)}
           shouldUseAIForTabooWords={true}
