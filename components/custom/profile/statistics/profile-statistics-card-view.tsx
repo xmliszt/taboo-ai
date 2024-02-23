@@ -14,7 +14,7 @@ export async function ProfileStatisticsCardView() {
 
   if (user.subscription?.customer_plan_type === 'free')
     return (
-      <Card className='w-full max-w-[500px]'>
+      <Card className='w-full'>
         <CardContent>
           <CardHeader className='my-4 p-0'>
             <CardTitle>Game statistics</CardTitle>

@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import { fetchUniqueTopicsCompletedByUser } from '@/app/profile/server/fetch-user-completed-topics';
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 
@@ -17,18 +15,10 @@ export async function ProfilePlayedTopicScrollView() {
       <p className='text-sm text-muted-foreground'>
         Golden aura indicates you are the top scorer for this topic
       </p>
-      <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-12 overflow-x-auto rounded-lg border px-12 py-8 leading-snug'>
-        {playedTopics.length === 0 ? (
-          <div className='w-full text-center'>
-            You have not completed any topics yet.{' '}
-            <Link href='/levels' className='underline transition-all hover:text-muted-foreground'>
-              Go play some topics
-            </Link>
-            .
-          </div>
-        ) : (
-          playedTopics.map((topic) => <ProfileTopicsCardView key={topic.level_id} topic={topic} />)
-        )}
+      <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-8 leading-snug'>
+        {playedTopics.map((topic) => (
+          <ProfileTopicsCardView key={topic.level_id} topic={topic} />
+        ))}
         <ProfileTopicsCardView topic={{ ...playedTopics[0], level_id: 'play-more' }} />
       </div>
     </div>

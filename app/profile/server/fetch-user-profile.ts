@@ -65,10 +65,26 @@ export async function fetchUserProfile(): Promise<
 
   // Check to restore stripe customer if needed
   if (!userProfile.subscription?.customer_id) {
+    // If no customer_id
     const stripeCustomer = await fetchStripeCustomerForUser(userProfile.email);
     if (stripeCustomer) {
       // Fetch user subscription from stripe
       const userSubscription = await fetchUserSubscriptionsFromStripe(stripeCustomer.id);
+      if (userSubscription.length === 0) {
+        // Update user subscription in db
+        const updateSubscriptionResponse = await supabaseClient
+          .from('subscriptions')
+          .update({ customer_id: stripeCustomer.id, customer_plan_type: 'free' })
+          .eq('user_id', userProfile.id)
+          .select()
+          .single();
+        if (updateSubscriptionResponse.error) throw updateSubscriptionResponse.error;
+        return {
+          ...userProfile,
+          subscription: updateSubscriptionResponse.data,
+          user_plan: userPlan,
+        };
+      }
       const planId = userSubscription[0].items.data[0].plan.id;
       const customerPlanType = availablePlans.find((plan) => plan.price_id === planId)?.type;
       // Update user subscription in db
@@ -100,6 +116,21 @@ export async function fetchUserProfile(): Promise<
     const userSubscription = await fetchUserSubscriptionsFromStripe(
       userProfile.subscription.customer_id
     );
+    if (userSubscription.length === 0) {
+      // Update user subscription in db
+      const updateSubscriptionResponse = await supabaseClient
+        .from('subscriptions')
+        .update({ customer_id: userProfile.subscription.customer_id, customer_plan_type: 'free' })
+        .eq('user_id', userProfile.id)
+        .select()
+        .single();
+      if (updateSubscriptionResponse.error) throw updateSubscriptionResponse.error;
+      return {
+        ...userProfile,
+        subscription: updateSubscriptionResponse.data,
+        user_plan: userPlan,
+      };
+    }
     const planId = userSubscription[0].items.data[0].plan.id;
     const customerPlanType = availablePlans.find((plan) => plan.price_id === planId)?.type;
     // Update user subscription in db

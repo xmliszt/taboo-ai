@@ -48,6 +48,18 @@ export async function fetchUserWithSubscriptions(): Promise<
     const fetchSubscriptionJson = await fetchSubscriptionResponse.json();
     if (fetchSubscriptionJson.error) throw fetchSubscriptionJson.error;
     const subscription = fetchSubscriptionJson.subscription as Stripe.Subscription;
+    if (subscription === null || subscription === undefined) {
+      return {
+        ...userProfile,
+        subscription: {
+          user_id: userProfile.id,
+          customer_id: customerId,
+          customer_plan_type: 'free',
+        },
+        user_plan: subscribedPlan,
+        stripeSubscription: subscription,
+      };
+    }
     const planId = subscription.items.data[0].plan.id;
     const customerPlanType = fetchAvailablePlans.data.find((plan) => plan.price_id === planId)
       ?.type;

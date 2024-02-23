@@ -35,17 +35,9 @@ export async function ProfileRecentGamesScrollView() {
         )}
       </div>
       <div className='flex w-full snap-x snap-mandatory flex-row justify-start gap-4 overflow-x-auto rounded-lg border p-8 leading-snug'>
-        {userGames.length === 0 ? (
-          <div className='w-full text-center'>
-            You have not played any game yet.{' '}
-            <Link href='/levels' className='underline transition-all hover:text-muted-foreground'>
-              Go choose a topic and start playing
-            </Link>
-            .
-          </div>
-        ) : (
-          userGames.map((game) => <ProfileRecentGameCard key={game.game_id} game={game} />)
-        )}
+        {userGames.map((game) => (
+          <ProfileRecentGameCard key={game.game_id} game={game} />
+        ))}
         <ProfileRecentGameCard
           game={{ ...userGames[0], game_id: 'play-more', level_name: 'Play more games' }}
         />

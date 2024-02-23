@@ -21,7 +21,7 @@ export function AuthProvider({ children, ...props }: AuthProviderProps) {
   const { data: user, isLoading } = useQuery({
     queryKey: ['fetch-user'],
     queryFn: fetchUserWithSubscriptions,
-    retry: false,
+    retry: true,
   });
 
   return (
