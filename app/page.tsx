@@ -51,11 +51,14 @@ export default async function HomePage() {
           </Link>
           <div className='group/pricing-card relative flex h-[500px] w-[300px] items-center justify-center'>
             <PricingCard
-              className='!absolute top-0 !z-10 group-hover/pricing-card:rotate-[5deg]'
+              className='!absolute top-0 !z-10 h-full w-full group-hover/pricing-card:!rotate-[5deg]'
               index={1}
               plan={proPlan}
             />
+            <Card className='absolute top-0 z-0 my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center bg-card transition-transform ease-in-out group-hover/pricing-card:-rotate-[15deg]'></Card>
+            <Card className='absolute top-0 z-0 my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center bg-card transition-transform ease-in-out group-hover/pricing-card:-rotate-[10deg]'></Card>
             <Card className='absolute top-0 z-0 my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center bg-card transition-transform ease-in-out group-hover/pricing-card:-rotate-[5deg]'></Card>
+            <Card className='absolute top-0 z-0 my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center bg-card transition-transform ease-in-out group-hover/pricing-card:-rotate-[0deg]'></Card>
           </div>
         </section>
       )}

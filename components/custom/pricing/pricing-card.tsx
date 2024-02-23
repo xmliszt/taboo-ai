@@ -24,6 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
 
+import { HoverPerspectiveContainer } from '../common/hover-perspective-container';
 import { confirmAlert } from '../globals/generic-alert-dialog';
 import { SignInReminderProps } from '../globals/sign-in-reminder-dialog';
 import { Spinner } from '../spinner';
@@ -182,69 +183,71 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
   }, [isCurrentPlan]);
 
   return (
-    <Card
-      id={`plan-card-${index}`}
-      ref={cardRef}
+    <HoverPerspectiveContainer
       className={cn(
         className,
-        /pro/i.test(plan.name) ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]' : '',
         user?.subscription?.customer_plan_type === plan.type ? 'border-[1px] border-primary' : '',
-        'relative my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center transition-transform ease-in-out hover:scale-105'
+        'relative my-12 max-h-[400px] min-h-[400px] min-w-[280px] max-w-[280px] snap-center'
       )}
     >
-      <CardHeader className='p-6 pb-4'>
-        <CardTitle>
-          <div className='flex flex-row items-center justify-between'>
-            {plan.name}
-            {plan.type !== 'free' && <Badge>{plan.trial_days} days free trial</Badge>}
-          </div>
-        </CardTitle>
-        <CardDescription className='text-base'>${plan.price_per_month} per month</CardDescription>
-      </CardHeader>
-      <CardContent className='flex h-full flex-col gap-[0.35rem] text-sm'>
-        {plan.plan_features.map((feature) => (
-          <div key={feature.id} className='flex flex-row items-start justify-start gap-2'>
-            <div className='w-[22px]'>
-              {feature.status === 'absent' ? (
-                <X size={20} color='#E54666' strokeWidth={2} />
-              ) : (
-                <Check
-                  size={20}
-                  color={feature.status === 'complete' ? '#7eb262' : '#7eb26250'}
-                  strokeWidth={2}
-                />
-              )}
+      <Card id={`plan-card-${index}`} ref={cardRef} className='h-full'>
+        <CardHeader className='p-6 pb-4'>
+          <CardTitle>
+            <div className='flex flex-row items-center justify-between'>
+              {plan.name}
+              {plan.type !== 'free' && <Badge>{plan.trial_days} days free trial</Badge>}
             </div>
+          </CardTitle>
+          <CardDescription className='text-base'>${plan.price_per_month} per month</CardDescription>
+        </CardHeader>
+        <CardContent className='flex h-full flex-col gap-[0.35rem] text-sm'>
+          {plan.plan_features.map((feature) => (
+            <div key={feature.id} className='flex flex-row items-start justify-start gap-2'>
+              <div className='w-[22px]'>
+                {feature.status === 'absent' ? (
+                  <X size={20} color='#E54666' strokeWidth={2} />
+                ) : (
+                  <Check
+                    size={20}
+                    color={feature.status === 'complete' ? '#7eb262' : '#7eb26250'}
+                    strokeWidth={2}
+                  />
+                )}
+              </div>
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <span
-                  className={cn(
-                    'leading-tight underline decoration-dotted underline-offset-2 hover:cursor-help',
-                    feature.status === 'absent' ? 'text-muted-foreground' : 'text-primary'
-                  )}
-                >
-                  {feature.title}{' '}
-                </span>
-              </PopoverTrigger>
-              <PopoverContent className='bg-muted leading-snug text-card-foreground'>
-                <p className='text-base leading-tight'>{feature.description}</p>
-              </PopoverContent>
-            </Popover>
-          </div>
-        ))}
-      </CardContent>
-      <CardFooter className='absolute bottom-0 left-0 z-10 flex w-full justify-center'>
-        <Button
-          className='w-full'
-          disabled={isCurrentPlan || isLoading}
-          onClick={() => {
-            void subscribeTo(plan.price_id ?? undefined);
-          }}
-        >
-          {isLoading ? <Spinner /> : actionLabel}
-        </Button>
-      </CardFooter>
-    </Card>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <span
+                    className={cn(
+                      'leading-tight underline decoration-dotted underline-offset-2 hover:cursor-help',
+                      feature.status === 'absent' ? 'text-muted-foreground' : 'text-primary'
+                    )}
+                  >
+                    {feature.title}{' '}
+                  </span>
+                </PopoverTrigger>
+                <PopoverContent className='bg-muted leading-snug text-card-foreground'>
+                  <p className='text-base leading-tight'>{feature.description}</p>
+                </PopoverContent>
+              </Popover>
+            </div>
+          ))}
+        </CardContent>
+        <CardFooter className='absolute bottom-0 left-0 z-10 flex w-full justify-center'>
+          <Button
+            className='w-full'
+            disabled={isCurrentPlan || isLoading}
+            onClick={() => {
+              void subscribeTo(plan.price_id ?? undefined);
+            }}
+          >
+            {isLoading ? <Spinner /> : actionLabel}
+          </Button>
+        </CardFooter>
+      </Card>
+      {plan.type === 'pro' && (
+        <div className='rotating-golden-gradient absolute left-0 top-0 -z-10 h-full w-full rounded-lg after:blur-xl'></div>
+      )}
+    </HoverPerspectiveContainer>
   );
 }

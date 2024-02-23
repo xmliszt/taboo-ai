@@ -14,7 +14,7 @@ export function HoverPerspectiveContainer({ children, className }: HoverPerspect
   return (
     <div
       className={cn(
-        'group relative transform transition-[transoform_border_box-shadow] duration-300 ease-out',
+        'group relative transform rounded-lg shadow-lg transition-[transoform_border_box-shadow] duration-300 ease-out',
         className
       )}
       onMouseEnter={(event) => {
@@ -40,7 +40,7 @@ export function HoverPerspectiveContainer({ children, className }: HoverPerspect
       }}
     >
       {children}
-      <div className='pointer-events-none absolute inset-0 group-hover:bg-[radial-gradient(at_var(--x)_var(--y),hsl(var(--glare))_20%,transparent_80%)]'></div>
+      <div className='pointer-events-none absolute inset-0 rounded-lg group-hover:bg-[radial-gradient(at_var(--x)_var(--y),hsl(var(--glare))_20%,transparent_80%)]'></div>
     </div>
   );
 }
