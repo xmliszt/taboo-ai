@@ -76,7 +76,6 @@ export function UserSignInPortal() {
           email: user.email,
           name: user.name,
           nickname: user.nickname ?? 'no nickname',
-          login_times: user.login_times,
           photo_url: user.photo_url ?? 'no photo',
           first_login_at: user.first_login_at,
           last_login_at: user.last_login_at,
