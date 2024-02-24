@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { fetchAllLevelsWithoutCookies } from '@/app/levels/server/fetch-levels';
-import { trackNavigation } from '@/lib/logsnap-server';
+import { trackNavigation } from '@/lib/logsnag/logsnag-server';
 
 export async function generateMetadata({
   params: { id },

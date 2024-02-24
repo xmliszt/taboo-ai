@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { trackNavigation } from '@/lib/logsnap-server';
+import { trackNavigation } from '@/lib/logsnag/logsnag-server';
 
 import { Footer } from '../footer';
 

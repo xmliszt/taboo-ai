@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useLogSnag } from '@logsnag/next';
 import {
   AlignJustify,
   BookMarked,
@@ -22,6 +21,7 @@ import { signIn } from '@/components/header/server/sign-in';
 import { signOut } from '@/components/header/server/sign-out';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLogSnag } from '@/lib/logsnag/use-controlled-logsnag';
 import { cn } from '@/lib/utils';
 
 import { Spinner } from '../custom/spinner';
@@ -91,6 +91,9 @@ export function UserSignInPortal() {
         event: 'login',
         user_id: user.id,
         icon: '👋',
+        tags: {
+          env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'no env identified',
+        },
       });
       hasGreeted = true;
     }
@@ -115,6 +118,9 @@ export function UserSignInPortal() {
           event: 'logout',
           user_id: user.id,
           icon: '👋',
+          tags: {
+            env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'no env identified',
+          },
         });
       hasGreeted = false;
       setTimeout(() => {
@@ -130,15 +136,10 @@ export function UserSignInPortal() {
     if (!user?.subscription?.customer_id) return;
     try {
       const portalSessionUrl = await createStripeCustomerPortal(
+        user.id,
         user.subscription.customer_id,
         `${window.location.origin}/profile?anchor=subscription`
       );
-      track({
-        channel: 'auth',
-        event: 'manage_subscription',
-        user_id: user.id,
-        icon: '🔐',
-      });
       router.push(portalSessionUrl);
     } catch (error) {
       console.error(error);

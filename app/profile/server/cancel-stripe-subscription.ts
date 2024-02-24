@@ -1,6 +1,6 @@
 'use server';
 
-import logSnag from '@/lib/logsnap-server';
+import { track } from '@/lib/logsnag/logsnag-server';
 
 import 'server-only';
 
@@ -15,7 +15,7 @@ export async function cancelStripeSubscription(userId: string, subscriptionId: s
   await stripe.subscriptions.update(subscriptionId, {
     cancel_at_period_end: true,
   });
-  await logSnag.track({
+  await track({
     channel: 'subscription',
     event: 'cancel',
     user_id: userId,
@@ -23,6 +23,7 @@ export async function cancelStripeSubscription(userId: string, subscriptionId: s
     notify: true,
     tags: {
       subscription_id: subscriptionId,
+      env: process.env.VERCEL_ENV ?? 'no env identified',
     },
   });
 }

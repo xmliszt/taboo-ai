@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { trackNavigation } from '@/lib/logsnap-server';
+import { trackNavigation } from '@/lib/logsnag/logsnag-server';
 
 export const metadata: Metadata = {
   title: 'My Profile',

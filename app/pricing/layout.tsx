@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import { trackNavigation } from '@/lib/logsnap-server';
+import { trackNavigation } from '@/lib/logsnag/logsnag-server';
 
 export const metadata: Metadata = {
   title: 'Pricing',

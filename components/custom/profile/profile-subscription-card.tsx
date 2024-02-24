@@ -81,6 +81,7 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
     if (!user.subscription?.customer_id) return;
     try {
       const portalSessionUrl = await createStripeCustomerPortal(
+        user.id,
         user.subscription.customer_id,
         `${window.location.origin}/profile?anchor=subscription`
       );
