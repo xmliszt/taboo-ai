@@ -74,7 +74,9 @@ export default async function HomePage() {
         </a>{' '}
         has more details.
       </footer>
-      <SetUserIdServerComponent userId={user?.id ?? null} />
+      {process.env.VERCEL_ENV === 'production' && (
+        <SetUserIdServerComponent userId={user?.id ?? null} />
+      )}
     </main>
   );
 }
