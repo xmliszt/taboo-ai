@@ -21,6 +21,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.1.2",
     "@hookform/resolvers": "^3.3.1",
+    "@logsnag/next": "^1.0.3",
     "@next/bundle-analyzer": "^13.4.19",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",

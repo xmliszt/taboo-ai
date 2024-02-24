@@ -1,6 +1,8 @@
 import React from 'react';
 import { Metadata } from 'next';
 
+import { trackNavigation } from '@/lib/logsnap-server';
+
 export const metadata: Metadata = {
   title: 'My Profile',
   alternates: {
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  await trackNavigation('/profile');
+  return <>{children}</>;
 }

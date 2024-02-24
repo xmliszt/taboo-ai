@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { trackNavigation } from '@/lib/logsnap-server';
+
 import { Footer } from '../footer';
 
 export const metadata: Metadata = {
@@ -21,7 +23,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  await trackNavigation('/pwa');
   return (
     <>
       {children}

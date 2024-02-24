@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import Stripe from 'stripe';
 
 import { fetchPlans } from '@/app/pricing/server/fetch-plans';
+import logSnag from '@/lib/logsnap-server';
 import { createClient } from '@/lib/utils/supabase/server';
 
 /**
@@ -47,5 +48,15 @@ export async function updateUserProfileWithCheckoutSession(sessionId: string) {
     }
   );
   if (error) throw error;
+  await logSnag.track({
+    channel: 'subscription',
+    event: 'subscribe',
+    user_id: fetchUserResponse.data.id,
+    icon: '🔥',
+    notify: true,
+    tags: {
+      plan: subscribedPlan.type,
+    },
+  });
   return { plan: subscribedPlan };
 }

@@ -156,7 +156,7 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
     }
     try {
       setIsLoading(true);
-      await cancelStripeSubscription(user.stripeSubscription.id);
+      await cancelStripeSubscription(user.id, user.stripeSubscription.id);
       confirmAlert({
         title: 'Your subscription has been cancelled',
         description:

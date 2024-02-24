@@ -56,7 +56,8 @@ export function ProfileSubscriptionCard({ user, className }: ProfileSubscription
   const proceedToCancelSubscription = async () => {
     try {
       setIsCancellingSubscription(true);
-      user.stripeSubscription?.id && (await cancelStripeSubscription(user.stripeSubscription.id));
+      user.stripeSubscription?.id &&
+        (await cancelStripeSubscription(user.id, user.stripeSubscription.id));
       setIsConfirmationDialogOpen(false);
       confirmAlert({
         title: 'Your subscription has been cancelled',

@@ -1,18 +1,20 @@
 import { Metadata } from 'next';
 
+import { trackNavigation } from '@/lib/logsnap-server';
+
 export async function generateMetadata({
-  params: { sessionId },
+  params,
 }: {
-  params: { sessionId: string };
+  params: { session_id: string };
 }): Promise<Metadata> {
   return {
     title: 'Thank you for your purchase!',
     alternates: {
-      canonical: `/checkout/success/${sessionId}`,
+      canonical: `/checkout/success/${params.session_id}`,
     },
     openGraph: {
       title: 'Taboo AI: Thank you for your purchase!',
-      url: 'https://taboo-ai.vercel.app/checkout/success/' + sessionId,
+      url: 'https://taboo-ai.vercel.app/checkout/success/' + params.session_id,
       images: [
         {
           url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',
@@ -25,6 +27,13 @@ export async function generateMetadata({
   };
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  params,
+  children,
+}: {
+  params: { session_id: string };
+  children: React.ReactNode;
+}) {
+  await trackNavigation('/checkout/success/' + params.session_id);
   return <main className='w-full'>{children}</main>;
 }

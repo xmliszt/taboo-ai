@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import Script from 'next/script';
+import { SetUserIdServerComponent } from '@logsnag/next';
 
-import { OutgoingLinksCarousel } from '@/app/OutgoingLinksCarousel';
+import { OutgoingLinksCarousel } from '@/app/outgoing-links-carousel';
 import { fetchPlans } from '@/app/pricing/server/fetch-plans';
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array';
@@ -16,8 +17,9 @@ const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 export default async function HomePage() {
   let isUserPro = false;
 
+  let user;
   try {
-    const user = await fetchUserProfile();
+    user = await fetchUserProfile();
     isUserPro = user?.subscription?.customer_plan_type === 'pro';
   } catch (error) {
     // do nothing, user not authenticated
@@ -72,6 +74,7 @@ export default async function HomePage() {
         </a>{' '}
         has more details.
       </footer>
+      <SetUserIdServerComponent userId={user?.id ?? null} />
     </main>
   );
 }

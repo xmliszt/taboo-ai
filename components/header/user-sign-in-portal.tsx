@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import { useLogSnag } from '@logsnag/next';
 import {
   AlignJustify,
   BookMarked,
@@ -59,6 +60,7 @@ export function UserSignInPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isLoading } = useAuth();
+  const { setUserId, identify, track } = useLogSnag();
 
   useEffect(() => {
     if (user && !hasGreeted) {
@@ -67,6 +69,29 @@ export function UserSignInPortal() {
       } else {
         toast(`Welcome back, ${user.nickname ?? user.name}!`);
       }
+      setUserId(user.id);
+      identify({
+        user_id: user.id,
+        properties: {
+          email: user.email,
+          name: user.name,
+          nickname: user.nickname ?? 'no nickname',
+          login_times: user.login_times,
+          photo_url: user.photo_url ?? 'no photo',
+          first_login_at: user.first_login_at,
+          last_login_at: user.last_login_at,
+          stripe_customer_id: user.subscription?.customer_id ?? 'no stripe customer id',
+          plan: user.subscription?.customer_plan_type ?? 'free',
+          trial_end: user.stripeSubscription?.trial_end ?? 'no trial',
+          next_billing_at: user.stripeSubscription?.current_period_end ?? 'no billing',
+        },
+      });
+      track({
+        channel: 'auth',
+        event: 'login',
+        user_id: user.id,
+        icon: '👋',
+      });
       hasGreeted = true;
     }
   }, [user]);
@@ -84,6 +109,13 @@ export function UserSignInPortal() {
     try {
       await signOut();
       toast(`Bye bye, ${user?.nickname ?? user?.name}! 👋`);
+      user &&
+        track({
+          channel: 'auth',
+          event: 'logout',
+          user_id: user.id,
+          icon: '👋',
+        });
       hasGreeted = false;
       setTimeout(() => {
         window.location.href = '/';
@@ -101,6 +133,12 @@ export function UserSignInPortal() {
         user.subscription.customer_id,
         `${window.location.origin}/profile?anchor=subscription`
       );
+      track({
+        channel: 'auth',
+        event: 'manage_subscription',
+        user_id: user.id,
+        icon: '🔐',
+      });
       router.push(portalSessionUrl);
     } catch (error) {
       console.error(error);

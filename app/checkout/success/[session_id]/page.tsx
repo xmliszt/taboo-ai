@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Check } from 'lucide-react';
 
-import { updateUserProfileWithCheckoutSession } from '@/app/checkout/success/[sessionId]/server/update-user-profile-with-checkout-session';
+import { updateUserProfileWithCheckoutSession } from '@/app/checkout/success/[session_id]/server/update-user-profile-with-checkout-session';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';

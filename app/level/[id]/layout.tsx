@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 
 import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { fetchAllLevelsWithoutCookies } from '@/app/levels/server/fetch-levels';
+import { trackNavigation } from '@/lib/logsnap-server';
 
 export async function generateMetadata({
   params: { id },
@@ -55,6 +56,15 @@ export async function generateStaticParams() {
   return (await fetchAllLevelsWithoutCookies()).map((level) => ({ id: level.id }));
 }
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  params,
+  children,
+}: {
+  params: {
+    id: string;
+  };
+  children: React.ReactNode;
+}) {
+  await trackNavigation(`/level/${params.id}`);
   return <>{children}</>;
 }

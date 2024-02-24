@@ -21,6 +21,7 @@ import './markdown.css';
 import './globals.css';
 
 import React from 'react';
+import { LogSnagProvider } from '@logsnag/next';
 
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
@@ -56,6 +57,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning={true}>
+        <head>
+          <LogSnagProvider token='public-token' project='taboo-ai' />
+        </head>
         <Script id='pwa-script' src='/js/pwa.js' />
         <Script id='clarity-script' src='/js/clarity.js' />
         <body className={`${font.className}`}>

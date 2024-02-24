@@ -12,7 +12,7 @@ export async function deleteUser() {
   // First, we need to delete the user's subscriptions
   const user = await fetchUserProfileWithSubscription();
   const subscriptionId = user.stripeSubscription?.id;
-  subscriptionId && (await cancelStripeSubscription(subscriptionId));
+  subscriptionId && (await cancelStripeSubscription(user.id, subscriptionId));
   // Note: we don't need to delete the Stripe customer because we need
   // to check if the customer comes back, then we can restore their customer
   // information, and disallow the trial again.

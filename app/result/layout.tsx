@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { trackNavigation } from '@/lib/logsnap-server';
+
 export const metadata: Metadata = {
   title: 'Your Results',
   alternates: {
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  await trackNavigation('/result');
+  return <>{children}</>;
 }
