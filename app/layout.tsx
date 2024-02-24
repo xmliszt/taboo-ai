@@ -58,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning={true}>
         <head>
-          <LogSnagProvider token='public-token' project='taboo-ai' />
+          <LogSnagProvider token={process.env.NEXT_PUBLIC_LOGSNAG_TOKEN!} project='taboo-ai' />
         </head>
         <Script id='pwa-script' src='/js/pwa.js' />
         <Script id='clarity-script' src='/js/clarity.js' />
