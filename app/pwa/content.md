@@ -1,8 +1,8 @@
-# Install Taboo AI as Web App!
+# Install Taboo AI as an app!
 
 Taboo AI is available to be installed as web app if you are an Android user using **Chrome** or **Edge** broswer, or if you are an **iOS** user using **Safari**.
 
-### For Chrome User
+### For Chrome user
 
 1. On your **Android** device, open Chrome.
 2. Go to Taboo AI website.
@@ -13,7 +13,7 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 
 ![chrome-pwa](https://i.ibb.co/tbYBZsY/pwa-chrome.png)
 
-### For iOS Safari User
+### For iOS Safari user
 
 1. On your **iOS** device, open Safari.
 2. Go to Taboo AI website.
@@ -23,7 +23,7 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 
 ![ios-pwa](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWFodXYzZXplZXdmMTdneWtlMDh4b3BieHdueXBzeXNwbXNxcHQwdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qzcg79aLtWtytlVodh/giphy.gif)
 
-### For Firefox Android User
+### For Firefox Android user
 
 1. On your **Android** device, open Firefox.
 2. Go to Taboo AI website.
@@ -34,7 +34,7 @@ Taboo AI is available to be installed as web app if you are an Android user usin
 ![firefox-pwa](https://i.ibb.co/hfJYzTN/pwa-firefox.png)
 [Learn How to Install PWA with Firefox on Android](https://mzl.la/3p7ltJx)
 
-### For Edge User
+### For Edge user
 
 1. On your **Android** device, open Edge.
 2. Go to Taboo AI website.

@@ -60,8 +60,8 @@ export default async function SitemapPage() {
   ];
 
   return (
-    <main className='flex h-full w-full flex-col gap-4 px-10 pb-10 text-center leading-snug md:text-left'>
-      <section id='features-section'>
+    <main className='flex h-full w-full flex-col items-center gap-4 px-10 pb-10 text-center leading-snug md:text-left'>
+      <section id='features-section' className='w-full max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>Features</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
@@ -76,7 +76,7 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-      <section id='all-topics-section'>
+      <section id='all-topics-section' className='max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>All Topics</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
@@ -91,7 +91,7 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-      <section id='information-section'>
+      <section id='information-section' className='max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>Information</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
@@ -106,7 +106,7 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-      <section id='social-media-section'>
+      <section id='social-media-section' className='max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>Social Media</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>

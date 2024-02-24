@@ -8,7 +8,7 @@ export default async function PricingPage() {
   return (
     <div className='flex w-full flex-col items-center pt-6'>
       <h2 className='px-4 text-center text-xl font-bold leading-snug lg:text-4xl'>
-        Choose The Right Plan For You
+        Choose the best plan for your needs
       </h2>
       <PricingCardCarousel className='h-full px-12' plans={sortedPlans} />
     </div>

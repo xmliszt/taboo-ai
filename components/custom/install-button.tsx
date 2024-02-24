@@ -21,7 +21,7 @@ export default function InstallButton() {
 
   return showButton ? (
     <Button className='shadow-xl' onClick={onInstallClick}>
-      Install App Now
+      Install Taboo AI
     </Button>
   ) : (
     <></>

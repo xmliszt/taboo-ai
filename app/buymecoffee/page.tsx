@@ -36,7 +36,7 @@ const BuyMeCoffeePage = () => {
           className='text-2xl'
         />
 
-        <article id='disclaimer' className='px-10 text-justify text-lg leading-snug lg:px-32'>
+        <article id='disclaimer' className='max-w-xl px-10 text-justify text-lg leading-snug'>
           <ReactMarkdown>{content}</ReactMarkdown>
         </article>
       </main>

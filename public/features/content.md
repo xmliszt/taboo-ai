@@ -1,8 +1,8 @@
-# 🥇 v3.1: Profile Page & Rankings 🏆
+# 🥇 v3.1: Profile page & rankings 🏆
 
 _New patch v3.1.8 released on 24th February 2024_
 
-## Topic Rankings 🏆
+## Topic rankings 🏆
 
 ![6](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-15-1.png?raw=true)
 
@@ -12,19 +12,19 @@ Upon visiting the **Topics page** ([Choose a topic](/levels)), you'll discover a
 
 ![8](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-1-3.png?raw=true)
 
-## Review Your Past Games
+## Review your past games
 
 ![2](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-0-2.png?raw=true)
 
 We've revamped our profile page for _signed-in users_. Now, you can revisit the outcomes of your previous games! [Visit your profile](/profile) to find your past games.
 
-## Explore Topics You've Played
+## Explore topics you've completed
 
 ![View topics](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-2-1.png?raw=true)
 
 You can now view all the topics you've completed so far on your profile page! [Visit your profile](/profile) and evaluate your performance on each topic! If you're the **top scorer** of a topic, you'll see a radiant card indicating that you're the **champion** 🏆.
 
-## Access Game Statistics
+## Access game statistics
 
 ![3](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-0-3.png?raw=true)
 
@@ -32,13 +32,13 @@ You can now view all the topics you've completed so far on your profile page! [V
 
 For _signed-in PRO users_, you'll find your game statistics on your profile page. You can conveniently access topics to play again! [Visit your profile page to learn more!](/profile)
 
-## Privacy Settings
+## Privacy settings
 
 ![9](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-1-4.png?raw=true)
 
 For _signed-in users_, you can adjust certain privacy-related options under your profile. Currently, we offer the option to toggle "anonymity", which determines whether your nickname is visible to others on the topic ranking screen.
 
-## AI Evaluations and Feedback
+## AI evaluations & feedbacks
 
 ![5](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-15-3.png?raw=true)
 

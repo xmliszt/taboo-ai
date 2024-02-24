@@ -42,9 +42,9 @@ export default function AccessLinkCard({
       id={`menu-${idx}`}
       className={cn(
         item.highlight ? 'border-green-500' : '',
-        pathname === item.path ? 'border-4 border-primary font-bold' : '',
+        pathname === item.path ? '!border-2 border-primary font-bold' : 'border',
         item.isUpcoming && 'opacity-20',
-        'relative rounded-lg border transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg',
+        'relative rounded-lg transition-all ease-in-out hover:scale-105 hover:cursor-pointer hover:shadow-lg',
         className
       )}
       onClick={(e) => {
@@ -56,7 +56,7 @@ export default function AccessLinkCard({
         onClick && onClick(e);
       }}
     >
-      <Card key={`menu-${item.path}`} id={`menu-${idx}`}>
+      <Card key={`menu-${item.path}`} id={`menu-${idx}`} className='border-none'>
         <CardHeader>
           {item.isUpcoming === true ? <Construction /> : icon}
           <CardTitle>{item.title}</CardTitle>
@@ -69,7 +69,7 @@ export default function AccessLinkCard({
       </Card>
       <div
         className={cn(
-          'absolute left-0 top-0 -z-10 h-full w-full rounded-lg',
+          'pointer-events-none absolute left-0 top-0 -z-10 h-full w-full rounded-lg',
           !!cta && 'unicorn-color transition-colors ease-out after:blur-sm'
         )}
       ></div>
