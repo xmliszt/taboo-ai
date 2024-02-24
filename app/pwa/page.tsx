@@ -6,7 +6,7 @@ import content from './content.md';
 
 export default async function InstallPWAPage() {
   return (
-    <main className='flex flex-col items-center'>
+    <main className='flex flex-col items-center px-8'>
       <article
         data-testid='content-article'
         className='max-w-xl pb-20 pt-8 leading-normal lg:pb-28'

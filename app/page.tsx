@@ -6,7 +6,6 @@ import { OutgoingLinksCarousel } from '@/app/outgoing-links-carousel';
 import { fetchPlans } from '@/app/pricing/server/fetch-plans';
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array';
-import PageCounter from '@/components/custom/home/page-counter';
 import { ProPlanIndicator } from '@/components/custom/home/pro-plan-indicator';
 import PricingCard from '@/components/custom/pricing/pricing-card';
 import { Card } from '@/components/ui/card';
@@ -29,20 +28,16 @@ export default async function HomePage() {
   const proPlan = plans.find((plan) => plan.type === 'pro');
 
   return (
-    <main>
+    <main className='flex flex-col items-center px-8'>
       <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex w-full flex-col items-center justify-center gap-2 pb-4 pt-8'>
         <div className='relative'>
-          <h1
-            data-testid='heading-title'
-            className='text-center text-6xl drop-shadow-lg lg:text-8xl'
-          >
+          <h1 data-testid='heading-title' className='text-center text-7xl drop-shadow-lg'>
             {title}
           </h1>
           <ProPlanIndicator />
           <span className='absolute -top-6 right-0 text-lg'>{versionNumber}</span>
         </div>
-        <PageCounter />
         <HomeMenuButtonArray />
       </section>
       {!isUserPro && proPlan && (
@@ -64,7 +59,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-      <footer className='w-full px-4 pb-2 text-center text-xs leading-tight'>
+      <footer className='w-full max-w-xl px-4 pb-2 text-center text-xs leading-tight'>
         <OutgoingLinksCarousel />
         We improve our products and advertising by using Microsoft Clarity to see how you use our
         website. By using our site, you agree that we and Microsoft can collect and use this data.
