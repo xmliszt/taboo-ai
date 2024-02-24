@@ -11,8 +11,8 @@ import ruleContent from './rule.md';
 export default function RulePage() {
   const router = useRouter();
   return (
-    <main className='flex flex-col gap-4 px-8 py-8 lg:px-48'>
-      <article className='leading-snug'>
+    <main className='flex flex-col items-center gap-4 px-8 py-8 lg:px-48'>
+      <article className='max-w-xl leading-snug'>
         <ReactMarkdown>{ruleContent}</ReactMarkdown>
       </article>
       <div className='flex flex-row items-center justify-start gap-8'>
@@ -24,11 +24,11 @@ export default function RulePage() {
             router.push('/levels');
           }}
         >
-          Choose Topics
+          Play now
         </Button>
       </div>
-      <Separator />
-      <p className='text-gray mt-2 text-justify text-xs leading-tight'>
+      <Separator className='max-w-xl' />
+      <p className='text-gray mt-2 max-w-xl text-justify text-xs leading-tight'>
         Disclaimer: Please note that Taboo AI relies solely on{' '}
         <a className='underline' href='https://openai.com/api/pricing/'>
           OpenAI AI Model
