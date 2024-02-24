@@ -22,17 +22,4 @@ export async function track(options: Parameters<LogSnag['track']>[number]) {
   await logSnag.track(options);
 }
 
-export async function trackNavigation(route: string) {
-  await track({
-    channel: 'navigation',
-    event: 'navigate',
-    icon: '🔍',
-    notify: false,
-    tags: {
-      route: route,
-      env: process.env.VERCEL_ENV ?? 'no env identified',
-    },
-  });
-}
-
 export default logSnag;
