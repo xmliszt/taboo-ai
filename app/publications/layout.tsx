@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import { trackNavigation } from '@/lib/logsnag/logsnag-server';
-
 import { Footer } from '../footer';
 
 export const metadata: Metadata = {
@@ -24,7 +22,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  await trackNavigation('/publications');
   return (
     <>
       {children}

@@ -1,8 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import { trackNavigation } from '@/lib/logsnag/logsnag-server';
-
 export const metadata: Metadata = {
   title: 'Pricing',
   alternates: {
@@ -23,7 +21,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  await trackNavigation('/pricing');
   return (
     <main className='relative flex h-full w-full justify-center'>
       {children}

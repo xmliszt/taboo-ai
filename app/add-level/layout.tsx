@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import { trackNavigation } from '@/lib/logsnag/logsnag-server';
-
 export const metadata: Metadata = {
   title: 'Contribute Topics',
   alternates: {
@@ -22,6 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  await trackNavigation('/add-level');
   return <>{children}</>;
 }

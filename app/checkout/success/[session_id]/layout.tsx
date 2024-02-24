@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import { trackNavigation } from '@/lib/logsnag/logsnag-server';
-
 export async function generateMetadata({
   params,
 }: {
@@ -27,13 +25,6 @@ export async function generateMetadata({
   };
 }
 
-export default async function Layout({
-  params,
-  children,
-}: {
-  params: { session_id: string };
-  children: React.ReactNode;
-}) {
-  await trackNavigation('/checkout/success/' + params.session_id);
+export default async function Layout({ children }: { children: React.ReactNode }) {
   return <main className='w-full'>{children}</main>;
 }
