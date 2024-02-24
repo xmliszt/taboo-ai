@@ -40,8 +40,6 @@ export class RouteManager {
       case TabooPathname.AI_MODE === route:
         return {
           title: 'AI generated topic',
-          hasBackButton: true,
-          hideMenu: true,
         };
       case TabooPathname.BUY_ME_COFFEE === route:
         return {
