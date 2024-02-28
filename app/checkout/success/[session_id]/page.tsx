@@ -8,12 +8,14 @@ import { Separator } from '@/components/ui/separator';
 
 import { Confetti } from './confetti';
 
-export default async function CheckoutSuccessPage({
-  params: { sessionId },
-}: {
-  params: { sessionId: string };
-}) {
-  const { plan } = await updateUserProfileWithCheckoutSession(sessionId);
+type CheckoutSuccessPageProps = {
+  params: {
+    session_id: string;
+  };
+};
+
+export default async function CheckoutSuccessPage(props: CheckoutSuccessPageProps) {
+  const { plan } = await updateUserProfileWithCheckoutSession(props.params.session_id);
 
   return (
     <>
