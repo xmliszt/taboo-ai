@@ -1,29 +1,39 @@
+'use client';
+
 import Image from 'next/image';
 
-import { Alert, AlertDescription } from '../ui/alert';
-import { AspectRatio } from '../ui/aspect-ratio';
+import { cn } from '@/lib/utils';
+
+import ThemeToggle from '../header/theme-toggle';
+import { HoverPerspectiveContainer } from './common/hover-perspective-container';
 
 const Maintenance = () => {
   return (
-    <article className='flex h-full w-full flex-col items-center justify-center gap-2 overflow-hidden px-8 py-16 text-center leading-normal'>
-      <h1>Maintenance</h1>
-      <div className='w-4/5'>
-        <AspectRatio ratio={1}>
+    <main className='flex h-full w-full items-center justify-center px-4 leading-normal'>
+      <article className='flex max-w-xl flex-col items-center gap-2'>
+        <div className='mb-4 flex items-center justify-center gap-2'>
+          <h1 className='mb-2'>Maintenance</h1>
+          <ThemeToggle />
+        </div>
+        <HoverPerspectiveContainer className='group relative w-full max-w-[300px] border border-primary hover:shadow-2xl'>
           <Image
-            fill
             src='https://i.ibb.co/7zJ4yHD/maintenance.png'
             alt='Taboo AI is under maintenance'
-            className='animate-pulse'
+            width={400}
+            height={400}
+            className='rounded-lg bg-background'
           />
-        </AspectRatio>
-      </div>
-      <Alert>
-        <AlertDescription className='animate-fade-in font-bold'>
-          Taboo AI is working hard to resolve the unexpected issue {'>_<!'}. We will be back once
-          the issue has been resolved. Thank you for your patience!
-        </AlertDescription>
-      </Alert>
-    </article>
+          <span
+            className={cn(
+              'rotating-mono-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card opacity-0 transition-[transform_opacity_0.3s_ease-in-out] after:blur-lg group-hover:scale-[1.02] group-hover:opacity-100'
+            )}
+          ></span>
+        </HoverPerspectiveContainer>
+        <p className='text-center'>
+          Taboo AI is currently under maintenance. Please check back later.
+        </p>
+      </article>
+    </main>
   );
 };
 

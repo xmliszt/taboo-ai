@@ -5,6 +5,7 @@
 ### 02 Mar 2024 - V3.1.9
 
 - Easier search experience.
+- Fix maintenance page.
 
 ### 24 Feb 2024 - V3.1.8
 
