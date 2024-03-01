@@ -1,8 +1,8 @@
-# 🥇 v3.1: Profile page & rankings 🏆
+# Taboo AI is updated! 🎉
 
-_New patch v3.1.8 released on 24th February 2024_
+_New patch v3.1.9 released on 2nd March 2024_
 
-## Topic rankings 🏆
+## Topic rankings
 
 ![6](https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/v3-1-15-1.png?raw=true)
 

@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { isDesktop } from 'react-device-detect';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -43,6 +42,19 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
   const isRankingModeOn = searchParams.get('rank') === 'true';
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
 
+  const timerRef = useRef<number | null>(null);
+
+  // if user stops typing for 500ms, redirect to the new search term
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      const newSearchParams = new URLSearchParams(searchParams);
+      if (searchTerm.length > 0) newSearchParams.set('search', searchTerm);
+      else newSearchParams.delete('search');
+      router.replace(`${pathname}?${newSearchParams}`);
+    }, 500);
+  }, [searchTerm]);
+
   return (
     <div>
       <div className='flex flex-row items-center gap-4'>
@@ -72,28 +84,13 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
           </Select>
         )}
 
-        <form
+        <Input
           className='flex w-full flex-row items-center gap-4 !text-sm'
-          onSubmit={(e) => {
-            e.preventDefault();
-            const newSearchParams = new URLSearchParams(searchParams);
-            if (searchTerm.length > 0) newSearchParams.set('search', searchTerm);
-            else newSearchParams.delete('search');
-            router.replace(`${pathname}?${newSearchParams}`);
-          }}
-        >
-          <Input
-            placeholder='Search by name/author. Enter to search.'
-            type='text'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          {searchTerm.length > 0 && (
-            <Button className='animate-fade-in' type='submit'>
-              Search
-            </Button>
-          )}
-        </form>
+          placeholder='Search by name/author'
+          type='text'
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
       <div className='mt-2 flex flex-row items-center justify-between'>
         <Badge className='shadow-[0_5px_10px_rgba(0,0,0,0.3)]'>
