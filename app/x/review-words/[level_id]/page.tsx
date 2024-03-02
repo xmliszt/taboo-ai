@@ -69,7 +69,7 @@ export default async function ReviewWordsLevelPage(props: ReviewWordsLevelPagePr
       {/* Create new target word section */}
       <CreateNewTargetWordSection level={level} user={user} />
       {/* Verification section */}
-      {level.author !== null && <LevelVerificationSection level={level} />}
+      <LevelVerificationSection level={level} />
     </ScrollArea>
   );
 }

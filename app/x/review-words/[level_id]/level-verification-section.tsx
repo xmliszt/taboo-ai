@@ -46,18 +46,21 @@ export function LevelVerificationSection(props: LevelVerificationSectionProps) {
 
   function performVerifyLevelAction() {
     startTransition(async () => {
-      const authorEmail = props.level.author?.email;
-      if (!authorEmail) {
-        toast.error('Author email is not available');
-        return;
+      if (props.level.author) {
+        const authorEmail = props.level.author?.email;
+        if (!authorEmail) {
+          toast.error('Author email is not available');
+          return;
+        }
+        await sendSecureEmail(
+          'Congratulations! Your Taboo AI Contribution is Now Live 🎉',
+          authorEmail,
+          'verify'
+        );
+        toast.success(`Sent an email to the author of the topic "${props.level.name}".`);
       }
       await updateLevel(props.level.id, { is_verified: true });
-      await sendSecureEmail(
-        'Congratulations! Your Taboo AI Contribution is Now Live 🎉',
-        authorEmail,
-        'verify'
-      );
-      toast.success(`Verified the topic "${props.level.name}" and sent an email to the author`);
+      toast.success(`Verified the topic "${props.level.name}".`);
       router.replace('/x/review-words');
     });
   }
@@ -65,7 +68,7 @@ export function LevelVerificationSection(props: LevelVerificationSectionProps) {
   function performRejectLevelAction() {
     const authorEmail = props.level.author?.email;
     if (!authorEmail) {
-      toast.error('Author email is not available');
+      toast.error('Author email is not available. Cannot send rejection email');
       return;
     }
     startTransition(async () => {
