@@ -11,7 +11,7 @@ import PricingCard from '@/components/custom/pricing/pricing-card';
 import { Card } from '@/components/ui/card';
 
 const title = 'Taboo AI';
-const versionNumber = `V${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
+const versionNumber = `v${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
 
 export default async function HomePage() {
   let isUserPro = false;
