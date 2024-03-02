@@ -301,30 +301,9 @@ export default function SideMenu() {
 
             <Separator className='my-1' />
 
-            <span>
-              <i>Powered by </i>
-              <Link href='https://beta.nextjs.org/docs/getting-started' target='_blank'>
-                NextJS
-              </Link>
-              <i> &amp; </i>
-              <Link
-                href='https://deepmind.google/technologies/gemini/#introduction'
-                target='_blank'
-              >
-                Gemini Pro
-              </Link>
-            </span>
-            <span>
-              <i>Developed by </i>
-              <Link href='https://liyuxuan.dev/' target='_blank'>
-                Li Yuxuan
-              </Link>
-            </span>
-            <span>
-              <i>Taboo AI is an open-source project. Feel free to </i>
-              <Link href='https://github.com/xmliszt/Taboo-AI' target='_blank'>
-                contribute on GitHub.
-              </Link>{' '}
+            <span className='text-sm'>
+              © 2023 Taboo AI <br /> All rights reserved. <br /> Version{' '}
+              {process.env.NEXT_PUBLIC_TABOO_AI_VERSION}
             </span>
           </article>
         </div>

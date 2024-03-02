@@ -14,9 +14,9 @@ export default async function SitemapPage() {
   const levels = (await fetchAllLevelsAndRanks()).sort((a, b) => a.name.localeCompare(b.name));
   const features: SitemapRoute[] = [
     { title: 'Home', href: '/' },
-    { title: 'Choose A Topic', href: '/levels' },
-    { title: 'AI Mode', href: '/ai' },
-    { title: 'Contribute A Topic', href: '/add-level' },
+    { title: 'Public topics', href: '/levels' },
+    { title: 'AI generated topics', href: '/ai' },
+    { title: 'Contribute a topic', href: '/add-level' },
     { title: 'Results', href: '/result' },
     { title: 'Profile', href: '/profile' },
     { title: 'Pricing', href: '/pricing' },
@@ -26,32 +26,28 @@ export default async function SitemapPage() {
     { title: 'About', href: '/about' },
     { title: 'Rules', href: '/rule' },
     { title: 'How to install Taboo AI?', href: '/pwa' },
-    { title: 'Latest Features', href: '/whatsnew' },
-    { title: 'Project Roadmap', href: '/roadmap' },
-    { title: 'Buy Me Coffee', href: '/buymecoffee' },
-    { title: 'Privacy Policy', href: '/privacy' },
-    { title: 'Cookie Policy', href: '/cookie-policy' },
+    { title: 'Latest features', href: '/whatsnew' },
+    { title: 'Project roadmap', href: '/roadmap' },
+    { title: 'Buy me coffee', href: '/buymecoffee' },
+    { title: 'Privacy policy', href: '/privacy' },
+    { title: 'Cookie policy', href: '/cookie-policy' },
   ];
   const socialMedia: SitemapRoute[] = [
-    { title: 'About Me', href: 'https://liyuxuan.dev' },
+    { title: 'About me', href: 'https://liyuxuan.dev' },
     { title: 'My Github', href: 'https://github.com/xmliszt' },
     { title: 'LinkedIn', href: 'https://www.linkedin.com/in/li-yuxuan/' },
     { title: 'Twitter', href: 'https://twitter.com/xmliszt' },
     {
       title: 'Facebook',
-      href: 'https://img.shields.io/badge/-My%20Facebook-black?logo=facebook',
+      href: 'https://m.facebook.com/profile.php?id=61552423745265',
     },
     {
-      title: 'Taboo AI Newsletter',
+      title: 'Newsletter',
       href: 'https://liyuxuan.substack.com',
     },
     {
-      title: 'Taboo AI Discord Server',
+      title: 'Taboo AI Discord server',
       href: 'https://discord.gg/dgqs29CHC2',
-    },
-    {
-      title: 'Taboo AI GitHub Repository',
-      href: 'https://github.com/xmliszt/Taboo-AI',
     },
     {
       title: 'Check out Easy Next',
@@ -77,7 +73,7 @@ export default async function SitemapPage() {
         </div>
       </section>
       <section id='all-topics-section' className='max-w-xl'>
-        <h3 className='my-2 text-center text-xl font-extrabold'>All Topics</h3>
+        <h3 className='my-2 text-center text-xl font-extrabold'>All topics</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
           {levels.map((level) => (
@@ -107,7 +103,7 @@ export default async function SitemapPage() {
         </div>
       </section>
       <section id='social-media-section' className='max-w-xl'>
-        <h3 className='my-2 text-center text-xl font-extrabold'>Social Media</h3>
+        <h3 className='my-2 text-center text-xl font-extrabold'>Social media</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
           {socialMedia.map((media) => (
