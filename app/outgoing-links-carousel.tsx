@@ -101,6 +101,20 @@ export function OutgoingLinksCarousel() {
             </div>
           </Link>
         </CarouselItem>
+        <CarouselItem key={6} className='flex items-center justify-center'>
+          <a
+            className='rounded-md transition-all hover:scale-105 hover:opacity-70'
+            href='https://www.theinsaneapp.com/tools/taboo-ai/'
+          >
+            <Image
+              className='rounded-md border-[1px]'
+              alt='Taboo.AI: A Cutting-Edge AI-Powered Game for Language Learning and Fun | Featured on AIBRB.COM'
+              src='https://avosfnqiscrmxpqmhswp.supabase.co/storage/v1/object/public/socials/Featured%20On%20TheInsaneApp.com.png'
+              width='240'
+              height='50'
+            />
+          </a>
+        </CarouselItem>
       </CarouselContent>
       <CarouselNext className='!relative !right-0 !top-0 !flex !aspect-square !translate-x-0 !translate-y-0 !rounded-lg !border-none' />
     </Carousel>

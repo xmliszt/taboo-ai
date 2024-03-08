@@ -30,37 +30,34 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'media.theresanaiforthat.com',
-        port: '',
       },
       {
         protocol: 'https',
         hostname: 'media.giphy.com',
-        port: '',
       },
       {
         protocol: 'https',
         hostname: 'i.ibb.co',
-        port: '',
       },
       {
         protocol: 'https',
         hostname: 'github.com',
-        port: '',
       },
       {
         protocol: 'https',
         hostname: 'aibrb.com',
-        port: '',
       },
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
-        port: '',
       },
       {
         protocol: 'https',
         hostname: 'api.producthunt.com',
-        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avosfnqiscrmxpqmhswp.supabase.co',
       },
     ],
     formats: ['image/webp'],
