@@ -25,15 +25,17 @@ interface LevelCardProps {
   level?: FetchAllLevelsAndRanksReturnTypeSingle;
   isShowingRank?: boolean;
   allowedPlanType?: Database['public']['Enums']['customer_plan_type'][];
+  beforeGoToLevel?: () => void;
 }
 
-export function LevelCard({ isShowingRank, level }: LevelCardProps) {
+export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardProps) {
   const router = useRouter();
   const { user } = useAuth();
   const [pointHasDown, setPointHasDown] = useState(false);
   const isAIMode = !level;
 
   const goToLevel = () => {
+    beforeGoToLevel && beforeGoToLevel();
     if (level) {
       setPersistence(HASH.level, level);
       if (isShowingRank && !user) {
@@ -146,9 +148,7 @@ export function LevelCard({ isShowingRank, level }: LevelCardProps) {
   };
 
   return (
-    <HoverPerspectiveContainer
-      className={'group/level-card relative h-auto min-h-[300px] w-[200px] cursor-pointer'}
-    >
+    <HoverPerspectiveContainer className={'group/level-card relative cursor-pointer'}>
       <Card
         onPointerDown={() => {
           setPointHasDown(true);
@@ -164,7 +164,9 @@ export function LevelCard({ isShowingRank, level }: LevelCardProps) {
           isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
             ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
             : '',
-          'relative flex h-full w-full cursor-pointer flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
+          'relative flex cursor-pointer flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]  ',
+          'xs:w-[200px] w-full',
+          'xs:min-h-[300px] h-full'
         )}
       >
         <CardHeader>

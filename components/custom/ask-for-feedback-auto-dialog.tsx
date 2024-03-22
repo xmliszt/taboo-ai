@@ -12,7 +12,6 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Textarea } from '../ui/textarea';
-import { Spinner } from './spinner';
 
 const DELAY_BEFORE_ASKING_FOR_FEEDBACK = 1000 * 60 * 1; // 1 minute
 const TOTAL_NUMBER_OF_TIMES_TO_ASK_FOR_FEEDBACK = 3;
@@ -136,7 +135,7 @@ export function AskForFeedbackAutoDialog() {
                 sendFeedback();
               }}
             >
-              {isPending ? <Spinner /> : 'Submit'}
+              Submit
             </Button>
           </form>
         </div>

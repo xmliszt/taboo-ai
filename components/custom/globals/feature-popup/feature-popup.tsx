@@ -2,17 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import { BsDiscord } from 'react-icons/bs';
-import ReactMarkdown from 'react-markdown';
 import semver from 'semver';
 
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { getFeaturePopupString, setFeaturePopupString } from '@/lib/cache';
-import content from '@/public/features/content.md';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
+
+import FeatureContentMDX from './content.mdx';
 
 export default function FeaturePopup() {
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);
   const incomingVersion = process.env.NEXT_PUBLIC_TABOO_AI_VERSION;
+
+  useEffect(() => {
+    const eventHandler = EventManager.bindEvent(CustomEventKey.CLOSE_FEATURE_POPUP, () => {
+      handleOpenChange(false);
+    });
+
+    return () => {
+      EventManager.removeListener(CustomEventKey.CLOSE_FEATURE_POPUP, eventHandler);
+    };
+  }, []);
 
   useEffect(() => {
     const featurePopupString = getFeaturePopupString();
@@ -60,7 +71,7 @@ export default function FeaturePopup() {
           data-testid='content-article'
           className='h-full overflow-y-scroll leading-snug scrollbar-hide'
         >
-          <ReactMarkdown className='pb-8'>{content}</ReactMarkdown>
+          <FeatureContentMDX />
           <div className='sticky bottom-4 flex w-full justify-center px-2'>
             <SocialLinkButton
               content='Join Discord Community'
