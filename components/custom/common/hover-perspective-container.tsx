@@ -14,7 +14,7 @@ export function HoverPerspectiveContainer({ children, className }: HoverPerspect
   return (
     <div
       className={cn(
-        'group relative transform rounded-lg shadow-lg transition-[transoform_border_box-shadow] duration-300 ease-out',
+        'group relative transform rounded-lg border shadow-lg transition-[transoform_border_box-shadow] duration-300 ease-out',
         className
       )}
       onMouseEnter={(event) => {

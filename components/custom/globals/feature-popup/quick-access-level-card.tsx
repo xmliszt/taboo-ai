@@ -20,26 +20,30 @@ export function QuickAccessLevelCard(props: { levelId: string; author: string | 
 
   useEffect(() => {
     startTransition(async () => {
-      const level = await fetchLevel(props.levelId);
-      setLevel({
-        ...level,
-        created_by: props.author,
-        is_ai_generated: false,
-        best_score: null,
-        top_scorer_ids: [],
-        top_scorer_names: [],
-      });
+      try {
+        const level = await fetchLevel(props.levelId);
+        setLevel({
+          ...level,
+          created_by: props.author,
+          is_ai_generated: false,
+          best_score: null,
+          top_scorer_ids: [],
+          top_scorer_names: [],
+        });
+      } catch (error) {
+        console.log('Failed to fetch level');
+      }
     });
   }, []);
 
   return isPending ? (
     <div className='h-48 w-48 animate-pulse bg-gray-200' />
-  ) : (
+  ) : level ? (
     <LevelCard
       level={level}
       beforeGoToLevel={() => {
         EventManager.fireEvent(CustomEventKey.CLOSE_FEATURE_POPUP);
       }}
     />
-  );
+  ) : null;
 }

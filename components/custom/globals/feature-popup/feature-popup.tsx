@@ -6,6 +6,7 @@ import semver from 'semver';
 
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { getFeaturePopupString, setFeaturePopupString } from '@/lib/cache';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
@@ -66,21 +67,20 @@ export default function FeaturePopup() {
 
   return (
     <Dialog defaultOpen={showFeaturePopup} open={showFeaturePopup} onOpenChange={handleOpenChange}>
-      <DialogContent className='h-[90%] w-[95%] rounded-lg'>
-        <article
-          data-testid='content-article'
-          className='h-full overflow-y-scroll leading-snug scrollbar-hide'
-        >
-          <FeatureContentMDX />
-          <div className='sticky bottom-4 flex w-full justify-center px-2'>
-            <SocialLinkButton
-              content='Join Discord Community'
-              icon={<BsDiscord />}
-              href='https://discord.gg/dgqs29CHC2'
-              newTab={true}
-            />
-          </div>
-        </article>
+      <DialogContent className='h-[90%] w-[95%] rounded-lg p-0'>
+        <ScrollArea className='w-full px-4'>
+          <article data-testid='content-article' className='h-full py-8 leading-snug'>
+            <FeatureContentMDX />
+            <div className='sticky bottom-4 flex w-full justify-center px-2'>
+              <SocialLinkButton
+                content='Join Discord Community'
+                icon={<BsDiscord />}
+                href='https://discord.gg/dgqs29CHC2'
+                newTab={true}
+              />
+            </div>
+          </article>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
