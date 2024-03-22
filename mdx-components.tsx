@@ -15,14 +15,18 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // Allows customizing built-in components, e.g. to add styling.
     ...components,
     img: (props) => (
-      <HoverPerspectiveContainer className='flex items-center justify-center'>
+      <HoverPerspectiveContainer className='flex flex-col items-stretch'>
         <Image
-          className='m-0 p-0'
           src={props.src ?? ''}
           alt={props.alt ?? ''}
           width={100}
           height={100}
           layout={'responsive'}
+          style={{
+            maxWidth: '100%',
+            padding: 0,
+            margin: 0,
+          }}
         />
       </HoverPerspectiveContainer>
     ),
