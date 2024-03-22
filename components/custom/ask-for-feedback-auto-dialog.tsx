@@ -27,8 +27,12 @@ export function AskForFeedbackAutoDialog() {
 
   useEffect(() => {
     startTransition(async () => {
-      const user = await fetchUserProfile();
-      setUser(user);
+      try {
+        const user = await fetchUserProfile();
+        setUser(user);
+      } catch (error) {
+        console.log('user not logged in');
+      }
     });
   }, []);
 
