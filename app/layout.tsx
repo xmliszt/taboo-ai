@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <AnalyticsProvider />
               </AuthProvider>
             </GlobalTooltipProvider>
-            <Toaster closeButton />
+            <Toaster />
           </ThemeProvider>
           <SpeedInsights />
         </body>
