@@ -10,4 +10,5 @@ export const HASH = {
   dev: getHash('dev'),
   hasReadFeaturePopup: getHash('has-read-feature-popup'),
   hasReadNewsletterPopup: getHash('has-read-newsletter-popup'),
+  hasReadWeeklyTopicsPopup: getHash('has-read-weekly-topics-popup'),
 };
