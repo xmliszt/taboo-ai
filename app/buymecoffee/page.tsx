@@ -1,11 +1,9 @@
 import Image from 'next/image';
+import MDXContent from 'mdx-contents/buymecoffee.mdx';
 import { GiCoffeeCup } from 'react-icons/gi';
-import ReactMarkdown from 'react-markdown';
 
+import SocialLinkButton from '@/components/custom/social-link-button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-
-import SocialLinkButton from '../../components/custom/social-link-button';
-import content from './content.md';
 
 const BuyMeCoffeeQR = '/images/bmc_qr.png';
 const BuyMeCoffeePage = () => {
@@ -37,7 +35,7 @@ const BuyMeCoffeePage = () => {
         />
 
         <article id='disclaimer' className='max-w-xl px-10 text-justify text-lg leading-snug'>
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <MDXContent />
         </article>
       </main>
     </>

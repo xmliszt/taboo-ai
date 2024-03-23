@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import WeeklyDropContentMDX from 'mdx-contents/weekly-drop.mdx';
+import FeaturePopupContent from 'mdx-contents/whatsnew.mdx';
 import moment from 'moment';
 import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';
 
-import FeaturePopupContent from '@/app/whatsnew/content.mdx';
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -16,8 +17,6 @@ import {
   setWeeklyTopicsPopupString,
 } from '@/lib/cache';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
-
-import WeeklyDropContentMDX from './weekly-drop.mdx';
 
 export default function FeaturePopup() {
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);

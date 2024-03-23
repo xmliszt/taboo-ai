@@ -1,9 +1,8 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import type { MDXComponents } from 'mdx/types';
 
 import { HoverPerspectiveContainer } from './components/custom/common/hover-perspective-container';
-import { CustomEventKey, EventManager } from './lib/event-manager';
+import { MDXLink } from './mdx-link';
 
 // This file allows you to provide custom React components
 // to be used in MDX files. You can import and use any
@@ -30,23 +29,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         />
       </HoverPerspectiveContainer>
     ),
-    a: (props) => (
-      <span className='ml-1 font-bold'>
-        <Link
-          href={props.href ?? ''}
-          style={{
-            textUnderlineOffset: '0.4em',
-            textDecorationStyle: 'wavy',
-            transition: 'text-decoration-style 0.5s ease-out',
-          }}
-          onClick={() => {
-            EventManager.fireEvent(CustomEventKey.CLOSE_FEATURE_POPUP);
-          }}
-        >
-          {props.children}
-        </Link>
-      </span>
-    ),
+    a: (props) => <MDXLink href={props.href ?? ''}>{props.children}</MDXLink>,
     em: (props) => <span className='italic text-muted-foreground'>{props.children}</span>,
   };
 }

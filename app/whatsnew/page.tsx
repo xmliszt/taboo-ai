@@ -1,7 +1,7 @@
+import LatestFeatureMDX from 'mdx-contents/whatsnew.mdx';
 import { SiDiscord } from 'react-icons/si';
 
-import SocialLinkButton from '../../components/custom/social-link-button';
-import LatestFeatureMDX from './content.mdx';
+import SocialLinkButton from '@/components/custom/social-link-button';
 
 export default async function WhatsNewPage() {
   return (

@@ -1,19 +1,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
+import RuleMDX from 'mdx-contents/rule.mdx';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-
-import ruleContent from './rule.md';
 
 export default function RulePage() {
   const router = useRouter();
   return (
     <main className='flex flex-col items-center gap-4 px-8 py-8 lg:px-48'>
       <article className='max-w-xl leading-snug'>
-        <ReactMarkdown>{ruleContent}</ReactMarkdown>
+        <RuleMDX />
       </article>
       <div className='flex flex-row items-center justify-start gap-8'>
         <Button
