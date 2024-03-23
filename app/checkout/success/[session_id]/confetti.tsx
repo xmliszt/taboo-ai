@@ -13,14 +13,16 @@ export function Confetti() {
     refAnimationInstance.current = instance;
   }, []);
   const confettiColors: string[] =
-    resolvedTheme === 'dark' ? ['#ee2255', '#ffffff'] : ['#bb0000', '#000000'];
+    resolvedTheme === 'dark'
+      ? ['#ee2255', '#ffffff', '#23c9cf']
+      : ['#bb0000', '#000000', '#1686c7'];
 
   const fire = useCallback(() => {
     const startVelocity = isMobile ? 30 : 70;
     const y = isMobile ? 0.3 : 0.8;
     const leftDrift = isMobile ? 0 : 1;
     const rightDrift = isMobile ? 0 : -1;
-    const particleCount = isMobile ? 30 : 88;
+    const particleCount = isMobile ? 30 : 100;
     const spread = isMobile ? 60 : 80;
     if (refAnimationInstance.current) {
       // Left side confetti

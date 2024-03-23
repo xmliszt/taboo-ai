@@ -3,8 +3,7 @@ import { Check } from 'lucide-react';
 
 import { updateUserProfileWithCheckoutSession } from '@/app/checkout/success/[session_id]/server/update-user-profile-with-checkout-session';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 import { Confetti } from './confetti';
 
@@ -19,15 +18,18 @@ export default async function CheckoutSuccessPage(props: CheckoutSuccessPageProp
 
   return (
     <>
-      <div className='flex h-full w-full flex-col items-center gap-2 overflow-y-auto py-10 leading-snug'>
-        <h1 className='text-center text-4xl font-bold'>Thank you for your purchase!</h1>
-        <div>
-          You are now a <Badge>PRO</Badge> user 🎉
+      <div className='mx-auto flex h-full max-w-lg flex-col gap-6 px-4 py-10 leading-snug sm:gap-10'>
+        <div className='flex flex-col justify-center gap-2 text-center'>
+          <h1 className='text-center text-3xl font-bold'>Thank you for your purchase!</h1>
+          <div>
+            You are now a <Badge>PRO</Badge> user 🎉
+          </div>
         </div>
-        <Card className='min-w-4/5 mx-4 mt-2 border-2 border-primary drop-shadow-lg'>
-          <CardContent>
-            <div className='pt-2 text-base text-muted-foreground'>You can now enjoy...</div>
-            <Separator className='my-2' />
+        <div className='flex flex-col gap-2'>
+          <div className='w-full pt-2 text-left text-base italic text-muted-foreground'>
+            You can now enjoy...
+          </div>
+          <div className='rounded-lg border-2 border-primary p-4 drop-shadow-lg'>
             <ul>
               {plan.plan_features.map((feature) => (
                 <li key={feature.id} className='mb-2 flex flex-row items-center gap-2'>
@@ -36,14 +38,22 @@ export default async function CheckoutSuccessPage(props: CheckoutSuccessPageProp
                 </li>
               ))}
             </ul>
-          </CardContent>
-        </Card>
-        <Link
-          href='/profile?anchor=subscription'
-          className='mt-2 rounded-xl bg-primary p-4 text-primary-foreground'
-        >
-          View My Subscription
-        </Link>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <Link
+            href='/ai'
+            className='group relative transition-transform ease-out hover:scale-105 '
+          >
+            <Button
+              variant={'default'}
+              className='p-4 transition-[padding_font-size_font-weight] ease-in-out group-hover:p-6 group-hover:text-lg'
+            >
+              Play AI generated topics
+            </Button>
+            <span className='unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card opacity-50 transition-[transform_opacity_blur] ease-in-out after:blur-xl group-hover:opacity-100' />
+          </Link>
+        </div>
       </div>
       <Confetti />
     </>

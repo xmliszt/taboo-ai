@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { ScrollArea } from '@/components/ui/scroll-area';
+
 export async function generateMetadata({
   params,
 }: {
@@ -26,5 +28,11 @@ export async function generateMetadata({
 }
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  return <main className='w-full'>{children}</main>;
+  return (
+    <main className='w-full'>
+      <ScrollArea className='h-full [&>[data-radix-scroll-area-viewport]>div]:h-full'>
+        {children}
+      </ScrollArea>
+    </main>
+  );
 }
