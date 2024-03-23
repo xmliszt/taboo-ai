@@ -26,6 +26,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
             padding: 0,
             margin: 0,
           }}
+          unoptimized
         />
       </HoverPerspectiveContainer>
     ),
