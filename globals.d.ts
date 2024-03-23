@@ -1,3 +1,6 @@
-declare module '*.md';
+import { Database } from './lib/supabase/extension/types';
 
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+global {
+  export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+  export type Level = Database['public']['Tables']['levels']['Row'];
+}

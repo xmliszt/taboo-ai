@@ -6,7 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AnalyticsProvider } from '@/components/analytics-provider';
 import { AuthProvider } from '@/components/auth-provider';
-import FeaturePopup from '@/components/custom/globals/feature-popup';
+import FeaturePopup from '@/components/custom/globals/feature-popup/feature-popup';
 import { SignInErrorDialog } from '@/components/custom/globals/sign-in-error-dialog';
 import SignInReminderDialog from '@/components/custom/globals/sign-in-reminder-dialog';
 import Maintenance from '@/components/custom/maintenance';
@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <AnalyticsProvider />
               </AuthProvider>
             </GlobalTooltipProvider>
-            <Toaster closeButton />
+            <Toaster />
           </ThemeProvider>
           <SpeedInsights />
         </body>

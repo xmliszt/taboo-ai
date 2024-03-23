@@ -29,16 +29,22 @@ article h2 {
 article h3 {
   font-size: 1.3rem !important;
   font-weight: 900;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 article h4 {
   font-size: 1.2rem !important;
   font-weight: 900;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 article h5 {
   font-size: 1rem !important;
   font-weight: 900;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 article ol {
@@ -46,17 +52,9 @@ article ol {
   padding-left: 1rem !important;
 }
 
-article ol > li::before {
-  content: '' !important;
-}
-
 article p {
   font-weight: 100 !important;
   margin-bottom: 1.5rem;
-}
-
-article li::before {
-  content: ' ¶ ';
 }
 
 article blockquote {
@@ -78,19 +76,11 @@ article pre {
   margin: 1rem 0;
 }
 
-@media (min-width: 1300px) {
-  article img {
-    padding: 3rem 10rem;
-  }
-}
-
-article img {
-  padding: 1rem 0;
-  image-rendering: optimizespeed;
-  width: 100%;
-  max-width: 500px;
-}
-
 article a {
-  @apply underline;
+  @apply cursor-alias font-bold underline decoration-wavy underline-offset-[0.3rem] transition-all ease-out [text-decoration-skip-ink:none] hover:opacity-75;
+}
+
+article ul > li {
+  list-style: disc;
+  margin-left: 1.5rem;
 }

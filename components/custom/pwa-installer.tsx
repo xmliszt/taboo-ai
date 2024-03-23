@@ -1,20 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader } from '@/components/ui/sheet';
+
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export default function PWAInstaller() {
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     window.addEventListener('openPWADrawer', () => {
-      setIsSheetOpen(true);
+      setIsOpen(true);
     });
     window.addEventListener('closePWADrawer', () => {
-      setIsSheetOpen(false);
+      setIsOpen(false);
     });
   }, []);
 
@@ -28,41 +29,49 @@ export default function PWAInstaller() {
         localStorage.setItem('pwa-user-choice', 'cancelled');
       }
     }
-    setIsSheetOpen(false);
+    setIsOpen(false);
   };
 
   const onCancel = () => {
     localStorage.setItem('pwa-user-choice', 'cancelled');
-    setIsSheetOpen(false);
+    setIsOpen(false);
   };
 
   const onSheetOpenChange = (isOpen: boolean) => {
-    setIsSheetOpen(isOpen);
+    setIsOpen(isOpen);
   };
 
   return (
-    <Sheet onOpenChange={onSheetOpenChange} open={isSheetOpen}>
-      <SheetContent side='bottom'>
-        <SheetHeader className='mb-2 flex flex-row items-center gap-1 text-lg font-extrabold text-black'>
-          <Download size={16} />
-          You Can Install Taboo AI as App!
-        </SheetHeader>
+    <Popover onOpenChange={onSheetOpenChange} open={isOpen}>
+      <PopoverTrigger asChild>
+        <div className='fixed bottom-4 left-4' />
+      </PopoverTrigger>
+      <PopoverContent side={'top'} align={'start'} alignOffset={16}>
+        <button
+          autoFocus={false}
+          className='group absolute right-2 top-2 text-muted-foreground'
+          onClick={onCancel}
+        >
+          <X
+            size={16}
+            className='transition-transform duration-300 ease-out group-hover:rotate-[180deg]'
+          />
+        </button>
+        <h3 className='mb-2 flex flex-row items-center gap-1 text-base font-bold'>
+          Taboo AI can be installed!
+        </h3>
         <div className='flex flex-col gap-2'>
-          <p className='mb-2 leading-snug'>
-            Taboo AI can be easily installed as an application on your device, allowing you to
-            seamlessly incorporate it into your routine just like any other app, without the need to
-            open a separate browser.
+          <p className='mb-2 text-sm leading-snug'>
+            Taboo AI can be easily installed just like any other app. Give it a try?
           </p>
           <div id='button-group' className='flex flex-row justify-around gap-4'>
-            <Button className='w-1/2' onClick={onInstall}>
+            <Button onClick={onInstall} className='group flex items-center gap-2' size={'sm'}>
+              <Download size={16} className='transition-transform ease-out group-hover:scale-110' />
               Install
-            </Button>
-            <Button className='w-1/2' onClick={onCancel}>
-              Cancel
             </Button>
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </PopoverContent>
+    </Popover>
   );
 }

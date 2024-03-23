@@ -2,6 +2,13 @@
 
 ## Release Notes (V3.0)
 
+### 23 Mar 2024 - V3.1.10
+
+- New weekly topics drop feature popup.
+- Dialog for gathering user feedbacks.
+- Non-intrusive PWA installation prompt.
+- Bug fixes & UI improvements.
+
 ### 02 Mar 2024 - V3.1.9
 
 - Easier search experience.

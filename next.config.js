@@ -62,13 +62,6 @@ const nextConfig = {
     ],
     formats: ['image/webp'],
   },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.md$/,
-      use: 'raw-loader',
-    });
-    return config;
-  },
   async headers() {
     return [
       {
@@ -97,10 +90,16 @@ const nextConfig = {
   eslint: {
     dirs: ['app', 'pages', 'components', 'lib'],
   },
+  pageExtensions: ['mdx', 'tsx', 'ts', 'jsx', 'js'],
+  transpilePackages: ['lucide-react'],
 };
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-module.exports = withBundleAnalyzer(withPWA(nextConfig));
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+});
+
+module.exports = withBundleAnalyzer(withMDX(withPWA(nextConfig)));

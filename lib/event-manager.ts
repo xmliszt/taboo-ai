@@ -8,6 +8,7 @@ export enum CustomEventKey {
   SUBSCRIPTION_LOCK_DIALOG = 'toggle-subscription-lock-dialog',
   GENERIC_ALERT_DIALOG = 'toggle-generic-alert-dialog',
   GENERIC_FEEDBACK_DIALOG = 'toggle-generic-feedback-dialog',
+  CLOSE_FEATURE_POPUP = 'close-feature-popup',
 }
 
 export class EventManager {

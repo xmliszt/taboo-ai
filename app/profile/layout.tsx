@@ -1,6 +1,8 @@
 import React from 'react';
 import { Metadata } from 'next';
 
+import { AskForFeedbackAutoDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
+
 export const metadata: Metadata = {
   title: 'My Profile',
   alternates: {
@@ -21,5 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <AskForFeedbackAutoDialog />
+    </>
+  );
 }

@@ -1,8 +1,6 @@
-import ReactMarkdown from 'react-markdown';
+import PWAContentMDX from 'mdx-contents/pwa.mdx';
 
 import InstallButton from '@/components/custom/install-button';
-
-import content from './content.md';
 
 export default async function InstallPWAPage() {
   return (
@@ -11,7 +9,7 @@ export default async function InstallPWAPage() {
         data-testid='content-article'
         className='max-w-xl pb-20 pt-8 leading-normal lg:pb-28'
       >
-        <ReactMarkdown>{content}</ReactMarkdown>
+        <PWAContentMDX />
         <div className='sticky bottom-4 z-40 mt-2 flex w-full justify-center gap-2 px-2'>
           <InstallButton />
         </div>

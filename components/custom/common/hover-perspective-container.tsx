@@ -7,15 +7,21 @@ import { cn } from '@/lib/utils';
 type HoverPerspectiveContainerProps = {
   children: React.ReactNode;
   className?: string;
+  clipping?: boolean;
 };
 
-export function HoverPerspectiveContainer({ children, className }: HoverPerspectiveContainerProps) {
+export function HoverPerspectiveContainer({
+  children,
+  className,
+  clipping,
+}: HoverPerspectiveContainerProps) {
   const boundingRef = useRef<DOMRect | null>(null);
   return (
     <div
       className={cn(
-        'group relative transform rounded-lg shadow-lg transition-[transoform_border_box-shadow] duration-300 ease-out',
-        className
+        'group relative transform rounded-lg border shadow-lg transition-[transoform_border_box-shadow] duration-300 ease-out',
+        className,
+        clipping ? 'overflow-hidden' : 'overflow-visible'
       )}
       onMouseEnter={(event) => {
         boundingRef.current = event.currentTarget.getBoundingClientRect();
