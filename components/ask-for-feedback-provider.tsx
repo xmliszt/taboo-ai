@@ -56,11 +56,13 @@ export function useAskForFeedback() {
   useEffect(() => {
     if (askCount >= MAXIMUM_ASK_COUNT) return;
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setIsFeedbackOpen(true);
-      incrementAskCount();
-      console.log(`Ask for feedback ${askCount + 1}`);
-    }, 1000 * 1); // 1 minute
+    timeoutRef.current = setTimeout(
+      () => {
+        setIsFeedbackOpen(true);
+        incrementAskCount();
+      },
+      1000 * 60 * 1
+    ); // 1 minute
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
