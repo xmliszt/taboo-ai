@@ -299,7 +299,7 @@ export default function SideMenu() {
               <BsDiscord className='ml-2 inline-block transition-transform ease-in-out group-hover/discord:rotate-[30deg]' />
             </Link>
 
-            <Separator className='my-1' />
+            <Separator className='mb-2 mt-6' />
 
             <span className='text-sm'>
               © 2023 Taboo AI <br /> All rights reserved. <br /> Version{' '}

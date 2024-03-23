@@ -77,7 +77,7 @@ article pre {
 }
 
 article a {
-  @apply cursor-alias font-bold underline decoration-wavy underline-offset-[0.5rem] transition-all ease-out hover:opacity-75;
+  @apply cursor-alias font-bold underline decoration-wavy underline-offset-[0.3rem] transition-all ease-out [text-decoration-skip-ink:none] hover:opacity-75;
 }
 
 article ul > li {
