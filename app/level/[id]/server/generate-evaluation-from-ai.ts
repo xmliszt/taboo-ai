@@ -110,11 +110,11 @@ type AIEvaluationMode = 'basic' | 'advanced';
 
 const getEvaluationSystemMessage = (target: string, taboos: string[], withSuggestions: boolean) => {
   return `
-  You are a judge and advisor in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. User engaged in a conversation with AI. Your job is to evaluate the performance of the user based on his clues. The users are English learners who are trying to improve their English skills. You will assess the messages given by the user based on the quality, descriptiveness, English correctness, and demonstration of good knowledge. Your evaluation score from 0 to 100. If user is found cheating, or try to ask for English translation in another language, you should penalise the player. You will output your reasoning about your scoring, and provide constructive feedbacks to the user how the user can improve on the grammar, word choices, sentence structure, without using any of the target word and taboo words given.
+  You are a judge and advisor in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. User engaged in a conversation with AI. Your job is to evaluate the performance of the user based on his clues. The users are English learners who are trying to improve their English skills. You will assess the messages given by the user based on the quality, descriptiveness, English correctness, and demonstration of good knowledge. Your evaluation score from 0 to 100. If user is found cheating, or try to ask for English translation in another language, you should penalise the player. You will output your reasoning about your scoring, without using any of the target word and taboo words given.
   
   ${
     withSuggestions &&
-    `Generate suggestions of better hints as grammatically correct examples, with better word choices and sentence structure. Give at least three examples. Do not include any of the word in [${taboos}]`
+    `You will provide constructive feedbacks to the user how the user can improve on the grammar, word choices, sentence structure. And you will generate suggestions of better hints as grammatically correct examples, with better word choices and sentence structure. Give at least three examples. Your examples must not contain word in [${taboos}] as they are taboo words. Your examples will be output in the "examples" field.`
   }
   
   Output your score and reasoning ${
