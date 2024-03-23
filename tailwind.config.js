@@ -36,10 +36,12 @@ module.exports = {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
+        'primary-translucent': 'hsl(var(--primary-translucent))',
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+        'secondary-translucent': 'hsl(var(--secondary-translucent))',
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
@@ -72,6 +74,8 @@ module.exports = {
         'ping-once': 'ping 1s linear 1',
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'fade-inout': 'fade-in-out 2s infinite cubic-bezier(.5856, .0703, .4143, .9297)',
+        'fade-inout-1s-linear': 'fade-in-out 1s infinite linear',
+        'fade-in-for-target-word': 'fade-in-for-target-word 1s linear',
         'small-bounce-delay-1-loop':
           'smallBounce 300ms alternate infinite cubic-bezier(.2, .65, .6, 1)',
         'small-bounce-delay-2-loop':
@@ -97,6 +101,10 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: 0 },
           '100%': { opacity: 100 },
+        },
+        'fade-in-for-target-word': {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 0.3 },
         },
         moveIn: {
           '0%': { transform: 'translateX(-100vw)' },
