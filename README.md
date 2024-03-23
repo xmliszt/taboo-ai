@@ -17,7 +17,6 @@ Visit https://taboo-ai.vercel.app/
 # Commands
 
 - `npm run dev`: Start a local development with `.env.local`
-- `npm dev:turbo`: Start a local development using experimental turbopack (not available for now)
 - `npm run build`: Create a local build
 - `npm run start`: Start the local server using local build
 - `npm run lint`: Run eslint and stylelint on the codebase
@@ -38,16 +37,11 @@ Then ask me for the migration files, which you will need to populate the local p
 
 # Contribute
 
-Taboo AI is an open-source project. To contribute, simply fork the project into your own repository. Look at the [**Issues**](https://github.com/xmliszt/taboo-ai/issues) to find the one that you are interested in working with. Or raise your own issues. Once you are done, simply submit a pull request for review.
+To contribute, look at the [**Issues**](https://github.com/xmliszt/taboo-ai/issues) to find the one that you are interested in working with. Or raise your own issues. Once you are done, simply submit a pull request for review.
 
 ## Branching
 
-Taboo AI has `main` branch for production, `preview` for staging. When you create a feature branch, you can either PR to `main` or `preview` depending on the urgency of the issue.
-
-- PR to `main` will be blocked if no approval or unit test or preview deployment failed.
-- PR to `preview` requires approval as well.
-
-When you create a PR, GitHub pipeline is automatically run to deploy a staging build to vercel preview. Once succeeded, you can check the deployment from https://taboo-ai-xmliszt.vercel.app .
+Taboo AI has `main` branch for production, YOu can just branch out from `main` to work on your feature. Once you are done, submit a PR to `main` branch. This PR will automatically trigger **preview** pipeline to deploy a preview version. As a contributor, you should be invited into our Slack channel, from which the GitHub bot will notify you when the preview deployment is ready for review
 
 ## Local Dev Environment
 
