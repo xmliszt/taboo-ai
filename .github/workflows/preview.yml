@@ -1,10 +1,6 @@
 name: Taboo AI Preview CI/CD
 
 on:
-  # run when pushed to all branches except main
-  push:
-    branches-ignore:
-      - main
   # run when a pull request into main is opened or updated
   pull_request:
     branches:
