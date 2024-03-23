@@ -57,6 +57,9 @@ let wordsPlayed: string[] = [];
 // Level stored in cache - only for AI mode
 let cacheLevel: LevelToUpload | null = null;
 
+// Scores evaluated
+let scoresEvaluated: ScoreToUpload['score_index'][] = [];
+
 // Scores stored in cache
 let savedScores: ScoreToUpload[] = [];
 
@@ -117,6 +120,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     gameStartedAt = new Date();
     gameEndedAt = new Date();
     savedScores = [];
+    scoresEvaluated = [];
     setCurrentEvaluationProgress(0);
   };
 
@@ -415,14 +419,24 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   }, [isCountingDown]);
 
   function startEvaluationAndUpload() {
-    setCurrentEvaluationProgress(0);
+    // Count how many savedScores have already been evaluated
+    const alreadyEvaluatedSavedScores = savedScores.filter((score) =>
+      scoresEvaluated.includes(score.score_index)
+    );
+    setCurrentEvaluationProgress(alreadyEvaluatedSavedScores.length);
+    const remainingSavedScores = savedScores.filter(
+      (score) => !scoresEvaluated.includes(score.score_index)
+    );
     startTransition(async () => {
       try {
-        for (let i = 0; i < savedScores.length; i++) {
-          const evaluation = await generateEvaluationFromAI(savedScores[i]);
-          savedScores[i].ai_evaluation.ai_score = evaluation.score;
-          savedScores[i].ai_evaluation.ai_explanation = evaluation.reasoning;
-          savedScores[i].ai_evaluation.ai_suggestion = evaluation.examples;
+        for (let i = 0; i < remainingSavedScores.length; i++) {
+          const scoreIndex = remainingSavedScores[i].score_index;
+          // scoreIndex starts from 1.
+          const evaluation = await generateEvaluationFromAI(savedScores[scoreIndex - 1]);
+          savedScores[scoreIndex - 1].ai_evaluation.ai_score = evaluation.score;
+          savedScores[scoreIndex - 1].ai_evaluation.ai_explanation = evaluation.reasoning;
+          savedScores[scoreIndex - 1].ai_evaluation.ai_suggestion = evaluation.examples;
+          scoresEvaluated.push(scoreIndex);
           setCurrentEvaluationProgress(i + 1);
         }
         // Check if in AI mode, or user is guest, if so, we direct to result page, passing savedScores & level info as URLSearchParams
@@ -447,7 +461,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           title: 'Something went wrong!',
           description: 'Something went wrong during our evaluation process. Please try again.',
           cancelLabel: 'Cancel and exit',
-          confirmLabel: 'Try again',
+          confirmLabel: 'Resume evaluation',
           hasConfirmButton: true,
           onCancel: () => {
             router.push('/levels');

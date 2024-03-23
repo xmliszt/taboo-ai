@@ -98,7 +98,7 @@ export function ResultClientWrapper(props: ResultClientWrapperProps) {
         className='fixed bottom-2 z-40 flex w-full justify-center gap-2 p-4'
         href={`/level/${level.id}`}
       >
-        <Button className='w-[60%] shadow-xl'>Play This Topic Again</Button>
+        <Button className='w-[60%] shadow-xl'>Play this topic again</Button>
       </Link>
     </div>
   );
