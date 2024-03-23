@@ -20,6 +20,7 @@ import { CONSTANTS } from '@/lib/constants';
 import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
+import { cn } from '@/lib/utils';
 
 export default function AiPage() {
   const { user } = useAuth();
@@ -49,6 +50,7 @@ export default function AiPage() {
     if (topic.length > 0) {
       setIsLoading(true);
       try {
+        // form-event using server action
         const level = await generateAITopic(topic, Number(difficulty));
         if (level) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
@@ -83,8 +85,20 @@ export default function AiPage() {
   return (
     <>
       <main className='flex flex-col items-center px-10 py-8'>
-        <div className='h-52 w-52 p-4 lg:h-64 lg:w-64 lg:p-8'>
-          <HoverPerspectiveContainer className='rounded-lg shadow-xl'>
+        <div
+          className={cn(
+            'h-52 w-52 p-4 lg:h-64 lg:w-64 lg:p-8',
+            isLoading ? 'animate-dynamic-breath duration-[1.5s]' : 'animate-none'
+          )}
+        >
+          <HoverPerspectiveContainer
+            className={cn(
+              'rounded-lg shadow-xl',
+              isLoading
+                ? 'animate-dynamic-spin duration-[2s] [animation-timing-function:cubic-bezier(.5856,.0703,.4143,.9297)]'
+                : 'animate-none duration-300'
+            )}
+          >
             <Image
               className='rounded-lg'
               src={
@@ -96,7 +110,12 @@ export default function AiPage() {
               width={600}
               height={600}
             />
-            <div className='unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg after:blur-lg'></div>
+            <div
+              className={cn(
+                'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg after:blur-lg',
+                isLoading ? 'animate-fade-inout' : 'animate-none'
+              )}
+            ></div>
           </HoverPerspectiveContainer>
         </div>
         {errorMessage !== undefined && (
