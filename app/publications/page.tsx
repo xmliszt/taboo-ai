@@ -19,7 +19,7 @@ export default function PublicationsPage() {
       </div>
       <div className='relative flex w-full min-w-[24rem] max-w-xl flex-col'>
         <iframe
-          src='https://liyuxuan.dev/blogs'
+          src='https://liyuxuan.dev/posts'
           width='100%'
           height='750px'
           className='w-full rounded-lg border-[1px] shadow-lg'
