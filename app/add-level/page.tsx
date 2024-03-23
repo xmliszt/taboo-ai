@@ -13,6 +13,7 @@ import _, { zip } from 'lodash';
 import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
 import { useAuth } from '@/components/auth-provider';
 import { InfoButton } from '@/components/custom/info-button';
 import { Skeleton } from '@/components/custom/skeleton';
@@ -53,6 +54,7 @@ const INVALID_WORD_ERROR =
   'Only single space or a single quotation mark is allowed between words. No special characters are allowed. Cannot be empty. e.g.: invalid - "Mc-Donalds", valid - "McDonald\'s"';
 
 const AddLevelPage = () => {
+  useAskForFeedback();
   const { user } = useAuth();
   const [reviewSheetOpen, setReviewSheetOpen] = useState(false);
   const [isScrollToTopButtonVisible, setIsScrollToTopButtonVisible] = useState(false);

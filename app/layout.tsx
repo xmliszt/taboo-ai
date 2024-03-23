@@ -5,15 +5,12 @@ import Script from 'next/script';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AnalyticsProvider } from '@/components/analytics-provider';
-import { AuthProvider } from '@/components/auth-provider';
 import FeaturePopup from '@/components/custom/globals/feature-popup/feature-popup';
 import { SignInErrorDialog } from '@/components/custom/globals/sign-in-error-dialog';
 import SignInReminderDialog from '@/components/custom/globals/sign-in-reminder-dialog';
 import Maintenance from '@/components/custom/maintenance';
 import PWAInstaller from '@/components/custom/pwa-installer';
 import SideMenu from '@/components/custom/side-menu';
-import { ThemeProvider } from '@/components/theme-provider';
-import { GlobalTooltipProvider } from '@/components/tooltip-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { _meta } from '@/lib/metadata';
 
@@ -23,10 +20,12 @@ import './globals.css';
 import React from 'react';
 import { LogSnagProvider } from '@logsnag/next';
 
+import { AskForFeedbackDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
 import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
 import Header from '@/components/header';
+import { Providers } from '@/components/providers';
 import { ReactQueryProvider } from '@/components/query-provider';
 
 const font = Lora({
@@ -52,7 +51,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const maintenanceMode = JSON.parse(process.env.NEXT_PUBLIC_MAINTENANCE || 'false');
   return (
     <ReactQueryProvider>
@@ -63,31 +62,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Script id='pwa-script' src='/js/pwa.js' />
         <Script id='clarity-script' src='/js/clarity.js' />
         <body className={`${font.className}`}>
-          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-            <GlobalTooltipProvider delayDuration={300}>
-              <AuthProvider>
-                {maintenanceMode ? (
-                  <Maintenance />
-                ) : (
-                  <>
-                    <Header />
-                    {children}
-                    {/* Below are floating components */}
-                    <SideMenu />
-                    <PWAInstaller />
-                    <SignInErrorDialog />
-                    <SignInReminderDialog />
-                    <SubscriptionLockDialog />
-                    <GenericAlertDialog />
-                    <GenericFeedbackDialog />
-                    <FeaturePopup />
-                  </>
-                )}
-                <AnalyticsProvider />
-              </AuthProvider>
-            </GlobalTooltipProvider>
-            <Toaster />
-          </ThemeProvider>
+          <Providers>
+            {maintenanceMode ? (
+              <Maintenance />
+            ) : (
+              <>
+                <Header />
+                {children}
+                {/* Below are floating components */}
+                <SideMenu />
+                <PWAInstaller />
+                <SignInErrorDialog />
+                <SignInReminderDialog />
+                <SubscriptionLockDialog />
+                <GenericAlertDialog />
+                <GenericFeedbackDialog />
+                <AskForFeedbackDialog />
+                <FeaturePopup />
+              </>
+            )}
+          </Providers>
+          <Toaster />
+          <AnalyticsProvider />
           <SpeedInsights />
         </body>
       </html>

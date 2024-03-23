@@ -4,7 +4,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { cloneDeep, toLower, uniqueId } from 'lodash';
-import { SendHorizonal, X } from 'lucide-react';
+import { Eye, EyeOff, SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { AsyncReturnType } from 'type-fest';
 import { useTimer } from 'use-timer';
@@ -26,6 +26,7 @@ import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { CONSTANTS } from '@/lib/constants';
 import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
@@ -84,6 +85,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const [conversation, setConversation] = useState<ScoreToUpload['conversations']>([]);
   const [isPending, startTransition] = useTransition();
   const [currentEvaluationProgress, setCurrentEvaluationProgress] = useState(0);
+  const [isSurfacingTargetWord, setIsSurfacingTargetWord] = useState(false);
 
   const {
     time,
@@ -319,7 +321,15 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
       const lastAssistantMessage = conversation[conversation.length - 1];
       const highlights = generateHighlights(target, lastAssistantMessage.content, true);
       if (highlights.length > 0) {
-        toast("That's a hit! Well done!");
+        // Pick one random congratulatory message
+        toast(
+          LIST_OF_CONGRATULATORY_MESSAGES[
+            Math.floor(Math.random() * LIST_OF_CONGRATULATORY_MESSAGES.length)
+          ],
+          {
+            duration: 1500,
+          }
+        );
         void nextQuestion(highlights);
       }
     }
@@ -496,37 +506,31 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
 
   return (
     <main className='flex justify-center'>
-      {isCountingDown ? (
-        <div
-          className={cn(
-            'fixed top-1/2 z-50 w-full animate-ping text-center',
-            countdown.time === 0
-              ? 'text-6xl'
-              : countdown.time === 1
-                ? 'text-5xl'
-                : countdown.time === 2
-                  ? 'text-4xl'
-                  : countdown.time === 3
-                    ? 'text-3xl'
-                    : 'text-2xl'
-          )}
-        >
-          {countdown.time === 0 ? 'Start' : countdown.time === -1 ? '' : countdown.time}
-        </div>
-      ) : isGeneratingVariations ? (
-        <div className='fixed top-1/2 z-50 w-full animate-pulse text-center text-3xl'>
-          {renderWaitingMessageForVariations()}
-        </div>
-      ) : (
-        <></>
-      )}
       <Timer className='fixed right-3 top-3 z-50 shadow-lg' time={time} status={timerStatus} />
       <section className='flex h-full w-full flex-col gap-0 text-center'>
-        <div className='flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 py-4 scrollbar-hide'>
+        <div className='relative flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 py-4 scrollbar-hide'>
+          <div
+            className={cn(
+              'fixed bottom-0 left-0 right-0 top-0 -z-10 flex h-full w-full items-center justify-center whitespace-pre-wrap text-wrap px-4 py-20 text-5xl font-bold text-muted-foreground opacity-30 sm:text-8xl',
+              isCountingDown ? 'animate-fade-inout-1s-linear' : 'animate-fade-in-for-target-word'
+            )}
+          >
+            {isGeneratingVariations
+              ? `Your next target word is: ${target}`
+              : isCountingDown
+                ? countdown.time > 0
+                  ? countdown.time
+                  : 'Start'
+                : target}
+          </div>
           {conversation.map((prompt, idx) => (
             <p
               key={idx}
-              className={cn(prompt.role === 'user' ? 'chat-bubble-right' : 'chat-bubble-left')}
+              className={cn(
+                prompt.role === 'user' ? 'chat-bubble-right' : 'chat-bubble-left',
+                isSurfacingTargetWord &&
+                  (prompt.role === 'user' ? '!bg-primary-translucent' : '!bg-secondary-translucent')
+              )}
             >
               {prompt.role === 'assistant' && idx === conversation.length - 1 ? (
                 isWaitingForAIResponse ? (
@@ -570,17 +574,32 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           ))}
           <div id='chat-end'></div>
         </div>
-        <section className='flex w-full flex-col border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
+        <section className='relative flex w-full flex-col gap-4 border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
+          {/* Toggle eye button to surface target word */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <IconButton
+                onClick={() => {
+                  setIsSurfacingTargetWord((isSurfacingTargetWord) => !isSurfacingTargetWord);
+                }}
+                className={cn(
+                  'absolute -top-16 right-6 z-30',
+                  isSurfacingTargetWord
+                    ? 'opacity-100'
+                    : 'opacity-50 transition-opacity ease-in-out hover:opacity-100'
+                )}
+              >
+                {isSurfacingTargetWord ? <Eye size={20} /> : <EyeOff size={20} />}
+              </IconButton>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isSurfacingTargetWord ? 'Hide target word below' : 'Show target word below'}
+            </TooltipContent>
+          </Tooltip>
           <Progress
             className='h-1 rounded-none'
             value={(currentProgress / CONSTANTS.numberOfQuestionsPerGame) * 100}
           />
-          <div className='relative mb-4 flex flex-col items-center gap-2 px-4 pt-4 text-card-foreground'>
-            <span className='text-base font-light'>Make AI Say:</span>
-            <span className='rounded-lg bg-card-foreground px-2 py-1 text-xl font-bold text-card'>
-              {target}
-            </span>
-          </div>
           <form autoComplete='off' onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
             <div className='relative flex items-center justify-center gap-4 px-4'>
               <IconButton
@@ -606,10 +625,10 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                 autoComplete='off'
                 placeholder={
                   isGeneratingVariations
-                    ? 'Generating taboo words...'
+                    ? renderWaitingMessageForVariations()
                     : isCountingDown
                       ? 'Ready to ask questions?'
-                      : 'Enter your prompt...'
+                      : `Make AI say "${target}"`
                 }
                 className={cn(
                   'flex-grow pr-10',
@@ -639,7 +658,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                 className='aspect-square'
                 aria-label='submit button'
               >
-                <SendHorizonal />
+                <SendHorizonal size={18} />
               </IconButton>
             </div>
             {userInputError && (
@@ -651,7 +670,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
               </Label>
             )}
           </form>
-          <div className='mt-4 w-full overflow-x-auto whitespace-nowrap px-4 pb-8 text-base'>
+          <div className='w-full overflow-x-auto whitespace-nowrap px-4 pb-4 text-sm'>
             <span>
               <span className='font-light italic'>Taboos: </span>
               <span className='text-red-400'>{variations.map(_.startCase).join(', ')}</span>{' '}
@@ -670,3 +689,15 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
     </main>
   );
 }
+
+const LIST_OF_CONGRATULATORY_MESSAGES = [
+  'Good job!',
+  'Great work!',
+  'Well done!',
+  'Awesome!',
+  'Fantastic!',
+  'Nice work!',
+  'You are on fire 🔥!',
+  'Amazing!',
+  'Brilliant!',
+];

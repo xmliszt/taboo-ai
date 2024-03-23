@@ -2,7 +2,7 @@ import PWAContentMDX from 'mdx-contents/pwa.mdx';
 
 import InstallButton from '@/components/custom/install-button';
 
-export default async function InstallPWAPage() {
+export default function InstallPWAPage() {
   return (
     <main className='flex flex-col items-center px-8'>
       <article

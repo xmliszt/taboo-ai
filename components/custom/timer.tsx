@@ -29,7 +29,7 @@ export default function Timer({ time, status, className = '' }: TimerProps) {
         {status === 'RUNNING' ? (
           <>
             <span>{_.padStart(String(time), 4, '0')}</span>
-            <span>SEC</span>
+            <span>S</span>
           </>
         ) : (
           <span>{status}</span>

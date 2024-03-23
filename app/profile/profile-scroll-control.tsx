@@ -3,10 +3,13 @@
 import React, { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
+
 type ProfileScrollControlProps = {
   children: React.ReactNode;
 };
 export function ProfileScrollControl(props: ProfileScrollControlProps) {
+  useAskForFeedback();
   const searchParams = useSearchParams();
 
   useEffect(() => {

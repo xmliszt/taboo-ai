@@ -1,5 +1,6 @@
 import { LevelsScrollArea } from '@/app/levels/levels-scroll-area';
 import { fetchAllLevelsAndRanks } from '@/app/levels/server/fetch-levels';
+import { FeedbackAutoLoader } from '@/components/custom/feedback-auto-loader';
 import { LevelCard } from '@/components/custom/level-card';
 import LevelsSearchBar from '@/components/custom/levels/levels-search-bar';
 import { LevelUtils, SortType } from '@/lib/utils/levelUtils';
@@ -11,6 +12,7 @@ type LevelsPageProps = {
     sort?: SortType;
   };
 };
+
 export default async function LevelsPage(props: LevelsPageProps) {
   const levels = await fetchAllLevelsAndRanks();
   const { rank, search, sort } = props.searchParams;
@@ -32,6 +34,7 @@ export default async function LevelsPage(props: LevelsPageProps) {
 
   return (
     <section className='flex h-full w-full flex-col overflow-y-hidden'>
+      <FeedbackAutoLoader />
       <div className='h-30 w-full border border-b-primary bg-card px-4 py-4 lg:px-12'>
         <LevelsSearchBar topicNumber={filteredLevels.length} />
       </div>

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <main className='relative flex h-full w-full justify-center'>
       {children}

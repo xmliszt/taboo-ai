@@ -27,7 +27,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <main className='w-full'>
       <ScrollArea className='h-full [&>[data-radix-scroll-area-viewport]>div]:h-full'>

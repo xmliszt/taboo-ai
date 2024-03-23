@@ -1,8 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { AskForFeedbackAutoDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
-
 export const metadata: Metadata = {
   title: 'Choose Topic',
   alternates: {
@@ -13,11 +11,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <main className='flex justify-center'>
-      {children}
-      <AskForFeedbackAutoDialog />
-    </main>
-  );
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <main className='flex justify-center'>{children}</main>;
 }
