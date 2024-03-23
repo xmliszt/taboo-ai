@@ -70,18 +70,16 @@ module.exports = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'ping-once': 'ping 1s linear 1',
-        'fade-out': 'fadeOut 0.5s ease-in-out',
         'fade-in': 'fadeIn 0.5s ease-in-out',
-        'fade-inout': 'fadeInOut 1.5s ease-in-out',
-        'fade-inout-first-loop': 'fadeInOut 10s ease-in-out infinite',
-        'fade-inout-delay-loop': 'fadeInOut 10s ease-in-out 5s infinite',
+        'fade-inout': 'fade-in-out 2s infinite cubic-bezier(.5856, .0703, .4143, .9297)',
         'small-bounce-delay-1-loop':
           'smallBounce 300ms alternate infinite cubic-bezier(.2, .65, .6, 1)',
         'small-bounce-delay-2-loop':
           'smallBounce 300ms alternate 100ms infinite cubic-bezier(.2, .65, .6, 1)',
         'small-bounce-delay-3-loop':
           'smallBounce 300ms alternate 200ms infinite cubic-bezier(.2, .65, .6, 1)',
-        'shake-head': 'shakeHead 0.35s once',
+        'dynamic-spin': 'full-spin 2s infinite cubic-bezier(.5856, .0703, .4143, .9297)',
+        'dynamic-breath': 'breath 2s infinite cubic-bezier(.5856, .0703, .4143, .9297)',
       },
       keyframes: {
         'accordion-down': {
@@ -104,12 +102,9 @@ module.exports = {
           '0%': { transform: 'translateX(-100vw)' },
           '100%': { transform: 'translateX(100vw)' },
         },
-        fadeInOut: {
+        'fade-in-out': {
           '0%': { opacity: 0 },
-          '4%': { opacity: 0 },
-          '7%': { opacity: 100 },
-          '50%': { opacity: 100 },
-          '53%': { opacity: 0 },
+          '50%': { opacity: 1 },
           '100%': { opacity: 0 },
         },
         smallBounce: {
@@ -122,6 +117,28 @@ module.exports = {
           '50%': { transform: 'translateX(0)' },
           '75%': { transform: 'translateX(-5px)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        'full-spin': {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(360deg)',
+          },
+        },
+        breath: {
+          '0%': {
+            transform: 'scale(1)',
+            opacity: 1,
+          },
+          '50%': {
+            transform: 'scale(0.75)',
+            opacity: 0.2,
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: 1,
+          },
         },
       },
     },

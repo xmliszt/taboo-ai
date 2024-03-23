@@ -10,9 +10,6 @@ import { ProPlanIndicator } from '@/components/custom/home/pro-plan-indicator';
 import PricingCard from '@/components/custom/pricing/pricing-card';
 import { Card } from '@/components/ui/card';
 
-const title = 'Taboo AI';
-const versionNumber = `v${process.env.NEXT_PUBLIC_TABOO_AI_VERSION}`;
-
 export default async function HomePage() {
   let isUserPro = false;
 
@@ -33,10 +30,9 @@ export default async function HomePage() {
       <section className='flex w-full flex-col items-center justify-center gap-2 pb-4 pt-8'>
         <div className='relative'>
           <h1 data-testid='heading-title' className='text-center text-7xl drop-shadow-lg'>
-            {title}
+            Taboo AI
           </h1>
           <ProPlanIndicator />
-          <span className='absolute -top-6 right-0 text-lg'>{versionNumber}</span>
         </div>
         <HomeMenuButtonArray />
       </section>
