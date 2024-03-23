@@ -140,7 +140,8 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
         user,
         plan,
         successRedirectUrl,
-        cancelRedirectUrl
+        cancelRedirectUrl,
+        window.location.origin
       );
       router.replace(redirectUrl);
     } catch (error) {

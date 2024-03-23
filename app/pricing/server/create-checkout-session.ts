@@ -16,7 +16,8 @@ export async function createCheckoutSession(
   user: UserProfile,
   plan: Plan,
   successUrl: string,
-  cancelUrl: string
+  cancelUrl: string,
+  origin: string
 ) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error('Stripe secret key not set');
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -31,7 +32,7 @@ export async function createCheckoutSession(
       const portalSessionUrl = await createStripeCustomerPortal(
         user.id,
         user.subscription.customer_id,
-        `${window.location.origin}/profile?anchor=subscription`
+        `${origin}/profile?anchor=subscription`
       );
       return portalSessionUrl;
     }
@@ -52,7 +53,7 @@ export async function createCheckoutSession(
       const portalSessionUrl = await createStripeCustomerPortal(
         user.id,
         customer.id,
-        `${window.location.origin}/profile?anchor=subscription`
+        `${origin}/profile?anchor=subscription`
       );
       return portalSessionUrl;
     }
