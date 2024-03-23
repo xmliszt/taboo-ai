@@ -3,7 +3,7 @@ import { SiDiscord } from 'react-icons/si';
 
 import SocialLinkButton from '@/components/custom/social-link-button';
 
-export default function AboutPage() {
+export default async function AboutPage() {
   return (
     <main className='flex flex-col items-center px-8'>
       <article data-testid='content-article' className='max-w-xl pb-24 pt-8 leading-normal'>

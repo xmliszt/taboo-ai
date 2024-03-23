@@ -91,6 +91,7 @@ const nextConfig = {
     dirs: ['app', 'pages', 'components', 'lib'],
   },
   pageExtensions: ['mdx', 'tsx', 'ts', 'jsx', 'js'],
+  transpilePackages: ['lucide-react'],
 };
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({

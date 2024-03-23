@@ -2,7 +2,6 @@ import Image from 'next/image';
 import type { MDXComponents } from 'mdx/types';
 
 import { HoverPerspectiveContainer } from './components/custom/common/hover-perspective-container';
-import { MDXLink } from './mdx-link';
 
 // This file allows you to provide custom React components
 // to be used in MDX files. You can import and use any
@@ -14,7 +13,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // Allows customizing built-in components, e.g. to add styling.
     ...components,
     img: (props) => (
-      <HoverPerspectiveContainer className='flex flex-col items-stretch'>
+      <HoverPerspectiveContainer className='flex flex-col items-stretch' clipping>
         <Image
           src={props.src ?? ''}
           alt={props.alt ?? ''}
@@ -29,7 +28,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         />
       </HoverPerspectiveContainer>
     ),
-    a: (props) => <MDXLink href={props.href ?? ''}>{props.children}</MDXLink>,
     em: (props) => <span className='italic text-muted-foreground'>{props.children}</span>,
   };
 }
