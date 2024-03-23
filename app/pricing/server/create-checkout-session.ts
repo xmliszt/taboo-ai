@@ -5,6 +5,7 @@ import 'server-only';
 import Stripe from 'stripe';
 
 import { Plan } from '@/app/pricing/server/fetch-plans';
+import { createStripeCustomerPortal } from '@/app/profile/server/create-stripe-customer-portal';
 import type { UserProfile } from '@/app/profile/server/fetch-user-profile';
 
 /**
@@ -26,7 +27,13 @@ export async function createCheckoutSession(
       customer: user.subscription.customer_id,
     });
     if (subscriptions.data.length > 0) {
-      throw new Error('Customer already has a subscription');
+      // Customer already has a subscription, we should create customer portal and redirect to it
+      const portalSessionUrl = await createStripeCustomerPortal(
+        user.id,
+        user.subscription.customer_id,
+        `${window.location.origin}/profile?anchor=subscription`
+      );
+      return portalSessionUrl;
     }
   }
 
@@ -41,7 +48,13 @@ export async function createCheckoutSession(
       customer: customer.id,
     });
     if (subscriptions.data.length > 0) {
-      throw new Error('Customer already has a subscription');
+      // Customer already has a subscription, we should create customer portal and redirect to it
+      const portalSessionUrl = await createStripeCustomerPortal(
+        user.id,
+        customer.id,
+        `${window.location.origin}/profile?anchor=subscription`
+      );
+      return portalSessionUrl;
     }
   }
 
