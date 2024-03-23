@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import { AskForFeedbackAutoDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
-
 import { Footer } from '../footer';
 
 export const metadata: Metadata = {
@@ -27,7 +25,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <>
       {children}
-      <AskForFeedbackAutoDialog />
       <Footer />
     </>
   );

@@ -165,8 +165,8 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
             ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
             : '',
           'relative flex cursor-pointer flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]  ',
-          'xs:w-[200px] w-full',
-          'xs:min-h-[300px] h-full'
+          'w-full xs:w-[200px]',
+          'h-full xs:min-h-[300px]'
         )}
       >
         <CardHeader>

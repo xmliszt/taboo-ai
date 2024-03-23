@@ -9,6 +9,7 @@ import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { ScoreDetailsAccordion } from '@/app/result/score-details-accordion';
 import { Game } from '@/app/result/server/fetch-game';
 import { TopicContributionController } from '@/app/result/topic-contribution-controller';
+import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
 import ResultsSummaryCard from '@/components/custom/results/results-summary-card';
 import { ShareScoreButton } from '@/components/header/share-score-button';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ type ResultClientWrapperProps = {
 };
 
 export function ResultClientWrapper(props: ResultClientWrapperProps) {
+  useAskForFeedback();
   let game: Game | undefined = props.remotelyFetchedGame;
 
   let level: Level | undefined = undefined;

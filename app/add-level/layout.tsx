@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import { AskForFeedbackAutoDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
-
 export const metadata: Metadata = {
   title: 'Contribute Topics',
   alternates: {
@@ -22,10 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      {children}
-      <AskForFeedbackAutoDialog />
-    </>
-  );
+  return <>{children}</>;
 }

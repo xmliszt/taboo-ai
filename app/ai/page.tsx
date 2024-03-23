@@ -7,6 +7,7 @@ import { PenTool, SpellCheck2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
+import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
 import { useAuth } from '@/components/auth-provider';
 import { HoverPerspectiveContainer } from '@/components/custom/common/hover-perspective-container';
 import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
@@ -23,6 +24,7 @@ import { setPersistence } from '@/lib/persistence/persistence';
 import { cn } from '@/lib/utils';
 
 export default function AiPage() {
+  useAskForFeedback();
   const { user } = useAuth();
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
@@ -88,14 +90,16 @@ export default function AiPage() {
         <div
           className={cn(
             'h-52 w-52 p-4 lg:h-64 lg:w-64 lg:p-8',
-            isLoading ? 'animate-dynamic-breath duration-[1.5s]' : 'animate-none'
+            isLoading
+              ? 'animate-dynamic-breath [animation-duration:2000ms] [transition-duration:2000ms]'
+              : 'animate-none'
           )}
         >
           <HoverPerspectiveContainer
             className={cn(
               'rounded-lg shadow-xl',
               isLoading
-                ? 'animate-dynamic-spin duration-[2s] [animation-timing-function:cubic-bezier(.5856,.0703,.4143,.9297)]'
+                ? 'animate-dynamic-spin [animation-duration:2000ms] [transition-duration:2000ms] [animation-timing-function:cubic-bezier(.5856,.0703,.4143,.9297)]'
                 : 'animate-none duration-300'
             )}
           >
