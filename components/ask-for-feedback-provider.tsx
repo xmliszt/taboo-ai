@@ -61,8 +61,8 @@ export function useAskForFeedback() {
         setIsFeedbackOpen(true);
         incrementAskCount();
       },
-      1000 * 60 * 1
-    ); // 1 minute
+      1000 * 60 * 2
+    ); // 2 minutes
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
