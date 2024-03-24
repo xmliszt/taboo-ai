@@ -22,7 +22,7 @@ export function ProfileRecentGameCard({ game }: ProfileRecentGameCardProps) {
   return (
     <Tooltip key={game.game_id}>
       <TooltipTrigger asChild>
-        <Link href={`/result?id=${game.game_id}`}>
+        <Link href={game.game_id === 'play-more' ? '/levels' : `/result?id=${game.game_id}`}>
           <HoverPerspectiveContainer className='h-full min-w-[240px] cursor-pointer snap-center border text-left leading-snug'>
             <Card className='h-full'>
               <CardHeader>
