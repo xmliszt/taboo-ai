@@ -18,7 +18,8 @@ export enum TabooPathname {
   PROFILE = '/profile',
   PRICING = '/pricing',
   PUBLICATIONS = '/publications',
-  PRIVACY = '/privacy',
+  PRIVACY = '/privacy-policy',
+  COOKIE = '/cookie-policy',
 }
 
 export class RouteManager {
@@ -118,6 +119,14 @@ export class RouteManager {
           title: 'Privacy policy',
           hasBackButton: true,
           hideMenu: true,
+          customBackHref: '/',
+        };
+      case TabooPathname.COOKIE === route:
+        return {
+          title: 'Cookie policy',
+          hasBackButton: true,
+          hideMenu: true,
+          customBackHref: '/',
         };
       default:
         return {

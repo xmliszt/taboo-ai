@@ -251,7 +251,7 @@ export default function SideMenu() {
             </Link>
             <Link
               className='group/privacy-policy'
-              href={'/privacy'}
+              href={'/privacy-policy'}
               onClick={() => {
                 setIsOpen(false);
               }}
