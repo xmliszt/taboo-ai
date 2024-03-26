@@ -19,7 +19,7 @@ export default function Page() {
 
   return (
     <ScrollArea className='h-full w-full' ref={scrollAreaRef} onScroll={onScrollChange}>
-      <article className='mx-auto max-w-xl p-4'>
+      <article className='mx-auto w-screen max-w-xl p-4'>
         <PrivacyMDXContent />
         {isScrollToTopButtonVisible && <ScrollToTopButton scrollAreaRef={scrollAreaRef} />}
       </article>
