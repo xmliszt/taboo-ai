@@ -18,6 +18,9 @@ export enum TabooPathname {
   PROFILE = '/profile',
   PRICING = '/pricing',
   PUBLICATIONS = '/publications',
+  PRIVACY = '/privacy-policy',
+  COOKIE = '/cookie-policy',
+  TNC = '/terms-and-conditions',
 }
 
 export class RouteManager {
@@ -111,6 +114,27 @@ export class RouteManager {
         return {
           title: 'Review words',
           hasBackButton: true,
+        };
+      case TabooPathname.PRIVACY === route:
+        return {
+          title: 'Privacy policy',
+          hasBackButton: true,
+          hideMenu: true,
+          customBackHref: '/',
+        };
+      case TabooPathname.COOKIE === route:
+        return {
+          title: 'Cookie policy',
+          hasBackButton: true,
+          hideMenu: true,
+          customBackHref: '/',
+        };
+      case TabooPathname.TNC === route:
+        return {
+          title: 'Terms & conditions',
+          hasBackButton: true,
+          hideMenu: true,
+          customBackHref: '/',
         };
       default:
         return {
