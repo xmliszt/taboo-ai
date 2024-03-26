@@ -437,7 +437,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           savedScores[scoreIndex - 1].ai_evaluation.ai_explanation = evaluation.reasoning;
           savedScores[scoreIndex - 1].ai_evaluation.ai_suggestion = evaluation.examples;
           scoresEvaluated.push(scoreIndex);
-          setCurrentEvaluationProgress(i + 1);
+          setCurrentEvaluationProgress(alreadyEvaluatedSavedScores.length + i + 1);
         }
         // Check if in AI mode, or user is guest, if so, we direct to result page, passing savedScores & level info as URLSearchParams
         if (!props.level?.id || props.fromAIMode || !user) {

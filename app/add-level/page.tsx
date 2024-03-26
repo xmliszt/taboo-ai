@@ -405,6 +405,7 @@ const AddLevelPage = () => {
   };
 
   const reset = () => {
+    setReviewSheetOpen(false);
     setTopicName('');
     setTopicNameErrorMessage('');
     setDifficultyLevel('1');
