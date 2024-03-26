@@ -20,6 +20,7 @@ export enum TabooPathname {
   PUBLICATIONS = '/publications',
   PRIVACY = '/privacy-policy',
   COOKIE = '/cookie-policy',
+  TNC = '/terms-and-conditions',
 }
 
 export class RouteManager {
@@ -124,6 +125,13 @@ export class RouteManager {
       case TabooPathname.COOKIE === route:
         return {
           title: 'Cookie policy',
+          hasBackButton: true,
+          hideMenu: true,
+          customBackHref: '/',
+        };
+      case TabooPathname.TNC === route:
+        return {
+          title: 'Terms & conditions',
           hasBackButton: true,
           hideMenu: true,
           customBackHref: '/',

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Handshake } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
 import { BiBook, BiCart, BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
 import { BsDiscord } from 'react-icons/bs';
@@ -250,24 +250,37 @@ export default function SideMenu() {
               <BiCart className='ml-2 inline-block transition-transform ease-in-out group-hover/pricing:rotate-[30deg]' />
             </Link>
             <Link
-              className='group/privacy-policy'
+              className='group'
               href={'/privacy-policy'}
               onClick={() => {
                 setIsOpen(false);
               }}
             >
               Privacy policy{' '}
-              <BiMask className='ml-2 inline-block transition-transform ease-in-out group-hover/privacy-policy:rotate-[30deg]' />
+              <BiMask className='ml-2 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]' />
             </Link>
             <Link
-              className='group/cookie-policy'
+              className='group'
               href={'/cookie-policy'}
               onClick={() => {
                 setIsOpen(false);
               }}
             >
               Cookie policy{' '}
-              <BiCookie className='ml-2 inline-block transition-transform ease-in-out group-hover/cookie-policy:rotate-[30deg]' />
+              <BiCookie className='ml-2 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group'
+              href={'/terms-and-conditions'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Terms & conditions{' '}
+              <Handshake
+                size={14}
+                className='ml-2 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]'
+              />
             </Link>
             <Link
               className='group/sitemap'
