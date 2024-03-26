@@ -53,7 +53,7 @@ export function LevelVerificationSection(props: LevelVerificationSectionProps) {
           return;
         }
         await sendSecureEmail(
-          'Congratulations! Your Taboo AI Contribution is Now Live 🎉',
+          `Congratulations! Your Taboo AI contribution "${props.level.name}" is now live 🎉`,
           authorEmail,
           'verify'
         );
@@ -74,7 +74,7 @@ export function LevelVerificationSection(props: LevelVerificationSectionProps) {
     startTransition(async () => {
       await deleteLevel(props.level.id);
       await sendSecureEmail(
-        "Hi! Let's Elevate Your Topics! Resubmit Your Taboo AI Entry 🚀",
+        "Hi! Let's elevate your topic! Resubmit your Taboo AI entry 🚀",
         authorEmail,
         'reject',
         rejectionReason
