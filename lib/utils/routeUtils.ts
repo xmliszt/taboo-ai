@@ -18,6 +18,7 @@ export enum TabooPathname {
   PROFILE = '/profile',
   PRICING = '/pricing',
   PUBLICATIONS = '/publications',
+  PRIVACY = '/privacy',
 }
 
 export class RouteManager {
@@ -111,6 +112,12 @@ export class RouteManager {
         return {
           title: 'Review words',
           hasBackButton: true,
+        };
+      case TabooPathname.PRIVACY === route:
+        return {
+          title: 'Privacy policy',
+          hasBackButton: true,
+          hideMenu: true,
         };
       default:
         return {

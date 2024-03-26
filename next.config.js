@@ -74,10 +74,6 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/privacy',
-        destination: '/html/privacy.html',
-      },
-      {
         source: '/cookie-policy',
         destination: '/html/cookie-policy.html',
       },

@@ -249,11 +249,23 @@ export default function SideMenu() {
               Pricing{' '}
               <BiCart className='ml-2 inline-block transition-transform ease-in-out group-hover/pricing:rotate-[30deg]' />
             </Link>
-            <Link className='group/privacy-policy' href={'/privacy'} target='_blank'>
+            <Link
+              className='group/privacy-policy'
+              href={'/privacy'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
               Privacy policy{' '}
               <BiMask className='ml-2 inline-block transition-transform ease-in-out group-hover/privacy-policy:rotate-[30deg]' />
             </Link>
-            <Link className='group/cookie-policy' href={'/cookie-policy'} target='_blank'>
+            <Link
+              className='group/cookie-policy'
+              href={'/cookie-policy'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
               Cookie policy{' '}
               <BiCookie className='ml-2 inline-block transition-transform ease-in-out group-hover/cookie-policy:rotate-[30deg]' />
             </Link>
