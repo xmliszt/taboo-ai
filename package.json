@@ -16,7 +16,7 @@
     "vercel:init": "vercel link && vercel pull",
     "vercel:pull": "vercel pull",
     "vercel:dev": "vercel dev --listen 3000",
-    "gen-types": "supabase gen types typescript --project-id qbjkpfyfmnkerzcmmjbk --schema public > lib/supabase/__generated__/types.ts --debug"
+    "gen-types": "supabase gen types typescript --project-id avosfnqiscrmxpqmhswp --schema public > lib/supabase/__generated__/types.ts --debug"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.2",

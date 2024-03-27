@@ -46,7 +46,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
           afterDialogClose: () => {
             router.push(`/level/${level.id}`);
           },
-          cancelLabel: 'Play as Guest',
+          cancelLabel: 'Play as guest',
         });
       } else {
         router.push(`/level/${level.id}`);
@@ -106,7 +106,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
     } else {
       return (
         <section className='mt-2 text-left leading-tight'>
-          Can&apos;t find the topic you are looking for? Try ask the AI to generate for you!
+          {`Can't find the topic you are looking for? Try ask the AI to generate for you!`}
         </section>
       );
     }
@@ -176,7 +176,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
               'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
             )}
           >
-            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI mode'}
+            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Generated Topics'}
           </div>
         </CardHeader>
         <CardContent className='relative'>

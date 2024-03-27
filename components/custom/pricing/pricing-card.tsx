@@ -202,37 +202,39 @@ export default function PricingCard({ index, plan, className }: PricingCardProps
           <CardDescription className='text-base'>${plan.price_per_month} per month</CardDescription>
         </CardHeader>
         <CardContent className='flex h-full flex-col gap-[0.35rem] text-sm'>
-          {plan.plan_features.map((feature) => (
-            <div key={feature.id} className='flex flex-row items-start justify-start gap-2'>
-              <div className='w-[22px]'>
-                {feature.status === 'absent' ? (
-                  <X size={20} color='#E54666' strokeWidth={2} />
-                ) : (
-                  <Check
-                    size={20}
-                    color={feature.status === 'complete' ? '#7eb262' : '#7eb26250'}
-                    strokeWidth={2}
-                  />
-                )}
-              </div>
+          {plan.plan_features
+            .sort((a, b) => a.feature_order - b.feature_order)
+            .map((feature) => (
+              <div key={feature.id} className='flex flex-row items-start justify-start gap-2'>
+                <div className='w-[22px]'>
+                  {feature.status === 'absent' ? (
+                    <X size={20} color='#E54666' strokeWidth={2} />
+                  ) : (
+                    <Check
+                      size={20}
+                      color={feature.status === 'complete' ? '#7eb262' : '#7eb26250'}
+                      strokeWidth={2}
+                    />
+                  )}
+                </div>
 
-              <Popover>
-                <PopoverTrigger asChild>
-                  <span
-                    className={cn(
-                      'leading-tight underline decoration-dotted underline-offset-2 hover:cursor-help',
-                      feature.status === 'absent' ? 'text-muted-foreground' : 'text-primary'
-                    )}
-                  >
-                    {feature.title}{' '}
-                  </span>
-                </PopoverTrigger>
-                <PopoverContent className='bg-muted leading-snug text-card-foreground'>
-                  <p className='text-base leading-tight'>{feature.description}</p>
-                </PopoverContent>
-              </Popover>
-            </div>
-          ))}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span
+                      className={cn(
+                        'leading-tight underline decoration-dotted underline-offset-2 hover:cursor-help',
+                        feature.status === 'absent' ? 'text-muted-foreground' : 'text-primary'
+                      )}
+                    >
+                      {feature.title}{' '}
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className='bg-muted leading-snug text-card-foreground'>
+                    <p className='text-base leading-tight'>{feature.description}</p>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            ))}
         </CardContent>
         <CardFooter className='absolute bottom-0 left-0 z-10 flex w-full justify-center'>
           <Button

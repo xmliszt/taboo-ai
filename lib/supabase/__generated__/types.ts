@@ -354,6 +354,7 @@ export type Database = {
       plan_features: {
         Row: {
           description: string
+          feature_order: number
           id: string
           plan_id: string
           status: Database["public"]["Enums"]["feature_status"]
@@ -361,6 +362,7 @@ export type Database = {
         }
         Insert: {
           description: string
+          feature_order?: number
           id?: string
           plan_id: string
           status: Database["public"]["Enums"]["feature_status"]
@@ -368,6 +370,7 @@ export type Database = {
         }
         Update: {
           description?: string
+          feature_order?: number
           id?: string
           plan_id?: string
           status?: Database["public"]["Enums"]["feature_status"]
