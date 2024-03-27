@@ -42,7 +42,7 @@ export class RouteManager {
         };
       case TabooPathname.AI_MODE === route:
         return {
-          title: 'AI generated topic',
+          title: 'AI generated topics',
         };
       case TabooPathname.BUY_ME_COFFEE === route:
         return {
@@ -58,11 +58,11 @@ export class RouteManager {
         };
       case TabooPathname.LEVELS === route:
         return {
-          title: 'Choose a topic',
+          title: 'Public topics',
         };
       case TabooPathname.RESULT === route:
         return {
-          title: 'Game result',
+          title: 'Game results',
           hideDevToggle: false,
         };
       case TabooPathname.PWA === route:

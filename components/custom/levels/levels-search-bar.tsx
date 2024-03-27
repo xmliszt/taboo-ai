@@ -15,8 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 import type { SortType } from '@/lib/utils/levelUtils';
+
+import { HallOfFameToggle } from './hall-of-fame-toggle';
 
 type SortItem = {
   value: SortType;
@@ -39,7 +40,6 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isRankingModeOn = searchParams.get('rank') === 'true';
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
 
   const timerRef = useRef<number | null>(null);
@@ -93,31 +93,9 @@ export default function LevelsSearchBar({ topicNumber }: { topicNumber: number }
         />
       </div>
       <div className='mt-2 flex flex-row items-center justify-between'>
-        <Badge className='shadow-[0_5px_10px_rgba(0,0,0,0.3)]'>
-          {`Found ${topicNumber} topics`}
-        </Badge>
-        <div
-          className={cn(
-            'relative h-6 w-44 rounded-sm border border-border after:blur-sm',
-            isRankingModeOn
-              ? 'rotating-golden-gradient '
-              : 'rotating-golden-border-trace bg-background',
-            'transition-transform ease-in-out hover:scale-105 hover:cursor-pointer'
-          )}
-          onClick={() => {
-            const newSearchParams = new URLSearchParams(searchParams);
-            if (isRankingModeOn) newSearchParams.delete('rank');
-            else newSearchParams.set('rank', 'true');
-            router.replace(`${pathname}?${newSearchParams}`);
-          }}
-        >
-          <div
-            className={cn(
-              'absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-sm text-center text-xs',
-              isRankingModeOn ? 'text-black' : 'bg-background text-secondary-foreground'
-            )}
-          >{`Let's get competitive! 🏆`}</div>
-        </div>
+        <Badge className='h-full shadow-lg'>{`${topicNumber} topics`}</Badge>
+        {/* Hall-of-fame toggle */}
+        <HallOfFameToggle />
       </div>
     </div>
   );

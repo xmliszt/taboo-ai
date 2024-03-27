@@ -150,11 +150,6 @@ textarea {
   animation: rotating 3s linear infinite forwards;
 }
 
-.rotating-golden-border-trace:hover::before,
-.rotating-golden-border-trace:hover::after {
-  opacity: 1;
-}
-
 .rotating-golden-border-trace::before,
 .rotating-golden-border-trace::after {
   content: '';
@@ -173,8 +168,6 @@ textarea {
   );
   border-radius: inherit;
   animation: rotating 3s linear infinite forwards;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
 }
 
 .rotating-mono-border-trace::before,

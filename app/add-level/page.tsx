@@ -84,7 +84,7 @@ const AddLevelPage = () => {
 
   useEffect(() => {
     if (!user) {
-      toast.warning('You need to sign in to contribute a topic');
+      toast.warning('You need to sign in to contribute topics');
       router.push('/');
     }
   }, [user]);

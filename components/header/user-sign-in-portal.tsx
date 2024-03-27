@@ -156,7 +156,7 @@ export function UserSignInPortal() {
         onClick: handleManageSubscription,
       },
       {
-        label: 'Contribute a topic',
+        label: 'Contribute topics',
         icon: <PenTool />,
         isVisible: pathname !== '/add-level',
         onClick: () => {
