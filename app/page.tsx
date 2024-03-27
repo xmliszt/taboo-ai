@@ -60,7 +60,7 @@ export default async function HomePage() {
         We improve our products and advertising by using Microsoft Clarity to see how you use our
         website. By using our site, you agree that we and Microsoft can collect and use this data.
         Our{' '}
-        <a href='/privacy' className='underline'>
+        <a href='/privacy-policy' className='underline'>
           privacy statement
         </a>{' '}
         has more details.

@@ -29,8 +29,9 @@ export default async function SitemapPage() {
     { title: 'Latest features', href: '/whatsnew' },
     { title: 'Project roadmap', href: '/roadmap' },
     { title: 'Buy me coffee', href: '/buymecoffee' },
-    { title: 'Privacy policy', href: '/privacy' },
+    { title: 'Privacy policy', href: '/privacy-policy' },
     { title: 'Cookie policy', href: '/cookie-policy' },
+    { title: 'Terms and conditions', href: '/terms-and-conditions' },
   ];
   const socialMedia: SitemapRoute[] = [
     { title: 'About me', href: 'https://liyuxuan.dev' },
