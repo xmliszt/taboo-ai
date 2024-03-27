@@ -6,7 +6,11 @@ import { useTheme } from 'next-themes';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { isMobile } from 'react-device-detect';
 
-export function Confetti() {
+type ConfettiProps = {
+  playOnce?: boolean;
+};
+
+export function Confetti(props: ConfettiProps) {
   const { resolvedTheme } = useTheme();
   const refAnimationInstance = useRef<confetti.CreateTypes | null>(null);
   const getRefConfettiInstance = useCallback((instance: confetti.CreateTypes | null) => {
@@ -51,10 +55,15 @@ export function Confetti() {
   }, [resolvedTheme, isMobile]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    let interval: NodeJS.Timeout;
+    if (props.playOnce) {
       fire();
-    }, 5000);
-    return () => clearInterval(interval);
+    } else {
+      interval = setInterval(() => {
+        fire();
+      }, 5000);
+    }
+    return () => interval && clearInterval(interval);
   }, [fire]);
 
   return (

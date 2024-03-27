@@ -84,6 +84,7 @@ module.exports = {
           'smallBounce 300ms alternate 200ms infinite cubic-bezier(.2, .65, .6, 1)',
         'dynamic-spin': 'full-spin 2s infinite cubic-bezier(.5856, .0703, .4143, .9297)',
         'dynamic-breath': 'breath 2s infinite cubic-bezier(.5856, .0703, .4143, .9297)',
+        'background-translate': 'background-translate 15s infinite ease',
       },
       keyframes: {
         'accordion-down': {
@@ -147,6 +148,11 @@ module.exports = {
             transform: 'scale(1)',
             opacity: 1,
           },
+        },
+        'background-translate': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
         },
       },
     },

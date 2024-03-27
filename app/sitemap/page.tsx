@@ -16,17 +16,16 @@ export default async function SitemapPage() {
     { title: 'Home', href: '/' },
     { title: 'Public topics', href: '/levels' },
     { title: 'AI generated topics', href: '/ai' },
-    { title: 'Contribute a topic', href: '/add-level' },
-    { title: 'Results', href: '/result' },
-    { title: 'Profile', href: '/profile' },
+    { title: 'Contribute topics', href: '/add-level' },
+    { title: 'My profile', href: '/profile' },
     { title: 'Pricing', href: '/pricing' },
   ];
   const baseUrl = RouteManager.baseUrl;
   const informations: SitemapRoute[] = [
     { title: 'About', href: '/about' },
     { title: 'Rules', href: '/rule' },
-    { title: 'How to install Taboo AI?', href: '/pwa' },
-    { title: 'Latest features', href: '/whatsnew' },
+    { title: 'Install Taboo AI', href: '/pwa' },
+    { title: 'New features', href: '/whatsnew' },
     { title: 'Project roadmap', href: '/roadmap' },
     { title: 'Buy me coffee', href: '/buymecoffee' },
     { title: 'Privacy policy', href: '/privacy-policy' },
@@ -47,12 +46,8 @@ export default async function SitemapPage() {
       href: 'https://liyuxuan.substack.com',
     },
     {
-      title: 'Taboo AI Discord server',
+      title: 'Taboo AI Discord community',
       href: 'https://discord.gg/dgqs29CHC2',
-    },
-    {
-      title: 'Check out Easy Next',
-      href: 'https://www.npmjs.com/package/easy-next',
     },
   ];
 

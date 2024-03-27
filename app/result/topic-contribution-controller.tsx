@@ -43,7 +43,7 @@ export function TopicContributionController(props: TopicContributionControllerPr
                 setIsAlertDialogOpen(false);
                 if (!props.user) {
                   EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
-                    title: 'You need to sign in to contribute a topic to us.',
+                    title: 'You need to sign in to contribute topics to us.',
                   });
                   return;
                 }

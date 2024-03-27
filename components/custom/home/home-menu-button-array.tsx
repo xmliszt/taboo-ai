@@ -33,7 +33,7 @@ export default function HomeMenuButtonArray() {
       router.push('/add-level');
     } else {
       EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
-        title: 'You need to sign in to contribute a topic',
+        title: 'You need to sign in to contribute topics',
         redirectHref: '/add-level',
       });
     }
@@ -62,7 +62,7 @@ export default function HomeMenuButtonArray() {
         visible: user === undefined,
       },
       {
-        key: 'play a topic',
+        key: 'play public topics',
         icon: <Quote size={20} />,
         title: 'Play public topics',
         subtitle: 'Start playing with public topics contributed by players around the world!',
@@ -71,9 +71,9 @@ export default function HomeMenuButtonArray() {
         visible: true,
       },
       {
-        key: 'ai mode',
+        key: 'ai generated topics',
         icon: <BrainCircuit size={20} />,
-        title: 'Play AI generated topic',
+        title: 'Play AI generated topics',
         subtitle: 'Play with AI generated topics for endless possibilities!',
         ariaLabel: 'Click to play with AI generated topics',
         href: '/ai',
@@ -81,9 +81,9 @@ export default function HomeMenuButtonArray() {
         cta: true,
       },
       {
-        key: 'contribute a topic',
+        key: 'contribute topics',
         icon: <PenSquare size={20} />,
-        title: 'Contribute new topics',
+        title: 'Contribute topics',
         subtitle:
           'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
         ariaLabel: 'Click to contribute a new topic to Taboo AI',

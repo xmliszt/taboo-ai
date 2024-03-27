@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Medal, Trophy } from 'lucide-react';
+import pluralize from 'pluralize';
 
 import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetch-levels';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
@@ -115,20 +115,22 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
   const renderRankingContent = () => {
     if (level?.best_score) {
       return (
-        <section className='flex flex-col items-center gap-4'>
-          <Medal size={25} />
+        <section className='flex flex-col items-center gap-2'>
+          <StarRatingBar
+            className='transition-transform ease-out group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-125'
+            rating={getOverallRating(level.best_score, 6)}
+            maxRating={6}
+          />
           <div className='flex flex-col items-center gap-2'>
-            <div>Best score</div>
-            <div className='text-2xl font-extrabold'>{level.best_score.toFixed(2)}</div>
-            <StarRatingBar rating={getOverallRating(level.best_score, 6)} maxRating={6} />
+            <div className='text-2xl font-extrabold'>
+              <span className='text-base font-normal'>Best:</span> {level.best_score.toFixed(2)}
+            </div>
           </div>
           {level?.top_scorer_names && (
             <div className='flex flex-col items-center gap-2'>
-              {level.top_scorer_names.length > 1 ? (
-                <div className='italic'>by top scorers</div>
-              ) : (
-                <div className='italic'>by top scorer</div>
-              )}
+              <div className='font-bold text-yellow-400'>
+                {pluralize('CHAMPION', level.top_scorer_names.length, false)}
+              </div>
               <div className='text-2xl font-extrabold'>{level.top_scorer_names.join(' & ')}</div>
             </div>
           )}
@@ -137,10 +139,9 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
     } else {
       return (
         <section className='flex animate-pulse flex-col items-center gap-4'>
-          <Trophy size={25} />
-          <p className='text-left leading-tight'>
-            The top scorer for this topic awaits its champion, and it could be you! This is your
-            chance to claim the title of highest scorer!
+          <p className='text-center leading-tight'>
+            This topic awaits its <b className='text-yellow-400'>champion</b>, and it could be you!
+            This is your chance to claim the title of highest scorer!
           </p>
         </section>
       );

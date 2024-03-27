@@ -69,7 +69,7 @@ export default function SideMenu() {
       router.push('/add-level');
     } else {
       EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
-        title: 'You need to sign in to contribute a topic',
+        title: 'You need to sign in to contribute topics',
         redirectHref: '/add-level',
       });
     }
@@ -112,7 +112,7 @@ export default function SideMenu() {
       },
       {
         path: '/add-level',
-        title: 'Contribute a topic',
+        title: 'Contribute topics',
         subtitle:
           'Be a contributor! Your creative topic will be played by all Taboo AI players around the world!',
         visible: true,
