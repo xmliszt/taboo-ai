@@ -204,17 +204,16 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
       ) : level.is_new && !isHallOfFameOn ? (
         <span
           className={cn(
-            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg',
+            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-md',
             'group-hover/level-card:scale-[1.02]'
           )}
         ></span>
-      ) : (
-        <span
-          className={cn(
-            'rotating-mono-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card opacity-0 transition-[transform_opacity_0.3s_ease-in-out] after:blur-lg group-hover/level-card:scale-[1.02] group-hover/level-card:opacity-100'
-          )}
-        ></span>
-      )}
+      ) : null}
+      <span
+        className={cn(
+          'rotating-mono-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card opacity-0 transition-[transform_opacity_0.3s_ease-in-out] after:blur-sm group-hover/level-card:scale-[1.02] group-hover/level-card:opacity-70'
+        )}
+      ></span>
     </HoverPerspectiveContainer>
   );
 }
