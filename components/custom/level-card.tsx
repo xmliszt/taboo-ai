@@ -204,7 +204,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
       ) : level.is_new && !isHallOfFameOn ? (
         <span
           className={cn(
-            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-md',
+            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-[4px]',
             'group-hover/level-card:scale-[1.02]'
           )}
         ></span>
