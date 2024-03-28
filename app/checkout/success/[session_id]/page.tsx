@@ -31,12 +31,14 @@ export default async function CheckoutSuccessPage(props: CheckoutSuccessPageProp
           </div>
           <div className='rounded-lg border-2 border-primary p-4 drop-shadow-lg'>
             <ul>
-              {plan.plan_features.map((feature) => (
-                <li key={feature.id} className='mb-2 flex flex-row items-center gap-2'>
-                  <Check size={20} color='#7eb262' strokeWidth={2} />
-                  <span>{feature.title}</span>
-                </li>
-              ))}
+              {plan.plan_features
+                .sort((a, b) => a.feature_order - b.feature_order)
+                .map((feature) => (
+                  <li key={feature.id} className='mb-2 flex flex-row items-center gap-2'>
+                    <Check size={20} color='#7eb262' strokeWidth={2} />
+                    <span>{feature.title}</span>
+                  </li>
+                ))}
             </ul>
           </div>
         </div>
