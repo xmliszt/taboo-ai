@@ -26,8 +26,8 @@ export function Confetti(props: ConfettiProps) {
     const y = isMobile ? 0.3 : 0.8;
     const leftDrift = isMobile ? 0 : 1;
     const rightDrift = isMobile ? 0 : -1;
-    const particleCount = isMobile ? 30 : 100;
-    const spread = isMobile ? 60 : 80;
+    const particleCount = isMobile ? 50 : 100;
+    const spread = 80;
     if (refAnimationInstance.current) {
       // Left side confetti
       refAnimationInstance.current({
@@ -76,6 +76,7 @@ export function Confetti(props: ConfettiProps) {
         height: '100%',
         top: 0,
         left: 0,
+        zIndex: 9999,
       }}
     />
   );

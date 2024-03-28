@@ -7,6 +7,7 @@ import moment from 'moment';
 import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';
 
+import { Confetti } from '@/app/checkout/success/[session_id]/confetti';
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -134,6 +135,7 @@ export default function FeaturePopup() {
           </article>
         </ScrollArea>
       </DialogContent>
+      {shouldShowWeeklyDrop && <Confetti playOnce />}
     </Dialog>
   );
 }
