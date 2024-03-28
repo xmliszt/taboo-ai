@@ -27,7 +27,7 @@ export async function ProfileRecentGamesScrollView() {
         .{' '}
         {user.subscription?.customer_plan_type === 'free' && (
           <span>
-            To view more past games, upgrade to PRO plan:{' '}
+            To view more past games, upgrade to Pro plan:{' '}
             <Link className='animate-pulse p-0 underline' href='/pricing'>
               Upgrade my plan
             </Link>

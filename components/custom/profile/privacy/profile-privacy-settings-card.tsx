@@ -31,7 +31,7 @@ export function ProfilePrivacySettingsCard({ user, className }: ProfilePrivacySe
         <div className='mt-6 flex flex-col gap-4'>
           <ProfilePrivacyFeatureToggle
             title='Stay anonymous?'
-            description='If turned on, your nickname will be hidden from others when shown in the topic rankings. It will be shown as "Anonymous" instead.'
+            description='If turned on, your nickname will be hidden from others when shown in the Hall of Fame. It will be shown as "Anonymous" instead.'
             onToggle={async (isOn) => {
               try {
                 setIsAnonymous(isOn);

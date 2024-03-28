@@ -22,7 +22,7 @@ export default async function CheckoutSuccessPage(props: CheckoutSuccessPageProp
         <div className='flex flex-col justify-center gap-2 text-center'>
           <h1 className='text-center text-3xl font-bold'>Thank you for your purchase!</h1>
           <div>
-            You are now a <Badge>PRO</Badge> user 🎉
+            You are now a <Badge>Pro</Badge> user 🎉
           </div>
         </div>
         <div className='flex flex-col gap-2'>

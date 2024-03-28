@@ -250,7 +250,7 @@ export function UserSignInPortal() {
             <>
               <DropdownMenuSeparator />
               <p className='p-2 text-sm font-light'>
-                Your PRO plan will end on{' '}
+                Your Pro plan will end on{' '}
                 {
                   // if is today, show 'today'
                   moment.unix(user.stripeSubscription.cancel_at).isSame(moment(), 'day')

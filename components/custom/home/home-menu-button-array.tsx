@@ -56,7 +56,7 @@ export default function HomeMenuButtonArray() {
         icon: <CircleUser size={20} />,
         title: 'Sign in',
         subtitle:
-          'Unlock personal profile, game history, join topic rankings, and contribute new topics!',
+          'Unlock personal profile, saved game history, join hall of fame, contribute new topics, game statistics, and more!',
         ariaLabel: 'Click to sign in',
         onClick: handleSignIn,
         visible: user === undefined,
@@ -95,7 +95,7 @@ export default function HomeMenuButtonArray() {
         icon: <User size={20} />,
         title: 'View my profile',
         subtitle:
-          'Access your game history, statistics, edit nickname, manage privacy settings, and more!',
+          'Access your saved game history, statistics, edit nickname, manage privacy settings, and more!',
         ariaLabel: 'Click to visit your personal profile',
         href: '/profile',
         visible: user !== undefined,
@@ -104,7 +104,7 @@ export default function HomeMenuButtonArray() {
         key: 'upgrade plan',
         icon: <BookPlus size={20} />,
         title: 'Upgrade my plan',
-        subtitle: 'Become a PRO. Upgrade your plan to enjoy more exclusive PRO features.',
+        subtitle: 'Become a Pro. Upgrade your plan to enjoy more exclusive Pro features.',
         ariaLabel: 'Click to upgrade your plan',
         href: '/pricing',
         visible: !user || user.subscription?.customer_plan_type === 'free',

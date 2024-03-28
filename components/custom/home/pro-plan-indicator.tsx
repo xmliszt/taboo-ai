@@ -11,7 +11,7 @@ export function ProPlanIndicator() {
       className='absolute -top-6 left-0 border-primary text-center drop-shadow-lg'
       variant='outline'
     >
-      PRO
+      Pro
     </Badge>
   );
 }

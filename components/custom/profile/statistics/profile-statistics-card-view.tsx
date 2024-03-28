@@ -20,7 +20,7 @@ export async function ProfileStatisticsCardView() {
             <CardTitle>Game statistics</CardTitle>
           </CardHeader>
           <CardDescription>
-            Upgrade to PRO plan to unlock your exclusive game statistics. Get more insights on your
+            Upgrade to Pro plan to unlock your exclusive game statistics. Get more insights on your
             game performance and improve your game play!
           </CardDescription>
           <Link href='/pricing'>

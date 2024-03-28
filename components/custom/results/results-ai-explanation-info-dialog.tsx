@@ -16,7 +16,7 @@ export function ResultsAiExplanationInfoDialog(props: ResultsAiExplanationInfoDi
       <PopoverContent className='border border-muted-foreground bg-muted leading-snug text-card-foreground'>
         {props.pro ? (
           <span>
-            You are on PRO plan, which unlocks exclusive AI-suggested hints with correct grammar and
+            You are on Pro plan, which unlocks exclusive AI-suggested hints with correct grammar and
             creative word choices for giving you additional insights on how to improve your writing.
           </span>
         ) : (
@@ -24,7 +24,7 @@ export function ResultsAiExplanationInfoDialog(props: ResultsAiExplanationInfoDi
             You are on FREE plan, which only provides basic AI evaluation and feedbacks. To unlock
             exclusive AI-suggested hints with correct grammar and creative word choices, consider{' '}
             <Link href='/pricing' className='underline'>
-              becoming a PRO member
+              becoming a Pro member
             </Link>
             .
           </span>
