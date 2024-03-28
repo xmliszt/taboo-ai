@@ -7,6 +7,7 @@ import moment from 'moment';
 import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';
 
+import { Confetti } from '@/app/checkout/success/[session_id]/confetti';
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -34,25 +35,25 @@ export default function FeaturePopup() {
     };
   }, []);
 
-  useEffect(() => {
-    function processWeeklyDropDate(weeklyDropDateFromLocalStorage: string | null) {
-      // compare the weekly drop date with the local storage date
-      if (!weeklyDropDateFromLocalStorage) {
-        // if there is no date in local storage, we set it
-        setShouldShowWeeklyDrop(true);
-        displayFeaturePopup();
-        return;
-      }
-      if (moment(weeklyDropDate).isAfter(moment(weeklyDropDateFromLocalStorage))) {
-        // if the date in local storage is older than the current date, we update it
-        setShouldShowWeeklyDrop(true);
-        displayFeaturePopup();
-        return;
-      }
-      // if the date in local storage is the same or newer than the current date, we do not show the weekly drop
-      setShowFeaturePopup(false);
+  function processWeeklyDropDate(weeklyDropDateFromLocalStorage: string | null) {
+    // compare the weekly drop date with the local storage date
+    if (!weeklyDropDateFromLocalStorage) {
+      // if there is no date in local storage, we set it
+      setShouldShowWeeklyDrop(true);
+      displayFeaturePopup();
+      return;
     }
+    if (moment(weeklyDropDate).isAfter(moment(weeklyDropDateFromLocalStorage))) {
+      // if the date in local storage is older than the current date, we update it
+      setShouldShowWeeklyDrop(true);
+      displayFeaturePopup();
+      return;
+    }
+    // if the date in local storage is the same or newer than the current date, we do not show the weekly drop
+    setShowFeaturePopup(false);
+  }
 
+  useEffect(() => {
     const weeklyTopicsPopupString = getWeeklyTopicsPopupString();
     const featurePopupString = getFeaturePopupString();
     if (!featurePopupString) {
@@ -105,6 +106,14 @@ export default function FeaturePopup() {
       } else {
         // pop up is about new feature, we update the version.
         setFeaturePopupString(process.env.NEXT_PUBLIC_TABOO_AI_VERSION);
+
+        // after this, we check if we should show weekly drop.
+        const weeklyTopicsPopupString = getWeeklyTopicsPopupString();
+        if (weeklyDropDate) {
+          setTimeout(() => {
+            processWeeklyDropDate(weeklyTopicsPopupString);
+          }, 1500);
+        }
       }
     }
   };
@@ -126,6 +135,7 @@ export default function FeaturePopup() {
           </article>
         </ScrollArea>
       </DialogContent>
+      {shouldShowWeeklyDrop && <Confetti playOnce />}
     </Dialog>
   );
 }
