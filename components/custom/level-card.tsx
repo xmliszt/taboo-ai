@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import pluralize from 'pluralize';
 
 import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetch-levels';
@@ -31,8 +31,10 @@ interface LevelCardProps {
 export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardProps) {
   const router = useRouter();
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [pointHasDown, setPointHasDown] = useState(false);
   const isAIMode = !level;
+  const isHallOfFameOn = searchParams.has('rank');
 
   const goToLevel = () => {
     beforeGoToLevel && beforeGoToLevel();
@@ -63,7 +65,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
           {level?.is_new === true && (
             <Badge
               variant='outline'
-              className='border-yellow-500 bg-secondary text-secondary-foreground'
+              className='border-[#42eca6] bg-secondary text-secondary-foreground'
             >
               New level
             </Badge>
@@ -196,6 +198,13 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
         <span
           className={cn(
             'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg',
+            'group-hover/level-card:scale-[1.02]'
+          )}
+        ></span>
+      ) : level.is_new && !isHallOfFameOn ? (
+        <span
+          className={cn(
+            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg',
             'group-hover/level-card:scale-[1.02]'
           )}
         ></span>
