@@ -103,6 +103,7 @@ export default function FeaturePopup() {
       if (shouldShowWeeklyDrop) {
         // pop up is about weekly drop, we update the date.
         setWeeklyTopicsPopupString(weeklyDropDate);
+        setShouldShowWeeklyDrop(false);
       } else {
         // pop up is about new feature, we update the version.
         setFeaturePopupString(process.env.NEXT_PUBLIC_TABOO_AI_VERSION);
