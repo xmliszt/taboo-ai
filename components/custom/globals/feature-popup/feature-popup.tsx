@@ -109,7 +109,9 @@ export default function FeaturePopup() {
         // after this, we check if we should show weekly drop.
         const weeklyTopicsPopupString = getWeeklyTopicsPopupString();
         if (weeklyDropDate) {
-          processWeeklyDropDate(weeklyTopicsPopupString);
+          setTimeout(() => {
+            processWeeklyDropDate(weeklyTopicsPopupString);
+          }, 1500);
         }
       }
     }
