@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ArrowRight, Handshake } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
 import { BiBook, BiCart, BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
-import { BsDiscord } from 'react-icons/bs';
+import { BsDiscord, BsTwitter } from 'react-icons/bs';
 import { toast } from 'sonner';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
@@ -322,6 +322,17 @@ export default function SideMenu() {
             >
               Join Taboo AI Discord community{' '}
               <BsDiscord className='ml-2 inline-block transition-transform ease-in-out group-hover/discord:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/twitter'
+              href='https://twitter.com/@taboo_ai'
+              target='_blank'
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Twitter (X)
+              <BsTwitter className='ml-2 inline-block transition-transform ease-in-out group-hover/twitter:rotate-[30deg]' />
             </Link>
 
             <Separator className='mb-2 mt-6' />

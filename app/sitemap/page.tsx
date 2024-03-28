@@ -34,9 +34,9 @@ export default async function SitemapPage() {
   ];
   const socialMedia: SitemapRoute[] = [
     { title: 'About me', href: 'https://liyuxuan.dev' },
-    { title: 'My Github', href: 'https://github.com/xmliszt' },
+    { title: 'Github', href: 'https://github.com/xmliszt' },
     { title: 'LinkedIn', href: 'https://www.linkedin.com/in/li-yuxuan/' },
-    { title: 'Twitter', href: 'https://twitter.com/xmliszt' },
+    { title: 'Twitter', href: 'https://twitter.com/@taboo_ai' },
     {
       title: 'Facebook',
       href: 'https://m.facebook.com/profile.php?id=61552423745265',
@@ -68,7 +68,7 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-      <section id='all-topics-section' className='max-w-xl'>
+      <section id='all-topics-section' className='w-full max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>All topics</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
@@ -83,7 +83,7 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-      <section id='information-section' className='max-w-xl'>
+      <section id='information-section' className='w-full max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>Information</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
@@ -98,7 +98,7 @@ export default async function SitemapPage() {
           ))}
         </div>
       </section>
-      <section id='social-media-section' className='max-w-xl'>
+      <section id='social-media-section' className='w-full max-w-xl'>
         <h3 className='my-2 text-center text-xl font-extrabold'>Social media</h3>
         <Separator />
         <div className='mt-2 grid grid-cols-1 gap-x-4 md:grid-cols-3'>
