@@ -23,7 +23,7 @@ export default async function ProfilePage() {
       <div className='flex flex-col items-center gap-4'>
         <Image
           className='rounded-full border-2 border-primary shadow-md'
-          src={user.photo_url ?? '/images/placeholder.png'}
+          src={user.photo_url || '/images/placeholder.png'}
           width={80}
           height={80}
           alt='Profile Photo'
