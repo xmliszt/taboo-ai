@@ -193,7 +193,7 @@ export function UserSignInPortal() {
             {user.photo_url && (
               <Image
                 className='rounded-[7px] transition-transform ease-in-out group-hover/user-login-portal:-rotate-12'
-                src={user.photo_url}
+                src={user.photo_url || '/images/placeholder.png'}
                 alt='user avatar'
                 width={23}
                 height={23}
