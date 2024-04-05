@@ -7,12 +7,17 @@ import { Button } from '@/components/ui/button';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
+const PWA_DRAWER_OPEN_DELAY = 1000 * 60 * 2; // 2 minutes
+
 export default function PWAInstaller() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     window.addEventListener('openPWADrawer', () => {
-      setIsOpen(true);
+      // Delay showing.
+      setTimeout(() => {
+        setIsOpen(true);
+      }, PWA_DRAWER_OPEN_DELAY);
     });
     window.addEventListener('closePWADrawer', () => {
       setIsOpen(false);
