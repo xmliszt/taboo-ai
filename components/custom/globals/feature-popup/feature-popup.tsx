@@ -8,6 +8,7 @@ import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';
 
 import { Confetti } from '@/app/checkout/success/[session_id]/confetti';
+import { useAuth } from '@/components/auth-provider';
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,10 +21,14 @@ import {
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 export default function FeaturePopup() {
+  const { user } = useAuth();
+  // If user is not logged in, we switch off the feature popup feature.
+  const featurePopupGlobalSwitchOff = user === null || user === undefined;
+
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);
   const [shouldShowWeeklyDrop, setShouldShowWeeklyDrop] = useState(false);
   const incomingVersion = process.env.NEXT_PUBLIC_TABOO_AI_VERSION;
-  const weeklyDropDate = process.env.NEXT_PUBLIC_WEEKLY_DROP_DATE; // '2024-03-23'
+  const weeklyDropDate = process.env.NEXT_PUBLIC_WEEKLY_DROP_DATE;
 
   useEffect(() => {
     const eventHandler = EventManager.bindEvent(CustomEventKey.CLOSE_FEATURE_POPUP, () => {
@@ -75,7 +80,7 @@ export default function FeaturePopup() {
         if (isIncomingVersionNewer) {
           // we have newer version, so we show feature popup instead of weekly drop.
           setShouldShowWeeklyDrop(false);
-          displayFeaturePopup();
+          !featurePopupGlobalSwitchOff && displayFeaturePopup();
           return;
         } else {
           // If no difference or order, we try to show weekly drop.
