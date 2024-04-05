@@ -23,7 +23,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 export default function FeaturePopup() {
   const { user } = useAuth();
   // If user is not logged in, we switch off the feature popup feature.
-  const featurePopupGlobalSwitchOff = user === null || user === undefined;
+  const featurePopupGlobalSwitchOff = !user;
 
   const [showFeaturePopup, setShowFeaturePopup] = useState(false);
   const [shouldShowWeeklyDrop, setShouldShowWeeklyDrop] = useState(false);
@@ -63,7 +63,7 @@ export default function FeaturePopup() {
     const featurePopupString = getFeaturePopupString();
     if (!featurePopupString) {
       // There is no version, so we show feature popup as this is first time.
-      displayFeaturePopup();
+      !featurePopupGlobalSwitchOff && displayFeaturePopup();
       return;
     }
     if (incomingVersion) {
@@ -95,7 +95,7 @@ export default function FeaturePopup() {
     }
     // If we have no incoming version, we try to show weekly drop.
     processWeeklyDropDate(weeklyTopicsPopupString);
-  }, []);
+  }, [featurePopupGlobalSwitchOff]);
 
   const displayFeaturePopup = () => {
     setShowFeaturePopup(true);
