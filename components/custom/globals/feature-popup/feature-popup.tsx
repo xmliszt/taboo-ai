@@ -63,7 +63,11 @@ export default function FeaturePopup() {
     const featurePopupString = getFeaturePopupString();
     if (!featurePopupString) {
       // There is no version, so we show feature popup as this is first time.
-      !featurePopupGlobalSwitchOff && displayFeaturePopup();
+      if (featurePopupGlobalSwitchOff) {
+        processWeeklyDropDate(weeklyTopicsPopupString);
+      } else {
+        displayFeaturePopup();
+      }
       return;
     }
     if (incomingVersion) {
@@ -80,7 +84,11 @@ export default function FeaturePopup() {
         if (isIncomingVersionNewer) {
           // we have newer version, so we show feature popup instead of weekly drop.
           setShouldShowWeeklyDrop(false);
-          !featurePopupGlobalSwitchOff && displayFeaturePopup();
+          if (featurePopupGlobalSwitchOff) {
+            processWeeklyDropDate(weeklyTopicsPopupString);
+          } else {
+            displayFeaturePopup();
+          }
           return;
         } else {
           // If no difference or order, we try to show weekly drop.
