@@ -13,10 +13,10 @@ import { formatResponseTextIntoArray } from '@/lib/utilities';
  */
 export async function generateTabooWordsFromAI(targetWord: string, topic?: string) {
   cookies(); // opt-out for caching
+  console.log(`Generating taboo words for ${targetWord} in ${topic}. Topic is omitted currently.`);
   const target = toLower(trim(targetWord));
   const prompt =
     `Generate 5-8 words related to '${target}',` +
-    (topic ? ` in the topic of ${topic},` : ' ') +
     ` in American English. Avoid plural and duplicates. Insert the words in an comma separated array: [word1, word2, ...]`;
 
   const completion = await googleGeminiPro.generateContent(prompt);
