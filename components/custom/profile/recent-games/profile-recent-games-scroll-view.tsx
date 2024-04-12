@@ -7,7 +7,7 @@ import { ProfileRecentGameCard } from './profile-recent-game-card';
 
 export async function ProfileRecentGamesScrollView() {
   const user = await fetchUserProfile();
-  const numberOfMostRecentGamesToDisplay = user.subscription?.customer_plan_type === 'pro' ? 10 : 1;
+  const numberOfMostRecentGamesToDisplay = user.subscription?.customer_plan_type === 'pro' ? 20 : 5;
   const userGames = await fetchGamesCompletedByUserWithLevelInfo(
     user.id,
     numberOfMostRecentGamesToDisplay,
@@ -20,11 +20,7 @@ export async function ProfileRecentGamesScrollView() {
         <h2 className='text-2xl'>Past games</h2>
       </div>
       <div className='text-sm leading-snug text-muted-foreground'>
-        You can view most recent{' '}
-        {numberOfMostRecentGamesToDisplay === 1
-          ? '1 game'
-          : `${numberOfMostRecentGamesToDisplay} games`}
-        .{' '}
+        You can view most recent {`${numberOfMostRecentGamesToDisplay} games`}.{' '}
         {user.subscription?.customer_plan_type === 'free' && (
           <span>
             To view more past games, upgrade to Pro plan:{' '}
