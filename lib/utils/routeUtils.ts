@@ -24,7 +24,7 @@ export enum TabooPathname {
 }
 
 export class RouteManager {
-  static baseUrl = process.env.SITE_URL ?? 'https://taboo-ai.vercel.app';
+  static baseUrl = process.env.SITE_URL ?? 'https://taboo-ai.com';
 
   static getStaticRoutes = (): string[] => {
     return Object.values(TabooPathname).map((p) => this.baseUrl + p);

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Taboo AI: Buy Me Coffee',
-    url: 'https://taboo-ai.vercel.app/buymecoffee',
+    url: 'https://taboo-ai.com/buymecoffee',
     images: [
       {
         url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',

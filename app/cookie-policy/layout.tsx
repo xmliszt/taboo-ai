@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Taboo AI: Cookie policy',
-    url: 'https://taboo-ai.vercel.app/cookie-policy',
+    url: 'https://taboo-ai.com/cookie-policy',
     images: [
       {
         url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',

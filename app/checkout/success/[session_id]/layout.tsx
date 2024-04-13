@@ -14,7 +14,7 @@ export async function generateMetadata({
     },
     openGraph: {
       title: 'Taboo AI: Thank you for your purchase!',
-      url: 'https://taboo-ai.vercel.app/checkout/success/' + params.session_id,
+      url: 'https://taboo-ai.com/checkout/success/' + params.session_id,
       images: [
         {
           url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',

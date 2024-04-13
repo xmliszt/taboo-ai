@@ -34,6 +34,15 @@ export default async function HomePage() {
           </h1>
           <ProPlanIndicator />
         </div>
+        <div>
+          <p className='w-80 text-center text-xs'>
+            {`We've got a new domain! Try out `}
+            <Link
+              className='font-semibold underline'
+              href={'https://taboo-ai.com'}
+            >{`https://taboo-ai.com`}</Link>
+          </p>
+        </div>
         <HomeMenuButtonArray />
       </section>
       {!isUserPro && proPlan && (

@@ -5,7 +5,7 @@ export const _meta: Metadata = {
     default: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     template: 'Taboo AI | %s',
   },
-  metadataBase: new URL('https://taboo-ai.vercel.app'),
+  metadataBase: new URL('https://taboo-ai.com'),
   description:
     'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
   applicationName: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
@@ -29,7 +29,7 @@ export const _meta: Metadata = {
     title: 'Taboo AI: Ignite Learning Through Play 🚀🎮',
     description:
       'Unleash wordplay skills, master English, and have fun learning with Taboo AI! Join now for a thrilling experience.',
-    url: 'https://taboo-ai.vercel.app/',
+    url: 'https://taboo-ai.com/',
     siteName: 'Taboo AI',
     images: [
       {

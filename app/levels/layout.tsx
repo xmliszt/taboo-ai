@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     canonical: '/levels',
   },
   openGraph: {
-    url: 'https://taboo-ai.vercel.app/levels',
+    url: 'https://taboo-ai.com/levels',
   },
 };
 
