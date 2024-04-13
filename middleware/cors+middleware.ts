@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const allowedOrigins = [
+  /taboo-ai\.com$/,
   /taboo-ai\.vercel\.app$/,
   /taboo-.+-xmliszt\.vercel\.app$/,
   /localhost:\d+$/,
