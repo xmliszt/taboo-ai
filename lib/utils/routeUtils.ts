@@ -5,7 +5,6 @@ export enum TabooPathname {
   ABOUT = '/about',
   AI_MODE = '/ai',
   ADD_LEVEL = '/add-level',
-  BUY_ME_COFFEE = '/buymecoffee',
   AI_LEVEL = '/level/ai',
   LEVELS = '/levels',
   PWA = '/pwa',
@@ -42,10 +41,6 @@ export class RouteManager {
       case TabooPathname.AI_MODE === route:
         return {
           title: 'AI generated topics',
-        };
-      case TabooPathname.BUY_ME_COFFEE === route:
-        return {
-          title: 'Buy me a coffee',
         };
       case /^\/level\//.test(route):
         return {

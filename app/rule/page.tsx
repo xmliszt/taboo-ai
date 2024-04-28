@@ -27,12 +27,9 @@ export default function RulePage() {
       </div>
       <Separator className='max-w-xl' />
       <p className='text-gray mt-2 max-w-xl text-justify text-xs leading-tight'>
-        Disclaimer: Please note that Taboo AI relies solely on{' '}
-        <a className='underline' href='https://openai.com/api/pricing/'>
-          OpenAI AI Model
-        </a>{' '}
-        for generating responses and taboo words. In the event that the API experiences overload due
-        to high traffic, you may encounter some internet hiccups while playing the game. However,
+        Disclaimer: Please note that Taboo AI relies on Google Gemini Pro and OpenAI ChatGPT for
+        generating responses and taboo words. In the event that the API experiences overload due to
+        high traffic, you may encounter some internet hiccups while playing the game. However,
         don&apos;t worry! Just try submitting your prompt again until it succeeds. The timer will be
         paused so that you won&apos;t be at a disadvantage if this occurs. Typically, after a
         maximum of five tries, you should be able to get your response.

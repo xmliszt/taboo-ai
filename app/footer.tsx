@@ -13,9 +13,6 @@ export async function Footer() {
       <Link href='/levels' className='hover:underline'>
         Choose a topic
       </Link>
-      <Link href='/pricing' className='hover:underline'>
-        Pricing
-      </Link>
       {user && (
         <Link href='/profile' className='hover:underline'>
           My profile

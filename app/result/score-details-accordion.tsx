@@ -5,7 +5,6 @@ import { MousePointerClick } from 'lucide-react';
 import { Level } from '@/app/level/[id]/server/fetch-level';
 import { CopyToClipboardLabel } from '@/app/result/copy-to-clipboard-label';
 import { Game } from '@/app/result/server/fetch-game';
-import { ResultsAiExplanationInfoDialog } from '@/components/custom/results/results-ai-explanation-info-dialog';
 import { StarRatingBar } from '@/components/custom/star-rating-bar';
 import {
   Accordion,
@@ -226,12 +225,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
     if (score.ai_explanation !== undefined) {
       items.push({
         title: 'AI evaluation',
-        content: (
-          <span>
-            {!props.pro && <ResultsAiExplanationInfoDialog pro={props.pro} />}
-            {score.ai_explanation}
-          </span>
-        ),
+        content: <span>{score.ai_explanation}</span>,
       });
     }
     if (score.ai_suggestion && score.ai_suggestion.length > 0) {
@@ -239,7 +233,6 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
         title: 'AI suggestions',
         content: (
           <span>
-            {props.pro && <ResultsAiExplanationInfoDialog pro={props.pro} />}
             <div className='ml-2 mt-2 flex flex-col gap-1'>
               {score.ai_suggestion.map((suggestion, idx) => (
                 <span key={idx} className='flex items-center'>

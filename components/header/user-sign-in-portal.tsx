@@ -29,8 +29,7 @@ function shouldShowSignInIconWithLabel(pathname: string) {
     pathname === '/levels' ||
     pathname === '/ai' ||
     pathname === '/profile' ||
-    pathname === '/result' ||
-    pathname === '/pricing'
+    pathname === '/result'
   );
 }
 

@@ -18,7 +18,6 @@ export default async function SitemapPage() {
     { title: 'AI generated topics', href: '/ai' },
     { title: 'Contribute topics', href: '/add-level' },
     { title: 'My profile', href: '/profile' },
-    { title: 'Pricing', href: '/pricing' },
   ];
   const baseUrl = RouteManager.baseUrl;
   const informations: SitemapRoute[] = [
@@ -27,7 +26,6 @@ export default async function SitemapPage() {
     { title: 'Install Taboo AI', href: '/pwa' },
     { title: 'Release notes', href: '/release-notes' },
     { title: 'Project roadmap', href: '/roadmap' },
-    { title: 'Buy me coffee', href: '/buymecoffee' },
     { title: 'Privacy policy', href: '/privacy-policy' },
     { title: 'Cookie policy', href: '/cookie-policy' },
     { title: 'Terms and conditions', href: '/terms-and-conditions' },
