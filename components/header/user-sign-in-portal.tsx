@@ -3,23 +3,12 @@
 import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  AlignJustify,
-  BookMarked,
-  CircleUser,
-  Construction,
-  LogOut,
-  PenTool,
-  User,
-} from 'lucide-react';
-import moment from 'moment';
+import { AlignJustify, CircleUser, Construction, LogOut, PenTool, User } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { createStripeCustomerPortal } from '@/app/profile/server/create-stripe-customer-portal';
 import { useAuth } from '@/components/auth-provider';
 import { signIn } from '@/components/header/server/sign-in';
 import { signOut } from '@/components/header/server/sign-out';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useLogSnag } from '@/lib/logsnag/use-controlled-logsnag';
 import { cn } from '@/lib/utils';
@@ -79,10 +68,6 @@ export function UserSignInPortal() {
           photo_url: user.photo_url ?? 'no photo',
           first_login_at: user.first_login_at,
           last_login_at: user.last_login_at,
-          stripe_customer_id: user.subscription?.customer_id ?? 'no stripe customer id',
-          plan: user.subscription?.customer_plan_type ?? 'free',
-          trial_end: user.stripeSubscription?.trial_end ?? 'no trial',
-          next_billing_at: user.stripeSubscription?.current_period_end ?? 'no billing',
         },
       });
       track({
@@ -131,30 +116,8 @@ export function UserSignInPortal() {
     }
   };
 
-  const handleManageSubscription = async () => {
-    if (!user?.subscription?.customer_id) return;
-    try {
-      const portalSessionUrl = await createStripeCustomerPortal(
-        user.id,
-        user.subscription.customer_id,
-        `${window.location.origin}/profile?anchor=subscription`
-      );
-      router.push(portalSessionUrl);
-    } catch (error) {
-      console.error(error);
-      toast.error('Sorry, we are unable to manage your subscription. Please try again!');
-    }
-  };
-
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
-      {
-        label: 'Manage billing & plan',
-        icon: <BookMarked />,
-        isVisible:
-          user?.subscription?.customer_id !== undefined && user?.subscription?.customer_id !== null,
-        onClick: handleManageSubscription,
-      },
       {
         label: 'Contribute topics',
         icon: <PenTool />,
@@ -208,56 +171,6 @@ export function UserSignInPortal() {
             <span className='font-light italic'>You are logged in as</span>
             <span>{user.email}</span>
           </DropdownMenuLabel>
-          {user?.subscription?.customer_plan_type && (
-            <>
-              <Badge className='mb-2 ml-2'>
-                {user.subscription.customer_plan_type.toUpperCase()}
-              </Badge>
-              {user?.stripeSubscription?.trial_end &&
-                // trial end date is later than now
-                moment.unix(user.stripeSubscription.trial_end).isAfter(moment()) && (
-                  <Badge variant='secondary' className='mb-2 ml-2'>
-                    Trial
-                  </Badge>
-                )}
-            </>
-          )}
-          {user?.subscription?.customer_plan_type === 'free' && (
-            <Button
-              variant='link'
-              size='sm'
-              className='h-auto animate-pulse underline'
-              onClick={() => {
-                router.push('/pricing');
-              }}
-            >
-              Upgrade My Plan
-            </Button>
-          )}
-          {user?.stripeSubscription?.trial_end && // trial end date is later than now
-            moment.unix(user.stripeSubscription.trial_end).isAfter(moment()) && (
-              <>
-                <DropdownMenuSeparator />
-                <p className='p-2 text-sm font-light'>
-                  Trial ends on{' '}
-                  {moment.unix(user.stripeSubscription.trial_end).format('DD MMM YYYY, hh:mm A')}
-                </p>
-              </>
-            )}
-          {user?.stripeSubscription?.cancel_at && (
-            <>
-              <DropdownMenuSeparator />
-              <p className='p-2 text-sm font-light'>
-                Your Pro plan will end on{' '}
-                {
-                  // if is today, show 'today'
-                  moment.unix(user.stripeSubscription.cancel_at).isSame(moment(), 'day')
-                    ? 'today'
-                    : moment.unix(user.stripeSubscription.cancel_at).format('DD MMM YYYY')
-                }
-              </p>
-            </>
-          )}
           <DropdownMenuSeparator />
           {userMenuItems.map(
             (item) =>

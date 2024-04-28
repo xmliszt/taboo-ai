@@ -2,12 +2,9 @@
 
 import 'server-only';
 
-import * as console from 'console';
 import { cookies } from 'next/headers';
-import { User } from '@supabase/gotrue-js';
 
 import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
-import { fetchCurrentAuthUser } from '@/app/profile/server/fetch-user-profile';
 import { googleGeminiPro } from '@/lib/google-ai';
 import { createClient } from '@/lib/utils/supabase/server';
 
@@ -19,27 +16,7 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   reasoning: string;
   examples: string[] | null;
 }> {
-  let user: User | undefined = undefined;
-  try {
-    user = await fetchCurrentAuthUser();
-  } catch (error) {
-    // do nothing - user not logged in
-  }
-
   const supabaseClient = createClient(cookies());
-  // Based on user's plan, determine which model to use
-  let evaluationMode: AIEvaluationMode = 'basic';
-  if (user) {
-    const fetchUserSubscriptionResponse = await supabaseClient
-      .from('subscriptions')
-      .select()
-      .eq('user_id', user.id)
-      .single();
-    if (fetchUserSubscriptionResponse.error) throw fetchUserSubscriptionResponse.error;
-    const userSubscription = fetchUserSubscriptionResponse.data;
-    evaluationMode = userSubscription.customer_plan_type === 'pro' ? 'advanced' : 'basic';
-  }
-  console.log(`Using ${evaluationMode} mode for evaluation`);
 
   // Filter out conversation messages whose role is not 'user' or 'assistant'
   const filteredConversation = gameScore.conversations.filter(
@@ -60,7 +37,7 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   const evaluationPrompt = getEvaluationSystemMessage(
     gameScore.target_word,
     fetchTaboosResponse.data?.taboos ?? [],
-    evaluationMode === 'advanced'
+    true
   );
   const systemMessage = {
     role: 'user',
@@ -91,22 +68,12 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
     examples: string[];
   } = JSON.parse(responseText);
 
-  if (evaluationMode === 'advanced') {
-    return {
-      score,
-      reasoning,
-      examples,
-    };
-  } else {
-    return {
-      score,
-      reasoning,
-      examples: null,
-    };
-  }
+  return {
+    score,
+    reasoning,
+    examples,
+  };
 }
-
-type AIEvaluationMode = 'basic' | 'advanced';
 
 const getEvaluationSystemMessage = (target: string, taboos: string[], withSuggestions: boolean) => {
   return `

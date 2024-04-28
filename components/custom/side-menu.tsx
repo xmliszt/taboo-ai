@@ -127,19 +127,6 @@ export default function SideMenu() {
         href: '/profile',
       },
       {
-        path: '/pricing',
-        title:
-          !user || user.subscription?.customer_plan_type === 'free'
-            ? 'Become a pro player'
-            : 'Pricing',
-        subtitle:
-          !user || user.subscription?.customer_plan_type === 'free'
-            ? 'Taboo AI is free to play. However, you can enjoy more exclusive features by subscribing to our pro plan!'
-            : 'View pricing plans to discover what exclusive features you can enjoy as a pro player!',
-        visible: true,
-        href: '/pricing',
-      },
-      {
         path: 'separator',
         title: 'separator',
         subtitle: '',

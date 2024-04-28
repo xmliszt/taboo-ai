@@ -8,9 +8,7 @@ import { useTheme } from 'next-themes';
 
 import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
 import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
-import { useAuth } from '@/components/auth-provider';
 import { HoverPerspectiveContainer } from '@/components/custom/common/hover-perspective-container';
-import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import { Spinner } from '@/components/custom/spinner';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -25,30 +23,16 @@ import { cn } from '@/lib/utils';
 
 export default function AiPage() {
   useAskForFeedback();
-  const { user } = useAuth();
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const isLocked = !user || user.subscription?.customer_plan_type === 'free';
 
   const { resolvedTheme } = useTheme();
 
   const submitForm = async (event: FormEvent) => {
     event.preventDefault();
-    if (isLocked) {
-      confirmAlert({
-        title: 'Subscribe to pro plan to unlock AI generated topics!',
-        description:
-          'AI generated topics are exclusive to pro plan subscribers. Become a pro player and enjoy the endless possibilities from our intelligent AI.',
-        confirmLabel: 'See pricing plans',
-        onConfirm: () => {
-          router.push('/pricing');
-        },
-      });
-      return;
-    }
     if (topic.length > 0) {
       setIsLoading(true);
       try {

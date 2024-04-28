@@ -4,7 +4,6 @@ import 'server-only';
 
 import { maxBy } from 'lodash';
 
-import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { createClient } from '@/lib/utils/supabase/client';
 
 /**
@@ -12,9 +11,6 @@ import { createClient } from '@/lib/utils/supabase/client';
  */
 export async function fetchUserStatistics(userId: string) {
   const supabaseClient = createClient();
-  const user = await fetchUserProfile();
-  if (user.subscription?.customer_plan_type === 'free')
-    throw new Error('You are not authorized to view statistics.');
   const fetchGamesCompletedByUserWithLevelInfoResponse = await supabaseClient
     .from('v_user_played_level_game_with_scores_and_completed_times')
     .select()

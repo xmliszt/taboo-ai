@@ -1,35 +1,13 @@
-import Link from 'next/link';
 import { startCase } from 'lodash';
 
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { fetchUserStatistics } from '@/app/profile/server/fetch-user-statistics';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 import { ProfileStatisticsSimpleCardView } from './profile-statistics-simple-card';
 
 export async function ProfileStatisticsCardView() {
   const user = await fetchUserProfile();
-
-  if (user.subscription?.customer_plan_type === 'free')
-    return (
-      <Card className='w-full'>
-        <CardContent>
-          <CardHeader className='my-4 p-0'>
-            <CardTitle>Game statistics</CardTitle>
-          </CardHeader>
-          <CardDescription>
-            Upgrade to Pro plan to unlock your exclusive game statistics. Get more insights on your
-            game performance and improve your game play!
-          </CardDescription>
-          <Link href='/pricing'>
-            <Button className='mt-4 w-full animate-pulse'>Upgrade my plan</Button>
-          </Link>
-        </CardContent>
-      </Card>
-    );
-
   const stats = await fetchUserStatistics(user.id);
   return (
     <div className='flex w-full flex-col justify-start gap-2'>

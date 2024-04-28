@@ -23,7 +23,6 @@ import { LogSnagProvider } from '@logsnag/next';
 import { AskForFeedbackDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
-import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
 import Header from '@/components/header';
 import { Providers } from '@/components/providers';
 import { ReactQueryProvider } from '@/components/query-provider';
@@ -74,7 +73,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <PWAInstaller />
                 <SignInErrorDialog />
                 <SignInReminderDialog />
-                <SubscriptionLockDialog />
                 <GenericAlertDialog />
                 <GenericFeedbackDialog />
                 <AskForFeedbackDialog />

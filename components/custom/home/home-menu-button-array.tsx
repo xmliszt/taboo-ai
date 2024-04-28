@@ -2,7 +2,7 @@
 
 import React, { MouseEventHandler, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookPlus, BrainCircuit, CircleUser, PenSquare, Quote, User, View } from 'lucide-react';
+import { BrainCircuit, CircleUser, PenSquare, Quote, User, View } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
@@ -99,15 +99,6 @@ export default function HomeMenuButtonArray() {
         ariaLabel: 'Click to visit your personal profile',
         href: '/profile',
         visible: user !== undefined,
-      },
-      {
-        key: 'upgrade plan',
-        icon: <BookPlus size={20} />,
-        title: 'Upgrade my plan',
-        subtitle: 'Become a Pro. Upgrade your plan to enjoy more exclusive Pro features.',
-        ariaLabel: 'Click to upgrade your plan',
-        href: '/pricing',
-        visible: !user || user.subscription?.customer_plan_type === 'free',
       },
       {
         key: 'review topic and words',
