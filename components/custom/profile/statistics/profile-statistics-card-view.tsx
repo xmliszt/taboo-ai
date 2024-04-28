@@ -8,6 +8,7 @@ import { ProfileStatisticsSimpleCardView } from './profile-statistics-simple-car
 
 export async function ProfileStatisticsCardView() {
   const user = await fetchUserProfile();
+  if (!user) return null;
   const stats = await fetchUserStatistics(user.id);
   return (
     <div className='flex w-full flex-col justify-start gap-2'>

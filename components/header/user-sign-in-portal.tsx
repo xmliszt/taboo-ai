@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { useLogSnag } from '@/lib/logsnag/use-controlled-logsnag';
 import { cn } from '@/lib/utils';
 
-import { Spinner } from '../custom/spinner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,7 +47,7 @@ let hasGreeted = false;
 export function UserSignInPortal() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const { setUserId, identify, track } = useLogSnag();
 
   useEffect(() => {
@@ -142,8 +141,6 @@ export function UserSignInPortal() {
       },
     ];
   }, [pathname, user]);
-
-  if (isLoading) return <Spinner />;
 
   return user ? (
     <div className='flex flex-row items-center gap-2'>

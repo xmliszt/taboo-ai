@@ -5,6 +5,7 @@ import { ProfileRecentGameCard } from './profile-recent-game-card';
 
 export async function ProfileRecentGamesScrollView() {
   const user = await fetchUserProfile();
+  if (!user) return null;
   const userGames = await fetchGamesCompletedByUserWithLevelInfo(user.id, 50, 0);
 
   return (

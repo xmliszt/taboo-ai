@@ -1,28 +1,19 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
+import { createContext, useContext } from 'react';
 
 interface AuthProviderProps {
   children: React.ReactNode;
+  user?: User;
 }
 
 const authProviderContext = createContext<{
-  isLoading: boolean;
   user?: User;
-}>({ isLoading: false });
+}>({});
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ['fetch-user'],
-    queryFn: fetchUserProfile,
-    retry: false,
-  });
-
   return (
-    <authProviderContext.Provider {...props} value={{ user, isLoading }}>
+    <authProviderContext.Provider {...props} value={{ user: props.user }}>
       {children}
     </authProviderContext.Provider>
   );

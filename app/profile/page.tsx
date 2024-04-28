@@ -16,7 +16,7 @@ import { fetchUserProfile } from './server/fetch-user-profile';
 
 export default async function ProfilePage() {
   const user = await fetchUserProfile();
-
+  if (!user) return null;
   return (
     <ProfileScrollControl>
       {/* Avatar */}

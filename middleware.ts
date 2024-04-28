@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const { supabase, response } = createClient(request);
   // Refresh session if expired - required for Server Components
   // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
-  const session = await supabase.auth.getSession();
+  const session = await supabase.auth.getUser();
 
   // Check origin
   const error = checkOrigin(request, response);
@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
       channel: 'navigation',
       event: 'navigate',
       icon: '🔍',
-      user_id: session.data.session?.user.id,
+      user_id: session.data.user?.id,
       notify: false,
       tags: {
         pathname: pathname,

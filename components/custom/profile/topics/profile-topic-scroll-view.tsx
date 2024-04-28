@@ -5,6 +5,7 @@ import { ProfileTopicsCardView } from './profile-topics-card-view';
 
 export async function ProfilePlayedTopicScrollView() {
   const user = await fetchUserProfile();
+  if (!user) return null;
   const playedTopics = await fetchUniqueTopicsCompletedByUser(user.id);
 
   return (
