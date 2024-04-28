@@ -30,5 +30,5 @@ export async function fetchUserProfile() {
     .eq('id', currentAuthUser.id)
     .maybeSingle();
   if (fetchUserProfileResponse.error) throw fetchUserProfileResponse.error;
-  return fetchUserProfileResponse.data;
+  return fetchUserProfileResponse.data ?? undefined;
 }
