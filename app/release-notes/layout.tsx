@@ -3,13 +3,13 @@ import { Metadata } from 'next';
 import { Footer } from '../footer';
 
 export const metadata: Metadata = {
-  title: "What's New?",
+  title: 'Release notes',
   alternates: {
-    canonical: '/whatsnew',
+    canonical: '/release-notes',
   },
   openGraph: {
-    title: "Taboo AI: What's New?",
-    url: 'https://taboo-ai.com/whatsnew',
+    title: 'Taboo AI: Release notes',
+    url: 'https://taboo-ai.com/release-notes',
     images: [
       {
         url: 'https://github.com/xmliszt/resources/blob/main/taboo-ai/images/v300/poster3.0(features).png?raw=true',

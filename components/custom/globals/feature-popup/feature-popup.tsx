@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import FeaturePopupContent from 'mdx-contents/release-notes.mdx';
 import WeeklyDropContentMDX from 'mdx-contents/weekly-drop.mdx';
-import FeaturePopupContent from 'mdx-contents/whatsnew.mdx';
 import moment from 'moment';
 import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';

@@ -154,11 +154,11 @@ export default function SideMenu() {
         href: '/pwa',
       },
       {
-        path: '/whatsnew',
+        path: '/release-notes',
         title: 'Latest features',
         subtitle: "Take a look at Taboo AI's latest features!",
         visible: true,
-        href: '/whatsnew',
+        href: '/release-notes',
       },
       {
         path: '/roadmap',

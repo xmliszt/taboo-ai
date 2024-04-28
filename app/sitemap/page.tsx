@@ -25,7 +25,7 @@ export default async function SitemapPage() {
     { title: 'About', href: '/about' },
     { title: 'Rules', href: '/rule' },
     { title: 'Install Taboo AI', href: '/pwa' },
-    { title: 'New features', href: '/whatsnew' },
+    { title: 'Release notes', href: '/release-notes' },
     { title: 'Project roadmap', href: '/roadmap' },
     { title: 'Buy me coffee', href: '/buymecoffee' },
     { title: 'Privacy policy', href: '/privacy-policy' },

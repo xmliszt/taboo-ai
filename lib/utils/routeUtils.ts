@@ -12,7 +12,7 @@ export enum TabooPathname {
   RESULT = '/result',
   ROADMAP = '/roadmap',
   RULE = '/rule',
-  WHATSNEW = '/whatsnew',
+  RELEASE_NOTES = '/release-notes',
   X_REVIEW_WORDS = '/x/review-words',
   SITEMAP = '/sitemap',
   PROFILE = '/profile',
@@ -77,7 +77,7 @@ export class RouteManager {
         return {
           title: 'Game rules',
         };
-      case TabooPathname.WHATSNEW === route:
+      case TabooPathname.RELEASE_NOTES === route:
         return {
           title: 'New features',
         };
