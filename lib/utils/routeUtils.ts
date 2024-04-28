@@ -16,7 +16,6 @@ export enum TabooPathname {
   X_REVIEW_WORDS = '/x/review-words',
   SITEMAP = '/sitemap',
   PROFILE = '/profile',
-  PRICING = '/pricing',
   PUBLICATIONS = '/publications',
   PRIVACY = '/privacy-policy',
   COOKIE = '/cookie-policy',
@@ -96,15 +95,6 @@ export class RouteManager {
       case TabooPathname.PROFILE === route:
         return {
           title: 'My profile',
-        };
-      case TabooPathname.PRICING === route:
-        return {
-          title: 'Pricing',
-          hasBackButton: false,
-        };
-      case /^\/checkout\/success/.test(route):
-        return {
-          title: 'Checkout success',
         };
       case TabooPathname.PUBLICATIONS === route:
         return {
