@@ -5,7 +5,7 @@ import { validate } from 'email-validator';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { fetchUserProfile, UserProfile } from '@/app/profile/server/fetch-user-profile';
+import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { sendEmail } from '@/lib/services/send-email';
 
 import { useAskForFeedbackControl } from '../ask-for-feedback-provider';
@@ -16,7 +16,7 @@ import { Textarea } from '../ui/textarea';
 
 export function AskForFeedbackDialog() {
   const [isPending, startTransition] = useTransition();
-  const [user, setUser] = useState<UserProfile>();
+  const [user, setUser] = useState<User>();
   const [customEmail, setCustomEmail] = useState('');
   const [feedbackContent, setFeedbackContent] = useState('');
   const { isFeedbackOpen, setIsFeedbackOpen } = useAskForFeedbackControl();

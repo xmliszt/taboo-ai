@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 
 import { Level } from '@/app/level/[id]/server/fetch-level';
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
 import { TopicReviewSheet } from '@/components/custom/topic-review-sheet';
 import {
@@ -19,7 +18,7 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 type TopicContributionControllerProps = {
   level: Level;
-  user?: UserProfile;
+  user?: User;
 };
 
 export function TopicContributionController(props: TopicContributionControllerProps) {

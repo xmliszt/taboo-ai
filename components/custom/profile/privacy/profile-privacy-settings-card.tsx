@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { VenetianMask } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { updateUserAnonymity } from '@/app/profile/server/update-user-anonymity';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -12,7 +11,7 @@ import { cn } from '@/lib/utils';
 import ProfilePrivacyFeatureToggle from './profile-privacy-feature-toggle';
 
 interface ProfilePrivacySettingsCardProps {
-  user: UserProfile;
+  user: User;
   className?: string;
 }
 

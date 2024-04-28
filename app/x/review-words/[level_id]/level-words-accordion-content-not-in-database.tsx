@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import { AsyncReturnType } from 'type-fest';
 
 import { generateTabooWordsFromAI } from '@/app/level/[id]/server/generate-taboo-words-from-ai';
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { fetchLevel } from '@/app/x/review-words/[level_id]/server/fetch-level';
 import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ import { upsertWordWithTabooWords } from '@/lib/services/wordService';
 type LevelWordsAccordionContentNotInDatabaseProps = {
   level: AsyncReturnType<typeof fetchLevel>;
   word: string;
-  user?: UserProfile;
+  user?: User;
 };
 
 export function LevelWordsAccordionContentNotInDatabase(

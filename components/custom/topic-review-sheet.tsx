@@ -3,7 +3,6 @@ import { DialogProps } from '@radix-ui/react-dialog';
 import _ from 'lodash';
 import { toast } from 'sonner';
 
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { addLevel, isLevelWithSameNameSubmittedBySameUser } from '@/lib/services/levelService';
 import { sendEmail } from '@/lib/services/send-email';
 import { upsertWordWithTabooWords } from '@/lib/services/wordService';
@@ -17,7 +16,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet';
 import { Spinner } from './spinner';
 
 interface TopicReviewSheet extends DialogProps {
-  user: UserProfile;
+  user: User;
   topicName: string;
   difficultyLevel: string;
   shouldUseAIForTabooWords: boolean;
