@@ -9,7 +9,6 @@ import FeaturePopup from '@/components/custom/globals/feature-popup/feature-popu
 import { SignInErrorDialog } from '@/components/custom/globals/sign-in-error-dialog';
 import SignInReminderDialog from '@/components/custom/globals/sign-in-reminder-dialog';
 import Maintenance from '@/components/custom/maintenance';
-import PWAInstaller from '@/components/custom/pwa-installer';
 import SideMenu from '@/components/custom/side-menu';
 import { Toaster } from '@/components/ui/sonner';
 import { _meta } from '@/lib/metadata';
@@ -75,7 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   {children}
                   {/* Below are floating components */}
                   <SideMenu />
-                  <PWAInstaller />
+                  {/* <PWAInstaller /> */}
                   <SignInErrorDialog />
                   <SignInReminderDialog />
                   <GenericAlertDialog />
