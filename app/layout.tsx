@@ -20,13 +20,15 @@ import './globals.css';
 import React from 'react';
 import { LogSnagProvider } from '@logsnag/next';
 
+import { AuthProvider } from '@/components/auth-provider';
 import { AskForFeedbackDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
 import GenericAlertDialog from '@/components/custom/globals/generic-alert-dialog';
 import GenericFeedbackDialog from '@/components/custom/globals/generic-feedback-dialog';
-import SubscriptionLockDialog from '@/components/custom/globals/subscription-lock-dialog';
 import Header from '@/components/header';
 import { Providers } from '@/components/providers';
 import { ReactQueryProvider } from '@/components/query-provider';
+
+import { fetchUserProfile } from './profile/server/fetch-user-profile';
 
 const font = Lora({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
@@ -51,8 +53,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const maintenanceMode = JSON.parse(process.env.NEXT_PUBLIC_MAINTENANCE || 'false');
+  const user = (await fetchUserProfile()) ?? undefined;
   return (
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning={true}>
@@ -62,26 +65,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script id='pwa-script' src='/js/pwa.js' />
         <Script id='clarity-script' src='/js/clarity.js' />
         <body className={`${font.className}`}>
-          <Providers>
-            {maintenanceMode ? (
-              <Maintenance />
-            ) : (
-              <>
-                <Header />
-                {children}
-                {/* Below are floating components */}
-                <SideMenu />
-                <PWAInstaller />
-                <SignInErrorDialog />
-                <SignInReminderDialog />
-                <SubscriptionLockDialog />
-                <GenericAlertDialog />
-                <GenericFeedbackDialog />
-                <AskForFeedbackDialog />
-                <FeaturePopup />
-              </>
-            )}
-          </Providers>
+          <AuthProvider user={user}>
+            <Providers>
+              {maintenanceMode ? (
+                <Maintenance />
+              ) : (
+                <>
+                  <Header />
+                  {children}
+                  {/* Below are floating components */}
+                  <SideMenu />
+                  <PWAInstaller />
+                  <SignInErrorDialog />
+                  <SignInReminderDialog />
+                  <GenericAlertDialog />
+                  <GenericFeedbackDialog />
+                  <AskForFeedbackDialog />
+                  <FeaturePopup />
+                </>
+              )}
+            </Providers>
+          </AuthProvider>
           <Toaster />
           <AnalyticsProvider />
           <SpeedInsights />

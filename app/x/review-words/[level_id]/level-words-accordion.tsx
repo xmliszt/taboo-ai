@@ -1,6 +1,5 @@
 import { AsyncReturnType } from 'type-fest';
 
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { LevelWordVerificationSection } from '@/app/x/review-words/[level_id]/level-word-verification-section';
 import { LevelWordsAccordionContentNotInDatabase } from '@/app/x/review-words/[level_id]/level-words-accordion-content-not-in-database';
 import { fetchLevel } from '@/app/x/review-words/[level_id]/server/fetch-level';
@@ -11,15 +10,14 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { Database } from '@/lib/supabase/extension/types';
 
 import { LevelWordsAccordionContentExistedInDatabase } from './level-words-accordion-content-existed-in-database';
 
 type LevelWordsAccordionProps = {
   level: AsyncReturnType<typeof fetchLevel>;
   words: string[];
-  wordsInDatabase: Database['public']['Tables']['words']['Row'][];
-  user?: UserProfile;
+  wordsInDatabase: Word[];
+  user?: User;
 };
 
 export function LevelWordsAccordion(props: LevelWordsAccordionProps) {

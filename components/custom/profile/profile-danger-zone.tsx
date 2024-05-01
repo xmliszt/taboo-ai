@@ -5,7 +5,6 @@ import { Skull } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { deleteUser } from '@/app/profile/server/delete-user';
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -22,7 +21,7 @@ import { cn } from '@/lib/utils';
 import { Spinner } from '../spinner';
 
 type ProfileDangerZoneProps = {
-  user: UserProfile;
+  user: User;
   className?: string;
 };
 export function ProfileDangerZone(props: ProfileDangerZoneProps) {
@@ -55,13 +54,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
           </CardHeader>
           <CardDescription>
             Once you have deleted your account, there is no going back. All your data with us will
-            be permanently deleted.{' '}
-            <b>
-              Your active subscription will also be cancelled. However, your ongoing paid
-              subscription (including trial) will still be available until the end of the billing
-              cycle when you sign in with the same email account.
-            </b>{' '}
-            Please be certain.
+            be permanently deleted. Please be certain.
           </CardDescription>
           <Button
             className='mt-4'
@@ -87,13 +80,7 @@ export function ProfileDangerZone(props: ProfileDangerZoneProps) {
             </AlertDialogTitle>
             <AlertDialogDescription>
               The action cannot be undone. This will permanently delete your account and remove all
-              your data from our server.{' '}
-              <b>
-                Your current subscription will also be cancelled automatically. However, your
-                ongoing subscription will still be available until the end of the billing cycle when
-                you sign in with the same email account.
-              </b>{' '}
-              This action is <b>irreversible</b>.
+              your data from our server. This action is <b>irreversible</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

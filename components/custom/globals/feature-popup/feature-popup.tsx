@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import FeaturePopupContent from 'mdx-contents/release-notes.mdx';
 import WeeklyDropContentMDX from 'mdx-contents/weekly-drop.mdx';
-import FeaturePopupContent from 'mdx-contents/whatsnew.mdx';
 import moment from 'moment';
 import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';
 
-import { Confetti } from '@/app/checkout/success/[session_id]/confetti';
 import { useAuth } from '@/components/auth-provider';
+import { Confetti } from '@/components/custom/confetti';
 import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';

@@ -14,11 +14,10 @@ import { updateTarget, updateWord } from '@/app/x/review-words/[level_id]/server
 import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Database } from '@/lib/supabase/extension/types';
 
 export function LevelWordsAccordionContentExistedInDatabase(props: {
   level: AsyncReturnType<typeof fetchLevel>;
-  word: Database['public']['Tables']['words']['Row'];
+  word: Word;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();

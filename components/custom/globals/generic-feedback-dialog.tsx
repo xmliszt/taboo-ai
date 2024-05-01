@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useTransition } from 'react';
 import { validate } from 'email-validator';
 import { toast } from 'sonner';
 
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +22,7 @@ import { sendEmail } from '@/lib/services/send-email';
 
 type GenericFeedbackDialogProps = {
   title: string;
-  user?: UserProfile;
+  user?: User;
   description?: string;
   defaultFeedback?: string;
   onSubmit?: () => void;
@@ -39,7 +38,7 @@ type GenericFeedbackDialogProps = {
 export default function GenericFeedbackDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState<string>('Feedback');
-  const [user, setUser] = useState<UserProfile>();
+  const [user, setUser] = useState<User>();
   const [customEmail, setCustomEmail] = useState('');
   const [feedbackContent, setFeedbackContent] = useState('');
   const [description, setDescription] = useState<string>();

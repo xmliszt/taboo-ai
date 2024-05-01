@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowRight, Handshake } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
-import { BiBook, BiCart, BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
+import { BiBook, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
 import { BsDiscord, BsTwitter } from 'react-icons/bs';
 import { toast } from 'sonner';
 
@@ -127,19 +127,6 @@ export default function SideMenu() {
         href: '/profile',
       },
       {
-        path: '/pricing',
-        title:
-          !user || user.subscription?.customer_plan_type === 'free'
-            ? 'Become a pro player'
-            : 'Pricing',
-        subtitle:
-          !user || user.subscription?.customer_plan_type === 'free'
-            ? 'Taboo AI is free to play. However, you can enjoy more exclusive features by subscribing to our pro plan!'
-            : 'View pricing plans to discover what exclusive features you can enjoy as a pro player!',
-        visible: true,
-        href: '/pricing',
-      },
-      {
         path: 'separator',
         title: 'separator',
         subtitle: '',
@@ -167,11 +154,11 @@ export default function SideMenu() {
         href: '/pwa',
       },
       {
-        path: '/whatsnew',
-        title: 'Latest features',
+        path: '/release-notes',
+        title: 'Release notes',
         subtitle: "Take a look at Taboo AI's latest features!",
         visible: true,
-        href: '/whatsnew',
+        href: '/release-notes',
       },
       {
         path: '/roadmap',
@@ -240,16 +227,6 @@ export default function SideMenu() {
           <Separator />
           <article className='flex flex-col gap-1 py-1'>
             <Link
-              className='group/pricing'
-              href={'/pricing'}
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Pricing{' '}
-              <BiCart className='ml-2 inline-block transition-transform ease-in-out group-hover/pricing:rotate-[30deg]' />
-            </Link>
-            <Link
               className='group'
               href={'/privacy-policy'}
               onClick={() => {
@@ -301,16 +278,6 @@ export default function SideMenu() {
             >
               Publications{' '}
               <BiBook className='ml-2 inline-block transition-transform ease-in-out group-hover/publications:rotate-[30deg]' />
-            </Link>
-            <Link
-              className='group/buymecoffee'
-              href={'/buymecoffee'}
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Buy me a coffee{' '}
-              <BiCoffeeTogo className='ml-2 inline-block transition-transform ease-in-out group-hover/buymecoffee:rotate-[30deg]' />
             </Link>
             <Link
               className='group/discord'

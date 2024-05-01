@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import { Level } from '@/app/level/[id]/server/fetch-level';
 import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { ScoreDetailsAccordion } from '@/app/result/score-details-accordion';
 import { Game } from '@/app/result/server/fetch-game';
 import { TopicContributionController } from '@/app/result/topic-contribution-controller';
@@ -18,7 +17,7 @@ import { getPersistence } from '@/lib/persistence/persistence';
 import { getCalculatedScore } from '@/lib/utils/gameUtils';
 
 type ResultClientWrapperProps = {
-  user?: UserProfile;
+  user?: User;
   storedHashKey?: string;
   remotelyFetchedGame?: Game;
 };
@@ -88,11 +87,7 @@ export function ResultClientWrapper(props: ResultClientWrapperProps) {
         topicName={level.name}
         difficulty={level.difficulty}
       />
-      <ScoreDetailsAccordion
-        pro={props.user?.user_plan?.type === 'pro'}
-        level={level}
-        game={game}
-      />
+      <ScoreDetailsAccordion pro level={level} game={game} />
       {game.is_custom_game && <TopicContributionController level={level} user={props.user} />}
       <Link
         className='fixed bottom-2 z-40 flex w-full justify-center gap-2 p-4'

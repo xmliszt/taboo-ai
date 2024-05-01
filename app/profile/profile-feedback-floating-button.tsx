@@ -2,13 +2,12 @@
 
 import { Mail } from 'lucide-react';
 
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
 import IconButton from '@/components/ui/icon-button';
 import { cn } from '@/lib/utils';
 
 type ProfileFeedbackFloatingButtonProps = {
-  user: UserProfile;
+  user: User;
 };
 
 export function ProfileFeedbackFloatingButton(props: ProfileFeedbackFloatingButtonProps) {

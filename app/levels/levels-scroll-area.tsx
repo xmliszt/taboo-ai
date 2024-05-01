@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
-import { Confetti } from '../checkout/success/[session_id]/confetti';
+import { Confetti } from '../../components/custom/confetti';
 import { ScrollToTopButton } from './scroll-to-top-button';
 
 export function LevelsScrollArea({ children }: { children: React.ReactNode }) {

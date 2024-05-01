@@ -1,5 +1,4 @@
 import React from 'react';
-import { AsyncReturnType } from 'type-fest';
 
 import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { ResultClientWrapper } from '@/app/result/result-client-wrapper';
@@ -13,21 +12,11 @@ type ResultPageProps = {
 };
 
 export default async function ResultPage(props: ResultPageProps) {
-  // Fetch user profile if possible
-  let user: AsyncReturnType<typeof fetchUserProfile> | undefined;
-  try {
-    user = await fetchUserProfile();
-  } catch (error) {
-    // do nothing
-  }
+  if (!props.searchParams.id) throw new Error('No game id provided');
 
+  const user = await fetchUserProfile();
   const hashedKey = props.searchParams.key;
-
-  // Fetch the game remotely if possible
-  let remotelyFetchedGame: AsyncReturnType<typeof fetchGame> | undefined = undefined;
-  if (props.searchParams.id) {
-    remotelyFetchedGame = await fetchGame(props.searchParams.id);
-  }
+  const remotelyFetchedGame = await fetchGame(props.searchParams.id);
 
   return (
     <main className='relative pb-20'>

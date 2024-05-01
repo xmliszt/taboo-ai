@@ -1,6 +1,7 @@
-import { Database } from './lib/supabase/extension/types';
+import { Tables } from './lib/supabase/__generated__/types';
 
 global {
-  export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-  export type Level = Database['public']['Tables']['levels']['Row'];
+  export type User = Tables<'users'>;
+  export type Level = Tables<'levels'>;
+  export type Word = Tables<'words'>;
 }

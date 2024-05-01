@@ -8,7 +8,6 @@ import { FetchAllLevelsAndRanksReturnTypeSingle } from '@/app/levels/server/fetc
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
-import { Database } from '@/lib/supabase/extension/types';
 import { getDifficulty } from '@/lib/utilities';
 import { cn } from '@/lib/utils';
 import { DisplayUtils } from '@/lib/utils/displayUtils';
@@ -21,12 +20,11 @@ import { HoverPerspectiveContainer } from './common/hover-perspective-container'
 import { SignInReminderProps } from './globals/sign-in-reminder-dialog';
 import { StarRatingBar } from './star-rating-bar';
 
-interface LevelCardProps {
+type LevelCardProps = {
   level?: FetchAllLevelsAndRanksReturnTypeSingle;
   isShowingRank?: boolean;
-  allowedPlanType?: Database['public']['Enums']['customer_plan_type'][];
   beforeGoToLevel?: () => void;
-}
+};
 
 export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardProps) {
   const router = useRouter();

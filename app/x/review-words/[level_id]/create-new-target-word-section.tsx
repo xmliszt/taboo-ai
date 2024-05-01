@@ -7,17 +7,15 @@ import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { generateTabooWordsFromAI } from '@/app/level/[id]/server/generate-taboo-words-from-ai';
-import { UserProfile } from '@/app/profile/server/fetch-user-profile';
 import { updateLevel } from '@/app/x/review-words/[level_id]/server/update-level';
 import { confirmAlert } from '@/components/custom/globals/generic-alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { upsertWordWithTabooWords } from '@/lib/services/wordService';
-import { Database } from '@/lib/supabase/extension/types';
 
 type CreateNewTargetWordSectionProps = {
-  level: Database['public']['Tables']['levels']['Row'];
-  user?: UserProfile;
+  level: Level;
+  user?: User;
 };
 export function CreateNewTargetWordSection(props: CreateNewTargetWordSectionProps) {
   const router = useRouter();
