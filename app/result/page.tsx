@@ -12,18 +12,17 @@ type ResultPageProps = {
 };
 
 export default async function ResultPage(props: ResultPageProps) {
-  if (!props.searchParams.id) throw new Error('No game id provided');
-
   const user = await fetchUserProfile();
   const hashedKey = props.searchParams.key;
-  const remotelyFetchedGame = await fetchGame(props.searchParams.id);
 
   return (
     <main className='relative pb-20'>
       <ResultClientWrapper
         user={user}
         storedHashKey={hashedKey}
-        remotelyFetchedGame={remotelyFetchedGame}
+        remotelyFetchedGame={
+          props.searchParams?.id ? await fetchGame(props.searchParams.id) : undefined
+        }
       />
     </main>
   );
