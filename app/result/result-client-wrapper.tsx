@@ -79,7 +79,7 @@ export function ResultClientWrapper(props: ResultClientWrapperProps) {
   if (!game) throw new Error('No game found so we cannot load the result.');
 
   return (
-    <div className='relative mb-8 flex w-full flex-col gap-6 px-4 pt-6'>
+    <div className='relative mx-auto mb-8 flex max-w-lg flex-col gap-6 px-4 pt-6'>
       <ShareScoreButton gameToShare={game} />
       <ResultsSummaryCard
         total={totalDuration}
@@ -89,12 +89,11 @@ export function ResultClientWrapper(props: ResultClientWrapperProps) {
       />
       <ScoreDetailsAccordion pro level={level} game={game} />
       {game.is_custom_game && <TopicContributionController level={level} user={props.user} />}
-      <Link
-        className='fixed bottom-2 z-40 flex w-full justify-center gap-2 p-4'
-        href={`/level/${level.id}`}
-      >
-        <Button className='w-[60%] shadow-xl'>Play this topic again</Button>
-      </Link>
+      <div className='fixed bottom-0 left-0 right-0 z-40 flex w-full justify-center'>
+        <Link className='w-full max-w-lg px-8 py-4' href={`/level/${level.id}`}>
+          <Button className='w-full shadow-xl'>Play this topic again</Button>
+        </Link>
+      </div>
     </div>
   );
 }

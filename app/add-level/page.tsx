@@ -431,7 +431,7 @@ const AddLevelPage = () => {
       )}
       <Card
         id='add-topic-card'
-        className={`relative w-full flex-grow overflow-y-scroll border-2 leading-snug transition-transform scrollbar-hide ${
+        className={`relative max-w-lg flex-grow overflow-y-scroll border-2 leading-snug transition-transform scrollbar-hide ${
           isAllValid ? 'border-green-500' : 'border-primary'
         }`}
         onScroll={onScrollChange}

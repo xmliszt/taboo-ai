@@ -250,7 +250,11 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
   return (
     <Accordion type='multiple' defaultValue={['1']}>
       {props.game.scores.map((score) => (
-        <AccordionItem key={score.score_index} value={score.score_index.toString()}>
+        <AccordionItem
+          key={score.score_index}
+          value={score.score_index.toString()}
+          className='data-[state=open]:border-b-0'
+        >
           <AccordionTrigger key={score.score_index} className='hover:no-underline'>
             <div className='flex w-full flex-row items-center justify-between gap-2 text-foreground transition-colors hover:text-muted-foreground'>
               <div className='flex flex-grow flex-row items-center justify-between gap-2'>
