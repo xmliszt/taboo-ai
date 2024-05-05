@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Script from 'next/script';
 import { SetUserIdServerComponent } from '@logsnag/next';
 
@@ -15,15 +14,6 @@ export default async function HomePage() {
           <h1 data-testid='heading-title' className='text-center text-7xl drop-shadow-lg'>
             Taboo AI
           </h1>
-        </div>
-        <div>
-          <p className='w-80 text-center text-xs'>
-            {`We've got a new domain! Try out `}
-            <Link
-              className='font-semibold underline'
-              href={'https://taboo-ai.com'}
-            >{`https://taboo-ai.com`}</Link>
-          </p>
         </div>
         <HomeMenuButtonArray />
       </section>
