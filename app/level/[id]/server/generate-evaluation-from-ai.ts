@@ -3,10 +3,13 @@
 import 'server-only';
 
 import { cookies } from 'next/headers';
+import OpenAI from 'openai';
 
 import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
-import { googleGeminiPro } from '@/lib/google-ai';
 import { createClient } from '@/lib/utils/supabase/server';
+
+const openai = new OpenAI();
+const GPT_MODEL: OpenAI.Chat.ChatModel = 'gpt-3.5-turbo';
 
 /**
  * Generate evaluation from AI.
@@ -34,30 +37,26 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   if (fetchTaboosResponse.error) throw fetchTaboosResponse.error;
 
   // Use json_mode for chat completion to get instruction to call function
-  const evaluationPrompt = getEvaluationSystemMessage(
-    gameScore.target_word,
-    fetchTaboosResponse.data?.taboos ?? [],
-    true
-  );
-  const systemMessage = {
-    role: 'user',
-    parts: evaluationPrompt,
-  };
-  const modelMessage = {
-    role: 'model',
-    parts:
-      "Ok, I will be ready to evaluate the user's clue performance based on input JSON object, and output the score and reasoning in the requested JSON format. I will not mention the target word and taboo words in my suggestions and examples.",
-  };
+  const systemPrompt = getEvaluationSystemMessage(fetchTaboosResponse.data?.taboos ?? []);
   const userMessage = JSON.stringify({
     target: gameScore.target_word,
     taboos: fetchTaboosResponse.data?.taboos ?? [],
     conversation: filteredConversation,
   });
-  const chat = googleGeminiPro.startChat({
-    history: [systemMessage, modelMessage],
+  const completion = await openai.chat.completions.create({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userMessage },
+    ],
+    model: GPT_MODEL,
+    response_format: {
+      type: 'json_object',
+    },
   });
-  const completion = await chat.sendMessage(userMessage);
-  const responseText = completion.response.text();
+
+  const responseText = completion.choices.at(0)?.message.content;
+  if (!responseText) throw new Error('Failed to generate evaluation response from AI');
+  const responseJSON = JSON.parse(responseText);
   const {
     score,
     reasoning,
@@ -66,8 +65,7 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
     score: number;
     reasoning: string;
     examples: string[];
-  } = JSON.parse(responseText);
-
+  } = responseJSON;
   return {
     score,
     reasoning,
@@ -75,27 +73,31 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   };
 }
 
-const getEvaluationSystemMessage = (target: string, taboos: string[], withSuggestions: boolean) => {
+const getEvaluationSystemMessage = (taboos: string[]) => {
   return `
-  You are a judge and advisor in Taboo AI game. Taboo AI game follows the rules of the traditional Game of Taboo. User engaged in a conversation with AI. Your job is to evaluate the performance of the user based on his clues. The users are English learners who are trying to improve their English skills. You will assess the messages given by the user based on the quality, descriptiveness, English correctness, and demonstration of good knowledge. Your evaluation score from 0 to 100. If user is found cheating, or try to ask for English translation in another language, you should penalise the player. You will output your reasoning about your scoring, without using any of the target word and taboo words given.
+  You are an English linguistic expert. You are tasked to evaluate the linguistic performance of the user in the Game of Taboo. You will assess the clues given by the user and score from 0 to 100. If user is found cheating, or use direct translation in another language, you should penalise the player. 
+
+  What is a good clue: simple and effective, creative, good grammar, smart association with other words without using the taboo words.
   
-  ${
-    withSuggestions &&
-    `You will provide constructive feedbacks to the user how the user can improve on the grammar, word choices, sentence structure. And you will generate suggestions of better hints as grammatically correct examples, with better word choices and sentence structure. Give at least three examples. Your examples must not contain word in [${taboos}] as they are taboo words. Your examples will be output in the "examples" field.`
+  You will be given a JSON stringified object that provides the following:
+  - "target": the target word that the user is trying to describe (assistant is trying to guess)
+  - "taboos": an array of words that the user is not allowed to use (assistant is allowed to say those words)
+  - "conversation": an array of objects that represent the conversation between the user and the assistant.
+  
+  You are designed to output JSON.
+
+  Your response is formatted as follows:
+  {
+    "score": {{a number from 0 to 100}},
+    "reasoning": "{{your reasoning}}",
+    "examples": ["{{example1}}", "{{example2}}", "{{example3}}"]
+    "count": {{count of taboo words used, must be 0}}
   }
-  
-  Output your score and reasoning ${
-    withSuggestions && 'and examples'
-  } in JSON stringified format: {"score": 100, "reasoning": ""${
-    withSuggestions && ', "examples": [""]'
-  }}
-  
-  Example output with the correct format:
-  {"score": 95.0, "reasoning": "The user uses a very creative way of hinting the AI into guessing the target word without saying any of the taboo words. Therefore I will give a very high score of 95 out of 100."${
-    withSuggestions &&
-    ', "examples": ["Which fruit falls from the tree and hits Newton on the head?", "Which fruit is red and has a stem?"]'
-  }}
-  
-  Your output should not have any newline character or any escaping character. Keep it as a single line JSON stringified string.
+
+  For "reasoning", you will provide constructive feedbacks on how the user can improve on the grammar, word choices, sentence structure.
+
+  For "examples", you will generate at least 3 suggestions of better hints as grammatically correct examples, with better word choices and sentence structure. Check the total count of any of the words from [${taboos}] and their lemmatized forms in the "examples" array and write the count in the "count" field. You must ensure that the "count" value is 0, if it is not 0, you need to rewrite the examples to ensure that the count is 0.
+
+  Your response:
   `;
 };

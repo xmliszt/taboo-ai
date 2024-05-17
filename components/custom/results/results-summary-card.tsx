@@ -27,7 +27,7 @@ export default function ResultsSummaryCard({
   return (
     <Card className='text-xl shadow-lg'>
       <CardHeader>
-        <div className='flex flex-row justify-between gap-2'>
+        <div className='flex flex-row items-start justify-between gap-3'>
           <span>
             <span className='font-light'>Topic: </span>
             <span className='font-extrabold'>{displayTopicName}</span>
