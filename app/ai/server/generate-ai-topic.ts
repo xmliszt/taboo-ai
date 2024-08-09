@@ -2,12 +2,13 @@
 
 import 'server-only';
 
-import { uniqueId } from 'lodash';
+import { isString, uniqueId } from 'lodash';
+import OpenAI from 'openai';
 
 import { LevelToUpload } from '@/app/level/[id]/server/upload-game';
 import { CONSTANTS } from '@/lib/constants';
-import { googleGeminiPro } from '@/lib/google-ai';
-import { formatResponseTextIntoArray } from '@/lib/utilities';
+
+const openai = new OpenAI();
 
 /**
  * Ask AI to generate taboo words for a given topic based on the difficulty.
@@ -32,10 +33,28 @@ export async function generateAITopic(
       break;
   }
 
-  const prompt = `Generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in the topic of ${topic} that are ${difficultyString}. In American English. Insert the words generated in an array: [word1, word2, ...]`;
-  const completion = await googleGeminiPro.generateContent(prompt);
-  const text = completion.response.text();
-  const words = formatResponseTextIntoArray(text);
+  const systemPrompt = `
+  You are tasked to generate a list of ${CONSTANTS.numberOfQuestionsPerGame} words in a given topic by the user, that are ${difficultyString} In American English. You only speak in JSON. Output your response in the following format:
+  { "words": ["word1", "word2", ...] }
+  `;
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: JSON.stringify({ topic }) },
+    ],
+    response_format: {
+      type: 'json_object',
+    },
+  });
+  const responseText = completion.choices.at(0)?.message.content;
+  if (!responseText) throw new Error('Failed to generate taboo words from AI');
+  const responseJSON = JSON.parse(responseText);
+  if (!responseJSON.words) throw new Error('Unparsable format from AI response');
+  const words = responseJSON.words;
+  if (!Array.isArray(words)) throw new Error('Invalid format from AI response');
+  if (!words.every(isString)) throw new Error('Invalid format from AI response');
+
   return {
     created_at: new Date().toISOString(),
     created_by: null,
@@ -43,7 +62,7 @@ export async function generateAITopic(
     id: uniqueId(topic),
     name: topic,
     difficulty: difficulty,
-    words: words,
+    words,
     is_verified: true,
     popularity: 0,
     is_ai_generated: true,

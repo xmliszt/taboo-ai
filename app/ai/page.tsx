@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CONSTANTS } from '@/lib/constants';
-import { tryParseErrorAsGoogleAIError } from '@/lib/errors/google-ai-error-parser';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
 import { cn } from '@/lib/utils';
@@ -48,13 +47,8 @@ export default function AiPage() {
           setErrorMessage(CONSTANTS.errors.overloaded);
         }
       } catch (error) {
-        try {
-          const googleError = tryParseErrorAsGoogleAIError(error, 'topic-generation');
-          setErrorMessage(googleError.message);
-        } catch (error) {
-          console.error(error);
-          setErrorMessage('Something went wrong. Please try again!');
-        }
+        console.error(error);
+        setErrorMessage('Something went wrong. Please try again!');
       } finally {
         setIsLoading(false);
       }

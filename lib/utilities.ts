@@ -11,41 +11,6 @@ export function generateHashedString(...items: string[]): string {
   return hash.substring(0, 8);
 }
 
-export const formatResponseTextIntoArray = (text: string, target?: string): string[] => {
-  let wordList: string[];
-  const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-  try {
-    wordList = JSON.parse(text) as string[];
-  } catch {
-    try {
-      const sanitizedString = text.trim();
-      wordList = sanitizedString.split(',');
-      if (wordList.length <= 1) {
-        wordList = sanitizedString.split('\n');
-        if (wordList.length <= 1) {
-          wordList = [];
-        }
-      }
-      wordList = _.uniq(
-        wordList.map((text) => _.trim(text.replace(/\d/g, ''), punctuation).toLowerCase())
-      );
-      wordList = wordList.filter((text) => text.length > 0);
-    } catch {
-      wordList = [];
-    }
-  }
-  wordList = wordList.map((e) => _.toLower(_.trim(e, punctuation)));
-  wordList = _.uniq(wordList);
-  if (target) {
-    const _word = _.toLower(target);
-    if (!wordList.includes(_word)) {
-      wordList.push(_word);
-    }
-  }
-  wordList = wordList.filter((word) => word.length < 20);
-  return wordList.map(_.trim);
-};
-
 export const getMockResponse = async (
   target: string,
   mode: string,
