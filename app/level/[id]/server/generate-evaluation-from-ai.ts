@@ -9,7 +9,7 @@ import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
 import { createClient } from '@/lib/utils/supabase/server';
 
 const openai = new OpenAI();
-const GPT_MODEL: OpenAI.Chat.ChatModel = 'gpt-3.5-turbo';
+const GPT_MODEL: OpenAI.Chat.ChatModel = 'gpt-4o';
 
 /**
  * Generate evaluation from AI.
