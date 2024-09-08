@@ -1,8 +1,9 @@
 'use client';
 
+import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Autoplay from 'embla-carousel-autoplay';
+import AutoPlay from 'embla-carousel-autoplay';
 
 import {
   Carousel,
@@ -13,15 +14,14 @@ import {
 } from '@/components/ui/carousel';
 
 export function OutgoingLinksCarousel() {
+  const autoplay = useRef(AutoPlay({ stopOnInteraction: true, delay: 5000 }));
   return (
     <Carousel
       opts={{ loop: true }}
-      plugins={[
-        Autoplay({
-          delay: 5000,
-        }),
-      ]}
+      plugins={[autoplay.current]}
       className='flex w-full items-center justify-center py-4'
+      onPointerEnter={() => autoplay.current.stop()}
+      onPointerLeave={() => autoplay.current.play()}
     >
       <CarouselPrevious className='!relative !left-0 !top-0 !flex !aspect-square !translate-x-0 !translate-y-0 !rounded-lg !border-none' />
       <CarouselContent>
