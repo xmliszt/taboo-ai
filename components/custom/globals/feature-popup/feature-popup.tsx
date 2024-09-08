@@ -80,6 +80,11 @@ export default function FeaturePopup() {
           processWeeklyDropDate(weeklyTopicsPopupString);
           return;
         }
+        if (versionDiff === 'patch') {
+          // If the incoming version is a patch version, we do not show feature popup and try to show weekly drop.
+          processWeeklyDropDate(weeklyTopicsPopupString);
+          return;
+        }
         const isIncomingVersionNewer = semver.gt(incomingVersion, featurePopupString);
         if (isIncomingVersionNewer) {
           // we have newer version, so we show feature popup instead of weekly drop.

@@ -38,15 +38,11 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
     beforeGoToLevel && beforeGoToLevel();
     if (level) {
       setPersistence(HASH.level, level);
-      if (isShowingRank && !user) {
+      // If the user is not logged in, show the sign in reminder dialog
+      if (!user) {
         EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
-          title:
-            'You are not logged in. Only logged in users can have their results saved and ranked.',
+          title: 'Please signin to play this level.',
           redirectHref: `/level/${level.id}`,
-          afterDialogClose: () => {
-            router.push(`/level/${level.id}`);
-          },
-          cancelLabel: 'Play as guest',
         });
       } else {
         router.push(`/level/${level.id}`);

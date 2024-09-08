@@ -1,5 +1,4 @@
 export enum CustomEventKey {
-  SIGN_IN_ERROR = 'sign-in-error-event',
   SIGN_IN_REMINDER = 'sign-in-reminder-event',
   TOGGLE_MENU = 'toggle-menu-event',
   SHARE_SCORE = 'share-score-event',

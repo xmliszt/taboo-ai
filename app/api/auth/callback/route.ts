@@ -6,6 +6,7 @@ import { createClient } from '@/lib/utils/supabase/server';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
+  const redirect = searchParams.get('redirect');
 
   if (code) {
     const supabaseClient = createClient(cookies());
@@ -16,9 +17,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const protocol = url.hostname === 'localhost' ? 'http' : 'https';
   let redirectUrl = `${protocol}://${url.hostname}`;
-  if (url.port) {
-    redirectUrl += `:${url.port}`;
-  }
-  console.log('redirectUrl', redirectUrl);
+  if (url.port) redirectUrl += `:${url.port}`;
+  if (redirect) redirectUrl += redirect;
   return NextResponse.redirect(redirectUrl);
 }

@@ -3,11 +3,9 @@
 import React, { MouseEventHandler, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { BrainCircuit, CircleUser, PenSquare, Quote, User, View } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
 import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
-import { signIn } from '@/components/header/server/sign-in';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
 import { HomeMenuButton } from '../home-menu-button';
@@ -33,19 +31,14 @@ export default function HomeMenuButtonArray() {
       router.push('/add-level');
     } else {
       EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
-        title: 'You need to sign in to contribute topics',
+        title: 'Please sign in to contribute topics',
         redirectHref: '/add-level',
       });
     }
   };
 
-  const handleSignIn = async () => {
-    try {
-      await signIn();
-    } catch (error) {
-      console.error(error);
-      toast.error('Something went wrong. Failed to sign in');
-    }
+  const handleSignIn = () => {
+    router.push('/sign-in');
   };
 
   const homeMenuButtonData = useMemo<HomeMenuButtonData[]>(

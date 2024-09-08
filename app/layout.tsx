@@ -6,7 +6,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AnalyticsProvider } from '@/components/analytics-provider';
 import FeaturePopup from '@/components/custom/globals/feature-popup/feature-popup';
-import { SignInErrorDialog } from '@/components/custom/globals/sign-in-error-dialog';
 import SignInReminderDialog from '@/components/custom/globals/sign-in-reminder-dialog';
 import Maintenance from '@/components/custom/maintenance';
 import SideMenu from '@/components/custom/side-menu';
@@ -57,13 +56,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = (await fetchUserProfile()) ?? undefined;
   return (
     <ReactQueryProvider>
-      <html lang='en' suppressHydrationWarning={true}>
+      <html lang='en' suppressHydrationWarning>
         <head>
           <LogSnagProvider token={process.env.NEXT_PUBLIC_LOGSNAG_TOKEN!} project='taboo-ai' />
         </head>
         <Script id='pwa-script' src='/js/pwa.js' />
         <Script id='clarity-script' src='/js/clarity.js' />
-        <body className={`${font.className}`}>
+        <body className={`${font.className}`} suppressHydrationWarning>
           <AuthProvider user={user}>
             <Providers>
               {maintenanceMode ? (
@@ -75,7 +74,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   {/* Below are floating components */}
                   <SideMenu />
                   {/* <PWAInstaller /> */}
-                  <SignInErrorDialog />
                   <SignInReminderDialog />
                   <GenericAlertDialog />
                   <GenericFeedbackDialog />
