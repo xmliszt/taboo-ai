@@ -1,8 +1,10 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { fetchAllLevelsWithoutCookies } from '@/app/levels/server/fetch-levels';
+import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 
 export async function generateMetadata({
   params: { id },
@@ -56,5 +58,8 @@ export async function generateStaticParams() {
 }
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
+  const user = await fetchUserProfile();
+  if (!user) redirect('/sign-in');
+
   return <>{children}</>;
 }

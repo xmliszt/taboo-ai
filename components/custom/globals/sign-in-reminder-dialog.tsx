@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
-import { signIn } from '@/components/header/server/sign-in';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,13 +53,11 @@ export default function SignInReminderDialog() {
     };
   }, []);
 
-  const handleSignIn = async () => {
-    try {
-      await signIn();
-      redirectHref && router.push(redirectHref);
-    } catch (error) {
-      console.error(error);
-      toast.error('Something went wrong. Failed to sign in');
+  const handleSignIn = () => {
+    if (redirectHref) {
+      router.push(`/sign-in?redirect=${redirectHref}`);
+    } else {
+      router.push('/sign-in');
     }
   };
 

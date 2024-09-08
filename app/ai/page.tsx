@@ -8,7 +8,9 @@ import { useTheme } from 'next-themes';
 
 import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
 import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
+import { useAuth } from '@/components/auth-provider';
 import { HoverPerspectiveContainer } from '@/components/custom/common/hover-perspective-container';
+import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
 import { Spinner } from '@/components/custom/spinner';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -16,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CONSTANTS } from '@/lib/constants';
+import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
 import { cn } from '@/lib/utils';
@@ -27,11 +30,21 @@ export default function AiPage() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { user } = useAuth();
 
   const { resolvedTheme } = useTheme();
 
   const submitForm = async (event: FormEvent) => {
     event.preventDefault();
+    // User must login to use AI mode
+    if (!user) {
+      EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
+        title: 'Please sign in to use AI mode.',
+        redirectHref: `/ai`,
+      });
+      return;
+    }
+
     if (topic.length > 0) {
       setIsLoading(true);
       try {

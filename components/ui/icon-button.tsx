@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -10,7 +12,7 @@ interface IconButtonProps extends ButtonProps {
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ tooltip, className, children, asChild = false, ...props }, ref) => {
+  ({ tooltip, className, children, ...props }, ref) => {
     const renderButton = () => (
       <Button
         ref={ref}
@@ -27,7 +29,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     );
     return tooltip ? (
       <Tooltip>
-        <TooltipTrigger asChild={asChild}>{renderButton()}</TooltipTrigger>
+        <TooltipTrigger asChild>{renderButton()}</TooltipTrigger>
         <TooltipContent>{tooltip}</TooltipContent>
       </Tooltip>
     ) : (

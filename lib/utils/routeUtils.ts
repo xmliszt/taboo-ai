@@ -19,6 +19,7 @@ export enum TabooPathname {
   PRIVACY = '/privacy-policy',
   COOKIE = '/cookie-policy',
   TNC = '/terms-and-conditions',
+  SIGN_IN = '/sign-in',
 }
 
 export class RouteManager {
@@ -120,6 +121,14 @@ export class RouteManager {
           hasBackButton: true,
           hideMenu: true,
           customBackHref: '/',
+        };
+      case TabooPathname.SIGN_IN === route:
+        return {
+          title: 'Sign in',
+          hideUserMenu: true,
+          hideMenu: false,
+          hideDevToggle: true,
+          hasBackButton: false,
         };
       default:
         return {

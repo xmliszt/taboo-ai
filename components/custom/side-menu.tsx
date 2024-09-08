@@ -7,10 +7,8 @@ import { ArrowRight, Handshake } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
 import { BiBook, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
 import { BsDiscord, BsGithub, BsTwitter } from 'react-icons/bs';
-import { toast } from 'sonner';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
-import { signIn } from '@/components/header/server/sign-in';
 import { Button } from '@/components/ui/button';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 
@@ -55,13 +53,8 @@ export default function SideMenu() {
     });
   }, [isFocused, pathname]);
 
-  const handleSignIn = async () => {
-    try {
-      await signIn();
-    } catch (error) {
-      console.error(error);
-      toast.error('Something went wrong. Failed to sign in');
-    }
+  const handleSignIn = () => {
+    router.push('/sign-in');
   };
 
   const handleContributeTopic = () => {

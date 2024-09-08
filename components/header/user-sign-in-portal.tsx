@@ -3,11 +3,10 @@
 import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { AlignJustify, CircleUser, Construction, LogOut, PenTool, User } from 'lucide-react';
+import { AlignJustify, Construction, LogOut, PenTool, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
-import { signIn } from '@/components/header/server/sign-in';
 import { signOut } from '@/components/header/server/sign-out';
 import { Button } from '@/components/ui/button';
 import { useLogSnag } from '@/lib/logsnag/use-controlled-logsnag';
@@ -21,17 +20,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import IconButton from '../ui/icon-button';
-
-function shouldShowSignInIconWithLabel(pathname: string) {
-  return (
-    pathname === '/' ||
-    pathname === '/levels' ||
-    pathname === '/ai' ||
-    pathname === '/profile' ||
-    pathname === '/result'
-  );
-}
 
 type UserMenuItem = {
   label: string;
@@ -81,13 +69,8 @@ export function UserSignInPortal() {
     }
   }, [user]);
 
-  const handleSignIn = async () => {
-    try {
-      await signIn();
-    } catch (error) {
-      console.error(error);
-      toast.error('Something went wrong. Failed to sign in');
-    }
+  const handleSignIn = () => {
+    router.push('/sign-in');
   };
 
   const handleSignOut = async () => {
@@ -150,7 +133,7 @@ export function UserSignInPortal() {
             className='group/user-login-portal flex h-[32px] flex-row items-center gap-1 p-1'
           >
             <Image
-              className='rounded-[7px] transition-transform ease-in-out group-hover/user-login-portal:-rotate-12'
+              className='rounded-[7px]'
               src={user.photo_url || '/images/placeholder.png'}
               alt='user avatar'
               width={23}
@@ -158,7 +141,7 @@ export function UserSignInPortal() {
             />
             <AlignJustify
               size={20}
-              className='transition-transform ease-in-out group-hover/user-login-portal:rotate-12 group-aria-[expanded=true]/user-login-portal:rotate-90'
+              className='transition-transform ease-in-out group-aria-[expanded=true]/user-login-portal:rotate-90'
             />
           </Button>
         </DropdownMenuTrigger>
@@ -192,18 +175,9 @@ export function UserSignInPortal() {
     </div>
   ) : (
     <div>
-      {shouldShowSignInIconWithLabel(pathname) ? (
-        <Button aria-label='Click to sign in' onClick={handleSignIn} className='h-[32px] px-2 py-1'>
-          <div className='flex flex-row items-center gap-1'>
-            <CircleUser size='23' />
-            Sign in
-          </div>
-        </Button>
-      ) : (
-        <IconButton aria-label='Click to sign in' tooltip='Sign in' onClick={handleSignIn}>
-          <CircleUser />
-        </IconButton>
-      )}
+      <button aria-label='Click to sign in' onClick={handleSignIn} className='h-[32px] px-3 py-1'>
+        Sign in
+      </button>
     </div>
   );
 }

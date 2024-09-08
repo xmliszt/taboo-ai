@@ -14,7 +14,6 @@ import { UserSignInPortal } from '@/components/header/user-sign-in-portal';
 import { cn } from '@/lib/utils';
 import { RouteManager } from '@/lib/utils/routeUtils';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import HeaderLeftElements from './header-left-elements';
 import HeaderRightElements from './header-right-elements';
 
@@ -83,21 +82,16 @@ export default function Header() {
       ) : (
         <h1
           data-testid='heading-rule-title'
-          className='flex items-center gap-2 whitespace-nowrap text-center text-lg'
+          className='relative flex items-center gap-2 whitespace-nowrap text-center text-lg'
         >
           {title}
           {pathname !== '/' && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link href='/' className='group/link inline-block'>
-                  <Home
-                    size={15}
-                    className='transition-transform ease-in-out group-hover/link:scale-110'
-                  />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>Go to home</TooltipContent>
-            </Tooltip>
+            <Link href='/' className='group/link invisible absolute -right-4 opacity-0'>
+              <Home
+                size={15}
+                className='transition-transform ease-in-out group-hover/link:scale-110'
+              />
+            </Link>
           )}
         </h1>
       )}
