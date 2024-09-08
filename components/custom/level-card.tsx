@@ -41,7 +41,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
       // If the user is not logged in, show the sign in reminder dialog
       if (!user) {
         EventManager.fireEvent<SignInReminderProps>(CustomEventKey.SIGN_IN_REMINDER, {
-          title: 'Please signin to play this level.',
+          title: 'Please sign in to play this level.',
           redirectHref: `/level/${level.id}`,
         });
       } else {
