@@ -72,7 +72,7 @@ export default function Page() {
   }, [api]);
 
   return (
-    <main className='flex flex-col items-center pt-6 md:pt-16'>
+    <main className='flex flex-col items-center pt-6 md:pt-16 [&_*]:select-none'>
       <div className='h-auto w-full md:h-48 md:w-96'>
         <DiamondScene />
       </div>

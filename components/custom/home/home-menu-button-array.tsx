@@ -2,7 +2,7 @@
 
 import React, { MouseEventHandler, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { BrainCircuit, CircleUser, PenSquare, Quote, User, View } from 'lucide-react';
+import { BrainCircuit, CircleUser, Gem, PenSquare, Quote, User, View } from 'lucide-react';
 
 import { useAuth } from '@/components/auth-provider';
 import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
@@ -82,6 +82,15 @@ export default function HomeMenuButtonArray() {
         ariaLabel: 'Click to contribute a new topic to Taboo AI',
         onClick: handleAddTopic,
         visible: user !== undefined,
+      },
+      {
+        key: 'shop',
+        icon: <Gem size={20} />,
+        title: 'Shop',
+        subtitle: 'Stock up on your gems to enjoy unlimited games!',
+        ariaLabel: 'Click to shop for more gems',
+        href: '/shop',
+        visible: true,
       },
       {
         key: 'view my profile',

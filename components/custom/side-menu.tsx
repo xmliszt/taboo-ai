@@ -111,6 +111,13 @@ export default function SideMenu() {
         onClick: handleContributeTopic,
       },
       {
+        path: '/shop',
+        title: 'Shop',
+        subtitle: 'Stock up on your gems to enjoy unlimited games!',
+        visible: true,
+        href: '/shop',
+      },
+      {
         path: '/profile',
         title: 'My profile',
         subtitle:

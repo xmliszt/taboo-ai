@@ -103,7 +103,7 @@ export function UserSignInPortal() {
       {
         label: 'Gem shop',
         icon: <Gem />,
-        isVisible: true,
+        isVisible: pathname !== '/shop',
         onClick: () => {
           router.push('/shop');
         },
@@ -160,13 +160,14 @@ export function UserSignInPortal() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent loop sideOffset={10} align='end'>
-          <DropdownMenuLabel className='flex flex-row items-center justify-end gap-x-1'>
+          <DropdownMenuLabel className='flex flex-row items-center justify-center gap-x-1'>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   size='sm'
                   variant={user.tokens === 0 ? 'destructive' : 'outline'}
                   className='flex flex-row items-center gap-x-1 rounded-sm border'
+                  onClick={() => router.push('/shop')}
                 >
                   {user.tokens} <Gem className='inline-block size-4' />
                 </Button>
