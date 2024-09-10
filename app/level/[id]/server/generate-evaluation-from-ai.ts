@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import OpenAI from 'openai';
 
 import { ScoreToUpload } from '@/app/level/[id]/server/upload-game';
+import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { createClient } from '@/lib/utils/supabase/server';
 
 const openai = new OpenAI();
@@ -18,6 +19,10 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
   reasoning: string;
   examples: string[] | null;
 }> {
+  // Permission: check that only logged-in user can call this.
+  const user = await fetchUserProfile();
+  if (!user) throw new Error('Unauthorized');
+
   const supabaseClient = createClient(cookies());
 
   // Filter out conversation messages whose role is not 'user' or 'assistant'

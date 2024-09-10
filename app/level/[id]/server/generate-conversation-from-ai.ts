@@ -6,6 +6,8 @@ import { cookies } from 'next/headers';
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
+import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
+
 const openai = new OpenAI();
 
 /**
@@ -18,6 +20,10 @@ export async function generateConversationFromAI(
     timestamp: string;
   }[]
 ) {
+  // Permission: check that only logged-in user can call this.
+  const user = await fetchUserProfile();
+  if (!user) throw new Error('Unauthorized');
+
   // Force revalidation of cache
   cookies();
   const filteredConversation: ChatCompletionMessageParam[] = conversation

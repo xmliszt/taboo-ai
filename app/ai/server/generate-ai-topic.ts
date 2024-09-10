@@ -6,6 +6,7 @@ import { isString, uniqueId } from 'lodash';
 import OpenAI from 'openai';
 
 import { LevelToUpload } from '@/app/level/[id]/server/upload-game';
+import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { CONSTANTS } from '@/lib/constants';
 
 const openai = new OpenAI();
@@ -17,6 +18,10 @@ export async function generateAITopic(
   topic: string,
   difficulty: number
 ): Promise<LevelToUpload | undefined> {
+  // Permission: check that only logged-in user can call this.
+  const user = await fetchUserProfile();
+  if (!user) throw new Error('Unauthorized');
+
   let difficultyString;
   switch (difficulty) {
     case 1:
