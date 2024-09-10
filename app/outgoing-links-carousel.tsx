@@ -68,20 +68,6 @@ export function OutgoingLinksCarousel() {
             />
           </a>
         </CarouselItem>
-        <CarouselItem key={4} className='flex items-center justify-center'>
-          <a
-            className='rounded-md transition-all hover:scale-105 hover:opacity-70'
-            href='https://aibrb.com/taboo-ai-a-cutting-edge-ai-powered-game-for-language-learning-and-fun/'
-          >
-            <Image
-              className='rounded-md border-[1px] border-gray-300 bg-white py-1'
-              alt='Taboo.AI: A Cutting-Edge AI-Powered Game for Language Learning and Fun | Featured on AIBRB.COM'
-              src='https://aibrb.com/wp-content/uploads/2023/09/Featured-on-AIBRB.com-white.png'
-              width='240'
-              height='50'
-            />
-          </a>
-        </CarouselItem>
         <CarouselItem
           key={5}
           className='flex items-center justify-center transition-all hover:scale-105 hover:opacity-70'
