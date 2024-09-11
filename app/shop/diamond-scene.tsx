@@ -1,3 +1,5 @@
+'use client';
+
 import { Suspense, useEffect, useRef } from 'react';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';

@@ -90,7 +90,7 @@ export default function HomeMenuButtonArray() {
         subtitle: 'Stock up on your gems to enjoy unlimited games!',
         ariaLabel: 'Click to shop for more gems',
         href: '/shop',
-        visible: true,
+        visible: user !== undefined,
       },
       {
         key: 'view my profile',

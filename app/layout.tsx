@@ -54,6 +54,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const maintenanceMode = JSON.parse(process.env.NEXT_PUBLIC_MAINTENANCE || 'false');
   const user = (await fetchUserProfile()) ?? undefined;
+
   return (
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning>

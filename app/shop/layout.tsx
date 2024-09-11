@@ -1,4 +1,7 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+
+import { fetchUserProfile } from '../profile/server/fetch-user-profile';
 
 export const metadata: Metadata = {
   title: 'Gem shop',
@@ -20,6 +23,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ShopLayout({ children }: { children: React.ReactNode }) {
+export default async function ShopLayout({ children }: { children: React.ReactNode }) {
+  //  Permission: Must be logged in
+  const user = await fetchUserProfile();
+  if (!user) redirect('/sign-in');
+
   return <>{children}</>;
 }

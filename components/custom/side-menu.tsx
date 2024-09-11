@@ -114,7 +114,7 @@ export default function SideMenu() {
         path: '/shop',
         title: 'Shop',
         subtitle: 'Stock up on your gems to enjoy unlimited games!',
-        visible: true,
+        visible: user !== undefined,
         href: '/shop',
       },
       {
