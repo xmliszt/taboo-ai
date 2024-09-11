@@ -6,7 +6,6 @@ import { fetchUserProfile } from '@/app/profile/server/fetch-user-profile';
 import { Confetti } from '@/components/custom/confetti';
 import { Button } from '@/components/ui/button';
 
-import { expireCheckoutSession } from '../../server/expire-checkout-session';
 import { getPrices } from '../../server/get-prices';
 import { retrieveCheckoutSession } from '../../server/retrieve-checkout-session';
 import { retrieveCheckoutSessionLineItems } from '../../server/retrieve-checkout-session-line-items';
@@ -42,7 +41,7 @@ export default async function CheckoutSuccessPage({ params }: CheckoutSuccessPag
 
   const { user: updatedUser } = await updateUserTokens({ tokens });
 
-  await expireCheckoutSession(params.checkout_session_id);
+  // TODO(@xmliszt): Make this checkout session no longer valid
 
   return (
     <main className='flex h-screen w-full items-start justify-center pt-24'>

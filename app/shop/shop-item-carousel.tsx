@@ -68,18 +68,8 @@ export function ShopItemCarousel({ products }: ShopItemCarouselProps) {
               style={{
                 boxShadow: (() => {
                   const radius = product.price * 3;
-                  const spread = product.price * 1.1;
-                  const color = (() => {
-                    switch (product.price) {
-                      case 2:
-                        return 'hsl(260, 100%, 50%)';
-                      case 3:
-                        return 'hsl(270, 100%, 50%)';
-                      case 5:
-                        return 'hsl(280, 100%, 50%)';
-                    }
-                  })();
-                  return `0 0 ${radius}px ${spread}px ${color}`;
+                  const spread = product.price * 2;
+                  return `0 0 ${radius}px ${spread}px rgba(147,0,255,0.5)`;
                 })(),
                 border: '1px solid rgba(147,0,255,0.5)',
               }}
@@ -99,6 +89,7 @@ export function ShopItemCarousel({ products }: ShopItemCarouselProps) {
                   </span>
                   <Button
                     variant='outline'
+                    className='hover:bg-purple-600'
                     onClick={() =>
                       startPurchasing(async () => {
                         const paymentLink = await createPaymentLink({

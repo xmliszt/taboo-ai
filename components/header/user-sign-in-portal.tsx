@@ -160,7 +160,7 @@ export function UserSignInPortal() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent loop sideOffset={10} align='end'>
-          <DropdownMenuLabel className='flex flex-row items-center justify-center gap-x-1'>
+          <DropdownMenuLabel className='flex flex-row items-center justify-end gap-x-1'>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

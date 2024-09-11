@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 import { DiamondScene } from './diamond-scene';
 import { getPrices } from './server/get-prices';
 import { ShopItemCarousel } from './shop-item-carousel';
@@ -13,7 +15,15 @@ export default async function Page() {
   prices.sort((a, b) => (a.unit_amount ?? 0) - (b.unit_amount ?? 0));
 
   return (
-    <main className='flex flex-col items-center pt-6 md:pt-16 [&_*]:select-none'>
+    <main className='relative flex flex-col items-center pt-6 md:pt-16 [&_*]:select-none'>
+      {/* Overlay gradient lining */}
+      <div
+        className={cn(
+          'pointer-events-none absolute z-10 -mt-6 h-full w-full md:-mt-16',
+          'animate-pulse',
+          'shadow-[inset_0_0_50px_10px_rgba(147,0,255,0.25)] dark:shadow-[inset_0_0_50px_10px_rgba(147,0,255,0.75)]'
+        )}
+      />
       <div className='h-auto w-full md:h-48 md:w-96'>
         <DiamondScene />
       </div>
