@@ -97,8 +97,7 @@ export default function SideMenu() {
       {
         path: '/ai',
         title: 'Play AI generated topics',
-        subtitle:
-          'Play with AI generated topics for endless possibilities! Exclusive to pro plan subscribers!',
+        subtitle: 'Play with AI generated topics for endless possibilities!',
         visible: true,
         href: '/ai',
         cta: true,
