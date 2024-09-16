@@ -15,6 +15,7 @@ export default async function SitemapPage() {
   const features: SitemapRoute[] = [
     { title: 'Home', href: '/' },
     { title: 'Public topics', href: '/levels' },
+    { title: 'Hall of fame', href: '/levels?rank=true' },
     { title: 'AI generated topics', href: '/ai' },
     { title: 'Contribute topics', href: '/add-level' },
     { title: 'My profile', href: '/profile' },
