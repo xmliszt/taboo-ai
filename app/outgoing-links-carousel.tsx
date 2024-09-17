@@ -4,13 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Autoplay from 'embla-carousel-autoplay';
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 export function OutgoingLinksCarousel() {
   return (
@@ -23,7 +17,6 @@ export function OutgoingLinksCarousel() {
       ]}
       className='flex w-full items-center justify-center py-4'
     >
-      <CarouselPrevious className='!relative !left-0 !top-0 !flex !aspect-square !translate-x-0 !translate-y-0 !rounded-lg !border-none' />
       <CarouselContent>
         <CarouselItem key={1} className='flex items-center justify-center'>
           <a
@@ -88,7 +81,6 @@ export function OutgoingLinksCarousel() {
           </Link>
         </CarouselItem>
       </CarouselContent>
-      <CarouselNext className='!relative !right-0 !top-0 !flex !aspect-square !translate-x-0 !translate-y-0 !rounded-lg !border-none' />
     </Carousel>
   );
 }
