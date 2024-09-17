@@ -556,6 +556,45 @@ export type Database = {
         }
         Relationships: []
       }
+      users_checkout_history: {
+        Row: {
+          checkout_session_id: string
+          price: number
+          price_id: string
+          tokens: number
+          user_id: string | null
+        }
+        Insert: {
+          checkout_session_id: string
+          price: number
+          price_id: string
+          tokens: number
+          user_id?: string | null
+        }
+        Update: {
+          checkout_session_id?: string
+          price?: number
+          price_id?: string
+          tokens?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_checkout_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_checkout_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_played_level_game_with_scores_and_completed_times"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       words: {
         Row: {
           created_by: string | null

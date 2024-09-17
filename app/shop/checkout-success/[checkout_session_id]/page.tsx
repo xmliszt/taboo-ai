@@ -10,6 +10,8 @@ import { getPrices } from '../../server/get-prices';
 import { retrieveCheckoutSession } from '../../server/retrieve-checkout-session';
 import { retrieveCheckoutSessionLineItems } from '../../server/retrieve-checkout-session-line-items';
 import { updateUserTokens } from '../../server/update-user-tokens';
+import { fetchCheckoutHistory } from './server/fetch-checkout-history';
+import { saveCheckoutHistory } from './server/save-checkout-history';
 
 type CheckoutSuccessPageProps = {
   params: {
@@ -39,9 +41,30 @@ export default async function CheckoutSuccessPage({ params }: CheckoutSuccessPag
   const tokens = parseInt(price.metadata.tokens_granted);
   if (isNaN(tokens)) throw new Error('Invalid tokens granted');
 
-  const { user: updatedUser } = await updateUserTokens({ tokens });
+  // Check if checkout session already exists in user's checkout history.
+  const { checkoutHistory } = await fetchCheckoutHistory({
+    checkoutSessionId: params.checkout_session_id,
+  });
+  if (checkoutHistory === null) {
+    // Save checkout history and update user tokens
+    await saveCheckoutHistory({
+      userId: user.id,
+      checkoutSessionId: params.checkout_session_id,
+      priceId: priceId,
+      price: price.unitDollar,
+      tokens,
+    });
 
-  // TODO(@xmliszt): Make this checkout session no longer valid
+    // Update user tokens
+    await updateUserTokens({ tokens });
+
+    // Refresh the page
+    redirect(`/shop/checkout-success/${params.checkout_session_id}`);
+  }
+
+  // Refresh user profile
+  const updatedUser = await fetchUserProfile();
+  if (!updatedUser) throw new Error('User not found');
 
   return (
     <main className='flex h-screen w-full items-start justify-center pt-24'>
