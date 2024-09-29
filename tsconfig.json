@@ -31,7 +31,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "pages/api/auth/[...nextauth].js"
+    "pages/api/auth/[...nextauth].js",
+    "app/shop/blocks.js"
   ],
   "exclude": ["node_modules", "functions"]
 }

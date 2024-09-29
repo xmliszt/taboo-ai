@@ -20,6 +20,7 @@ export enum TabooPathname {
   COOKIE = '/cookie-policy',
   TNC = '/terms-and-conditions',
   SIGN_IN = '/sign-in',
+  SHOP = '/shop',
 }
 
 export class RouteManager {
@@ -129,6 +130,11 @@ export class RouteManager {
           hideMenu: false,
           hideDevToggle: true,
           hasBackButton: false,
+        };
+      case TabooPathname.SHOP === route:
+        return {
+          title: 'Gem shop',
+          hideDevToggle: true,
         };
       default:
         return {

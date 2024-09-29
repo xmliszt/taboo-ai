@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { AlignJustify, Construction, LogOut, PenTool, User } from 'lucide-react';
+import { AlignJustify, Construction, Gem, LogOut, PenTool, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '@/components/auth-provider';
@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 type UserMenuItem = {
   label: string;
@@ -100,6 +101,14 @@ export function UserSignInPortal() {
   const userMenuItems: UserMenuItem[] = useMemo(() => {
     return [
       {
+        label: 'Gem shop',
+        icon: <Gem />,
+        isVisible: pathname !== '/shop',
+        onClick: () => {
+          router.push('/shop');
+        },
+      },
+      {
         label: 'Contribute topics',
         icon: <PenTool />,
         isVisible: pathname !== '/add-level',
@@ -125,7 +134,12 @@ export function UserSignInPortal() {
   }, [pathname, user]);
 
   return user ? (
-    <div className='flex flex-row items-center gap-2'>
+    <div className='flex flex-row items-center gap-x-3'>
+      {/* Token gems */}
+      <div className='hidden flex-row items-center gap-x-1 md:flex'>
+        <Gem className='size-4' />
+        <span className='text-sm font-bold'>{user.tokens}</span>
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -146,9 +160,22 @@ export function UserSignInPortal() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent loop sideOffset={10} align='end'>
-          <DropdownMenuLabel className='flex flex-col'>
-            <span className='font-light italic'>You are logged in as</span>
-            <span>{user.email}</span>
+          <DropdownMenuLabel className='flex flex-row items-center justify-end gap-x-1'>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size='sm'
+                  variant={user.tokens === 0 ? 'destructive' : 'outline'}
+                  className='flex flex-row items-center gap-x-1 rounded-sm border'
+                  onClick={() => router.push('/shop')}
+                >
+                  {user.tokens} <Gem className='inline-block size-4' />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side='left' sideOffset={6}>
+                Get more gems!
+              </TooltipContent>
+            </Tooltip>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {userMenuItems.map(

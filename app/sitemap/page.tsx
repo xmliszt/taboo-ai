@@ -18,6 +18,7 @@ export default async function SitemapPage() {
     { title: 'Hall of fame', href: '/levels?rank=true' },
     { title: 'AI generated topics', href: '/ai' },
     { title: 'Contribute topics', href: '/add-level' },
+    { title: 'Gem shop', href: '/shop' },
     { title: 'My profile', href: '/profile' },
   ];
   const baseUrl = RouteManager.baseUrl;
