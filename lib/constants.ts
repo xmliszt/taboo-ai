@@ -8,10 +8,11 @@ export const CONSTANTS = {
 };
 
 export type RejectionReason =
-  | 'inappropriate-content'
-  | 'ambiguous'
-  | 'duplicate'
-  | 'insufficient-word-variety';
+  | 'inappropriate_content'
+  | 'ambiguous_topic'
+  | 'duplicate_topic'
+  | 'insufficient_word_variety'
+  | 'inaccurate_topic_name';
 
 export const REJECTIONS: Record<
   RejectionReason,
@@ -20,24 +21,29 @@ export const REJECTIONS: Record<
     message: string;
   }
 > = {
-  'inappropriate-content': {
+  inappropriate_content: {
     title: 'Inappropriate Content',
     message:
       'We strive to maintain a friendly and inclusive environment for players of all ages. Unfortunately, your topic contains content that may not align with our community standards. Please feel free to submit other topics that are suitable for a wider audience.',
   },
-  ambiguous: {
+  ambiguous_topic: {
     title: 'Ambiguity and Lack of Clarity',
     message:
       "Your topic's target words and associated taboo words lacked clarity, making the gameplay confusing and less enjoyable for users. To enhance the gaming experience, please consider providing more concise and clear definitions for future submissions.",
   },
-  duplicate: {
+  duplicate_topic: {
     title: 'Duplicate Topic',
     message:
       'We already have a similar topic in our database, and to avoid repetition, we have decided not to accept duplicate entries. We encourage you to explore other unique topics to share with the Taboo AI community.',
   },
-  'insufficient-word-variety': {
+  insufficient_word_variety: {
     title: 'Insufficient Word Variety',
     message:
       'Your submission contained limited word choices, which may limit the diversity of gameplay. Please consider adding more words or exploring broader themes for your next submission.',
+  },
+  inaccurate_topic_name: {
+    title: 'Inaccurate Topic Name',
+    message:
+      'The topic name you provided does not accurately relate to the target words submitted. Please revise the topic name to better reflect the theme of the target words in your Taboo AI contribution.',
   },
 };

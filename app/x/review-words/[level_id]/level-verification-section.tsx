@@ -33,7 +33,7 @@ type LevelVerificationSectionProps = {
 export function LevelVerificationSection(props: LevelVerificationSectionProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [rejectionReason, setRejectionReason] = useState<RejectionReason>('ambiguous');
+  const [rejectionReason, setRejectionReason] = useState<RejectionReason>('ambiguous_topic');
 
   function verifyTopic() {
     confirmAlert({
