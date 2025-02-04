@@ -52,7 +52,7 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage },
     ],
-    model: 'gpt-4o',
+    model: 'o3-mini',
     response_format: {
       type: 'json_object',
     },
