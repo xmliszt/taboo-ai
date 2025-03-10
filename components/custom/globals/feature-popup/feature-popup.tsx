@@ -16,47 +16,41 @@ export default function FeaturePopup() {
   const incomingVersion = process.env.NEXT_PUBLIC_TABOO_AI_VERSION;
 
   useEffect(() => {
-    const eventHandler = EventManager.bindEvent(CustomEventKey.CLOSE_FEATURE_POPUP, () => {
-      handleOpenChange(false);
-    });
+    const eventHandler = EventManager.bindEvent(CustomEventKey.CLOSE_FEATURE_POPUP, () =>
+      handleOpenChange(false)
+    );
 
-    return () => {
-      EventManager.removeListener(CustomEventKey.CLOSE_FEATURE_POPUP, eventHandler);
-    };
+    return () => EventManager.removeListener(CustomEventKey.CLOSE_FEATURE_POPUP, eventHandler);
   }, []);
 
   useEffect(() => {
+    // Get the feature popup version from local storage.
     const featurePopupString = getFeaturePopupString();
     if (!featurePopupString) {
       // There is no version, so we show feature popup as this is first time.
-      displayFeaturePopup();
+      setShowFeaturePopup(true);
       return;
     }
-    if (incomingVersion) {
-      // If we have incoming version, we compare it with the feature popup version.
-      try {
-        const versionDiff = semver.diff(String(incomingVersion), String(featurePopupString));
-        if (versionDiff === null) {
-          semver.gt(incomingVersion, featurePopupString) && setFeaturePopupString(incomingVersion);
-          return;
-        }
-        if (versionDiff === 'patch') return;
-        const isIncomingVersionNewer = semver.gt(incomingVersion, featurePopupString);
-        if (isIncomingVersionNewer) {
-          displayFeaturePopup();
-          return;
-        } else {
-          return;
-        }
-      } catch {
+
+    if (!incomingVersion) return;
+    // If we have incoming version, we compare it with the feature popup version.
+    try {
+      const versionDiff = semver.diff(String(incomingVersion), String(featurePopupString));
+      // Version is the same, so we don't show the popup.
+      if (versionDiff === null) return;
+
+      const isIncomingVersionNewer = semver.gt(incomingVersion, featurePopupString);
+      // If incoming version is newer, we show the popup.
+      if (isIncomingVersionNewer) {
+        setShowFeaturePopup(true);
+        setFeaturePopupString(incomingVersion);
         return;
       }
+    } catch {
+      // If there is an error, we don't show the popup.
+      return;
     }
   }, []);
-
-  const displayFeaturePopup = () => {
-    setShowFeaturePopup(true);
-  };
 
   const handleOpenChange = (isOpen: boolean) => {
     setShowFeaturePopup(isOpen);
