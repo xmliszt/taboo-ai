@@ -12,7 +12,8 @@ export type RejectionReason =
   | 'ambiguous_topic'
   | 'duplicate_topic'
   | 'insufficient_word_variety'
-  | 'inaccurate_topic_name';
+  | 'inaccurate_topic_name'
+  | 'non_english_topic';
 
 export const REJECTIONS: Record<
   RejectionReason,
@@ -30,6 +31,11 @@ export const REJECTIONS: Record<
     title: 'Ambiguity and Lack of Clarity',
     message:
       "Your topic's target words and associated taboo words lacked clarity, making the gameplay confusing and less enjoyable for users. To enhance the gaming experience, please consider providing more concise and clear definitions for future submissions.",
+  },
+  non_english_topic: {
+    title: 'Non-English Topic',
+    message:
+      'We only accept topics in English for now. Please submit a topic in English for future submissions.',
   },
   duplicate_topic: {
     title: 'Duplicate Topic',

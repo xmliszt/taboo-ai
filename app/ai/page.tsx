@@ -77,7 +77,7 @@ export default function AiPage() {
 
   return (
     <>
-      <main className='flex flex-col items-center px-10 py-8'>
+      <main className='flex flex-col items-center justify-center gap-y-4 px-10 py-8'>
         <div
           className={cn(
             'h-52 w-52 p-4 lg:h-64 lg:w-64 lg:p-8',
@@ -120,60 +120,70 @@ export default function AiPage() {
           </Alert>
         )}
         <form onSubmit={submitForm}>
-          <div className='flex max-w-xl flex-col items-center justify-center gap-6'>
-            <label
-              htmlFor='topicInput'
-              className='text-center text-sm leading-normal lg:text-base'
-              aria-label='AI Mode Explanation'
-            >
-              Enter a topic and Taboo AI will generate a list of words for you to guess. The
-              difficulty level will determine how easy or hard the words are.
-            </label>
-            <Input
-              aria-label='topic input field'
-              aria-placeholder='for example: Planets'
-              autoFocus
-              id='topicInput'
-              type='text'
-              value={topic}
-              onChange={onInputChange}
-              placeholder='Enter a topic: e.g. planets'
-              maxLength={50}
-              disabled={isLoading}
-              className='w-full'
-            />
-            <Label htmlFor='difficulty'>Choose a difficulty level</Label>
-            <RadioGroup
-              name='difficulty'
-              id='difficulty'
-              value={difficulty}
-              aria-label='select difficulty'
-              onValueChange={(v) => {
-                setDifficulty(v);
-              }}
-              className='flex flex-row gap-2'
-            >
-              <div className='flex flex-row items-center gap-2'>
-                <RadioGroupItem id='difficulty-1' value='1' />
-                <Label htmlFor='difficulty-1'>Easy</Label>
-              </div>
-              <div className='flex flex-row items-center gap-2'>
-                <RadioGroupItem id='difficulty-2' value='2' />
-                <Label htmlFor='difficulty-2'>Medium</Label>
-              </div>
-              <div className='flex flex-row items-center gap-2'>
-                <RadioGroupItem id='difficulty-3' value='3' />
-                <Label htmlFor='difficulty-3'>Hard</Label>
-              </div>
-            </RadioGroup>
+          <div className='flex max-w-xl flex-col items-center justify-center gap-y-8'>
+            <div className='flex flex-col items-center justify-center gap-y-2'>
+              <Input
+                aria-label='topic input field'
+                aria-placeholder='for example: Planets'
+                autoFocus
+                id='topicInput'
+                type='text'
+                value={topic}
+                onChange={onInputChange}
+                placeholder='Enter a topic: e.g. planets'
+                maxLength={50}
+                disabled={isLoading}
+                className='w-full'
+              />
+              <label
+                htmlFor='topicInput'
+                className='text-center text-xs leading-normal text-muted-foreground'
+                aria-label='AI Mode Explanation'
+              >
+                Enter a topic and Taboo AI will generate a list of words for you to guess. The
+                difficulty level will determine how easy or hard the words are.
+              </label>
+            </div>
+            <div className='flex w-full flex-col items-end gap-y-2'>
+              <Label htmlFor='difficulty' className='text-xs text-muted-foreground'>
+                Difficulty level
+              </Label>
+              <RadioGroup
+                name='difficulty'
+                id='difficulty'
+                value={difficulty}
+                aria-label='select difficulty'
+                onValueChange={(v) => {
+                  setDifficulty(v);
+                }}
+                className='flex flex-row gap-2'
+              >
+                <div className='flex flex-row items-center gap-2'>
+                  <RadioGroupItem id='difficulty-1' value='1' />
+                  <Label htmlFor='difficulty-1'>Easy</Label>
+                </div>
+                <div className='flex flex-row items-center gap-2'>
+                  <RadioGroupItem id='difficulty-2' value='2' />
+                  <Label htmlFor='difficulty-2'>Medium</Label>
+                </div>
+                <div className='flex flex-row items-center gap-2'>
+                  <RadioGroupItem id='difficulty-3' value='3' />
+                  <Label htmlFor='difficulty-3'>Hard</Label>
+                </div>
+              </RadioGroup>
+            </div>
             {isLoading ? (
               <Button className='w-full' disabled>
                 <Spinner />
               </Button>
             ) : (
-              <Button type='submit' className='w-full' aria-label='Confirm to submit your input'>
+              <Button
+                type='submit'
+                className='w-max px-6'
+                aria-label='Confirm to submit your input'
+              >
                 <div className='flex flex-row items-center gap-2'>
-                  <PenTool />
+                  <PenTool className='size-4' />
                   Generate a topic
                 </div>
               </Button>

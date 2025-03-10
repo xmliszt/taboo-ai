@@ -41,10 +41,11 @@ export default function AccessLinkCard({
       key={`menu-${item.path}`}
       id={`menu-${idx}`}
       className={cn(
+        'select-none',
         item.highlight ? 'border-green-500' : '',
         pathname === item.path ? '!border-2 border-primary font-bold' : 'border',
         item.isUpcoming && 'opacity-20',
-        'group relative rounded-lg transition-all ease-in-out hover:scale-105 hover:shadow-lg',
+        'group relative rounded-lg transition-all ease-in-out hover:scale-[1.02] hover:shadow-lg',
         className
       )}
       onClick={(e) => {

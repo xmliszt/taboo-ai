@@ -175,7 +175,11 @@ export function UserSignInPortal() {
     </div>
   ) : (
     <div>
-      <button aria-label='Click to sign in' onClick={handleSignIn} className='h-[32px] px-3 py-1'>
+      <button
+        aria-label='Click to sign in'
+        onClick={handleSignIn}
+        className='h-[32px] px-3 py-1 text-foreground transition-colors hover:text-foreground/70'
+      >
         Sign in
       </button>
     </div>

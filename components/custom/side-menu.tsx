@@ -295,23 +295,22 @@ export default function SideMenu() {
               </Link>
             </div>
 
-            <Separator className='mb-2 mt-6' />
+            <Separator className='my-2' />
 
-            <div className='text-sm'>
-              Crafted by{' '}
-              <Link
-                className='font-semibold no-underline'
-                href='https://liyuxuan.dev/'
-                target='_blank'
-              >
-                Li Yuxuan
-              </Link>
+            <div className='flex select-none flex-col items-end gap-y-1 text-xs text-muted-foreground [&>div]:h-4'>
+              <div>
+                Crafted by{' '}
+                <Link
+                  className='font-semibold no-underline '
+                  href='https://liyuxuan.dev/'
+                  target='_blank'
+                >
+                  Li Yuxuan
+                </Link>
+              </div>
+              <div>© 2023 Taboo AI</div>
+              <div>{process.env.NEXT_PUBLIC_TABOO_AI_VERSION}</div>
             </div>
-
-            <span className='text-sm'>
-              © 2023 Taboo AI <br /> All rights reserved. <br /> Version{' '}
-              {process.env.NEXT_PUBLIC_TABOO_AI_VERSION}
-            </span>
           </article>
         </div>
       </SheetContent>

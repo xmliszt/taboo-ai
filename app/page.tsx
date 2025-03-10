@@ -17,15 +17,8 @@ export default async function HomePage() {
         </div>
         <HomeMenuButtonArray />
       </section>
-      <footer className='w-full max-w-xl px-4 pb-2 text-center text-xs leading-tight'>
+      <footer className='w-full max-w-xl px-4 pb-6 text-center text-xs leading-tight text-muted-foreground'>
         <OutgoingLinksCarousel />
-        We improve our products and advertising by using Microsoft Clarity to see how you use our
-        website. By using our site, you agree that we and Microsoft can collect and use this data.
-        Our{' '}
-        <a href='/privacy-policy' className='underline'>
-          privacy statement
-        </a>{' '}
-        has more details.
       </footer>
       {process.env.VERCEL_ENV === 'production' && (
         <SetUserIdServerComponent userId={(await fetchUserProfile())?.id ?? null} />
