@@ -33,7 +33,7 @@ export default async function SitemapPage() {
   ];
   const socialMedia: SitemapRoute[] = [
     { title: 'About me', href: 'https://liyuxuan.dev' },
-    { title: 'Github open source', href: 'https://github.com/xmliszt/taboo-ai' },
+    { title: 'Github', href: 'https://github.com/xmliszt/taboo-ai' },
     { title: 'LinkedIn', href: 'https://www.linkedin.com/in/li-yuxuan/' },
     { title: 'Twitter', href: 'https://twitter.com/@taboo_ai' },
     {

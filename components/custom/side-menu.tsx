@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowRight, Handshake } from 'lucide-react';
+import { Handshake, Mail } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
-import { BiBook, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
+import { BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
 import { BsDiscord, BsGithub, BsTwitter } from 'react-icons/bs';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
@@ -214,7 +214,7 @@ export default function SideMenu() {
               });
             }}
           >
-            Feedback to us <ArrowRight size={15} className={'ml-2'} />{' '}
+            Feedback to us <Mail className='ml-2 size-3' />{' '}
           </Button>
           <Separator />
           <article className='flex flex-col gap-1 py-1'>
@@ -261,51 +261,52 @@ export default function SideMenu() {
               Sitemap{' '}
               <BiMapAlt className='ml-2 inline-block transition-transform ease-in-out group-hover/sitemap:rotate-[30deg]' />
             </Link>
-            <Link
-              className='group/publications'
-              href={'/publications'}
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Publications{' '}
-              <BiBook className='ml-2 inline-block transition-transform ease-in-out group-hover/publications:rotate-[30deg]' />
-            </Link>
-            <Link
-              className='group/discord'
-              href='https://discord.gg/dgqs29CHC2'
-              target='_blank'
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Join Taboo AI Discord community{' '}
-              <BsDiscord className='ml-2 inline-block transition-transform ease-in-out group-hover/discord:rotate-[30deg]' />
-            </Link>
-            <Link
-              className='group/twitter'
-              href='https://twitter.com/@taboo_ai'
-              target='_blank'
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Twitter (X)
-              <BsTwitter className='ml-2 inline-block transition-transform ease-in-out group-hover/twitter:rotate-[30deg]' />
-            </Link>
-            <Link
-              className='group/github'
-              href='https://github.com/xmliszt/taboo-ai'
-              target='_blank'
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              GitHub open source
-              <BsGithub className='ml-2 inline-block transition-transform ease-in-out group-hover/github:rotate-[30deg]' />
-            </Link>
+
+            <div className='flex items-center justify-end gap-x-1'>
+              <Link
+                className='group/discord'
+                href='https://discord.gg/dgqs29CHC2'
+                target='_blank'
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                <BsDiscord className='ml-2 inline-block transition-transform ease-in-out group-hover/discord:rotate-[30deg]' />
+              </Link>
+              <Link
+                className='group/twitter'
+                href='https://twitter.com/@taboo_ai'
+                target='_blank'
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                <BsTwitter className='ml-2 inline-block transition-transform ease-in-out group-hover/twitter:rotate-[30deg]' />
+              </Link>
+              <Link
+                className='group/github'
+                href='https://github.com/xmliszt/taboo-ai'
+                target='_blank'
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                <BsGithub className='ml-2 inline-block transition-transform ease-in-out group-hover/github:rotate-[30deg]' />
+              </Link>
+            </div>
 
             <Separator className='mb-2 mt-6' />
+
+            <div className='text-sm'>
+              Crafted by{' '}
+              <Link
+                className='font-semibold no-underline'
+                href='https://liyuxuan.dev/'
+                target='_blank'
+              >
+                Li Yuxuan
+              </Link>
+            </div>
 
             <span className='text-sm'>
               © 2023 Taboo AI <br /> All rights reserved. <br /> Version{' '}
