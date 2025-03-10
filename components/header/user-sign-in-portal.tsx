@@ -156,7 +156,7 @@ export function UserSignInPortal() {
               item.isVisible && (
                 <DropdownMenuItem
                   key={item.label}
-                  className={cn('gap-2 hover:cursor-pointer', item.isUpcoming && 'opacity-20')}
+                  className={cn('gap-2', item.isUpcoming && 'opacity-20')}
                   onSelect={(e) => {
                     if (item.isUpcoming) {
                       e.preventDefault();

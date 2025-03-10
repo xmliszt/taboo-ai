@@ -145,7 +145,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
   };
 
   return (
-    <HoverPerspectiveContainer className={'group/level-card relative cursor-pointer'}>
+    <HoverPerspectiveContainer className={'group/level-card relative'}>
       <Card
         onPointerDown={() => {
           setPointHasDown(true);
@@ -161,7 +161,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
           isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
             ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
             : '',
-          'relative flex cursor-pointer flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]  ',
+          'relative flex flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]  ',
           'w-full xs:w-[200px]',
           'h-full xs:min-h-[300px]'
         )}

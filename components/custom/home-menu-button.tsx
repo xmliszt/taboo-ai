@@ -27,7 +27,7 @@ export function HomeMenuButton({
   const router = useRouter();
 
   return (
-    <div className='group relative rounded-lg shadow-lg transition-all ease-in-out hover:scale-105 hover:cursor-pointer'>
+    <div className='group relative rounded-lg shadow-lg transition-all ease-in-out hover:scale-105'>
       <Alert
         aria-label={ariaLabel}
         onClick={(e) => {

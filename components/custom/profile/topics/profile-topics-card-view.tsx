@@ -22,7 +22,7 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
       <TooltipTrigger asChild>
         {topic.level_id === 'play-more' ? (
           <Link href='/levels'>
-            <HoverPerspectiveContainer className='h-full min-w-[240px] cursor-pointer snap-center border text-left'>
+            <HoverPerspectiveContainer className='h-full min-w-[240px] snap-center border text-left'>
               <Card className='h-full'>
                 <CardHeader>
                   <CardTitle className='text-center text-border'>Play More Topics</CardTitle>
@@ -35,7 +35,7 @@ export function ProfileTopicsCardView({ topic }: ProfileTopicsCardViewProps) {
           </Link>
         ) : (
           <Link href={`/level/${topic.level_id}`}>
-            <HoverPerspectiveContainer className='relative h-full min-w-[240px] max-w-[240px] cursor-pointer snap-center border text-left'>
+            <HoverPerspectiveContainer className='relative h-full min-w-[240px] max-w-[240px] snap-center border text-left'>
               <Card className='h-full'>
                 <CardHeader>
                   <CardTitle className='text-left text-card-foreground'>

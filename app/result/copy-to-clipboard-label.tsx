@@ -22,7 +22,7 @@ export function CopyToClipboardLabel(props: CopyToClipboardLabelProps) {
         <span
           className={cn(
             'rounded-lg bg-muted px-2 py-1 text-foreground',
-            'transition-colors hover:cursor-pointer hover:text-muted-foreground',
+            'transition-colors hover:text-muted-foreground',
             props.className
           )}
           onClick={async () => {

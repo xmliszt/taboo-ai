@@ -14,7 +14,7 @@ export function ProfileAlertInfo() {
       <AlertTitle className='leading-snug'>
         <X
           size={15}
-          className='absolute right-2 top-2 transition-transform duration-200 ease-in-out hover:rotate-180 hover:scale-125 hover:cursor-pointer'
+          className='absolute right-2 top-2 transition-transform duration-200 ease-in-out hover:rotate-180 hover:scale-125'
           onClick={() => {
             setHideAlert(true);
           }}

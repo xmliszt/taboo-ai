@@ -73,6 +73,11 @@ body > main {
   @apply w-full flex-grow overflow-y-auto scroll-smooth;
 }
 
+button,
+a {
+  @apply cursor-default;
+}
+
 @layer base {
   * {
     @apply border-border;
