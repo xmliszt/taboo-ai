@@ -7,9 +7,9 @@ import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array
 
 export default async function HomePage() {
   return (
-    <main className='flex flex-col items-center px-8'>
+    <main className='flex flex-col items-center justify-between px-8'>
       <Script id='pwa-script' src='/js/pwa.js' />
-      <section className='flex w-full flex-col items-center justify-center gap-2 pb-4 pt-8'>
+      <section className='flex w-full grow flex-col items-center justify-center gap-2 pb-4 pt-8'>
         <div className='relative'>
           <h1 data-testid='heading-title' className='text-center text-7xl drop-shadow-lg'>
             Taboo AI

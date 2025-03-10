@@ -73,16 +73,16 @@ export default function FeaturePopup() {
         <ScrollArea className='w-full px-4'>
           <article data-testid='content-article' className='h-full py-8 leading-snug'>
             <FeaturePopupContent />
-            <div className='sticky bottom-4 flex w-full justify-center px-2'>
-              <SocialLinkButton
-                content='Join Discord Community'
-                icon={<BsDiscord />}
-                href='https://discord.gg/dgqs29CHC2'
-                newTab={true}
-              />
-            </div>
           </article>
         </ScrollArea>
+        <div className='sticky bottom-4 flex w-full justify-center px-2'>
+          <SocialLinkButton
+            content='Join Discord Community'
+            icon={<BsDiscord />}
+            href='https://discord.gg/dgqs29CHC2'
+            newTab={true}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );
