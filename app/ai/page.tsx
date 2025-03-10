@@ -1,9 +1,9 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { PenTool, SpellCheck2 } from 'lucide-react';
+import { PenTool } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { generateAITopic } from '@/app/ai/server/generate-ai-topic';
@@ -12,7 +12,6 @@ import { useAuth } from '@/components/auth-provider';
 import { HoverPerspectiveContainer } from '@/components/custom/common/hover-perspective-container';
 import { SignInReminderProps } from '@/components/custom/globals/sign-in-reminder-dialog';
 import { Spinner } from '@/components/custom/spinner';
-import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,12 +21,12 @@ import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { HASH } from '@/lib/hash';
 import { setPersistence } from '@/lib/persistence/persistence';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export default function AiPage() {
   useAskForFeedback();
   const [topic, setTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('1');
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { user } = useAuth();
@@ -52,27 +51,22 @@ export default function AiPage() {
         const level = await generateAITopic(topic, Number(difficulty));
         if (level) {
           if (level.words.length < CONSTANTS.numberOfQuestionsPerGame) {
-            return setErrorMessage(CONSTANTS.errors.aiModeTopicTooFew);
+            return toast.error(CONSTANTS.errors.aiModeTopicTooFew);
           }
           setPersistence(HASH.level, level);
           router.push('/level/ai');
         } else {
-          setErrorMessage(CONSTANTS.errors.overloaded);
+          toast.error(CONSTANTS.errors.overloaded);
         }
       } catch (error) {
         console.error(error);
-        setErrorMessage('Something went wrong. Please try again!');
+        toast.error('Something went wrong. Please try again!');
       } finally {
         setIsLoading(false);
       }
     } else {
-      setErrorMessage('Topic cannot be blank.');
+      toast.error('Topic cannot be blank.');
     }
-  };
-
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTopic(event.target.value);
-    setErrorMessage(undefined);
   };
 
   return (
@@ -113,12 +107,6 @@ export default function AiPage() {
             ></div>
           </HoverPerspectiveContainer>
         </div>
-        {errorMessage !== undefined && (
-          <Alert className='mb-8 max-w-xl animate-fade-in border-red-500 text-center font-extrabold text-red-500'>
-            <SpellCheck2 color='red' />
-            <AlertTitle className='leading-snug'>{errorMessage}</AlertTitle>
-          </Alert>
-        )}
         <form onSubmit={submitForm}>
           <div className='flex max-w-xl flex-col items-center justify-center gap-y-8'>
             <div className='flex flex-col items-center justify-center gap-y-2'>
@@ -129,7 +117,7 @@ export default function AiPage() {
                 id='topicInput'
                 type='text'
                 value={topic}
-                onChange={onInputChange}
+                onChange={(event) => setTopic(event.target.value)}
                 placeholder='Enter a topic: e.g. planets'
                 maxLength={50}
                 disabled={isLoading}
@@ -137,11 +125,10 @@ export default function AiPage() {
               />
               <label
                 htmlFor='topicInput'
-                className='text-center text-xs leading-normal text-muted-foreground'
+                className='text-xs leading-normal text-muted-foreground'
                 aria-label='AI Mode Explanation'
               >
-                Enter a topic and Taboo AI will generate a list of words for you to guess. The
-                difficulty level will determine how easy or hard the words are.
+                Enter a topic and Taboo AI will generate a list of words for you to guess.
               </label>
             </div>
             <div className='flex w-full flex-col items-end gap-y-2'>

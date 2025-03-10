@@ -3,13 +3,11 @@
 import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { AlignJustify, Construction, LogOut, PenTool, User } from 'lucide-react';
+import { AlignJustify, Construction, LogIn, LogOut, PenTool, User } from 'lucide-react';
 import { toast } from 'sonner';
-
 import { useAuth } from '@/components/auth-provider';
 import { signOut } from '@/components/header/server/sign-out';
 import { Button } from '@/components/ui/button';
-import { useLogSnag } from '@/lib/logsnag/use-controlled-logsnag';
 import { cn } from '@/lib/utils';
 
 import {
@@ -35,7 +33,6 @@ export function UserSignInPortal() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
-  const { setUserId, identify, track } = useLogSnag();
 
   useEffect(() => {
     if (user && !hasGreeted) {
@@ -44,27 +41,6 @@ export function UserSignInPortal() {
       } else {
         toast(`Welcome back, ${user.nickname ?? user.name}!`);
       }
-      setUserId(user.id);
-      identify({
-        user_id: user.id,
-        properties: {
-          email: user.email,
-          name: user.name,
-          nickname: user.nickname ?? 'no nickname',
-          photo_url: user.photo_url ?? 'no photo',
-          first_login_at: user.first_login_at,
-          last_login_at: user.last_login_at,
-        },
-      });
-      track({
-        channel: 'auth',
-        event: 'login',
-        user_id: user.id,
-        icon: '👋',
-        tags: {
-          env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'no env identified',
-        },
-      });
       hasGreeted = true;
     }
   }, [user]);
@@ -77,16 +53,6 @@ export function UserSignInPortal() {
     try {
       await signOut();
       toast(`Bye bye, ${user?.nickname ?? user?.name}! 👋`);
-      user &&
-        track({
-          channel: 'auth',
-          event: 'logout',
-          user_id: user.id,
-          icon: '👋',
-          tags: {
-            env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'no env identified',
-          },
-        });
       hasGreeted = false;
       setTimeout(() => {
         window.location.href = '/';
@@ -178,9 +144,9 @@ export function UserSignInPortal() {
       <button
         aria-label='Click to sign in'
         onClick={handleSignIn}
-        className='h-[32px] px-3 py-1 text-foreground transition-colors hover:text-foreground/70'
+        className='h-[32px] px-3 py-1 text-sm text-foreground transition-colors hover:text-foreground/70'
       >
-        Sign in
+        <LogIn className='size-4' />
       </button>
     </div>
   );

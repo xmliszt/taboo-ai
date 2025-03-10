@@ -27,17 +27,20 @@ export function HomeMenuButton({
   const router = useRouter();
 
   return (
-    <div className='group relative select-none rounded-lg shadow-lg transition-all ease-in-out hover:scale-[1.02]'>
+    <div className='group relative select-none rounded-lg shadow-lg transition-all ease-in-out'>
       <Alert
         aria-label={ariaLabel}
+        className='[&_svg]:size-5'
         onClick={(e) => {
           onClick && onClick(e);
           href && router.push(href);
         }}
       >
         {icon}
-        <AlertTitle className='font-bold'>{title}</AlertTitle>
-        <AlertDescription>{subtitle}</AlertDescription>
+        <AlertTitle className='line-clamp-1 text-sm font-medium'>{title}</AlertTitle>
+        <AlertDescription className='line-clamp-2 text-xs font-normal text-muted-foreground'>
+          {subtitle}
+        </AlertDescription>
       </Alert>
       <div
         className={cn(

@@ -60,7 +60,7 @@ export default function Header() {
     <header
       id='header-section'
       className={cn(
-        'flex h-16 w-full flex-row items-center justify-between gap-2 p-4 text-center',
+        'flex h-12 w-full flex-row items-center justify-between gap-2 p-4 text-center',
         'border-b bg-card'
       )}
     >
@@ -74,7 +74,7 @@ export default function Header() {
         <Link href='/'>
           <h1
             data-testid='heading-rule-title'
-            className='max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-center text-base'
+            className='max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-normal'
           >
             {title}
           </h1>
@@ -82,7 +82,7 @@ export default function Header() {
       ) : (
         <h1
           data-testid='heading-rule-title'
-          className='relative flex items-center gap-2 whitespace-nowrap text-center text-lg'
+          className='relative flex items-center gap-2 whitespace-nowrap text-center text-sm font-normal'
         >
           {title}
           {pathname !== '/' && (

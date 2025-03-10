@@ -183,10 +183,12 @@ export default function SideMenu() {
       >
         <SheetHeader>
           <SheetTitle>Menu</SheetTitle>
-          <SheetDescription>Explore the various functionalities of Taboo AI!</SheetDescription>
+          <SheetDescription className='text-xs'>
+            Explore the various functionalities of Taboo AI!
+          </SheetDescription>
         </SheetHeader>
         <Separator className='mt-2' />
-        <div className='flex h-full flex-col gap-4 overflow-y-scroll p-4 pb-16 scrollbar-hide'>
+        <div className='flex h-full flex-col gap-4 overflow-y-scroll px-2 pb-16 pt-4 scrollbar-hide'>
           {menuItems.map((item, idx) =>
             item.title === 'separator' ? (
               <Separator key={`sep-${idx}`} />
@@ -196,9 +198,7 @@ export default function SideMenu() {
                   key={`menu-${item.path}`}
                   idx={idx}
                   item={item}
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
+                  onClick={() => setIsOpen(false)}
                   cta={item.cta}
                 />
               )
@@ -217,7 +217,7 @@ export default function SideMenu() {
             Feedback to us <Mail className='ml-2 size-3' />{' '}
           </Button>
           <Separator />
-          <article className='flex flex-col gap-1 py-1'>
+          <article className='flex flex-col gap-1 py-1 [&_a]:text-sm [&_a]:font-normal [&_a]:no-underline'>
             <Link
               className='group'
               href={'/privacy-policy'}
@@ -226,7 +226,7 @@ export default function SideMenu() {
               }}
             >
               Privacy policy{' '}
-              <BiMask className='ml-2 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]' />
+              <BiMask className='ml-1 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]' />
             </Link>
             <Link
               className='group'
@@ -236,7 +236,7 @@ export default function SideMenu() {
               }}
             >
               Cookie policy{' '}
-              <BiCookie className='ml-2 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]' />
+              <BiCookie className='ml-1 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]' />
             </Link>
             <Link
               className='group'
@@ -248,7 +248,7 @@ export default function SideMenu() {
               Terms & conditions{' '}
               <Handshake
                 size={14}
-                className='ml-2 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]'
+                className='ml-1 inline-block transition-transform ease-in-out group-hover:rotate-[30deg]'
               />
             </Link>
             <Link
@@ -259,7 +259,7 @@ export default function SideMenu() {
               }}
             >
               Sitemap{' '}
-              <BiMapAlt className='ml-2 inline-block transition-transform ease-in-out group-hover/sitemap:rotate-[30deg]' />
+              <BiMapAlt className='ml-1 inline-block transition-transform ease-in-out group-hover/sitemap:rotate-[30deg]' />
             </Link>
 
             <div className='flex items-center justify-end gap-x-1'>

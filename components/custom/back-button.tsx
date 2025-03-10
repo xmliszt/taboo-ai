@@ -17,6 +17,8 @@ export function BackButton({ customBackHref }: BackButtonProps) {
       onClick={() => {
         customBackHref ? router.push(customBackHref) : router.back();
       }}
+      variant='link'
+      className='[&_svg]:size-5'
     >
       <ArrowLeft />
     </IconButton>

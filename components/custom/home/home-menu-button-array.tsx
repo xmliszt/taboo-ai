@@ -48,8 +48,7 @@ export default function HomeMenuButtonArray() {
         // eslint-disable-next-line react/jsx-no-undef
         icon: <CircleUser size={20} />,
         title: 'Sign in',
-        subtitle:
-          'Unlock personal profile, saved game history, join hall of fame, contribute new topics, game statistics, and more!',
+        subtitle: 'Sign in to access your profile, game history, and contribute new topics!',
         ariaLabel: 'Click to sign in',
         onClick: handleSignIn,
         visible: user === undefined,
@@ -107,7 +106,7 @@ export default function HomeMenuButtonArray() {
   );
 
   return (
-    <section className='mx-4 mb-2 mt-4 flex max-w-[400px] flex-col gap-y-6'>
+    <section className='mx-auto mb-2 mt-4 flex max-w-[320px] flex-col gap-y-6'>
       {homeMenuButtonData.map(
         (data) =>
           data.visible && (

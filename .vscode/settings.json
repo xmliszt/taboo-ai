@@ -4,7 +4,10 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "css.lint.unknownAtRules": "ignore",
   "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": ["source.fixAll.format", "source.fixAll.eslint"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.format": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
   "eslint.workingDirectories": [
     {
       "mode": "auto"
@@ -16,8 +19,6 @@
     "javascriptreact",
     "typescriptreact"
   ],
-  "coverage-gutters.showGutterCoverage": true,
-  "coverage-gutters.showLineCoverage": true,
   "[mdx]": {
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "editor.unicodeHighlight.invisibleCharacters": false,

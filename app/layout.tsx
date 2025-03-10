@@ -1,8 +1,6 @@
-/* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import { Metadata, Viewport } from 'next';
 import { Lora } from 'next/font/google';
 import Script from 'next/script';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AnalyticsProvider } from '@/components/analytics-provider';
 import FeaturePopup from '@/components/custom/globals/feature-popup/feature-popup';
@@ -16,7 +14,6 @@ import './markdown.css';
 import './globals.css';
 
 import React from 'react';
-import { LogSnagProvider } from '@logsnag/next';
 
 import { AuthProvider } from '@/components/auth-provider';
 import { AskForFeedbackDialog } from '@/components/custom/ask-for-feedback-auto-dialog';
@@ -57,9 +54,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning>
-        <head>
-          <LogSnagProvider token={process.env.NEXT_PUBLIC_LOGSNAG_TOKEN!} project='taboo-ai' />
-        </head>
         <Script id='pwa-script' src='/js/pwa.js' />
         <body className={`${font.className}`} suppressHydrationWarning>
           <AuthProvider user={user}>
@@ -84,7 +78,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </AuthProvider>
           <Toaster />
           <AnalyticsProvider />
-          <SpeedInsights />
         </body>
       </html>
     </ReactQueryProvider>

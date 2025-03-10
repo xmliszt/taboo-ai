@@ -20,7 +20,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         className={cn(className, 'h-[32px] w-[32px] p-1', 'group/icon-button')}
       >
         <div
-          className='transition-transform ease-in-out group-hover/icon-button:scale-110'
+          className='transition-transform ease-in-out group-hover/icon-button:scale-[1.02]'
           id='icon-wrapper'
         >
           {children}

@@ -43,9 +43,9 @@ export default function AccessLinkCard({
       className={cn(
         'select-none',
         item.highlight ? 'border-green-500' : '',
-        pathname === item.path ? '!border-2 border-primary font-bold' : 'border',
+        pathname === item.path ? '!border-2 border-primary' : 'border',
         item.isUpcoming && 'opacity-20',
-        'group relative rounded-lg transition-all ease-in-out hover:scale-[1.02] hover:shadow-lg',
+        'group relative rounded-lg transition-all ease-in-out hover:shadow-lg',
         className
       )}
       onClick={(e) => {
@@ -58,10 +58,10 @@ export default function AccessLinkCard({
       }}
     >
       <Card key={`menu-${item.path}`} id={`menu-${idx}`} className='z-10 border-none'>
-        <CardHeader>
+        <CardHeader className='p-4'>
           {item.isUpcoming === true ? <Construction /> : icon}
-          <CardTitle>{item.title}</CardTitle>
-          <CardDescription>
+          <CardTitle className='text-lg font-medium'>{item.title}</CardTitle>
+          <CardDescription className='text-xs font-normal text-muted-foreground'>
             {item.isUpcoming
               ? 'Taboo AI is still developing this feature for you. Stay tuned for more updates!'
               : item.subtitle}

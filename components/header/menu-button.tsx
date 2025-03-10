@@ -10,9 +10,9 @@ export function MenuButton() {
   return (
     <IconButton
       tooltip='Open menu'
-      onClick={() => {
-        EventManager.fireEvent<boolean>(CustomEventKey.TOGGLE_MENU, true);
-      }}
+      onClick={() => EventManager.fireEvent<boolean>(CustomEventKey.TOGGLE_MENU, true)}
+      variant='link'
+      className='[&_svg]:size-5'
     >
       <Menu />
     </IconButton>

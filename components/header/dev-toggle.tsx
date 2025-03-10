@@ -115,7 +115,7 @@ const DevToggle = () => {
   return user && user?.is_dev ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton tooltip='Open dev menu'>
+        <IconButton tooltip='Open dev menu' variant='link' className='[&_svg]:size-5'>
           <Bot />
         </IconButton>
       </DropdownMenuTrigger>
