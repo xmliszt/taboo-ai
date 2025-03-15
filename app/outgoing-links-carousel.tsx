@@ -87,9 +87,9 @@ export function OutgoingLinksCarousel() {
       </Carousel>
 
       {/* Left blur overlay */}
-      <div className='pointer-events-none absolute left-0 top-0 z-10 h-full w-16 mix-blend-color-dodge backdrop-blur-md [mask-image:linear-gradient(to_right,black,transparent)]'></div>
+      <div className='pointer-events-none absolute left-0 top-0 z-10 h-full w-16 backdrop-blur-[6px] [mask-image:linear-gradient(to_right,black,transparent)]'></div>
       {/* Right blur overlay */}
-      <div className='pointer-events-none absolute right-0 top-0 z-10 h-full w-16 mix-blend-color-dodge backdrop-blur-md [mask-image:linear-gradient(to_left,black,transparent)]'></div>
+      <div className='pointer-events-none absolute right-0 top-0 z-10 h-full w-16 backdrop-blur-[6px] [mask-image:linear-gradient(to_left,black,transparent)]'></div>
     </div>
   );
 }

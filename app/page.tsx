@@ -8,14 +8,12 @@ export default async function HomePage() {
     <main className='flex flex-col items-center justify-between'>
       <Script id='pwa-script' src='/js/pwa.js' />
       <section className='flex w-full grow flex-col items-center justify-center gap-2 px-8 pb-4 pt-8'>
-        <div className='relative'>
-          <h1
-            data-testid='heading-title'
-            className='select-none truncate text-center text-6xl font-extrabold drop-shadow-lg'
-          >
-            Taboo AI
-          </h1>
-        </div>
+        <h1
+          data-testid='heading-title'
+          className='line-clamp-1 select-none text-center text-6xl font-extrabold drop-shadow-lg'
+        >
+          Taboo AI
+        </h1>
         <HomeMenuButtonArray />
       </section>
       <footer className='w-full pb-6 text-center text-xs leading-tight text-muted-foreground'>
