@@ -5,20 +5,20 @@ import HomeMenuButtonArray from '@/components/custom/home/home-menu-button-array
 
 export default async function HomePage() {
   return (
-    <main className='flex flex-col items-center justify-between px-8'>
+    <main className='flex flex-col items-center justify-between'>
       <Script id='pwa-script' src='/js/pwa.js' />
-      <section className='flex w-full grow flex-col items-center justify-center gap-2 pb-4 pt-8'>
+      <section className='flex w-full grow flex-col items-center justify-center gap-2 px-8 pb-4 pt-8'>
         <div className='relative'>
           <h1
             data-testid='heading-title'
-            className='select-none truncate text-center text-6xl font-medium drop-shadow-lg'
+            className='select-none truncate text-center text-6xl font-extrabold drop-shadow-lg'
           >
             Taboo AI
           </h1>
         </div>
         <HomeMenuButtonArray />
       </section>
-      <footer className='w-full max-w-xl px-4 pb-6 text-center text-xs leading-tight text-muted-foreground'>
+      <footer className='w-full pb-6 text-center text-xs leading-tight text-muted-foreground'>
         <OutgoingLinksCarousel />
       </footer>
     </main>

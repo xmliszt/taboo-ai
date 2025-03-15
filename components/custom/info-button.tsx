@@ -29,9 +29,9 @@ export const InfoButton = ({
           <HelpCircle size={size} />
         </IconButton>
       </PopoverTrigger>
-      <PopoverContent className='bg-muted leading-snug text-card-foreground'>
-        <h4 className='text-lg font-bold'>{title}</h4>
-        <p className='text-base leading-tight'>{description}</p>
+      <PopoverContent className='flex flex-col gap-y-2 bg-muted text-xs leading-snug text-card-foreground'>
+        <h4 className='text-sm'>{title}</h4>
+        <p className='text-xs leading-tight text-muted-foreground'>{description}</p>
       </PopoverContent>
     </Popover>
   );

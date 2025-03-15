@@ -106,7 +106,7 @@ export default function HomeMenuButtonArray() {
   );
 
   return (
-    <section className='mx-auto mb-2 mt-4 flex max-w-[320px] flex-col gap-y-6'>
+    <section className='mx-auto mb-2 mt-4 flex max-w-[320px] flex-col gap-y-4'>
       {homeMenuButtonData.map(
         (data) =>
           data.visible && (

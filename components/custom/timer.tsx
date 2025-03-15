@@ -17,7 +17,7 @@ export default function Timer({ time, status, className = '' }: TimerProps) {
       id='timer'
       className={cn(
         className,
-        'rounded-md border-2 border-primary px-2 py-1 text-xl transition-colors ease-in-out',
+        'rounded-md border-2 border-primary px-2 py-1 text-sm transition-colors ease-in-out',
         time > 100
           ? 'bg-red-400  text-primary'
           : time > 50

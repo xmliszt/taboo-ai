@@ -33,12 +33,16 @@ export default function SignInPage(props: SignInPageProps) {
       <Card className='w-96'>
         <CardHeader>
           <CardTitle>Sign in to Taboo AI</CardTitle>
-          <CardDescription>
+          <CardDescription className='text-sm'>
             Sign in to Taboo AI to access your account and start playing.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button className='w-full grow text-center' variant='outline' onClick={handleSignIn}>
+          <Button
+            className='w-full grow text-center font-normal'
+            variant='outline'
+            onClick={handleSignIn}
+          >
             <BsGoogle className='mr-2' />
             Sign in with Google
           </Button>

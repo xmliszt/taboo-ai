@@ -56,7 +56,7 @@ export function NicknameEditor(props: NicknameEditorProps) {
       />
       <label
         htmlFor='nickname-edit-input'
-        className='font-extra flex flex-row items-center gap-2 text-sm italic text-muted-foreground'
+        className='font-extra flex flex-row items-center gap-2 text-xs text-muted-foreground'
       >
         {isNicknameUpdating && <Spinner size={12} />} {isMobile || isTablet ? 'Tap' : 'Click'} to
         edit nickname

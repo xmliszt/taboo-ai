@@ -67,6 +67,8 @@ body {
 
 body {
   @apply flex h-full w-full flex-col;
+
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted)));
 }
 
 body > main {
@@ -159,7 +161,7 @@ textarea {
 .rotating-golden-border-trace::after {
   content: '';
   position: absolute;
-  inset: -0.1rem;
+  inset: -1px;
   z-index: 0;
   background: conic-gradient(
     from var(--gradient-angle),
@@ -179,7 +181,7 @@ textarea {
 .rotating-mono-border-trace::after {
   content: '';
   position: absolute;
-  inset: -0.1rem;
+  inset: -2px;
   z-index: 0;
   background: conic-gradient(
     from var(--gradient-angle),
@@ -195,7 +197,7 @@ textarea {
 .rotating-green-border-trace::after {
   content: '';
   position: absolute;
-  inset: -0.1rem;
+  inset: -2px;
   z-index: 0;
   background: conic-gradient(from var(--gradient-angle), #42eca6, #208ea2, #42eca6);
   border-radius: inherit;
@@ -206,7 +208,7 @@ textarea {
 .unicorn-color::after {
   content: '';
   position: absolute;
-  inset: -0.2rem;
+  inset: -2px;
   z-index: -1;
   border-radius: inherit;
   animation: rotating 5s linear infinite forwards;

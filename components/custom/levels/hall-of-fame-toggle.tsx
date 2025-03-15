@@ -19,12 +19,12 @@ export function HallOfFameToggle() {
         else newSearchParams.set('rank', 'true');
         router.replace(`${pathname}?${newSearchParams}`);
       }}
-      className='group relative z-10 h-6 rounded-full border text-xs font-bold shadow-lg transition-transform ease-in-out hover:scale-105'
+      className='group relative z-10 h-6 rounded-sm border text-xs transition-transform ease-in-out hover:scale-105'
     >
-      <div className='h-full w-full rounded-full bg-background px-2 py-1'>HALL OF FAME</div>
+      <div className='h-full w-full rounded-sm bg-background px-2 py-1'>HALL OF FAME</div>
       <span
         className={cn(
-          'rotating-golden-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg transition-[transform_opacity] ease-out after:blur-lg group-hover:opacity-100',
+          'rotating-golden-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-sm transition-[transform_opacity] ease-out after:blur-sm group-hover:opacity-100',
           isToggledOn ? 'opacity-100' : 'opacity-0'
         )}
       />

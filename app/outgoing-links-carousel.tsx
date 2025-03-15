@@ -21,7 +21,7 @@ export function OutgoingLinksCarousel() {
         <CarouselContent>
           <CarouselItem key={1} className='flex items-center justify-center'>
             <a
-              className='rounded-md transition-all hover:scale-[1.02] hover:opacity-70'
+              className='rounded-md shadow-lg transition-all hover:scale-[1.02] hover:opacity-70'
               href='https://www.producthunt.com/posts/taboo-ai?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
               target='_blank'
             >
@@ -35,7 +35,7 @@ export function OutgoingLinksCarousel() {
           </CarouselItem>
           <CarouselItem key={2} className='flex items-center justify-center'>
             <a
-              className='rounded-md transition-all hover:scale-[1.02] hover:opacity-70'
+              className='rounded-md shadow-lg transition-all hover:scale-[1.02] hover:opacity-70'
               href='https://www.producthunt.com/posts/taboo-ai?utm_source=badge-top-post-topic-badge&utm_medium=badge&utm_souce=badge-taboo&#0045;ai'
               target='_blank'
             >
@@ -49,7 +49,7 @@ export function OutgoingLinksCarousel() {
           </CarouselItem>
           <CarouselItem key={3} className='flex items-center justify-center'>
             <a
-              className='rounded-md transition-all hover:scale-[1.02] hover:opacity-70'
+              className='rounded-md shadow-lg transition-all hover:scale-[1.02] hover:opacity-70'
               href='https://theresanaiforthat.com/ai/taboo-ai/?ref=embed'
               target='_blank'
               rel='noreferrer'
@@ -73,7 +73,7 @@ export function OutgoingLinksCarousel() {
               target={'_blank'}
             >
               <div className='flex items-center justify-center px-4 py-4 md:px-24'>
-                <div className='flex flex-col gap-y-2 rounded-md border bg-secondary p-4 text-center text-secondary-foreground'>
+                <div className='flex flex-col gap-y-2 rounded-md border bg-secondary p-4 text-center text-secondary-foreground shadow-md'>
                   <div className='line-clamp-2 text-xs text-muted-foreground'>
                     This Online &quot;Taboo&quot; Game Using Artificial Intelligence Is Fun & Can Be
                     A Language Learning Tool For ELLs
@@ -86,10 +86,10 @@ export function OutgoingLinksCarousel() {
         </CarouselContent>
       </Carousel>
 
-      {/* Left gradient overlay */}
-      <div className='pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-background to-transparent'></div>
-      {/* Right gradient overlay */}
-      <div className='pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-background to-transparent'></div>
+      {/* Left blur overlay */}
+      <div className='pointer-events-none absolute left-0 top-0 z-10 h-full w-16 mix-blend-color-dodge backdrop-blur-md [mask-image:linear-gradient(to_right,black,transparent)]'></div>
+      {/* Right blur overlay */}
+      <div className='pointer-events-none absolute right-0 top-0 z-10 h-full w-16 mix-blend-color-dodge backdrop-blur-md [mask-image:linear-gradient(to_left,black,transparent)]'></div>
     </div>
   );
 }

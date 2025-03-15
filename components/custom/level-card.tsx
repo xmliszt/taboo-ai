@@ -124,7 +124,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
           </div>
           {level?.top_scorer_names && (
             <div className='flex flex-col items-center gap-2'>
-              <div className='font-bold text-yellow-400'>
+              <div className='text-yellow-400'>
                 {pluralize('CHAMPION', level.top_scorer_names.length, false)}
               </div>
               <div className='text-2xl font-extrabold'>{level.top_scorer_names.join(' & ')}</div>
@@ -135,9 +135,9 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
     } else {
       return (
         <section className='flex animate-pulse flex-col items-center gap-4'>
-          <p className='text-center leading-tight'>
-            This topic awaits its <b className='text-yellow-400'>champion</b>, and it could be you!
-            This is your chance to claim the title of highest scorer!
+          <p className='text-center text-sm leading-tight'>
+            This topic awaits its <span className='text-yellow-400'>champion</span>, and it could be
+            you! This is your chance to claim the title of highest scorer!
           </p>
         </section>
       );
@@ -145,7 +145,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
   };
 
   return (
-    <HoverPerspectiveContainer className={'group/level-card relative'}>
+    <HoverPerspectiveContainer className={'group/level-card relative select-none'}>
       <Card
         onPointerDown={() => {
           setPointHasDown(true);
@@ -159,7 +159,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
         className={cn(
           'z-10',
           isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
-            ? '!shadow-[0px_0px_20px_3px_rgba(255,204,51,1)]'
+            ? '!shadow-[0px_0px_10px_1px_rgba(255,204,51,1)]'
             : '',
           'relative flex flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]  ',
           'w-full xs:w-[200px]',
@@ -191,14 +191,14 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
       {isAIMode ? (
         <span
           className={cn(
-            'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-lg',
+            'unicorn-color absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-sm',
             'group-hover/level-card:scale-[1.02]'
           )}
         ></span>
       ) : level.is_new && !isHallOfFameOn ? (
         <span
           className={cn(
-            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-[4px]',
+            'rotating-green-border-trace absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-card transition-transform ease-in-out after:blur-sm',
             'group-hover/level-card:scale-[1.02]'
           )}
         ></span>

@@ -60,7 +60,7 @@ export default function AccessLinkCard({
       <Card key={`menu-${item.path}`} id={`menu-${idx}`} className='z-10 border-none'>
         <CardHeader className='p-4'>
           {item.isUpcoming === true ? <Construction /> : icon}
-          <CardTitle className='text-lg font-medium'>{item.title}</CardTitle>
+          <CardTitle className='text-lg font-semibold'>{item.title}</CardTitle>
           <CardDescription className='text-xs font-normal text-muted-foreground'>
             {item.isUpcoming
               ? 'Taboo AI is still developing this feature for you. Stay tuned for more updates!'

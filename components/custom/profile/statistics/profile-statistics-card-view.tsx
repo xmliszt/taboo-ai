@@ -19,7 +19,8 @@ export async function ProfileStatisticsCardView() {
         className={cn(
           'flex w-full snap-proximity flex-row gap-4 rounded-lg border p-4 leading-snug',
           'snap-x flex-nowrap items-stretch overflow-x-auto',
-          'lg:max-h-[500px] lg:snap-y lg:flex-wrap lg:items-start lg:justify-start lg:overflow-y-auto'
+          'lg:max-h-[500px] lg:snap-y lg:flex-wrap lg:items-start lg:justify-start lg:overflow-y-auto',
+          '[&_*]:select-none'
         )}
       >
         {stats.bestPerformedLevel?.level_name && (

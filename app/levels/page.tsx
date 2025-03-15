@@ -35,9 +35,7 @@ export default async function LevelsPage(props: LevelsPageProps) {
   return (
     <section className='flex h-full w-full flex-col overflow-y-hidden'>
       <FeedbackAutoLoader />
-      <div className='h-30 w-full border border-b-primary bg-card px-4 py-4 lg:px-12'>
-        <LevelsSearchBar topicNumber={filteredLevels.length} />
-      </div>
+      <LevelsSearchBar topicNumber={filteredLevels.length} />
       <LevelsScrollArea>
         {/* AI Mode Card */}
         <LevelCard />

@@ -155,6 +155,9 @@ module.exports = {
           '100%': { backgroundPosition: '0% 50%' },
         },
       },
+      blur: {
+        sm: '2px',
+      },
     },
   },
   plugins: [require('tailwindcss-animate'), require('tailwind-scrollbar-hide')],

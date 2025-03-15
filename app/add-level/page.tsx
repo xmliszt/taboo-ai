@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { zip } from 'lodash';
-import { ChevronsUp, Info, Plus, SpellCheck, Trash } from 'lucide-react';
+import { ChevronsUp, Info, SpellCheck, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAskForFeedback } from '@/components/ask-for-feedback-provider';
@@ -437,11 +437,12 @@ const AddLevelPage = () => {
         onScroll={onScrollChange}
       >
         <CardContent className='p-6 pt-2'>
-          <div className='mt-2 text-sm leading-snug text-muted-foreground'>
+          <div className='mt-2 text-xs leading-snug text-muted-foreground'>
             You can create your custom topics here! Fill up the fields below and submit your topics.
             Your topic will be reviewed and uploaded to Taboo AI within 3 working days!{' '}
             <span>
               <InfoButton
+                className='absolute right-0 top-0'
                 size={15}
                 tooltip='Read about Taboo AI content policy'
                 title='Taboo AI content policy'
@@ -460,7 +461,7 @@ const AddLevelPage = () => {
             </span>
           </div>
           <div className='mt-4 flex flex-col gap-1'>
-            <Label className='text-lg' htmlFor='input-topicName'>
+            <Label className='text-md' htmlFor='input-topicName'>
               1. Topic name
             </Label>
             <div className='relative w-full'>
@@ -472,7 +473,7 @@ const AddLevelPage = () => {
                     : topicName.length > 0
                       ? '!border-green-500'
                       : '!border-border',
-                  'w-full pr-[40px]'
+                  'w-full pr-[40px] text-sm'
                 )}
                 value={topicName}
                 placeholder='Name for your topic...'
@@ -491,11 +492,11 @@ const AddLevelPage = () => {
               <p className='my-1 animate-fade-in text-xs text-red-500'>{topicNameErrorMessage}</p>
             )}
             <Separator className='mb-1 mt-2' />
-            <Label className='text-lg'>2. Assess the difficulty level for your topic</Label>
+            <Label className='text-md'>2. Assess the difficulty level for your topic</Label>
             <RadioGroup
               onValueChange={setDifficultyLevel}
               value={difficultyLevel}
-              className='flex flex-row items-center gap-2'
+              className='mt-2 flex flex-row items-center gap-2'
             >
               <div className='flex flex-row items-center gap-2'>
                 <RadioGroupItem id='diff-1' value='1' />
@@ -512,26 +513,27 @@ const AddLevelPage = () => {
             </RadioGroup>
             <Separator className='mb-1 mt-2' />
             <div className='flex flex-col gap-2'>
-              <div className='flex flex-row items-center justify-between'>
+              <div className='flex flex-row items-center justify-between gap-x-4'>
                 <Label className='mt-2 text-lg text-primary' htmlFor='ai-switch'>
                   3. Use AI to generate taboo words for each target word?
                 </Label>
                 <Switch
                   id='ai-switch'
+                  className='cursor-default'
                   checked={shouldUseAIForTabooWords}
                   onCheckedChange={(checked) => {
                     setShouldUseAIForTabooWords(checked);
                   }}
                 />
               </div>
-              <p className='text-sm leading-tight text-muted-foreground'>
+              <p className='text-xs leading-tight text-muted-foreground'>
                 If turned on, you are not required to create taboo words for each target word that
                 you created. After submission, if your submission passes the review, we will use AI
                 to create the taboo words for you.
               </p>
             </div>
             <Separator className='mb-1 mt-2' />
-            <Label className='text-lg'>
+            <Label className='text-md'>
               4. Give at least 3 target words relevant to the topic provided
             </Label>
             {targetWordsErrorMessage && (
@@ -539,7 +541,7 @@ const AddLevelPage = () => {
             )}
             <div className='my-4 flex w-full flex-row flex-wrap items-center justify-start gap-4'>
               {targetWords.map((w, i) => (
-                <div key={i} className='relative w-full lg:w-52'>
+                <div key={i} className='relative w-full'>
                   <Input
                     autoFocus
                     disabled={tabooWordsCheckingStatus[i]}
@@ -565,33 +567,33 @@ const AddLevelPage = () => {
                     asChild
                     tooltip='Delete'
                     disabled={tabooWordsCheckingStatus[i]}
-                    className='absolute -right-3 -top-4 z-10 rounded-full p-2 shadow-sm'
                     aria-label={`delete this target word with index ${i}`}
-                    variant='destructive'
+                    className='absolute right-1 top-1 z-10 rounded-full p-2'
+                    variant='link'
                     onClick={() => {
                       deleteTargetWordAtIndex(i);
                     }}
                   >
-                    <Trash size={15} />
+                    <X size={12} />
                   </IconButton>
                 </div>
               ))}
               {targetWords.length < MAX_TARGET_WORDS_COUNT && (
-                <IconButton
-                  asChild
-                  tooltip='Add target word'
+                <Button
                   key='add-button'
                   aria-label='add a new target word'
+                  className='w-full rounded-md'
+                  variant='outline'
                   onClick={addNewTargetWord}
                 >
-                  <Plus />
-                </IconButton>
+                  New target word...
+                </Button>
               )}
             </div>
             {!shouldUseAIForTabooWords && (
               <>
                 <Separator className='mb-1 mt-2' />
-                <Label className='text-lg'>
+                <Label className='text-md'>
                   5. For each target word, define at least 5 taboo words
                 </Label>
                 <Accordion
@@ -632,13 +634,13 @@ const AddLevelPage = () => {
                             </b>
                           </div>
                         </AccordionTrigger>
-                        <AccordionContent key={i} className='px-4'>
+                        <AccordionContent key={i} className='px-1'>
                           {tabooWordsCheckingStatus[i] ? (
                             <Skeleton numberOfRows={2} />
                           ) : (
                             <div>
                               {tabooWordsExistedStatus[i] && (
-                                <div className='text-primary'>
+                                <div className='text-xs text-muted-foreground'>
                                   <span>
                                     Taboo words for &quot;{w}&quot; have already been defined in our
                                     system by others. In order to respect the contents created by
@@ -651,7 +653,7 @@ const AddLevelPage = () => {
                                     <PopoverTrigger asChild>
                                       <IconButton
                                         tooltip='How to appeal?'
-                                        className='!m-0 !w-fit !p-0'
+                                        className='inline'
                                         variant='link'
                                       >
                                         <Info size={12} />
@@ -681,7 +683,7 @@ const AddLevelPage = () => {
 
                               <div className='my-4 flex w-full flex-row flex-wrap items-center justify-start gap-4'>
                                 {tabooWords[i].map((tw, ti) => (
-                                  <div key={`taboo-${ti}`} className='relative w-full lg:w-52'>
+                                  <div key={`taboo-${ti}`} className='relative w-full'>
                                     <Input
                                       autoFocus
                                       disabled={tabooWordsExistedStatus[i] ?? false}
@@ -709,15 +711,15 @@ const AddLevelPage = () => {
                                           asChild
                                           tooltip='Delete'
                                           disabled={tabooWordsCheckingStatus[i]}
-                                          className='absolute -right-3 -top-4 z-10 rounded-full p-2 shadow-sm'
+                                          className='absolute right-1 top-1 z-10 rounded-full p-2'
                                           hidden={tabooWordsExistedStatus[i] ?? false}
-                                          variant='destructive'
+                                          variant='link'
                                           aria-label={`delete this target word with index ${i}`}
                                           onClick={() => {
                                             deleteTabooWordAtIndex(i, ti);
                                           }}
                                         >
-                                          <Trash size={15} />
+                                          <X size={12} />
                                         </IconButton>
                                       </>
                                     )}
@@ -726,17 +728,15 @@ const AddLevelPage = () => {
                               </div>
                               {!(tabooWordsExistedStatus[i] ?? false) &&
                                 tabooWords[i].length < MAX_TABOO_WORDS_COUNT && (
-                                  <IconButton
-                                    asChild
-                                    tooltip='Add target word'
+                                  <Button
                                     key='add-button'
-                                    aria-label='add a new target word'
-                                    onClick={() => {
-                                      addNewTabooWord(i);
-                                    }}
+                                    aria-label='add a new taboo word'
+                                    className='w-full rounded-md'
+                                    variant='outline'
+                                    onClick={() => addNewTabooWord(i)}
                                   >
-                                    <Plus />
-                                  </IconButton>
+                                    New taboo word...
+                                  </Button>
                                 )}
                             </div>
                           )}

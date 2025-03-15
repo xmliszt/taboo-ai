@@ -4,7 +4,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import _, { cloneDeep, toLower, uniqueId } from 'lodash';
-import { Eye, EyeOff, SendHorizonal, X } from 'lucide-react';
+import { Loader2, MessageCircleOff, SendHorizonal, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { AsyncReturnType } from 'type-fest';
 import { useTimer } from 'use-timer';
@@ -26,7 +26,6 @@ import IconButton from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { CONSTANTS } from '@/lib/constants';
 import { HASH } from '@/lib/hash';
 import { getPersistence, setPersistence } from '@/lib/persistence/persistence';
@@ -40,6 +39,7 @@ import {
 import { cn } from '@/lib/utils';
 import { getDevMode, isDevMode } from '@/lib/utils/devUtils';
 import { generateHighlights, getMatchedTabooWords } from '@/lib/utils/levelUtils';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type LevelWordsProviderProps = {
   level?: Level;
@@ -87,7 +87,6 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
   const [conversation, setConversation] = useState<ScoreToUpload['conversations']>([]);
   const [isPending, startTransition] = useTransition();
   const [currentEvaluationProgress, setCurrentEvaluationProgress] = useState(0);
-  const [isSurfacingTargetWord, setIsSurfacingTargetWord] = useState(false);
 
   const {
     time,
@@ -506,31 +505,34 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
 
   return (
     <main className='flex justify-center'>
-      <Timer className='fixed right-3 top-3 z-50 shadow-lg' time={time} status={timerStatus} />
+      <Timer className='fixed right-2 top-2 z-50 shadow-sm' time={time} status={timerStatus} />
       <section className='flex h-full w-full flex-col gap-0 text-center'>
         <div className='relative flex w-full flex-grow flex-col gap-4 overflow-y-scroll px-4 py-4 scrollbar-hide'>
           <div
             className={cn(
-              'fixed bottom-0 left-0 right-0 top-0 -z-10 flex h-full w-full items-center justify-center whitespace-pre-wrap text-wrap px-4 py-20 text-5xl font-bold text-muted-foreground opacity-30 sm:text-8xl',
+              'fixed bottom-0 left-0 right-0 top-0 -z-10 flex h-full w-full items-center justify-center whitespace-pre-wrap text-wrap px-4 py-20 text-4xl text-muted-foreground opacity-30 sm:text-6xl',
               isCountingDown ? 'animate-fade-inout-1s-linear' : 'animate-fade-in-for-target-word'
             )}
           >
-            {isGeneratingVariations
-              ? `Your next target word is: ${target}`
-              : isCountingDown
-                ? countdown.time > 0
-                  ? countdown.time
-                  : 'Start'
-                : target}
+            {isGeneratingVariations ? (
+              <div className='flex flex-col items-center justify-center gap-2'>
+                <span>Your next target word is:</span>
+                <span className='font-bold'>{target}</span>
+              </div>
+            ) : isCountingDown ? (
+              countdown.time > 0 ? (
+                countdown.time
+              ) : (
+                'Start'
+              )
+            ) : (
+              <span className='font-bold'>{target}</span>
+            )}
           </div>
           {conversation.map((prompt, idx) => (
             <p
               key={idx}
-              className={cn(
-                prompt.role === 'user' ? 'chat-bubble-right' : 'chat-bubble-left',
-                isSurfacingTargetWord &&
-                  (prompt.role === 'user' ? '!bg-primary-translucent' : '!bg-secondary-translucent')
-              )}
+              className={cn(prompt.role === 'user' ? 'chat-bubble-right' : 'chat-bubble-left')}
             >
               {prompt.role === 'assistant' && idx === conversation.length - 1 ? (
                 isWaitingForAIResponse ? (
@@ -574,42 +576,22 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
           ))}
           <div id='chat-end'></div>
         </div>
-        <section className='relative flex w-full flex-col gap-4 border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
-          {/* Toggle eye button to surface target word */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton
-                onClick={() => {
-                  setIsSurfacingTargetWord((isSurfacingTargetWord) => !isSurfacingTargetWord);
-                }}
-                className={cn(
-                  'absolute -top-16 right-6 z-30',
-                  isSurfacingTargetWord
-                    ? 'opacity-100'
-                    : 'opacity-50 transition-opacity ease-in-out hover:opacity-100'
-                )}
-              >
-                {isSurfacingTargetWord ? <Eye size={20} /> : <EyeOff size={20} />}
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent>
-              {isSurfacingTargetWord ? 'Hide target word below' : 'Show target word below'}
-            </TooltipContent>
-          </Tooltip>
+        <section className='relative flex w-full flex-col gap-y-2 border-t-[1px] border-t-border bg-card text-card-foreground transition-colors'>
           <Progress
             className='h-1 rounded-none'
             value={(currentProgress / CONSTANTS.numberOfQuestionsPerGame) * 100}
           />
           <form autoComplete='off' onSubmit={onUserSubmitInput} className='flex flex-col gap-2'>
-            <div className='relative flex items-center justify-center gap-4 px-4'>
+            <div className='relative flex items-center justify-center gap-x-2 px-4'>
               <IconButton
                 id='clear'
                 type='button'
                 tooltip='Clear input'
                 aria-label='Clear input button'
+                variant='link'
                 asChild
                 disabled={isLoading || isCountingDown || isGeneratingVariations}
-                className='absolute right-20 z-10 !h-[20px] !w-[20px] rounded-full shadow-lg'
+                className='absolute right-[70px] z-10 !h-[20px] !w-[20px] rounded-full bg-transparent'
                 onClick={() => {
                   setUserInput('');
                   inputTextField.current?.focus();
@@ -631,7 +613,7 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                       : `Make AI say "${target}"`
                 }
                 className={cn(
-                  'flex-grow pr-10',
+                  'h-auto flex-grow !py-1.5 pl-2.5 pr-10 !text-sm',
                   userInputMatchedTabooWords.length > 0
                     ? 'bg-red-500 text-primary-foreground'
                     : 'text-primary'
@@ -643,10 +625,8 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                 }}
                 maxLength={150}
               />
-              <IconButton
+              <button
                 id='submit'
-                data-style='none'
-                tooltip='Submit'
                 disabled={
                   isGeneratingVariations ||
                   isCountingDown ||
@@ -655,29 +635,51 @@ export function LevelPageClientWrapper(props: LevelWordsProviderProps) {
                   isLoading
                 }
                 type='submit'
-                className='aspect-square'
+                className='relative aspect-square size-6 transition-all duration-300 hover:scale-110 disabled:opacity-50'
                 aria-label='submit button'
               >
-                <SendHorizonal size={18} />
-              </IconButton>
+                <div className='absolute inset-0 flex items-center justify-center overflow-hidden'>
+                  <AnimatePresence mode='popLayout' initial={false}>
+                    {isLoading ? (
+                      <motion.div
+                        key='send-button-loading'
+                        initial={{ opacity: 0, y: '100px', scale: 0.5 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: '100px', scale: 0.5 }}
+                        transition={{ duration: 0.375, ease: 'easeInOut' }}
+                      >
+                        <Loader2 className='size-[16px] animate-spin' />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key='send-button-send'
+                        initial={{ opacity: 0, y: '-100px', scale: 0.5 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: '-100px', scale: 0.5 }}
+                        transition={{ duration: 0.375, ease: 'easeInOut' }}
+                      >
+                        <SendHorizonal size={16} className='-rotate-90' />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </button>
             </div>
             {userInputError && (
               <Label
                 htmlFor='user-input'
-                className='animate-fade-in px-4 leading-snug text-red-400'
+                className='animate-fade-in self-start px-4 text-xs leading-snug text-red-400'
               >
                 {userInputError}
               </Label>
             )}
           </form>
-          <div className='w-full overflow-x-auto whitespace-nowrap px-4 pb-4 text-sm'>
-            <span>
-              <span className='font-light italic'>Taboos: </span>
-              <span className='text-red-400'>{variations.map(_.startCase).join(', ')}</span>{' '}
-              {isGeneratingVariations && (
-                <span className=''>({renderWaitingMessageForVariations()})</span>
-              )}
-            </span>
+          <div className='flex w-full items-center gap-x-1 overflow-x-auto whitespace-nowrap px-4 pb-4 text-xs'>
+            <MessageCircleOff className='size-3 shrink-0 text-red-400' />
+            <div className='text-red-400'>{variations.map(_.startCase).join(', ')}</div>{' '}
+            {isGeneratingVariations && (
+              <div className='text-muted-foreground'>({renderWaitingMessageForVariations()})</div>
+            )}
           </div>
         </section>
       </section>

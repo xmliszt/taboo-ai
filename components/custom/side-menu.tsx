@@ -17,6 +17,7 @@ import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
 import AccessLinkCard, { MenuItem } from './common/access-link-card';
 import { SignInReminderProps } from './globals/sign-in-reminder-dialog';
+import { cn } from '@/lib/utils';
 
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -173,7 +174,7 @@ export default function SideMenu() {
     >
       <SheetContent
         side='left'
-        className={`${isMobile ? 'w-full' : 'w-auto'}`}
+        className={cn(`${isMobile ? 'w-full' : 'w-auto'}`)}
         onOpenAutoFocus={() => {
           setIsFocused(true);
         }}
@@ -182,7 +183,7 @@ export default function SideMenu() {
         }}
       >
         <SheetHeader>
-          <SheetTitle>Menu</SheetTitle>
+          <SheetTitle className='sr-only'>Menu</SheetTitle>
           <SheetDescription className='text-xs'>
             Explore the various functionalities of Taboo AI!
           </SheetDescription>

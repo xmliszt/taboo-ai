@@ -1,5 +1,5 @@
 import { Metadata, Viewport } from 'next';
-import { Lora } from 'next/font/google';
+import { Mulish } from 'next/font/google';
 import Script from 'next/script';
 
 import { AnalyticsProvider } from '@/components/analytics-provider';
@@ -25,9 +25,9 @@ import { ReactQueryProvider } from '@/components/query-provider';
 
 import { fetchUserProfile } from './profile/server/fetch-user-profile';
 
-const font = Lora({
+const font = Mulish({
   subsets: ['cyrillic', 'cyrillic-ext', 'latin', 'latin-ext'],
-  fallback: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+  fallback: ['Inter', 'Roboto', 'sans-serif'],
   variable: '--font_family_ui',
 });
 

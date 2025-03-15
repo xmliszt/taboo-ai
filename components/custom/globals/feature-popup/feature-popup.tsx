@@ -64,9 +64,9 @@ export default function FeaturePopup() {
   return (
     <Dialog defaultOpen={showFeaturePopup} open={showFeaturePopup} onOpenChange={handleOpenChange}>
       <DialogContent className='h-[90%] w-[95%] grow rounded-lg p-0'>
-        <ScrollArea className='h-full w-full px-4'>
+        <ScrollArea className='h-full w-full px-6'>
           <div className='flex h-full min-h-[calc(100vh-10rem)] flex-col justify-between'>
-            <article data-testid='content-article' className='h-full py-8 leading-snug'>
+            <article data-testid='content-article' className='h-full py-8'>
               <FeaturePopupContent />
             </article>
             <div className='sticky bottom-4 flex w-full justify-center px-2'>
