@@ -14,11 +14,12 @@ import { DisplayUtils } from '@/lib/utils/displayUtils';
 import { getOverallRating } from '@/lib/utils/gameUtils';
 
 import { useAuth } from '../auth-provider';
-import { Badge } from '../ui/badge';
+import { LevelCardBadge } from './level-card-badge';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { HoverPerspectiveContainer } from './common/hover-perspective-container';
 import { SignInReminderProps } from './globals/sign-in-reminder-dialog';
 import { StarRatingBar } from './star-rating-bar';
+import { CircleIcon, BookIcon, UsersIcon } from 'lucide-react';
 
 type LevelCardProps = {
   level?: FetchAllLevelsAndRanksReturnTypeSingle;
@@ -55,53 +56,38 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
   const renderCardContent = () => {
     if (!isAIMode) {
       return (
-        <section className='flex flex-wrap gap-2'>
-          {level?.is_new === true && (
-            <Badge
-              variant='outline'
-              className='border-[#42eca6] bg-secondary text-secondary-foreground'
-            >
-              New level
-            </Badge>
-          )}
-          {level?.difficulty && (
-            <Badge
-              variant='outline'
-              className={cn(
-                'bg-secondary text-secondary-foreground',
-                level.difficulty === 1
-                  ? 'border-green-500'
-                  : level.difficulty === 2
-                    ? 'border-amber-500'
-                    : level.difficulty === 3
-                      ? 'border-red-500'
-                      : 'border-border'
-              )}
-            >
-              Difficulty: {getDifficulty(level.difficulty, false)}
-            </Badge>
-          )}
+        <section className='flex flex-col gap-2'>
           {level?.words && (
-            <Badge
-              variant='outline'
-              className='border-primary bg-secondary text-secondary-foreground'
-            >
+            <LevelCardBadge prefixIcon={<BookIcon className='size-3' />}>
               {level.words.length} words
-            </Badge>
+            </LevelCardBadge>
           )}
           {level?.popularity !== undefined && (
-            <Badge
-              variant='outline'
-              className='border-primary bg-secondary text-secondary-foreground'
-            >
+            <LevelCardBadge prefixIcon={<UsersIcon className='size-3' />}>
               {level.popularity} {level.popularity <= 1 ? 'attempt' : 'attempts'}
-            </Badge>
+            </LevelCardBadge>
+          )}
+          {level?.difficulty && (
+            <LevelCardBadge
+              prefixIcon={<CircleIcon className='size-3' />}
+              className={cn(
+                level.difficulty === 1
+                  ? 'text-green-500'
+                  : level.difficulty === 2
+                    ? 'text-amber-500'
+                    : level.difficulty === 3
+                      ? 'text-red-500'
+                      : 'text-border'
+              )}
+            >
+              {getDifficulty(level.difficulty, false)}
+            </LevelCardBadge>
           )}
         </section>
       );
     } else {
       return (
-        <section className='mt-2 text-left leading-tight'>
+        <section className='mt-1 text-left text-sm leading-tight text-muted-foreground'>
           {`Can't find the topic you are looking for? Try ask the AI to generate for you!`}
         </section>
       );
@@ -135,7 +121,7 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
     } else {
       return (
         <section className='flex animate-pulse flex-col items-center gap-4'>
-          <p className='text-center text-sm leading-tight'>
+          <p className='text-left text-sm leading-tight text-muted-foreground'>
             This topic awaits its <span className='text-yellow-400'>champion</span>, and it could be
             you! This is your chance to claim the title of highest scorer!
           </p>
@@ -145,8 +131,11 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
   };
 
   return (
-    <HoverPerspectiveContainer className={'group/level-card relative select-none'}>
+    <HoverPerspectiveContainer
+      className={cn('group/level-card relative select-none', 'w-[240px]', 'h-[340px]')}
+    >
       <Card
+        title={level?.name ? DisplayUtils.getLevelName(level.name) : 'Generate for me'}
         onPointerDown={() => {
           setPointHasDown(true);
         }}
@@ -161,19 +150,18 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
           isShowingRank && user && level?.top_scorer_ids?.includes(user.id)
             ? '!shadow-[0px_0px_10px_1px_rgba(255,204,51,1)]'
             : '',
-          'relative flex flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]  ',
-          'w-full xs:w-[200px]',
-          'h-full xs:min-h-[300px]'
+          'relative flex h-full w-full flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
         )}
       >
         <CardHeader>
           <div
             className={cn(
-              'text-md rounded-lg bg-primary p-2 font-extrabold leading-tight text-primary-foreground shadow-md transition-transform ease-in-out',
-              'group-hover/level-card:-translate-y-1/2 group-hover/level-card:scale-150'
+              'text-md truncate rounded-lg bg-primary px-3 py-2 font-extrabold leading-tight text-primary-foreground shadow-md',
+              'transition-transform ease-in-out',
+              'group-hover/level-card:-translate-y-[32px] group-hover/level-card:scale-150'
             )}
           >
-            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'AI Generated Topics'}
+            {!isAIMode ? DisplayUtils.getLevelName(level.name) : 'Generate for me'}
           </div>
         </CardHeader>
         <CardContent className='relative'>

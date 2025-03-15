@@ -15,7 +15,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CustomEventKey, EventManager } from '@/lib/event-manager';
 import { sendEmail } from '@/lib/services/send-email';
@@ -107,26 +106,22 @@ export default function GenericFeedbackDialog() {
           {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
         </AlertDialogHeader>
         <form action=''>
-          <div className='flex flex-row items-center gap-2'>
-            <Label htmlFor='email-input' className='w-[60px]'>
-              Email
-            </Label>
-            <Input
-              disabled={user?.email !== undefined}
-              id='email-input'
-              type='email'
-              placeholder='Enter your email address'
-              value={user?.email ?? customEmail}
-              onChange={(e) => {
-                setCustomEmail(e.target.value);
-              }}
-            />
-          </div>
+          {typeof user?.email !== 'string' && (
+            <div className='flex flex-row items-center gap-2'>
+              <Input
+                disabled={user?.email !== undefined}
+                id='email-input'
+                type='email'
+                placeholder='Enter your email address'
+                value={user?.email ?? customEmail}
+                onChange={(e) => {
+                  setCustomEmail(e.target.value);
+                }}
+              />
+            </div>
+          )}
           <div className='h-2'></div>
           <div className='flex flex-row items-center gap-2'>
-            <Label htmlFor='feedback-input' className='w-[60px]'>
-              Details
-            </Label>
             <Textarea
               autoFocus
               id='feedback-input'

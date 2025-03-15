@@ -24,16 +24,18 @@ export function LevelsScrollArea({ children }: { children: React.ReactNode }) {
 
   return (
     <ScrollArea id='level-section' ref={levelSectionRef} onScroll={onScrollChange}>
-      <div
-        className={cn(
-          'flex w-full flex-col flex-nowrap items-stretch gap-8 px-8 py-10 text-center',
-          'xs:flex-grow xs:flex-row xs:flex-wrap xs:content-start xs:justify-center xs:px-4'
-        )}
-      >
-        {children}
-        {isScrollToTopButtonVisible && <ScrollToTopButton scrollAreaRef={levelSectionRef} />}
+      <div className='px-8'>
+        <div
+          className={cn(
+            'flex flex-col flex-nowrap items-center gap-8 py-10 text-center',
+            'xs:flex-grow xs:flex-row xs:flex-wrap xs:content-start xs:justify-center xs:px-4'
+          )}
+        >
+          {children}
+          {isScrollToTopButtonVisible && <ScrollToTopButton scrollAreaRef={levelSectionRef} />}
+        </div>
+        {isHallOfFameOn && <Confetti playOnce />}
       </div>
-      {isHallOfFameOn && <Confetti playOnce />}
     </ScrollArea>
   );
 }

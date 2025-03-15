@@ -84,16 +84,15 @@ export function AskForFeedbackDialog() {
             {`We would love to hear your feedback on how we can improve our product. :)`}
           </p>
           <form action='' className='flex flex-col items-end gap-2'>
-            <Input
-              disabled={user?.email !== undefined}
-              id='email-input'
-              type='email'
-              placeholder='Enter your email address'
-              value={user?.email ?? customEmail}
-              onChange={(e) => {
-                setCustomEmail(e.target.value);
-              }}
-            />
+            {typeof user?.email !== 'string' && (
+              <Input
+                id='email-input'
+                type='email'
+                placeholder='Enter your email address'
+                value={customEmail}
+                onChange={(e) => setCustomEmail(e.target.value)}
+              />
+            )}
             <Textarea
               autoFocus
               id='feedback-input'
