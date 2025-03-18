@@ -3,6 +3,8 @@ import { fetchLevel } from '@/app/level/[id]/server/fetch-level';
 import { incrementLevelPopularity } from '@/app/level/[id]/server/increment-level-popularity';
 import { formatStringForDisplay } from '@/lib/utilities';
 
+export const maxDuration = 60; // 60 seconds
+
 interface LevelPageProps {
   params: { id: string };
 }
