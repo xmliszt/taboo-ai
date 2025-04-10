@@ -14,9 +14,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     })
   );
-  staticSites.push({
-    url: '/levels?rank=true',
-    lastModified: new Date(),
-  });
   return staticSites;
 }
