@@ -113,7 +113,9 @@ export function LevelCard({ isShowingRank, level, beforeGoToLevel }: LevelCardPr
               <div className='text-yellow-400'>
                 {pluralize('CHAMPION', level.top_scorer_names.length, false)}
               </div>
-              <div className='text-2xl font-extrabold'>{level.top_scorer_names.join(' & ')}</div>
+              <div className='line-clamp-3 text-xl font-extrabold'>
+                {level.top_scorer_names.join(' & ')}
+              </div>
             </div>
           )}
         </section>
