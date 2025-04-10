@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Handshake, Mail } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
-import { BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
+import { BiCoffeeTogo, BiCookie, BiMapAlt, BiMask } from 'react-icons/bi';
 import { BsDiscord, BsGithub, BsTwitter } from 'react-icons/bs';
 
 import { feedback } from '@/components/custom/globals/generic-feedback-dialog';
@@ -261,6 +261,16 @@ export default function SideMenu() {
             >
               Sitemap{' '}
               <BiMapAlt className='ml-1 inline-block transition-transform ease-in-out group-hover/sitemap:rotate-[30deg]' />
+            </Link>
+            <Link
+              className='group/coffee'
+              href={'/coffee'}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Buy me a coffee{' '}
+              <BiCoffeeTogo className='ml-1 inline-block transition-transform ease-in-out group-hover/coffee:rotate-[30deg]' />
             </Link>
 
             <div className='flex items-center justify-end gap-x-1'>

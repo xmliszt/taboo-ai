@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import FeaturePopupContent from 'mdx-contents/release-notes.mdx';
-import { BsDiscord } from 'react-icons/bs';
 import semver from 'semver';
 
-import SocialLinkButton from '@/components/custom/social-link-button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getFeaturePopupString, setFeaturePopupString } from '@/lib/cache';
@@ -69,14 +67,6 @@ export default function FeaturePopup() {
             <article data-testid='content-article' className='h-full py-8'>
               <FeaturePopupContent />
             </article>
-            <div className='sticky bottom-4 flex w-full justify-center px-2'>
-              <SocialLinkButton
-                content='Join Discord Community'
-                icon={<BsDiscord />}
-                href='https://discord.gg/dgqs29CHC2'
-                newTab={true}
-              />
-            </div>
           </div>
         </ScrollArea>
       </DialogContent>

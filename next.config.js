@@ -59,6 +59,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'avosfnqiscrmxpqmhswp.supabase.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'storage.ko-fi.com',
+      },
     ],
     formats: ['image/webp'],
   },

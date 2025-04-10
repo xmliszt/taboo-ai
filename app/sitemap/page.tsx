@@ -30,6 +30,7 @@ export default async function SitemapPage() {
     { title: 'Privacy policy', href: '/privacy-policy' },
     { title: 'Cookie policy', href: '/cookie-policy' },
     { title: 'Terms and conditions', href: '/terms-and-conditions' },
+    { title: 'Buy me a coffee', href: '/coffee' },
   ];
   const socialMedia: SitemapRoute[] = [
     { title: 'About me', href: 'https://liyuxuan.dev' },

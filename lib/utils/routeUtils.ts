@@ -20,6 +20,7 @@ export enum TabooPathname {
   COOKIE = '/cookie-policy',
   TNC = '/terms-and-conditions',
   SIGN_IN = '/sign-in',
+  COFFEE = '/coffee',
 }
 
 export class RouteManager {
