@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'My Profile',
   alternates: {
-    canonical: '/profile',
+    canonical: 'https://taboo-ai.com/profile',
   },
   openGraph: {
     title: 'Taboo AI: My Profile',

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   ..._meta,
   title: 'Buy me a coffee',
   alternates: {
-    canonical: '/coffee',
+    canonical: 'https://taboo-ai.com/coffee',
   },
   openGraph: {
     title: 'Buy me a coffee',

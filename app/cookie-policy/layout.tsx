@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Cookie policy',
   alternates: {
-    canonical: '/cookie-policy',
+    canonical: 'https://taboo-ai.com/cookie-policy',
   },
   openGraph: {
     title: 'Taboo AI: Cookie policy',

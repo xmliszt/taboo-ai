@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Contribute Topics',
   alternates: {
-    canonical: '/add-level',
+    canonical: 'https://taboo-ai.com/add-level',
   },
   openGraph: {
     title: 'Taboo AI: Contribute Topics',

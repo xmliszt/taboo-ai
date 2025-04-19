@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Terms & conditions',
   alternates: {
-    canonical: '/terms-and-conditions',
+    canonical: 'https://taboo-ai.com/terms-and-conditions',
   },
   openGraph: {
     title: 'Taboo AI: Terms & conditions',

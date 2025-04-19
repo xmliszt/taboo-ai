@@ -34,7 +34,7 @@ const font = Mulish({
 export async function generateMetadata(): Promise<Metadata> {
   const metadata = _meta;
   metadata.alternates = {
-    canonical: '/',
+    canonical: 'https://taboo-ai.com/',
   };
   return metadata;
 }

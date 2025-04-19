@@ -5,7 +5,7 @@ import { Footer } from '../footer';
 export const metadata: Metadata = {
   title: 'About Taboo AI',
   alternates: {
-    canonical: '/about',
+    canonical: 'https://taboo-ai.com/about',
   },
   openGraph: {
     title: 'Taboo AI: About',

@@ -15,7 +15,7 @@ export async function generateMetadata({
     return {
       title: 'AI Mode',
       alternates: {
-        canonical: '/level/ai',
+        canonical: 'https://taboo-ai.com/level/ai',
       },
       openGraph: {
         title: 'Taboo AI: AI Mode',
@@ -35,7 +35,7 @@ export async function generateMetadata({
   return {
     title: level?.name ?? 'Level',
     alternates: {
-      canonical: `/level/${id}`,
+      canonical: `https://taboo-ai.com/level/${id}`,
     },
     openGraph: {
       title: `Taboo AI: ${level?.name ?? 'Level'}`,

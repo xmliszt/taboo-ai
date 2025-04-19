@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Sign in',
   alternates: {
-    canonical: '/sign-in',
+    canonical: 'https://taboo-ai.com/sign-in',
   },
   openGraph: {
     title: 'Taboo AI: Sign in',
