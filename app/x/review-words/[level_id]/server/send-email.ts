@@ -3,22 +3,23 @@
 import 'server-only';
 
 import { cookies } from 'next/headers';
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 
 import { RejectionReason, REJECTIONS } from '@/lib/constants';
 import { createClient } from '@/lib/utils/supabase/server';
 
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
-sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
+const resendApiKey = process.env.RESEND_KEY;
+if (!resendApiKey) throw new Error('No Resend API key found');
+const resend = new Resend(resendApiKey);
 
 async function sendExternalEmailVerificationSuccess(
   subject: string,
   toEmail: string,
   fromEmail: string
 ) {
-  const msg = {
-    to: toEmail,
+  await resend.emails.send({
     from: fromEmail,
+    to: toEmail,
     subject: subject,
     html: `<article>
         <h1>${subject}</h1>
@@ -32,8 +33,7 @@ async function sendExternalEmailVerificationSuccess(
         Taboo AI
         </p>
         </article>`,
-  };
-  await sgMail.send(msg);
+  });
 }
 
 async function sendExternalEmailVerificationRejection(
@@ -44,9 +44,9 @@ async function sendExternalEmailVerificationRejection(
 ) {
   const reasonString = REJECTIONS[reason].title;
   const reasonContent = REJECTIONS[reason].message;
-  const msg = {
-    to: toEmail,
+  await resend.emails.send({
     from: fromEmail,
+    to: toEmail,
     subject: subject,
     html: `<article>
         <h1>${subject}</h1>
@@ -78,8 +78,7 @@ async function sendExternalEmailVerificationRejection(
         Taboo AI
         </p>
         </article>`,
-  };
-  await sgMail.send(msg);
+  });
 }
 
 export async function sendSecureEmail(
@@ -91,7 +90,7 @@ export async function sendSecureEmail(
   const supabaseClient = createClient(cookies());
   const authUserResponse = await supabaseClient.auth.getUser();
   if (authUserResponse.error) throw new Error('You are not authenticated');
-  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
+  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
   if (FROM_EMAIL === undefined)
     throw new Error('Error sending email because no source email is provided');
   if (type === 'verify') {

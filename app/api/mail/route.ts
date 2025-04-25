@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
-sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
+const resendApiKey = process.env.RESEND_KEY;
+if (!resendApiKey) throw new Error('No Resend API key found');
+const resend = new Resend(resendApiKey);
 
 export async function POST(request: NextRequest) {
-  const TO_EMAIL = process.env.SENDGRID_TO_EMAIL;
-  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
+  const TO_EMAIL = process.env.RESEND_TO_EMAIL;
+  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
   if (TO_EMAIL === undefined || FROM_EMAIL === undefined) {
     return new Response('Error sending email', { status: 500 });
   }
@@ -14,17 +15,17 @@ export async function POST(request: NextRequest) {
   if (email === undefined) {
     return new Response('email is requried', { status: 400 });
   }
-  const msg = {
-    to: TO_EMAIL,
-    from: FROM_EMAIL,
-    subject: subject ?? 'Mail from ' + email,
-    text: message,
-    html:
-      html ??
-      `<article><h1>Mail from ${nickname}</h1><h3>${email}</h3><p><strong>${message}</strong></p></article>`,
-  };
+
   try {
-    await sgMail.send(msg);
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: TO_EMAIL,
+      subject: subject ?? 'Mail from ' + email,
+      text: message,
+      html:
+        html ??
+        `<article><h1>Mail from ${nickname}</h1><h3>${email}</h3><p><strong>${message}</strong></p></article>`,
+    });
     return NextResponse.json({ message: 'Email sent' });
   } catch (error) {
     console.log(error);

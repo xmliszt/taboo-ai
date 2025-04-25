@@ -1,9 +1,10 @@
 'use server';
 
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
-sendgridApiKey && sgMail.setApiKey(sendgridApiKey);
+const resendApiKey = process.env.RESEND_KEY;
+if (!resendApiKey) throw new Error('No Resend API key found');
+const resend = new Resend(resendApiKey);
 
 export async function sendEmail(
   nickname: string,
@@ -12,12 +13,12 @@ export async function sendEmail(
   subject?: string,
   html?: string
 ) {
-  const TO_EMAIL = process.env.SENDGRID_TO_EMAIL;
-  const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
+  const TO_EMAIL = process.env.RESEND_TO_EMAIL;
+  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
   if (TO_EMAIL === undefined || FROM_EMAIL === undefined) throw new Error('Error sending email');
-  const msg = {
-    to: TO_EMAIL,
+  await resend.emails.send({
     from: FROM_EMAIL,
+    to: TO_EMAIL,
     subject: subject ?? `Mail from ${nickname} (${fromEmail})`,
     text: content,
     html:
@@ -27,6 +28,5 @@ export async function sendEmail(
         <h1>Mail from ${nickname} (${fromEmail})</h1>
         <p>${content}</p>
       </article>`,
-  };
-  await sgMail.send(msg);
+  });
 }
