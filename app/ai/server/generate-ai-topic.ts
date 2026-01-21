@@ -43,14 +43,12 @@ export async function generateAITopic(
   { "words": ["word1", "word2", ...] }
   `;
   const completion = await openai.chat.completions.create({
-    model: 'gpt-5-mini',
+    model: 'gpt-4o-mini',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: JSON.stringify({ topic }) },
     ],
-    response_format: {
-      type: 'json_object',
-    },
+    response_format: { type: 'json_object' },
   });
   const responseText = completion.choices.at(0)?.message.content;
   if (!responseText) throw new Error('Failed to generate taboo words from AI');

@@ -19,23 +19,20 @@ export async function generateTabooWordsFromAI(targetWord: string, topic?: strin
   if (!user) throw new Error('Unauthorized');
 
   cookies(); // opt-out for caching
-  console.log(`Generating taboo words for ${targetWord} in ${topic}. Topic is omitted currently.`);
   const target = toLower(trim(targetWord));
   const systemPrompt = `
-  You are tasked to generate 8 words related to a given target word given by user, in American English. Avoid plural and duplicates. You only respond in JSON. Output your response in the following format:
+  You are tasked to generate 8 words related to a given target word given by user, in American English. In the topic related to ${topic || 'in general'}. Avoid plural forms and duplicates. You only respond in JSON. Output your response in the following format:
   { "words": ["word1", "word2", ...] }
   `;
   const userPrompt = JSON.stringify({ target });
 
   const completion = await openai.chat.completions.create({
-    model: 'gpt-5-mini',
+    model: 'gpt-4o-mini',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ],
-    response_format: {
-      type: 'json_object',
-    },
+    response_format: { type: 'json_object' },
   });
   const responseText = completion.choices.at(0)?.message.content;
   if (!responseText) throw new Error('Failed to generate taboo words from AI');
