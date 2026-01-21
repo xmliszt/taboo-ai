@@ -52,7 +52,8 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage },
     ],
-    model: 'o3-mini',
+    model: 'gpt-5-mini',
+    reasoning_effort: 'high',
     response_format: {
       type: 'json_object',
     },
@@ -79,15 +80,15 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
 
 const getEvaluationSystemMessage = () => {
   return `
-  You are an English linguistic expert. You are tasked to evaluate the linguistic performance of the user in the Game of Taboo. You will assess the clues given by the user and score from 0 to 100. If user is found cheating, or use direct translation in another language, you should penalise the player. 
+  You are an English linguistic expert. You are tasked to evaluate the linguistic performance of the user in the Game of Taboo. You will assess the clues given by the user and score from 0 to 100. If user is found cheating, or use direct translation in another language, you should penalise the player.
 
   What is a good clue: simple, direct and effective, creative, good grammar, smart association with other words without using the taboo words.
-  
+
   You will be given a JSON stringified object that provides the following:
   - "target": the target word that the user is trying to describe (assistant is trying to guess)
   - "taboos": an array of words that the user is not allowed to use (assistant is allowed to say those words)
   - "conversation": an array of objects that represent the conversation between the user and the assistant.
-  
+
   You are designed to output JSON.
 
   Your response is formatted as follows:

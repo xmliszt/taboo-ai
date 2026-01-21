@@ -247,7 +247,7 @@ export function ScoreDetailsAccordion(props: ScoreDetailsAccordionProps) {
                 href='https://openai.com/index/openai-o3-mini/'
                 target='_blank'
               >
-                gpt-o3-mini
+                gpt-5-mini
               </a>
               . Results might not be accurate.
             </div>
