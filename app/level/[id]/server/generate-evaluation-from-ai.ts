@@ -53,10 +53,7 @@ export async function generateEvaluationFromAI(gameScore: ScoreToUpload): Promis
       { role: 'user', content: userMessage },
     ],
     model: 'gpt-5-mini',
-    reasoning_effort: 'high',
-    response_format: {
-      type: 'json_object',
-    },
+    response_format: { type: 'json_object' },
   });
 
   const responseText = completion.choices.at(0)?.message.content;
