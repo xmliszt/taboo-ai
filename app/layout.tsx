@@ -55,26 +55,47 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <ReactQueryProvider>
       <html lang='en' suppressHydrationWarning>
         {/* Ezoic Ads - Privacy */}
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
         <Script
           id='gatekeeper-consent'
           key='gatekeeper-consent'
           data-cfasync='false'
           src='https://cmp.gatekeeperconsent.com/min.js'
+          strategy='beforeInteractive'
+          async={false}
         />
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
         <Script
           id='gatekeeper-consent-2'
           key='gatekeeper-consent-2'
           data-cfasync='false'
           src='https://the.gatekeeperconsent.com/cmp.min.js'
+          strategy='beforeInteractive'
+          async={false}
         />
 
         {/* Ezoic Ads - Header */}
-        <Script id='ezoic-header-1' key='ezoic-header-1' src='//www.ezojs.com/ezoic/sa.min.js' />
-        <Script id='ezoic-header-2' key='ezoic-header-2'>
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
+        <Script
+          id='ezoic-header-1'
+          key='ezoic-header-1'
+          src='//www.ezojs.com/ezoic/sa.min.js'
+          strategy='beforeInteractive'
+          async={false}
+        />
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
+        <Script id='ezoic-header-2' key='ezoic-header-2' strategy='beforeInteractive' async={false}>
           window.ezstandalone = window.ezstandalone || {}; ezstandalone.cmd = ezstandalone.cmd ||
           [];
         </Script>
-        <Script id='ezoic-header-3' key='ezoic-header-3' src='//ezoicanalytics.com/analytics.js' />
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
+        <Script
+          id='ezoic-header-3'
+          key='ezoic-header-3'
+          src='//ezoicanalytics.com/analytics.js'
+          strategy='beforeInteractive'
+          async={false}
+        />
 
         <Script id='pwa-script' src='/js/pwa.js' />
         <body className={`${font.className}`} suppressHydrationWarning>
