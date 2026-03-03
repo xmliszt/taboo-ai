@@ -42,7 +42,7 @@ export function AdLevelCard() {
         title='Advertisement'
         className={cn(
           'z-10',
-          'relative flex h-full w-full flex-col overflow-hidden shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
+          'relative flex h-full w-full flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
         )}
       >
         <CardHeader>
@@ -57,7 +57,7 @@ export function AdLevelCard() {
           </div>
         </CardHeader>
 
-        <CardContent className='relative flex min-h-0 flex-1 items-center justify-center overflow-hidden'>
+        <CardContent className='relative flex min-h-0 flex-1 items-center justify-center'>
           <div className='flex h-full w-full items-center justify-center p-2'>
             <div className='h-full w-full max-w-full'>
               <div
