@@ -38,12 +38,8 @@ export default async function LevelsPage(props: LevelsPageProps) {
       <LevelCard key={`level-${level.id ?? idx}`} level={level} isShowingRank={isRankingModeOn} />,
     ];
 
-    if ((idx + 1) % 20 === 0) {
-      const adIndex = (idx + 1) / 20;
-
-      levelElements.push(
-        <AdLevelCard key={`ad-card-${adIndex}`} isPrimary={adIndex === 1} />
-      );
+    if (idx + 1 === 20) {
+      levelElements.push(<AdLevelCard key='ad-card-1' />);
     }
 
     return levelElements;
