@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 const AD_CONTAINER_ID = 'container-d743f129b71ea38d5f36f459ef5b855e';
 const AD_TITLE_CLASS = `${AD_CONTAINER_ID}__title`;
+const AD_TITLE_LINK = `${AD_CONTAINER_ID}__link`;
 
 function hideAdTitleText() {
   document.querySelectorAll(`.${AD_TITLE_CLASS}`).forEach((node) => {
@@ -17,14 +18,12 @@ function hideAdTitleText() {
 }
 
 export function AdLevelCard() {
-  const handleCardClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-    if (target.closest(`#${AD_CONTAINER_ID}`)) {
-      return;
-    }
+  const handleCardClick = () => {
+    const linkElement = document.querySelector(`.${AD_TITLE_LINK}`) as HTMLAnchorElement | null;
+    if (!linkElement) return;
 
-    const sourceContainer = document.getElementById(AD_CONTAINER_ID);
-    sourceContainer?.click();
+    // Check if the click target is inside the link element
+    linkElement.click();
   };
 
   useEffect(() => {
@@ -68,7 +67,7 @@ export function AdLevelCard() {
           </div>
         </CardHeader>
 
-        <CardContent className='relative flex min-h-0 flex-1 items-center justify-center'>
+        <CardContent className='relative flex min-h-fit flex-1 items-center justify-center'>
           <div className='flex h-full w-full items-center justify-center p-2'>
             <div className='h-full w-full max-w-full'>
               <div
