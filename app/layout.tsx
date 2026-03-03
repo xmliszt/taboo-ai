@@ -46,6 +46,7 @@ export const viewport: Viewport = {
   ],
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -62,7 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           ></script>
         </head>
         <Script id='pwa-script' src='/js/pwa.js' />
-        <body className={`${font.className}`} suppressHydrationWarning>
+        <body className={`${font.className}`}>
           <AuthProvider user={user}>
             <Providers>
               {maintenanceMode ? (
