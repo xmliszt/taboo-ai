@@ -32,18 +32,9 @@ export default async function LevelsPage(props: LevelsPageProps) {
     })
     .filter((level) => level.is_verified);
   const sortedLevels = [...filteredLevels].sort(LevelUtils.getCompareFn(selectedSorter));
-
-  const levelCardsWithAds = sortedLevels.flatMap((level, idx) => {
-    const levelElements = [
-      <LevelCard key={`level-${level.id ?? idx}`} level={level} isShowingRank={isRankingModeOn} />,
-    ];
-
-    if (idx + 1 === 20) {
-      levelElements.push(<AdLevelCard key='ad-card-1' />);
-    }
-
-    return levelElements;
-  });
+  const levelCards = sortedLevels.map((level, idx) => (
+    <LevelCard key={`level-${level.id ?? idx}`} level={level} isShowingRank={isRankingModeOn} />
+  ));
 
   return (
     <section className='flex h-full w-full flex-col overflow-y-hidden'>
@@ -53,8 +44,11 @@ export default async function LevelsPage(props: LevelsPageProps) {
         {/* AI Mode Card */}
         <LevelCard />
 
+        {/* Advertisement Card */}
+        <AdLevelCard />
+
         {/* Levels Card */}
-        {levelCardsWithAds}
+        {levelCards}
       </LevelsScrollArea>
     </section>
   );
