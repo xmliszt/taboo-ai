@@ -17,6 +17,16 @@ function hideAdTitleText() {
 }
 
 export function AdLevelCard() {
+  const handleCardClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest(`#${AD_CONTAINER_ID}`)) {
+      return;
+    }
+
+    const sourceContainer = document.getElementById(AD_CONTAINER_ID);
+    sourceContainer?.click();
+  };
+
   useEffect(() => {
     const sourceContainer = document.getElementById(AD_CONTAINER_ID);
     if (!sourceContainer) return;
@@ -40,9 +50,10 @@ export function AdLevelCard() {
     >
       <Card
         title='Advertisement'
+        onClick={handleCardClick}
         className={cn(
           'z-10',
-          'relative flex h-full w-full flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
+          'relative flex h-full w-full cursor-pointer flex-col shadow-md transition-all ease-in-out group-hover/level-card:scale-[1.02]'
         )}
       >
         <CardHeader>
