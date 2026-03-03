@@ -1,5 +1,6 @@
 import { LevelsScrollArea } from '@/app/levels/levels-scroll-area';
 import { fetchAllLevelsAndRanks } from '@/app/levels/server/fetch-levels';
+import { AdLevelCard } from '@/app/levels/ad-level-card';
 import { FeedbackAutoLoader } from '@/components/custom/feedback-auto-loader';
 import { LevelCard } from '@/components/custom/level-card';
 import LevelsSearchBar from '@/components/custom/levels/levels-search-bar';
@@ -31,7 +32,6 @@ export default async function LevelsPage(props: LevelsPageProps) {
     })
     .filter((level) => level.is_verified);
   const sortedLevels = [...filteredLevels].sort(LevelUtils.getCompareFn(selectedSorter));
-  const adContainerBaseId = 'container-d743f129b71ea38d5f36f459ef5b855e';
 
   const levelCardsWithAds = sortedLevels.flatMap((level, idx) => {
     const levelElements = [
@@ -40,17 +40,9 @@ export default async function LevelsPage(props: LevelsPageProps) {
 
     if ((idx + 1) % 20 === 0) {
       const adIndex = (idx + 1) / 20;
-      const adContainerId = adIndex === 1 ? adContainerBaseId : `${adContainerBaseId}-${adIndex}`;
 
       levelElements.push(
-        <article
-          key={`ad-card-${adIndex}`}
-          className='relative h-[340px] w-[240px] select-none rounded-lg border bg-card text-card-foreground shadow-md'
-        >
-          <div className='flex h-full w-full items-center justify-center p-4'>
-            <div id={adContainerId}></div>
-          </div>
-        </article>
+        <AdLevelCard key={`ad-card-${adIndex}`} isPrimary={adIndex === 1} />
       );
     }
 
