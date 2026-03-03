@@ -56,9 +56,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <html lang='en' suppressHydrationWarning>
         <head>
           <script
-            defer
+            async
             data-cfasync='false'
-            src='https://pl28835676.effectivegatecpm.com/51/f1/fc/51f1fcd81344de138f4d1d8927d41cbe.js'
+            src='https://pl28836057.effectivegatecpm.com/d743f129b71ea38d5f36f459ef5b855e/invoke.js'
           ></script>
         </head>
         <Script id='pwa-script' src='/js/pwa.js' />

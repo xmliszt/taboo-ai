@@ -31,6 +31,31 @@ export default async function LevelsPage(props: LevelsPageProps) {
     })
     .filter((level) => level.is_verified);
   const sortedLevels = [...filteredLevels].sort(LevelUtils.getCompareFn(selectedSorter));
+  const adContainerBaseId = 'container-d743f129b71ea38d5f36f459ef5b855e';
+
+  const levelCardsWithAds = sortedLevels.flatMap((level, idx) => {
+    const levelElements = [
+      <LevelCard key={`level-${level.id ?? idx}`} level={level} isShowingRank={isRankingModeOn} />,
+    ];
+
+    if ((idx + 1) % 20 === 0) {
+      const adIndex = (idx + 1) / 20;
+      const adContainerId = adIndex === 1 ? adContainerBaseId : `${adContainerBaseId}-${adIndex}`;
+
+      levelElements.push(
+        <article
+          key={`ad-card-${adIndex}`}
+          className='relative h-[340px] w-[240px] select-none rounded-lg border bg-card text-card-foreground shadow-md'
+        >
+          <div className='flex h-full w-full items-center justify-center p-4'>
+            <div id={adContainerId}></div>
+          </div>
+        </article>
+      );
+    }
+
+    return levelElements;
+  });
 
   return (
     <section className='flex h-full w-full flex-col overflow-y-hidden'>
@@ -41,9 +66,7 @@ export default async function LevelsPage(props: LevelsPageProps) {
         <LevelCard />
 
         {/* Levels Card */}
-        {sortedLevels.map((level, idx) => (
-          <LevelCard key={idx} level={level} isShowingRank={isRankingModeOn} />
-        ))}
+        {levelCardsWithAds}
       </LevelsScrollArea>
     </section>
   );
